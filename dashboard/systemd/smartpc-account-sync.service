@@ -1,7 +1,12 @@
 [Unit]
-Description=Send ChatGPT account usage to SmartPC
+Description=DeskPulse - Sync ChatGPT & Codex usage to board
+After=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/python3 /home/giuseppe/Documenti/Workspace/SmartPC/dashboard/account_sync.py
+# Path can use %h (expands to user home directory) or explicit path:
+ExecStart=/usr/bin/python3 %h/desk-pulse/dashboard/account_sync.py
 TimeoutStartSec=35
+
+[Install]
+WantedBy=default.target

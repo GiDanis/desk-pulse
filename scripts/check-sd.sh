@@ -1,14 +1,44 @@
 #!/bin/bash
+# ==============================================================================
+# DeskPulse - MicroSD Integrity & Filesystem Repair Checker
+# ==============================================================================
 set -euo pipefail
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
-dev=/dev/disk/by-id/usb-Mass_Storage_Device_121220130416-0:0-part1
-target_uuid=$(blkid -s UUID -o value "$dev" 2>/dev/null || true)
-[[ "$target_uuid" =~ ^(932dec6a-307e-4174-8694-c4a1ef18eef4|d8bcf295-3d76-4436-be46-7c06b17369f9|B6D0-9AA5)$ ]]
-if findmnt -rn -S "$(readlink -f "$dev")" >/dev/null; then umount "$dev"; fi
+
+dev="${1:-}"
+
+if [[ -z "$dev" ]]; then
+    echo "Dispositivi disponibili:"
+    lsblk -o NAME,SIZE,FSTYPE,LABEL,MOUNTPOINTS
+    echo ""
+    read -rp "Inserisci la partizione da verificare (es. /dev/sdb1 o /dev/mmcblk0p1): " dev
+fi
+
+if [[ ! -b "$dev" ]]; then
+    echo "[ERRORE] Dispositivo $dev non valido o inesistente." >&2
+    exit 1
+fi
+
+echo "Controllo partizione $dev..."
+if findmnt -rn -S "$(readlink -f "$dev")" >/dev/null 2>&1; then
+    echo "Smontaggio partizione attiva..."
+    umount "$dev"
+fi
+
 set +e
+echo "Esecuzione fsck in corso..."
 e2fsck -f -p "$dev"
 status=$?
 set -e
-echo "Esito riparazione filesystem: $status"
-[[ $status -le 1 ]] || exit "$status"
+
+echo "Esito fsck: $status"
+if [[ $status -le 1 ]]; then
+    echo "✓ Filesystem integro o corretto con successo."
+else
+    echo "⚠ Riparazione terminata con codice $status."
+    exit "$status"
+fi
+
+# Verifica in sola lettura di conferma
 e2fsck -f -n "$dev"
+echo "✓ Verifica completata."
