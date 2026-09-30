@@ -1,0 +1,11 @@
+[Unit]
+Description=Refresh SmartPC ChatGPT account usage every ten minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=10min
+Persistent=true
+Unit=smartpc-account-sync.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,16 @@
+From: SmartPC Orange Pi bring-up
+Subject: [PATCH] phy: sunxi-cadence-combophy: enable CMN PLL clock for DP+USB
+
+The 2-lane USB-C DisplayPort Alt Mode path configures DP lane rates but omits
+the CMN PLL1 clock enable performed by the 4-lane DP-only path. Without it the
+PLL does not lock and link training fails for STATE_DP_D sinks.
+
+--- a/bsp/drivers/phy/sunxi-cadence-combophy.c
++++ b/bsp/drivers/phy/sunxi-cadence-combophy.c
+@@ -1932,5 +1932,6 @@ static int combo0_configure_usb_dp(struct sunxi_cadence_combophy *combo0)
+ 	writel(val, COMB0_REG_PHYPINS_LINK_CTRL2(combo0->top_reg));
+ 
++	phy_writew(combo0->phy_reg + (0xE003 << 1), 0x0003);
+ 	phy_writew(combo0->phy_reg + (0xE005 << 1), 0x0003);
+ 	phy_writew(combo0->phy_reg + (0xE006 << 1), 0x1124);
+ 	if (combo0->orientation == TYPEC_ORIENTATION_REVERSE) {

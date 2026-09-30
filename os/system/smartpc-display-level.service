@@ -1,0 +1,10 @@
+[Unit]
+Description=Keep SmartPC display awake and set day/night brightness
+After=lightdm.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/smartpc-display-level
+
+[Install]
+WantedBy=graphical.target

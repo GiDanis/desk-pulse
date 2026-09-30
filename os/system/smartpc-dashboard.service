@@ -1,0 +1,34 @@
+[Unit]
+Description=SmartPC fullscreen dashboard
+After=systemd-user-sessions.service
+Conflicts=display-manager.service
+Before=display-manager.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=smartpc
+Group=smartpc
+SupplementaryGroups=video render input
+WorkingDirectory=/opt/smartpc/dashboard
+Environment=HOME=/var/lib/smartpc-dashboard
+Environment=XDG_CACHE_HOME=/var/cache/smartpc-dashboard
+StateDirectory=smartpc-dashboard
+CacheDirectory=smartpc-dashboard
+ExecStart=/opt/smartpc/dashboard/run.sh --device
+Restart=always
+RestartSec=2
+TimeoutStopSec=10
+UMask=0027
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+LockPersonality=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+
+[Install]
+WantedBy=multi-user.target

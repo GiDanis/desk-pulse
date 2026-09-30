@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+
+# Let NetworkManager complete its normal boot-time autoconnection first.
+/usr/bin/nm-online --quiet --wait-for-startup --timeout=20 || true
+state=$(/usr/bin/nmcli -g GENERAL.STATE device show wlan0)
+case "$state" in
+    100*)
+        echo "Wi-Fi already connected; no reconnection needed"
+        exit 0
+        ;;
+esac
+exec /usr/bin/nmcli --wait 25 connection up id "Orange Pi wireless" ifname wlan0

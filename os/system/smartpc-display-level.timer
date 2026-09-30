@@ -1,0 +1,11 @@
+[Unit]
+Description=Update SmartPC display brightness at 07:00 and 21:00
+
+[Timer]
+OnCalendar=*-*-* 07:00:00
+OnCalendar=*-*-* 21:00:00
+Persistent=true
+Unit=smartpc-display-level.service
+
+[Install]
+WantedBy=timers.target

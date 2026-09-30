@@ -1,0 +1,15 @@
+[Unit]
+Description=Recover SmartPC Wi-Fi only if normal autoconnection failed
+Wants=NetworkManager.service
+After=NetworkManager.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/smartpc-wifi-connect
+TimeoutStartSec=50s
+Restart=on-failure
+RestartSec=30s
+
+[Install]
+WantedBy=multi-user.target
