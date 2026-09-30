@@ -31,6 +31,9 @@ Window {
     property int settingsIndex: 0
     property int modulesIndex: 0
     property int systemIndex: 0
+    property int notificationIndex: 0
+    property int alertIndex: 0
+    property var selectedAlert: ({})
     property int accountIndex: 0
     property bool diagnostics: false
     property int frames: 0
@@ -57,6 +60,12 @@ Window {
     readonly property int accountCriticalPercent: dashboardState ? dashboardState.accountCriticalPercent : 95
     readonly property var nextEvent: dashboardState ? dashboardState.nextRelevantEvent : ({})
     readonly property bool hasEvent: !!nextEvent.title
+    readonly property var events: dashboardState ? dashboardState.eventsState : ({inbox: [], urgent: {}, visibleBanner: {}})
+    readonly property var alertItems: events.inbox || []
+    readonly property int unreadAlertCount: events.unreadCount || 0
+    readonly property var urgentEvent: events.urgent || ({})
+    readonly property var bannerEvent: events.visibleBanner || ({})
+    onAlertItemsChanged: alertIndex = Math.min(alertIndex, Math.max(0, alertItems.length - 1))
     readonly property int dayStartHour: dashboardState ? dashboardState.dayStartHour : 7
     readonly property int nightStartHour: dashboardState ? dashboardState.nightStartHour : 21
     readonly property bool daytime: dayStartHour < nightStartHour
@@ -69,12 +78,36 @@ Window {
            : (daytime ? dashboardState.dayBrightness : dashboardState.nightBrightness))
         : 100
     readonly property var menuItems: ["Comandi", "Impostazioni", "Diagnostica"]
-    readonly property var settingsItems: ["Aspetto e dispositivo", "Moduli visibili"]
+    readonly property var settingsItems: ["Aspetto e dispositivo", "Moduli visibili", "Notifiche"]
     readonly property var systemLabels: ["Tema", "Luminosità", "Manuale", "Giorno auto", "Notte auto", "Giorno dalle", "Notte dalle"]
+    readonly property var notificationLabels: ["Fascia di silenzio", "Dalle", "Alle", "Interruzioni Meteo", "Interruzioni Account"]
 
     function two(value) { return (value < 10 ? "0" : "") + value }
     function timeText() { return two(now.getHours()) + ":" + two(now.getMinutes()) }
     function dateText() { return weekdays[now.getDay()] + " " + now.getDate() + " " + months[now.getMonth()] + " " + now.getFullYear() }
+    function quietTime(value) { return two(Math.floor(value / 60)) + ":" + two(value % 60) }
+    function eventStamp(value) {
+        if (!value) return "—"
+        const d = new Date(value * 1000)
+        return two(d.getDate()) + "/" + two(d.getMonth() + 1) + " " + two(d.getHours()) + ":" + two(d.getMinutes())
+    }
+    function eventWhen(value) {
+        if (!value || !value.startsAt) return ""
+        const start = new Date(value.startsAt * 1000)
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+        const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1)
+        if (start >= tomorrow && start < new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2)) return "DOMANI"
+        if (start >= today && start < tomorrow) return "OGGI"
+        return two(start.getDate()) + "/" + two(start.getMonth() + 1)
+    }
+    function notificationValue(index) {
+        if (!dashboardState) return "—"
+        if (index === 0) return dashboardState.quietHoursEnabled ? "ATTIVA" : "DISATTIVA"
+        if (index === 1) return quietTime(dashboardState.quietStartMinute)
+        if (index === 2) return quietTime(dashboardState.quietEndMinute)
+        if (index === 3) return dashboardState.weatherInterruptions ? "ATTIVE" : "DISATTIVE"
+        return dashboardState.accountInterruptions ? "ATTIVE" : "DISATTIVE"
+    }
     function updatedText() {
         if (!weather.updatedAt) return "DATO ASSENTE"
         const d = new Date(weather.updatedAt * 1000)
@@ -155,6 +188,13 @@ Window {
     function selectSettings() {
         if (settingsIndex === 0) { systemIndex = 0; pushOverlay("system") }
         else if (settingsIndex === 1) { modulesIndex = 1; pushOverlay("modules") }
+        else if (settingsIndex === 2) { notificationIndex = 0; pushOverlay("notifications") }
+    }
+    function openSelectedAlert() {
+        if (!alertItems.length) return
+        selectedAlert = alertItems[alertIndex]
+        if (dashboardState) dashboardState.markEventSeen(selectedAlert.id)
+        pushOverlay("alertDetail")
     }
     function toggleModule(index) {
         const moduleId = allFamilies[index].id
@@ -168,6 +208,16 @@ Window {
         measuredFps = 0; p95Ms = 0
     }
     function activateKey(position) {
+        if (urgentEvent.id) {
+            if (position === 7) { dashboardState.dismissEvent(urgentEvent.id); return }
+            if (position === 1) { dashboardState.dismissEvent(urgentEvent.id); home(); return }
+            if (position === 5) {
+                selectedAlert = urgentEvent
+                dashboardState.dismissEvent(urgentEvent.id)
+                pushOverlay("alertDetail")
+            }
+            return
+        }
         if (position === 1) { home(); return }
         if (position === 7) { back(); return }
         if (position === 3) {
@@ -205,6 +255,21 @@ Window {
             else if (position === 6 || position === 5) adjustSystem(1)
             return
         }
+        if (overlay === "notifications") {
+            if (position === 2) notificationIndex = (notificationIndex + notificationLabels.length - 1) % notificationLabels.length
+            else if (position === 8) notificationIndex = (notificationIndex + 1) % notificationLabels.length
+            else if (position === 4) dashboardState.adjustNotificationSetting(notificationIndex, -1)
+            else if (position === 6 || position === 5) dashboardState.adjustNotificationSetting(notificationIndex, 1)
+            return
+        }
+        if (overlay === "alerts") {
+            if (alertItems.length) {
+                if (position === 2) alertIndex = Math.max(0, alertIndex - 1)
+                else if (position === 8) alertIndex = Math.min(alertItems.length - 1, alertIndex + 1)
+                else if (position === 5) openSelectedAlert()
+            }
+            return
+        }
         if (overlay !== "") return
         if (position === 4) navigateFamily(-1)
         else if (position === 6) navigateFamily(1)
@@ -223,7 +288,9 @@ Window {
     }
     Component.onCompleted: {
         if (dashboardState && dashboardState.firstRun) pushOverlay("commands")
+        if (dashboardState) dashboardState.setBannerAvailable(overlay === "")
     }
+    onOverlayChanged: if (dashboardState) dashboardState.setBannerAvailable(overlay === "")
     function syncClock() {
         const d = new Date()
         if (d.getMinutes() !== app.now.getMinutes() || d.getDate() !== app.now.getDate()) {
@@ -291,7 +358,20 @@ Window {
     Text { x: 351; y: 578; text: app.familyId === "account" ? (app.accountWindows.length > 2 ? "2/8  SCORRI" : "") : "2/8  VISTA"; color: app.muted; font.pixelSize: 25 }
     Text { x: 669; y: 578; text: app.familyId === "account" ? "9  MENU" : "5  DETTAGLI"; color: app.accent; font.pixelSize: 25 }
 
+    UnreadAlertsBadge {
+        dashboard: app
+        visible: app.familyId === "oggi" && app.overlay === "" && app.unreadAlertCount > 0 && !app.bannerEvent.id && !app.urgentEvent.id
+    }
     DashboardOverlay { dashboard: app; visible: app.overlay !== ""; anchors.fill: parent }
+    EventBanner {
+        dashboard: app
+        visible: !!app.bannerEvent.id && app.bannerEvent.bannerSize !== "large" && app.overlay === "" && !app.urgentEvent.id
+    }
+    EventLargeBanner {
+        dashboard: app
+        visible: !!app.bannerEvent.id && app.bannerEvent.bannerSize === "large" && app.overlay === "" && !app.urgentEvent.id
+    }
+    EventUrgent { dashboard: app; visible: !!app.urgentEvent.id; anchors.fill: parent }
 
     Rectangle {
         visible: app.diagnostics
@@ -301,7 +381,7 @@ Window {
     Rectangle {
         id: devPanel
         visible: false
-        x: 494; y: 105; width: 420; height: 185; radius: 10
+        x: 494; y: 105; width: 420; height: 237; radius: 10
         color: "#304750"; border.color: app.accent; border.width: 2
         Text { x: 16; y: 12; text: "PANNELLO DEMO · F12"; color: app.accent; font.pixelSize: 23; font.bold: true }
         Text { x: 16; y: 53; text: "Meteo: " + (app.dashboardState ? app.dashboardState.demoScenario : "—"); color: app.ink; font.pixelSize: 22 }
@@ -309,6 +389,8 @@ Window {
             MouseArea { anchors.fill: parent; onClicked: app.dashboardState.cycleDemoWeather() } }
         Text { x: 16; y: 133; text: "Clic: prossimo evento on/off"; color: app.ink; font.pixelSize: 19
             MouseArea { anchors.fill: parent; onClicked: app.dashboardState.toggleDemoEvent() } }
+        Text { x: 16; y: 175; text: "Avvisi: " + (app.dashboardState ? app.dashboardState.demoAlertScenario : "—"); color: app.ink; font.pixelSize: 19
+            MouseArea { anchors.fill: parent; onClicked: app.dashboardState.cycleDemoAlert() } }
     }
     Rectangle {
         anchors.fill: parent

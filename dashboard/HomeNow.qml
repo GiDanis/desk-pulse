@@ -19,7 +19,7 @@ Item {
         x: 538; y: 263; width: 334; height: 157
         night: dashboard.night
         heading: "PROSSIMO EVENTO"; value: dashboard.nextEvent.title || ""
-        detail: (dashboard.nextEvent.type || "").toUpperCase() + " · " + (dashboard.nextEvent.when || "")
+        detail: dashboard.nextEvent.when || dashboard.eventWhen(dashboard.nextEvent)
         compact: true
     }
 }

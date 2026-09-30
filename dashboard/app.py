@@ -12,6 +12,7 @@ from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 
 from account import AccountService
+from events import EventService
 from keypad import Keypad
 from state import DashboardState
 from weather import WeatherService
@@ -117,7 +118,15 @@ def main() -> int:
     demo = "--demo" in sys.argv
     weather = WeatherService(auto_refresh=not demo)
     account = AccountService()
-    state = DashboardState(weather, system_info, account, demo=demo)
+    events = EventService(path=":memory:" if demo else None, auto_refresh=not demo)
+    state = DashboardState(weather, system_info, account, events, demo=demo)
+    if not demo:
+        def update_account_events() -> None:
+            events.ingest_account(account.moduleState, state.accountWarningPercent,
+                                  state.accountCriticalPercent)
+        account.changed.connect(update_account_events)
+        update_account_events()
+    application.aboutToQuit.connect(events.close)
     engine.setInitialProperties({"keypad": keypad, "dashboardState": state})
     engine.load(QUrl.fromLocalFile(str(Path(__file__).with_name("Main.qml"))))
     if not engine.rootObjects():

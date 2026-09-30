@@ -69,7 +69,7 @@ Il dispositivo USB invia già nove codici distinti e il lettore Python li traduc
 
 I copritasti dovrebbero mostrare le quattro frecce, OK, Home, campanella, Indietro e Menu. Una mappa ricordata solo dallo schermo costringerebbe a guardare il display prima di ogni pressione, perdendo il vantaggio del controllo fisico. Non serve modificare i LED per ottenere questa guida tattile/visiva.
 
-La scelta di 3 Avvisi e 9 Menu prepara le funzioni future; fino a quando l'event engine non c'è, il tasto 3 può mostrare «Nessun avviso» con Indietro ben visibile. I quattro tasti direzionali e OK non cambiano posizione né significato di base.
+La scelta di 3 Avvisi e 9 Menu è applicata nella v0.5: il tasto 3 apre gli eventi attivi o futuri, oppure «Nessun avviso attivo» con Indietro ben visibile. I quattro tasti direzionali e OK non cambiano posizione né significato di base.
 
 ## Due stati d'interazione, mostrati chiaramente
 
@@ -103,7 +103,9 @@ La sorgente dello stato offre `nextRelevantEvent` come valore opzionale. Esiste 
 
 Il meteo mantiene sempre origine, età del dato e stato corrente. Se manca la rete ma esiste una cache valida, la Home mostra il dato con «Offline» e l'ora dell'ultimo aggiornamento; se non c'è alcun dato, mostra «Meteo non disponibile» al posto di temperatura fittizia. Gli avvisi prioritari usano un overlay temporaneo e, alla chiusura, ripristinano la vista e il focus precedenti. Il cane cede sempre spazio agli avvisi.
 
-Account ChatGPT è una famiglia di consultazione nel carosello, con piano, finestre d'uso, crediti solo quando restituiti dalla fonte e ora dell'ultimo aggiornamento. Dati mancanti o vecchi vanno dichiarati. L'utente può nasconderla da Impostazioni → Moduli visibili; ciò non elimina la cache né interrompe la sincronizzazione. Un avviso di soglia può arrivare nella casella Avvisi quando il motore eventi esiste; non occupa una tessera fissa della Home.
+Un badge «3 · NUOVI AVVISI» nell'intestazione delle due viste Home ricorda gli eventi non letti nella casella, compresi quelli ambientali e quelli il cui banner è terminato. Non riserva una tessera nel contenuto. Scompare durante banner o pannelli; leggere il dettaglio aggiorna il conteggio, mentre aprire soltanto la casella non segna gli eventi come letti. Scadenza o annullamento rimuovono anche il relativo conteggio.
+
+Account ChatGPT è una famiglia di consultazione nel carosello, con piano, finestre d'uso, crediti solo quando restituiti dalla fonte e ora dell'ultimo aggiornamento. Dati mancanti o vecchi vanno dichiarati. L'utente può nasconderla da Impostazioni → Moduli visibili; ciò non elimina la cache né interrompe la sincronizzazione. Gli avvisi di soglia arrivano nella casella Avvisi e, al livello critico, nel banner condiviso; non occupano una tessera fissa della Home.
 
 ### Collegamento al MasterPlan
 
@@ -143,4 +145,4 @@ Account ChatGPT è una famiglia di consultazione nel carosello, con piano, fines
 
 ### Stato dell'implementazione
 
-La mappa dei nove tasti, Oggi/Meteo/Account nel carosello e la scelta dei moduli visibili sono implementate nella v0.4. Le schermate future entrano nel flusso solo dopo avere dati e stati utili. Restano da completare le etichette dei vicini, il motore eventi reale e le famiglie Sport, Casa e PC.
+La mappa dei nove tasti, Oggi/Meteo/Account nel carosello e la scelta dei moduli visibili sono implementate nella v0.4. La v0.5 aggiunge motore eventi persistente, banner e overlay riutilizzabili, casella Avvisi, allerta ufficiale per Angri e soglie Account. Impostazioni → Notifiche contiene sempre la fascia di silenzio programmabile e le interruzioni per categoria. Gli avvisi urgenti superano la fascia oraria; disattivare esplicitamente le interruzioni di una categoria li lascia soltanto nella casella. Le schermate future entrano nel flusso solo dopo avere dati e stati utili. Restano da completare le etichette dei vicini e le famiglie Sport, Casa e PC.

@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import os
 import tempfile
+import time
 from pathlib import Path
+from unittest.mock import patch
 
 # Isolate the first-run and theme preferences from the real kiosk account.
 os.environ["XDG_CONFIG_HOME"] = tempfile.mkdtemp(prefix="smartpc-check-")
@@ -19,8 +21,11 @@ import shiboken6  # noqa: E402
 
 from app import SystemInfo  # noqa: E402
 from account import AccountService  # noqa: E402
+from events import EventService  # noqa: E402
 from state import DashboardState  # noqa: E402
 from weather import WeatherService  # noqa: E402
+from weather_alerts import BulletinProvider  # noqa: E402
+from check_weather_alerts import bulletin_fixture  # noqa: E402
 
 
 class FakeKeypad(QObject):
@@ -36,8 +41,9 @@ def main() -> None:
     system = SystemInfo()
     weather = WeatherService(auto_refresh=False)
     account = AccountService(path=Path(os.environ["XDG_CONFIG_HOME"]) / "missing-account.json")
+    events = EventService(path=Path(os.environ["XDG_CONFIG_HOME"]) / "events.sqlite3", auto_refresh=False)
     keypad = FakeKeypad()
-    state = DashboardState(weather, system, account, demo=True)
+    state = DashboardState(weather, system, account, events, demo=True)
     engine.setInitialProperties({"keypad": keypad, "dashboardState": state})
     engine.load(QUrl.fromLocalFile(str(Path(__file__).with_name("Main.qml"))))
     assert engine.rootObjects(), "QML failed to load"
@@ -54,6 +60,9 @@ def main() -> None:
         visible = [name for name, screen in screens.items() if screen.property("visible")]
         assert len(visible) == 1, f"expected one visible screen, got {visible}"
         return visible[0]
+
+    def as_value(value: object):
+        return value.toVariant() if hasattr(value, "toVariant") else value
 
     def press(position: int, transition: bool = False) -> None:
         keypad.keyPressed.emit(position)
@@ -189,7 +198,143 @@ def main() -> None:
     assert window.property("familyId") == "oggi"
     state.toggleModuleVisibility("meteo")
     state.toggleModuleVisibility("account")
-    print("QML load, carousel, module visibility, account, settings and persistence: PASS")
+    press(1)
+    events.set_quiet(False, 22 * 60, 7 * 60)
+    events.set_demo_scenario("banner")
+    application.processEvents()
+    assert as_value(window.property("bannerEvent"))["title"] == "Avviso di prova"
+    small_banner = next(item for item in visual_items(quick_window.contentItem()) if item.objectName() == "eventBanner")
+    large_banner = next(item for item in visual_items(quick_window.contentItem()) if item.objectName() == "eventLargeBanner")
+    unread_badge = next(item for item in visual_items(quick_window.contentItem()) if item.objectName() == "unreadAlertsBadge")
+    assert small_banner.isVisible() and not large_banner.isVisible()
+    assert not unread_badge.isVisible(), "unread badge duplicated a visible banner"
+    family_before = window.property("familyId")
+    views_before = as_value(window.property("viewIndex"))
+    events.set_demo_scenario("banner grande")
+    application.processEvents()
+    assert as_value(window.property("bannerEvent"))["bannerSize"] == "large"
+    assert large_banner.isVisible() and not small_banner.isVisible()
+    assert large_banner.height() > small_banner.height()
+    assert window.property("familyId") == family_before
+    assert as_value(window.property("viewIndex")) == views_before
+    press(3)
+    assert window.property("overlay") == "alerts"
+    assert not large_banner.isVisible(), "large banner covered the inbox"
+    assert len(as_value(window.property("alertItems"))) == 1
+    press(5)
+    assert window.property("overlay") == "alertDetail"
+    assert window.property("unreadAlertCount") == 0
+    press(7)
+    assert window.property("overlay") == "alerts"
+    press(7)
+    press(6)
+    assert window.property("familyId") == "meteo"
+    events.set_demo_scenario("urgente")
+    application.processEvents()
+    assert as_value(window.property("urgentEvent"))["title"] == "Allerta prioritaria di prova"
+    press(7)
+    assert window.property("familyId") == "meteo" and window.property("overlay") == ""
+    events.set_demo_scenario("nessuno")
+
+    press(9)
+    window.setProperty("menuIndex", 1)
+    press(5)
+    window.setProperty("settingsIndex", 2)
+    press(5)
+    assert window.property("overlay") == "notifications"
+    was_enabled = state.quietHoursEnabled
+    press(5)
+    assert state.quietHoursEnabled != was_enabled
+    press(8)
+    old_start = state.quietStartMinute
+    press(6)
+    assert state.quietStartMinute == (old_start + 15) % 1440
+    persisted = DashboardState(weather, system, account, demo=True)
+    assert persisted.quietHoursEnabled == state.quietHoursEnabled
+    assert persisted.quietStartMinute == state.quietStartMinute
+    press(8)
+    press(8)
+    assert window.property("notificationIndex") == 3
+    old_weather_interruptions = state.weatherInterruptions
+    press(5)
+    assert state.weatherInterruptions != old_weather_interruptions
+    assert DashboardState(weather, system, account, demo=True).weatherInterruptions == state.weatherInterruptions
+    events.set_demo_scenario("urgente")
+    application.processEvents()
+    press(7)
+    assert window.property("overlay") == "notifications"
+    assert window.property("notificationIndex") == 3, "urgent notice lost settings focus"
+    events.set_demo_scenario("nessuno")
+    press(1)
+    events.set_quiet(False, 22 * 60, 7 * 60)
+    stamp = time.time()
+    account_snapshot = {"status": "active", "updatedAt": stamp, "data": {"windows": [
+        {"label": "Codex", "usedPercent": 84, "windowDurationMins": 300, "resetsAt": stamp + 3600}]}}
+    events.ingest_account(account_snapshot, 80, 95)
+    assert events.eventState["inbox"][0]["priority"] == 1
+    assert window.property("unreadAlertCount") == 1 and unread_badge.isVisible()
+    press(8)
+    assert visible_screen() == "homeDay" and unread_badge.isVisible()
+    press(2)
+    account_snapshot["data"]["windows"][0]["usedPercent"] = 96
+    events.ingest_account(account_snapshot, 80, 95)
+    assert events.eventState["visibleBanner"]["title"] == "Uso Codex: 96%"
+    assert not unread_badge.isVisible()
+    QTimer.singleShot(8500, application.quit)
+    application.exec()
+    assert not events.eventState["visibleBanner"], "banner did not finish after eight seconds"
+    assert unread_badge.isVisible(), "unread notice disappeared with its banner"
+    press(3)
+    assert window.property("unreadAlertCount") == 1, "opening the inbox marked notices as read"
+    assert not unread_badge.isVisible()
+    press(5)
+    assert window.property("unreadAlertCount") == 0
+    press(7)
+    press(7)
+    assert not unread_badge.isVisible()
+    events.ingest_account(account_snapshot, 80, 95)
+    assert not events.eventState["visibleBanner"], "unchanged account snapshot repeated the banner"
+    account_snapshot["data"]["windows"][0]["usedPercent"] = 20
+    events.ingest_account(account_snapshot, 80, 95)
+    assert not events.eventState["inbox"]
+
+    with tempfile.TemporaryDirectory() as directory:
+        cache_path = Path(directory) / "dpc-bulletin.json"
+        stamp = time.time()
+        responses = bulletin_fixture(stamp)
+        with patch("weather_alerts._read", side_effect=lambda url, _: responses[url]):
+            snapshot = BulletinProvider(cache_path).refresh(stamp)
+        cached_service = EventService(path=Path(directory) / "events.sqlite3", auto_refresh=False)
+        assert cached_service.eventState["sourceFromCache"]
+        assert cached_service.eventState["sourceCheckedAt"] == stamp
+        assert len(cached_service.eventState["inbox"]) == 2, "cache failed to recover alerts without an existing database"
+        current_id = next(event["id"] for event in cached_service.eventState["inbox"] if not event["upcoming"])
+        cached_service._engine.mark_notified(current_id)
+        cached_service.markSeen(current_id)
+        with patch("weather_alerts._read", side_effect=OSError("offline")) as read:
+            restarted = EventService(path=Path(directory) / "events.sqlite3", auto_refresh=False)
+            read.assert_not_called()
+        restarted._on_weather_finished(None, "offline simulato")
+        assert "cache" in restarted.eventState["sourceStatus"]
+        assert next(event["seen"] for event in restarted.eventState["inbox"] if event["id"] == current_id)
+        assert not restarted.eventState["banner"], "offline restart repeated an already delivered banner"
+        assert len(restarted.eventState["inbox"]) == 2
+        # A newer all-clear applied to SQLite must survive a failed cache write.
+        responses = bulletin_fixture(stamp + 60, colour="NESSUNA ALLERTA")
+        with patch("weather_alerts._read", side_effect=lambda url, _: responses[url]), \
+                patch("weather_alerts.os.replace", side_effect=OSError("non scrivibile")):
+            empty = BulletinProvider(cache_path).refresh(stamp + 60)
+        assert empty.cache_error
+        restarted._on_weather_finished(empty, None)
+        assert not restarted.eventState["inbox"]
+        restarted_again = EventService(path=Path(directory) / "events.sqlite3", auto_refresh=False)
+        assert not restarted_again.eventState["inbox"], "older cache resurrected a cancelled alert"
+        for service in (cached_service, restarted, restarted_again):
+            service._tick_timer.stop()
+            service._poll_timer.stop()
+            service._banner_timer.stop()
+            service._engine.close()
+    print("QML, both banners, unread Home badge, cached offline restart and notification settings: PASS")
 
 
 if __name__ == "__main__":

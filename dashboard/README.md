@@ -1,14 +1,16 @@
-# SmartPC Dashboard v0.4
+# SmartPC Dashboard v0.5
 
-Dashboard Qt Quick per Orange Pi Zero 3W e display Hagibis 960×640 a 60 Hz. La v0.4 applica la [specifica UX](/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/design/ux-navigation-v2.md): un dato dominante per vista, Home dinamica, due assi di navigazione e tasti sempre coerenti. La board usa Orange Pi Debian 13, Qt 6, EGLFS/KMS e GPU PowerVR.
+Dashboard Qt Quick per Orange Pi Zero 3W e display Hagibis 960×640 a 60 Hz. La v0.5 applica la [specifica UX](/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/design/ux-navigation-v2.md): un dato dominante per vista, Home dinamica, due assi di navigazione, tasti coerenti e avvisi condivisi. La board usa Orange Pi Debian 13, Qt 6, EGLFS/KMS e GPU PowerVR.
 
 ## Esperienza
 
-- **Home:** ora e meteo occupano la schermata. Una tessera «prossimo evento» compare solo quando lo stato contiene un evento valido; per ora si può simulare nella demo. Nessun evento reale viene inventato.
+- **Home:** ora e meteo occupano la schermata. Una tessera «prossimo evento» compare solo quando esiste un evento futuro valido, per esempio un'allerta prevista per domani. Nessun evento viene inventato per riempire lo spazio.
+- **Nuovi avvisi:** sulle due viste Home un badge discreto nell'intestazione indica quanti avvisi della casella non sono stati letti e ricorda il tasto **3**. Compare anche per gli avvisi ambientali e dopo la fine del banner. Aprire la casella non segna tutto come letto: il badge si aggiorna quando si apre il dettaglio di ciascun evento, oppure quando l'evento scade o viene annullato. Durante banner, overlay e menu il badge resta nascosto.
 - **Orizzontale:** Oggi ↔ Meteo ↔ Account ChatGPT. Sport, Casa e PC entreranno nel carosello quando avranno dati reali. I moduli nascosti sono saltati senza lasciare schermate vuote.
 - **Verticale:** Oggi: Ora/Giornata. Meteo: Adesso/Previsioni. Ogni famiglia ricorda la propria vista.
-- **Menu:** Comandi, Impostazioni e Diagnostica. Impostazioni contiene **Aspetto e dispositivo** (tema, luminosità, stato) e **Moduli visibili**. Quest'ultima voce mostra le famiglie disponibili, permette di mostrare o nascondere Meteo e Account ChatGPT e conserva la scelta dopo il riavvio. Oggi resta sempre visibile.
-- **Avvisi:** casella vuota fino al motore eventi v0.5.
+- **Menu:** Comandi, Impostazioni e Diagnostica. Impostazioni contiene **Aspetto e dispositivo** (tema, luminosità, stato), **Moduli visibili** e **Notifiche**. Moduli visibili mostra le famiglie disponibili, permette di mostrare o nascondere Meteo e Account ChatGPT e conserva la scelta dopo il riavvio. Oggi resta sempre visibile.
+- **Avvisi:** il tasto 3 apre la casella da qualsiasi vista. Gli avvisi importanti ricevono un banner breve; quelli prioritari aprono un overlay. Indietro chiude l'overlay e restituisce la vista, il menu e la selezione precedenti.
+- **Notifiche:** Menu → Impostazioni → Notifiche permette sempre di attivare o disattivare la fascia di silenzio e regolare inizio e fine a passi di 15 minuti. L'impostazione iniziale è 22:00–07:00, nel fuso Europe/Rome. Il silenzio trattiene i banner fino al termine della fascia, se ancora validi; gli avvisi prioritari restano visibili. Due controlli separati permettono di disattivare le interruzioni di Meteo e Account: gli eventi rimangono consultabili nella casella, ma quella categoria non mostra banner o overlay.
 - L'intestazione non ripete il marchio o la modalità notte. Dati assenti, aggiornamento e offline sono indicati esplicitamente. La transizione tra viste dura 160 ms.
 
 | 1 Home | 2 Su | 3 Avvisi |
@@ -49,9 +51,47 @@ La sincronizzazione manuale dal PC è:
 python3 dashboard/account_sync.py
 ```
 
-`SMARTPC_ACCOUNT_HOST` può sostituire l'host SSH predefinito `smartpc@192.168.1.179`; `--identity` seleziona una chiave diversa. Le unità in `dashboard/systemd/` installate in `~/.config/systemd/user/` eseguono il controllo ogni 10 minuti mentre il PC è acceso; il timer utente richiede che il servizio systemd dell'utente sia attivo anche dopo il logout. Per verificarle: `systemctl --user status smartpc-account-sync.timer` e `systemctl --user start smartpc-account-sync.service`. L'integrazione è di sola lettura: non acquista crediti né consuma i reset disponibili. La pagina evidenzia l'utilizzo dall'80% e dal 95%; queste soglie si possono cambiare con `SMARTPC_ACCOUNT_WARNING_PERCENT` e `SMARTPC_ACCOUNT_CRITICAL_PERCENT` nell'ambiente del servizio dashboard, poi riavviandolo. Gli avvisi globali arriveranno con il motore eventi v0.5.
+`SMARTPC_ACCOUNT_HOST` può sostituire l'host SSH predefinito `smartpc@192.168.1.179`; `--identity` seleziona una chiave diversa. Le unità in `dashboard/systemd/` installate in `~/.config/systemd/user/` eseguono il controllo ogni 10 minuti mentre il PC è acceso; il timer utente richiede che il servizio systemd dell'utente sia attivo anche dopo il logout. Per verificarle: `systemctl --user status smartpc-account-sync.timer` e `systemctl --user start smartpc-account-sync.service`. L'integrazione è di sola lettura: non acquista crediti né consuma i reset disponibili. La pagina evidenzia l'utilizzo dall'80% e dal 95%; queste soglie si possono cambiare con `SMARTPC_ACCOUNT_WARNING_PERCENT` e `SMARTPC_ACCOUNT_CRITICAL_PERCENT` nell'ambiente del servizio dashboard, poi riavviandolo. Il motore eventi crea una voce ambientale all'80% e un banner al 95%, solo da dati ancora aggiornati; non ripete l'avviso a ogni sincronizzazione.
 
-In **Menu → Sistema** i tasti `2/8` selezionano una riga, `4/6` modificano il valore e `5` passa al valore successivo. Tema offre auto/giorno/notte. Luminosità offre auto/manuale; il livello manuale e i livelli automatici giorno/notte vanno dal 20% al 100% a passi del 5%. In Auto, il valore predefinito è 100% dalle 07:00 alle 20:59 e 65% dalle 21:00 alle 06:59; entrambi i livelli e gli orari sono modificabili. Il tema Auto usa gli stessi orari. Il valore effettivo compare nella schermata Sistema.
+## Motore eventi e allerta meteo
+
+`event_core.py` conserva in SQLite identità, priorità, validità e stato di consegna degli eventi. `events.py` collega il motore a Qt e offre ai moduli un ingresso comune: un modulo consegna il proprio snapshot di eventi, il motore decide casella, banner, overlay e tessera futura della Home. Un aggiornamento identico non ricompare; una priorità aumentata può comparire di nuovo. Gli eventi scaduti o rimossi dalla fonte escono dalla casella. Il database si trova nella directory di stato del servizio (`/var/lib/smartpc-dashboard/events.sqlite3` sulla board) e i record più vecchi di sette giorni vengono eliminati.
+
+### Contratto per nuovi moduli
+
+Ogni modulo chiama `EventService.publish_snapshot(source, events)` sul thread Qt principale; i risultati di un worker arrivano tramite un segnale. Lo snapshot completo sostituisce soltanto gli eventi della propria fonte. Una lista vuota valida li annulla; un errore di rete deve conservare lo snapshot precedente. L'ID deve essere stabile e contenere il prefisso della fonte. Esempio:
+
+```python
+event_service.publish_snapshot("casa", [{
+    "version": 1, "id": "casa:porta:20260930", "source": "casa",
+    "sourceLabel": "Casa", "category": "casa", "priority": 2,
+    "bannerSize": "large",
+    "title": "Porta aperta", "detail": "Ingresso aperto da cinque minuti",
+    "issuedAt": now, "startsAt": now, "expiresAt": now + 600,
+    "revision": "1", "sourceUrl": "", "showOnHome": False,
+}])
+```
+
+Le priorità sono `1` ambientale (casella), `2` importante (banner di otto secondi), `3` urgente (overlay fino alla conferma o alla scadenza). `notificationRank`, opzionale e uguale alla priorità per default, permette di distinguere aumenti di gravità nella stessa presentazione: l'allerta arancione vale 3 e la rossa 4. `revision` aggiorna il contenuto senza ripetere la consegna. `showOnHome` abilita solo la tessera di un evento futuro valido. I componenti degli avvisi sono comuni a tutte le fonti; il modulo non crea un proprio banner.
+
+Ogni evento di priorità `2` sceglie il formato con `bannerSize`:
+
+| Valore | Componente | Presentazione |
+| --- | --- | --- |
+| `"small"` (predefinito) | `EventBanner.qml` | Fascia in basso, titolo e descrizione su una riga |
+| `"large"` | `EventLargeBanner.qml` | Pannello nell'area centrale, titolo su due righe, descrizione su tre righe e fonte |
+
+Il banner grande riusa lo stesso componente grafico con `large: true`. Entrambi lasciano disponibili i comandi, non cambiano vista o focus, si chiudono dopo otto secondi e rispettano la fascia di silenzio e i controlli per categoria. Il tasto 3 apre la casella e nasconde il banner durante la consultazione. Il formato non modifica priorità o stato di consegna: cambiare solo `bannerSize` su un evento già mostrato non lo fa ricomparire. Per gli eventi urgenti resta l'overlay `EventUrgent.qml`.
+
+`weather_alerts.py` legge ogni 30 minuti il bollettino pubblico di criticità del Dipartimento della Protezione Civile e i suoi dati di zona. Seleziona **Angri** dall'elenco dei comuni, poi considera i rischi idraulico, temporali e idrogeologico per oggi e domani. Un'allerta gialla genera un banner; arancione o rossa un overlay prioritario. Il bollettino è una valutazione quotidiana, con possibili correzioni: non è un feed di emergenza in tempo reale. La schermata Avvisi indica quando la fonte non è aggiornata; un errore di rete non trasforma i dati precedenti in una nuova allerta e non inventa «nessuna allerta».
+
+Il provider salva atomicamente l'ultimo bollettino valido in `$XDG_CACHE_HOME/smartpc-dashboard/dpc-bulletin.json` (`/var/cache/smartpc-dashboard/smartpc-dashboard/dpc-bulletin.json` sulla board). La cache contiene chiave, ora di emissione, ultimo download, ultima verifica e proprietà della zona di Angri per oggi/domani; non conserva le geometrie nazionali. Dopo avere letto la pagina ufficiale, una chiave invariata riusa metadati e mappe già validati. Il file temporaneo viene sincronizzato e sostituito con `os.replace`; una risposta incompleta o non valida conserva il file precedente. Se il disco non è scrivibile, i dati validi restano utilizzabili nella sessione e la fonte segnala «cache non salvata».
+
+All'avvio gli eventi vengono ricostruiti dalla cache senza attendere la rete, mantenendo le scadenze originali e lo stato letto/consegnato di SQLite. I dati caricati da disco sono indicati come **cache · da verificare**, con `sourceCheckedAt` e `sourceFetchedAt` precedenti; un fallimento della rete non aggiorna queste ore. La revisione della fonte è salvata insieme agli eventi anche quando il bollettino è vuoto: una vecchia cache non può far ricomparire un'allerta annullata da un bollettino più recente. Dopo la fine della validità la cache non produce più allerte. La demo in memoria non legge questa cache.
+
+Le preferenze della fascia di silenzio sono salvate con le altre impostazioni in `QSettings`. Il tasto 3 e il menu sono sempre disponibili; un banner non sposta il focus. Nell'overlay prioritario, 5 apre il dettaglio, 7 lo chiude tornando al punto precedente e 1 lo chiude tornando alla Home. La casella mostra gli avvisi in corso o futuri, fino a tre righe per pagina; 2/8 selezionano e 5 apre il dettaglio.
+
+In **Menu → Impostazioni → Aspetto e dispositivo** i tasti `2/8` selezionano una riga, `4/6` modificano il valore e `5` passa al valore successivo. Tema offre auto/giorno/notte. Luminosità offre auto/manuale; il livello manuale e i livelli automatici giorno/notte vanno dal 20% al 100% a passi del 5%. In Auto, il valore predefinito è 100% dalle 07:00 alle 20:59 e 65% dalle 21:00 alle 06:59; entrambi i livelli e gli orari sono modificabili. Il tema Auto usa gli stessi orari. Il valore effettivo compare nella schermata.
 
 Il pannello Hagibis non espone un controllo retroilluminazione in `/sys/class/backlight` né DDC. Questa regolazione attenua **l'immagine Qt**, non la retroilluminazione fisica e quindi non garantisce un risparmio energetico del pannello. La soglia minima del 20% mantiene visibili i comandi per recuperare il livello desiderato.
 
@@ -70,13 +110,24 @@ Per provare sul PC il layout senza rete:
 ./dashboard/run.sh --demo
 ```
 
-`F12` apre il pannello demo: un clic cambia meteo online/offline/assente, l'altro aggiunge o rimuove il prossimo evento. I tasti della dashboard continuano a cambiare vista. La demo non chiama Open-Meteo.
+`F12` apre il pannello demo: si possono cambiare meteo online/offline/assente, tessera evento e scenari Avvisi (nessuno, prossimo, banner, banner grande, urgente). I tasti della dashboard continuano a cambiare vista. La demo non chiama Open-Meteo o il bollettino ufficiale e usa un database eventi in memoria, separato dagli avvisi reali.
 
 `Main.qml` gestisce navigazione e composizione; `HomeNow.qml`, `HomeDay.qml`, `WeatherNow.qml`, `WeatherForecast.qml` e `AccountChatGPT.qml` sono le viste indipendenti. `DashboardOverlay.qml` contiene menu e impostazioni. Una nuova famiglia va aggiunta al registro `allFamilies` in `Main.qml`, insieme alle sue viste e al relativo provider; solo dopo entra in **Moduli visibili**. In modalità `--device`, `run.sh` nasconde il cursore software di EGLFS anche quando la mini tastiera USB espone un'interfaccia mouse.
 
 ## Verifiche e ripristino
 
-`check_dashboard.py` esegue un controllo rapido di caricamento QML, navigazione, visibilità delle cinque viste, schermata Account ChatGPT nel carosello, stati demo, impostazioni, visibilità persistente dei moduli e luminosità manuale/auto senza usare la rete. Si può avviare con `python3 dashboard/check_dashboard.py` dove PySide6 è installato.
+Verifica v0.5 del 30/09/2026:
+
+- Sei test del motore e sei test della cache superati sul PC e sulla board; controllo QML completo superato in entrambi i runtime, inclusi i due formati di banner, timer, badge non letti, recupero da cache, soglie Account, ritorno del focus e preferenze persistenti. Cambiare formato conserva lo stato di consegna e i payload precedenti usano il formato piccolo.
+- Acquisite e controllate le schermate Home, banner piccolo, banner grande, overlay urgente e Notifiche dal renderer EGLFS della board a 960×640. Gli avvisi nelle catture sono simulati e dichiarati come tali; non è stata provocata un'allerta ufficiale.
+- Lettura della fonte Protezione Civile eseguita anche dalla board; il bollettino verificato non conteneva allerte per Angri.
+- Misura GPU di 12 secondi: 26 transizioni, 260 frame, mediana 16,60 ms, p95 17,76 ms, massimo 19,59 ms. È una misura breve di navigazione, non un test di durata o una garanzia di 60 fps costanti.
+- Dopo le prove il servizio è attivo, con `NRestarts=0`. In questa verifica i tasti sono stati simulati; la leggibilità alla distanza d'uso e la prova manuale dei pulsanti restano da confermare sull'apparecchio.
+- Estensione cache e badge: prova sulla board con due processi separati e rete simulata come indisponibile. Il secondo avvio recupera il bollettino di prova, conserva lettura e consegna ed evita un nuovo banner. Verificato anche il recupero da cache con database inizialmente vuoto e il caso di cache precedente a un bollettino senza allerte. La prova non comporta un riavvio del sistema operativo o la disattivazione del Wi-Fi.
+- Catture EGLFS aggiuntive delle due viste Home con badge e della Home dopo la lettura, senza badge. Il badge non cambia la composizione di ora/meteo e non riserva una tessera eventi.
+- Verifica reale della cache sulla board: bollettino `20260930_1423`, zero allerte per Angri, file di 1268 byte. Primo recupero con quattro richieste; seconda verifica della stessa chiave con una sola richiesta alla pagina ufficiale, senza scaricare nuovamente metadati o mappe.
+
+`check_dashboard.py` esegue un controllo rapido di caricamento QML, navigazione, visibilità delle cinque viste, Account ChatGPT, impostazioni, eventi demo, ritorno del focus, silenzio per orario/categoria, durata reale del banner, badge non letti e ricostruzione da cache al riavvio offline senza usare la rete. `check_events.py` verifica deduplicazione, escalation anche da arancione a rossa, scadenza, persistenza, non letti, isolamento delle fonti, dati invalidi e selezione di Angri. `check_weather_alerts.py` verifica chiave invariata, cache dopo riavvio, scadenze, aggiornamenti invalidi, file corrotto e sostituzione atomica fallita. Si possono avviare con `python3 dashboard/check_dashboard.py`, `python3 dashboard/check_events.py` e `python3 dashboard/check_weather_alerts.py` dove PySide6 è installato; gli ultimi due non richiedono Qt.
 
 La v0.2 aveva già superato i test di meteo online, cache offline e riavvio senza Wi-Fi. Sul dispositivo, il servizio riparte automaticamente dopo un crash; la configurazione è in [smartpc-dashboard.service](/home/giuseppe/Documenti/Workspace/SmartPC/os/system/smartpc-dashboard.service). La scena diagnostica visualizza FPS e intervallo p95 tra frame, ma un valore basso su una schermata ferma è normale: non misura da solo la fluidità delle transizioni. `benchmark.py` misura intervalli di frame mentre simula cambi di vista sul renderer EGLFS/GPU; va eseguito con il servizio fermo. `soak.py` osserva memoria, temperatura e stabilità del servizio senza inviare input.
 
@@ -90,4 +141,4 @@ sudo journalctl -u smartpc-dashboard --since "10 minutes ago"
 sudo systemctl restart smartpc-dashboard
 ```
 
-Il target è 960×640 a 60 Hz. Le scene future andranno misurate sulla board. Il vecchio timer Xorg per la luminosità è disabilitato nel kiosk EGLFS; il conflitto dell'aggiornamento Xorg resta annotato nel [resoconto OS](/home/giuseppe/Documenti/Workspace/SmartPC/os/board-audit-2026-09-29.md).
+Il backup della v0.4 prima del motore eventi è `/var/backups/smartpc-dashboard-v04-before-events`; quello della v0.5 prima del secondo formato di banner è `/var/backups/smartpc-dashboard-v05-before-banner-sizes`; prima di cache e badge è stato salvato `/var/backups/smartpc-dashboard-v05-before-cache-badge`. Il target è 960×640 a 60 Hz. Le scene future andranno misurate sulla board. Il vecchio timer Xorg per la luminosità è disabilitato nel kiosk EGLFS; il conflitto dell'aggiornamento Xorg resta annotato nel [resoconto OS](/home/giuseppe/Documenti/Workspace/SmartPC/os/board-audit-2026-09-29.md).

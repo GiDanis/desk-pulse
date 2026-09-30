@@ -9,6 +9,7 @@ from typing import Any
 from PySide6.QtCore import QObject, Property, QSettings, Signal, Slot
 
 from module_state import module_state
+from events import EventService
 
 
 DEMO_WEATHER = {
@@ -64,11 +65,13 @@ class DashboardState(QObject):
     settingsChanged = Signal()
     eventChanged = Signal()
 
-    def __init__(self, weather: QObject, system: QObject, account: QObject, demo: bool = False) -> None:
+    def __init__(self, weather: QObject, system: QObject, account: QObject,
+                 events: EventService | None = None, demo: bool = False) -> None:
         super().__init__()
         self._weather = weather
         self._system = system
         self._account = account
+        self._events = events
         self._account_warning_percent = _account_threshold("SMARTPC_ACCOUNT_WARNING_PERCENT", 80)
         self._account_critical_percent = max(
             self._account_warning_percent,
@@ -77,6 +80,7 @@ class DashboardState(QObject):
         self._demo = demo
         self._scenario = "online"
         self._demo_event = False
+        self._demo_alert_scenario = "nessuno"
         self._settings = QSettings("SmartPC", "Dashboard")
         self._module_visible = {
             module_id: _saved_bool(self._settings, f"moduleVisible/{module_id}")
@@ -94,6 +98,18 @@ class DashboardState(QObject):
         if self._day_start_hour == self._night_start_hour:
             self._day_start_hour, self._night_start_hour = 7, 21
         self._first_run = str(self._settings.value("seenCommands", "false")).lower() != "true"
+        self._quiet_enabled = _saved_bool(self._settings, "notifications/quietEnabled", True)
+        self._quiet_start = _saved_int(self._settings, "notifications/quietStart", 22 * 60, 0, 1439)
+        self._quiet_end = _saved_int(self._settings, "notifications/quietEnd", 7 * 60, 0, 1439)
+        self._weather_interruptions = _saved_bool(self._settings, "notifications/meteoInterruptions", True)
+        self._account_interruptions = _saved_bool(self._settings, "notifications/accountInterruptions", True)
+        if self._quiet_start == self._quiet_end:
+            self._quiet_start, self._quiet_end = 22 * 60, 7 * 60
+        if events is not None:
+            events.set_quiet(self._quiet_enabled, self._quiet_start, self._quiet_end)
+            events.set_category_silenced("meteo", not self._weather_interruptions)
+            events.set_category_silenced("account", not self._account_interruptions)
+            events.changed.connect(self.eventChanged)
         weather.changed.connect(self.weatherChanged)
         account.changed.connect(self.accountChanged)
         system.changed.connect(self.systemChanged)
@@ -159,7 +175,78 @@ class DashboardState(QObject):
     def nextRelevantEvent(self) -> dict[str, Any]:
         if self._demo and self._demo_event:
             return {"type": "promemoria", "title": "Evento di prova", "when": "Tra 30 min"}
-        return {}
+        return self._events.eventState.get("nextRelevantEvent", {}) if self._events else {}
+
+    @Property("QVariantMap", notify=eventChanged)
+    def eventsState(self) -> dict[str, Any]:
+        return self._events.eventState if self._events else {
+            "inbox": [], "urgent": {}, "visibleBanner": {}, "sourceStatus": "in attesa"}
+
+    @Slot(str)
+    def dismissEvent(self, event_id: str) -> None:
+        if self._events:
+            self._events.dismiss(event_id)
+
+    @Slot(str)
+    def markEventSeen(self, event_id: str) -> None:
+        if self._events:
+            self._events.markSeen(event_id)
+
+    @Slot(bool)
+    def setBannerAvailable(self, available: bool) -> None:
+        if self._events:
+            self._events.setBannerAvailable(available)
+
+    @Property(bool, notify=settingsChanged)
+    def quietHoursEnabled(self) -> bool:
+        return self._quiet_enabled
+
+    @Property(int, notify=settingsChanged)
+    def quietStartMinute(self) -> int:
+        return self._quiet_start
+
+    @Property(int, notify=settingsChanged)
+    def quietEndMinute(self) -> int:
+        return self._quiet_end
+
+    @Property(bool, notify=settingsChanged)
+    def weatherInterruptions(self) -> bool:
+        return self._weather_interruptions
+
+    @Property(bool, notify=settingsChanged)
+    def accountInterruptions(self) -> bool:
+        return self._account_interruptions
+
+    @Slot(int, int)
+    def adjustNotificationSetting(self, row: int, direction: int) -> None:
+        step = 1 if direction > 0 else -1 if direction < 0 else 0
+        if not step:
+            return
+        if row == 0:
+            self._quiet_enabled = not self._quiet_enabled
+            key, value = "notifications/quietEnabled", self._quiet_enabled
+        elif row in (1, 2):
+            attribute = "_quiet_start" if row == 1 else "_quiet_end"
+            other = self._quiet_end if row == 1 else self._quiet_start
+            value = (getattr(self, attribute) + step * 15) % 1440
+            if value == other:
+                value = (value + step * 15) % 1440
+            setattr(self, attribute, value)
+            key = "notifications/quietStart" if row == 1 else "notifications/quietEnd"
+        elif row in (3, 4):
+            attribute = "_weather_interruptions" if row == 3 else "_account_interruptions"
+            value = not getattr(self, attribute)
+            setattr(self, attribute, value)
+            key = "notifications/meteoInterruptions" if row == 3 else "notifications/accountInterruptions"
+        else:
+            return
+        self._settings.setValue(key, value)
+        self._settings.sync()
+        if self._events:
+            self._events.set_quiet(self._quiet_enabled, self._quiet_start, self._quiet_end)
+            self._events.set_category_silenced("meteo", not self._weather_interruptions)
+            self._events.set_category_silenced("account", not self._account_interruptions)
+        self.settingsChanged.emit()
 
     @Property(str, notify=settingsChanged)
     def nightMode(self) -> str:
@@ -262,4 +349,16 @@ class DashboardState(QObject):
     def toggleDemoEvent(self) -> None:
         if self._demo:
             self._demo_event = not self._demo_event
+            self.eventChanged.emit()
+
+    @Property(str, notify=eventChanged)
+    def demoAlertScenario(self) -> str:
+        return self._demo_alert_scenario
+
+    @Slot()
+    def cycleDemoAlert(self) -> None:
+        if self._demo and self._events:
+            scenarios = ("nessuno", "prossimo", "banner", "banner grande", "urgente")
+            self._demo_alert_scenario = scenarios[(scenarios.index(self._demo_alert_scenario) + 1) % len(scenarios)]
+            self._events.set_demo_scenario(self._demo_alert_scenario)
             self.eventChanged.emit()
