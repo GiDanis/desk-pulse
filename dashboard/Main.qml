@@ -17,14 +17,208 @@ Window {
     readonly property var allFamilies: [
         { id: "oggi", slot: 0, name: "OGGI", views: ["ORA", "GIORNATA"] },
         { id: "meteo", slot: 1, name: "METEO", views: ["ADESSO", "PREVISIONI"] },
-        { id: "account", slot: 2, name: "ACCOUNT CHATGPT", views: ["UTILIZZO"] }
-    ]
+        { id: "account", slot: 2, name: "ACCOUNT CHATGPT", views: ["UTILIZZO"] },
+        { id: "sport", slot: 3, name: "SPORT · SERIE A", views: app.sportViews },
+        { id: "f1", slot: 4, name: "SPORT · F1", views: app.racingViews("f1") },
+        { id: "motogp", slot: 5, name: "SPORT · MOTOGP", views: app.racingViews("motogp") }
+    ].filter(item => item.id === "sport" ? dashboardState && dashboardState.sportAvailable :
+        item.id === "f1" || item.id === "motogp" ? dashboardState && (dashboardState.racingAvailable || []).indexOf(item.id) >= 0 : true)
     readonly property var visibleModules: dashboardState ? dashboardState.visibleModules : ["oggi", "meteo", "account"]
+    onVisibleModulesChanged: if (visibleModules.indexOf(familyId) === -1) home()
     readonly property var families: allFamilies.filter(item => visibleModules.indexOf(item.id) !== -1)
     property string familyId: "oggi"
     readonly property int family: Math.max(0, families.findIndex(item => item.id === familyId))
     readonly property var currentFamily: families[family] || allFamilies[0]
-    property var viewIndex: [0, 0, 0]
+    property var viewIndex: [0, 0, 0, 0, 0, 0]
+    property string sportView: "PROSSIME"
+    property bool sportTeamDetail: false
+    property int teamTab: 0
+    property int teamIndex: 0
+    property int teamPickerIndex: 0
+    property bool teamSerieAOnly: false
+    property string teamFocusedId: ""
+    readonly property var teamState: sportData.favouriteTeam || ({status: "unavailable", source: "FotMob", data: {}})
+    readonly property var teamData: teamState.data || ({})
+    readonly property var teamPickerRows: [{id: "", name: "Nessuna preferita"}].concat(sportData.teams || [])
+    readonly property var teamInfoRows: [
+        {title: "Squadra preferita", value: teamData.name || "Nessuna", action: "5 CAMBIA"},
+        {title: "Dati della squadra", value: teamState.status === "updating" ? "Aggiornamento…" : "Fonte " + teamState.source, action: "5 AGGIORNA"},
+        {title: "Allenatore", value: teamData.coach || "Non disponibile"},
+        {title: "Stadio", value: teamData.stadium || "Non disponibile"},
+        {title: "Città / capienza", value: (teamData.city || "—") + " · " + (teamData.capacity == null ? "—" : teamData.capacity + " posti")},
+        {title: "Serie A · " + (teamData.season || ""), value: teamStandingText()},
+        {title: "Bilancio Serie A", value: teamRecordText()},
+        {title: "Ultime 5 · tutte le competizioni", value: teamData.form || "Non disponibile"}
+    ]
+    function teamNumber(v) { return v == null ? "—" : v }
+    function teamStandingText() {
+        const r = teamData.standing || {}
+        return r.position == null ? "Non disponibile" : r.position + "° · " + teamNumber(r.points) + " PT · " + teamNumber(r.played) + " partite"
+    }
+    function teamRecordText() {
+        const r = teamData.standing || {}
+        return r.wins == null ? "Non disponibile" : "V " + teamNumber(r.wins) + " · N " + teamNumber(r.draws) + " · P " + teamNumber(r.losses) + " · Gol " + teamNumber(r.goalsFor) + "–" + teamNumber(r.goalsAgainst)
+    }
+    readonly property var teamRows: teamTab === 2 ? teamInfoRows : teamTab === 3 ? (teamData.squad || []) :
+        (teamTab === 1 ? (teamData.results || []) : (teamData.active || []).concat(teamData.upcoming || [])).filter(m => !teamSerieAOnly || m.providerLeagueId === 55)
+    onTeamRowsChanged: {
+        const retained = teamRows.findIndex(m => (m.canonicalMatchId || m.id || m.title) === teamFocusedId)
+        teamIndex = retained >= 0 ? retained : Math.min(teamIndex, Math.max(0, teamRows.length - 1))
+    }
+    onTeamIndexChanged: {
+        const row = teamRows[teamIndex]
+        teamFocusedId = row ? (row.canonicalMatchId || row.id || row.title) : ""
+    }
+    function openTeamPicker() {
+        teamPickerIndex = Math.max(0, teamPickerRows.findIndex(t => t.id === sportData.favourite))
+        pushOverlay("sportTeamPicker")
+    }
+    function openTeam() {
+        teamTab = 0; teamIndex = 0; teamFocusedId = ""
+        if (!sportData.favourite) openTeamPicker()
+        else pushOverlay("sportTeam")
+    }
+    property string sportMatchId: ""
+    property int sportIndex: 0
+    property string sportFocusedId: ""
+    property int sportSettingsIndex: 0
+    property string sportRound: ""
+    readonly property bool sportIsSerieA: sportMatch.competitionId === "serie_a" || sportMatch.competitionId === "football:55" && sportMatch.providerLeagueId === 55
+    readonly property var sportDetailTabs: ["RIEPILOGO", "STATISTICHE", "FORMAZIONI"].concat(sportIsSerieA ? ["FANTACALCIO"] : [])
+    readonly property var fantasyState: sportData.fantacalcio || ({status: "unavailable", source: "Redazione Fantacalcio", data: {}})
+    readonly property var fantasyData: fantasyState.data && fantasyState.data.selectedMatchId === sportMatch.canonicalMatchId ? fantasyState.data : ({})
+    property int fantasyTeamIndex: 0
+    property int fantasyPlayerIndex: 0
+    property string fantasyFocusedId: ""
+    readonly property var fantasyRows: ((fantasyData.teams || [])[fantasyTeamIndex] || {}).players || []
+    onFantasyRowsChanged: {
+        const retained = fantasyRows.findIndex(p => p.id === fantasyFocusedId)
+        fantasyPlayerIndex = retained >= 0 ? retained : Math.min(fantasyPlayerIndex, Math.max(0, fantasyRows.length - 1))
+    }
+    onFantasyPlayerIndexChanged: fantasyFocusedId = fantasyRows[fantasyPlayerIndex] ? fantasyRows[fantasyPlayerIndex].id : ""
+    onSportDetailTabsChanged: Qt.callLater(function() { if (sportDetailPage >= sportDetailTabs.length) sportDetailPage = 0 })
+    onSportDetailPageChanged: {
+        fantasyTeamIndex = 0; fantasyPlayerIndex = 0; fantasyFocusedId = ""
+        Qt.callLater(function() {
+            if (!dashboardState) return
+            if (overlay === "sportDetail" && sportDetailPage === 3 && sportIsSerieA) dashboardState.selectFantacalcio(sportMatchId)
+            else dashboardState.clearFantacalcio()
+        })
+    }
+    property int sportDetailPage: 0
+    property int sportDetailOffset: 0
+    property int sportListIndex: 0
+    property int sportTableIndex: 0
+    property int sportOverviewPage: 0
+    readonly property var sportRounds: [...new Set(sportFixtures.map(m => m.round).filter(r => !!r))].sort((a,b) => Number(a)-Number(b))
+    function openSportList() {
+        const source = sportView === "RISULTATI" ? sportData.lastFinished : sportView === "IN CORSO" ? sportOverviewMatches : sportData.upcoming
+        sportRound = source && source.length ? source[0].round : ""
+        sportFocusedId = ""; sportIndex = 0; sportListIndex = 0; sportTableIndex = 0
+        pushOverlay("sportList")
+        const first = source && source.length ? sportRows.findIndex(m => m.canonicalMatchId === source[0].canonicalMatchId) : 0
+        sportIndex = Math.max(0, first)
+    }
+    function openSportTable() {
+        if (!sportRound) sportRound = (sportData.upcoming || []).length ? sportData.upcoming[0].round : sportData.resultsRound || ""
+        sportIndex = Math.min(sportTableIndex, Math.max(0, (sportData.standings || []).length - 1))
+        sportFocusedId = ""
+        pushOverlay("sportTable")
+    }
+    function changeSportRound(direction) {
+        const current = sportRounds.indexOf(sportRound)
+        const next = Math.max(0, Math.min(sportRounds.length - 1, current + direction))
+        sportRound = sportRounds[next] || ""
+        sportFocusedId = ""; sportIndex = -1
+    }
+    function switchSportTab() {
+        if (overlay === "sportList") sportListIndex = sportIndex
+        else sportTableIndex = sportIndex
+        sportFocusedId = ""
+        overlay = overlay === "sportTable" ? "sportList" : "sportTable"
+        sportIndex = overlay === "sportTable" ? sportTableIndex : sportListIndex
+    }
+    readonly property var sport: dashboardState ? dashboardState.sportState : ({status: "unavailable", source: "FotMob / ESPN", data: {}})
+    readonly property var sportData: sport.data || ({})
+    readonly property var sportViews: ["PROSSIME"].concat(sportData.hasLiveView || sportView === "IN CORSO" ? ["IN CORSO"] : []).concat(["RISULTATI", "CLASSIFICA", "LA MIA SQUADRA"])
+    readonly property var sportFixtures: sportData.fixtures || []
+    readonly property var sportOverviewMatches: sportView === "IN CORSO" ? ((sportData.activeMatches || []).length ? sportData.activeMatches : sportMatch.status === "finished" ? [sportMatch] : []) :
+        (sportData.upcoming || []).filter(m => !sportData.upcoming[0].round || m.round === sportData.upcoming[0].round)
+    readonly property int sportOverviewPages: Math.max(1, Math.ceil(sportOverviewMatches.length / 3))
+    onSportOverviewPagesChanged: sportOverviewPage = Math.min(sportOverviewPage, sportOverviewPages - 1)
+    onSportViewChanged: sportOverviewPage = 0
+    Timer {
+        objectName: "sportOverviewTimer"
+        interval: 8000; repeat: true
+        running: app.familyId === "sport" && app.overlay === "" && (app.sportView === "PROSSIME" || app.sportView === "IN CORSO") && app.sportOverviewPages > 1
+        onTriggered: app.sportOverviewPage = (app.sportOverviewPage + 1) % app.sportOverviewPages
+    }
+    readonly property var sportMatch: sportTeamDetail ? ((teamData.fixtures || []).find(m => m.canonicalMatchId === sportMatchId) || ({})) : ((overlay === "sportDetail" || overlayStack.indexOf("sportDetail") >= 0 || sportView === "IN CORSO") ? sportFixtures.find(m => m.canonicalMatchId === sportMatchId) : null) ||
+        (sportView === "IN CORSO" ? (sportData.activeMatches || [])[0] : (sportData.upcoming || [])[0]) || ({})
+    readonly property var sportRows: (overlay === "sportTable" || overlayStack.indexOf("sportTable") >= 0) ? (sportData.standings || []) :
+        sportView === "IN CORSO" ? sportOverviewMatches :
+        sportRound ? sportFixtures.filter(m => m.round === sportRound) :
+        sportView === "RISULTATI" ? (sportData.lastFinished || []) : (sportData.upcoming || [])
+    onSportRowsChanged: {
+        const retained = sportRows.findIndex(row => (row.canonicalMatchId || row.teamId) === sportFocusedId)
+        sportIndex = retained >= 0 ? retained : Math.min(sportIndex, Math.max(0, sportRows.length - 1))
+    }
+    onSportIndexChanged: {
+        const row = sportRows[sportIndex]
+        sportFocusedId = row ? (row.canonicalMatchId || row.teamId) : ""
+    }
+    readonly property bool isRacing: familyId === "f1" || familyId === "motogp"
+    readonly property var racingStates: dashboardState ? dashboardState.racingStates : ({})
+    readonly property var racing: racingStates[familyId] || ({status: "unavailable", source: "", data: {}})
+    readonly property var racingData: racing.data || ({})
+    property var racingViewNames: ({f1: "PROGRAMMA", motogp: "PROGRAMMA"})
+    readonly property string racingView: racingViewNames[familyId] || "PROGRAMMA"
+    function racingViews(kind) {
+        const data = (racingStates[kind] || {}).data || ({})
+        return ["PROGRAMMA"].concat((data.live || {}).active || racingViewNames[kind] === "IN CORSO" ? ["IN CORSO"] : []).concat(["RISULTATI", "CLASSIFICA"])
+    }
+    property string racingEventId: ""
+    property string racingSessionId: ""
+    property int racingIndex: 0
+    property string racingFocusedId: ""
+    property int racingDetailPage: 0
+    property int racingEventPage: 0
+    property int racingInfoIndex: 0
+    property string racingDriverId: ""
+    property bool racingDriverLive: false
+    property int racingDriverPage: 0
+    property int racingDriverIndex: 0
+    property int racingTimingPage: 0
+    property int racingResultIndex: 0
+    property int racingStandingTab: 0
+    property int racingSettingsIndex: 0
+    property string racingSettingsKind: "f1"
+    readonly property var racingEvent: (racingData.events || []).find(e => e.id === racingEventId) || ({})
+    readonly property var racingSession: (racingEvent.sessions || []).find(s => s.id === racingSessionId) || ({})
+    readonly property var racingDriver: (racingDriverLive ? (racingData.live || {}).rows || [] : racingSession.results || []).find(r => r.id === racingDriverId) || ({})
+    readonly property var racingDriverTabs: racingDriverLive ? ["TEMPI"] : familyId === "f1" ? ["DETTAGLI"].concat(racingSession.kind === "RAC" ? ["SOSTE", "GIRI"] : []).concat(["GOMME"]) : ["DETTAGLI"]
+    readonly property string racingDriverPane: racingDriverTabs[racingDriverPage] || "DETTAGLI"
+    readonly property var racingDriverRows: racingDriverPane === "SOSTE" ? racingDriver.pitStops || [] : racingDriverPane === "GIRI" ? racingDriver.lapTimes || [] : racingDriverPane === "GOMME" ? racingDriver.stints || [] : racingDriver.detailRows || []
+    readonly property var racingInfoRows: overlay === "racingEvent" ? racingEventPage === 1 ? racingEvent.infoRows || [] : racingEvent.summaryRows || [] : overlay === "racingTiming" ? racingTimingPage === 2 ? ((racingData.live || {}).messages || []).map(m => ({label: "Direzione gara", value: m})) : (racingData.live || {}).infoRows || [] : racingSession.infoRows || []
+    readonly property var racingRows: overlay === "racingTable" || overlayStack.indexOf("racingTable") >= 0 ?
+        (racingStandingTab === 1 && familyId === "f1" ? racingData.constructors || [] : racingData.standings || []) :
+        overlay === "racingEvent" || overlayStack.indexOf("racingEvent") >= 0 || overlay === "racingSession" ? racingEvent.sessions || [] :
+        racingView === "RISULTATI" ? racingData.past || [] : racingView === "IN CORSO" ? (racingData.live || {}).rows || [] : racingData.events || []
+    onRacingRowsChanged: {
+        const retained = racingRows.findIndex(row => row.id === racingFocusedId)
+        racingIndex = retained >= 0 ? retained : Math.min(racingIndex, Math.max(0, racingRows.length - 1))
+    }
+    onRacingIndexChanged: racingFocusedId = racingRows[racingIndex] ? racingRows[racingIndex].id : ""
+    function openRacing() {
+        racingStandingTab = 0; racingIndex = 0; racingFocusedId = ""
+        if (racingView === "CLASSIFICA") pushOverlay("racingTable")
+        else if (racingView === "IN CORSO") { racingTimingPage = 0; racingInfoIndex = 0; pushOverlay("racingTiming") }
+        else {
+            pushOverlay("racingList")
+            const initial = racingView === "RISULTATI" ? racingData.lastEvent : racingData.nextEvent
+            if (initial) racingIndex = Math.max(0, racingRows.findIndex(e => e.id === initial.id))
+        }
+    }
     property string overlay: ""
     property var overlayStack: []
     property int menuIndex: 0
@@ -78,7 +272,7 @@ Window {
            : (daytime ? dashboardState.dayBrightness : dashboardState.nightBrightness))
         : 100
     readonly property var menuItems: ["Comandi", "Impostazioni", "Diagnostica"]
-    readonly property var settingsItems: ["Aspetto e dispositivo", "Moduli visibili", "Notifiche"]
+    readonly property var settingsItems: ["Aspetto e dispositivo", "Moduli visibili", "Notifiche", "Sport · Serie A"].concat(dashboardState && (dashboardState.racingAvailable || []).indexOf("f1") >= 0 ? ["Sport · F1"] : []).concat(dashboardState && (dashboardState.racingAvailable || []).indexOf("motogp") >= 0 ? ["Sport · MotoGP"] : [])
     readonly property var systemLabels: ["Tema", "Luminosità", "Manuale", "Giorno auto", "Notte auto", "Giorno dalle", "Notte dalle"]
     readonly property var notificationLabels: ["Fascia di silenzio", "Dalle", "Alle", "Interruzioni Meteo", "Interruzioni Account"]
 
@@ -122,7 +316,7 @@ Window {
         return "IN ATTESA"
     }
     function viewName() {
-        return currentFamily.views[viewIndex[currentFamily.slot] || 0]
+        return isRacing ? racingView : familyId === "sport" ? sportView : currentFamily.views[viewIndex[currentFamily.slot] || 0]
     }
     function systemValue(index) {
         if (!dashboardState) return "—"
@@ -151,11 +345,20 @@ Window {
         const indices = viewIndex.slice()
         const slot = currentFamily.slot
         const count = currentFamily.views.length
-        indices[slot] = ((indices[slot] || 0) + direction + count) % count
+        const current = isRacing ? currentFamily.views.indexOf(racingView) : familyId === "sport" ? currentFamily.views.indexOf(sportView) : (indices[slot] || 0)
+        indices[slot] = (current + direction + count) % count
         viewIndex = indices
+        if (isRacing) {
+            const names = Object.assign({}, racingViewNames)
+            names[familyId] = currentFamily.views[indices[slot]]; racingViewNames = names
+        }
+        if (familyId === "sport") { sportView = currentFamily.views[indices[slot]]; sportMatchId = sportView === "IN CORSO" && (sportData.activeMatches || []).length ? sportData.activeMatches[0].canonicalMatchId : "" }
         animateMove(direction)
     }
     function home() {
+        if (dashboardState) { dashboardState.clearSportTeamSelection(); dashboardState.clearFantacalcio() }
+        sportTeamDetail = false
+        if (isRacing && dashboardState) dashboardState.clearRacingSelection(familyId)
         overlay = ""
         overlayStack = []
         familyId = "oggi"
@@ -171,10 +374,25 @@ Window {
         overlay = target
     }
     function popOverlay() {
+        if ((overlay === "racingEvent" || overlay === "racingTiming") && dashboardState) dashboardState.clearRacingSelection(familyId)
+        if (overlay === "sportDetail" && dashboardState) dashboardState.clearFantacalcio()
+        if (overlay === "sportDetail" && sportTeamDetail && dashboardState) dashboardState.clearSportTeamSelection()
+        if (overlay === "sportTable") sportTableIndex = sportIndex
         if (overlay === "commands" && dashboardState) dashboardState.markCommandsSeen()
+        const previous = overlay
         const stack = overlayStack.slice()
         overlay = stack.length ? stack.pop() : ""
         overlayStack = stack
+        if (previous === "racingDriver" && !racingDriverLive && dashboardState) dashboardState.selectRacing(familyId, racingEventId, racingSessionId)
+        if (previous === "sportDetail") sportTeamDetail = false
+        if (previous === "racingEvent" && overlay === "racingList") {
+            racingFocusedId = racingEventId
+            racingIndex = Math.max(0, racingRows.findIndex(e => e.id === racingEventId))
+        }
+        if (previous === "racingSession" && overlay === "racingEvent") {
+            racingFocusedId = racingSessionId
+            racingIndex = Math.max(0, racingRows.findIndex(s => s.id === racingSessionId))
+        }
     }
     function back() {
         if (overlay !== "") popOverlay()
@@ -189,6 +407,8 @@ Window {
         if (settingsIndex === 0) { systemIndex = 0; pushOverlay("system") }
         else if (settingsIndex === 1) { modulesIndex = 1; pushOverlay("modules") }
         else if (settingsIndex === 2) { notificationIndex = 0; pushOverlay("notifications") }
+        else if (settingsIndex === 3) { sportSettingsIndex = 0; pushOverlay("sportSettings") }
+        else if (settingsIndex >= 4) { racingSettingsKind = settingsItems[settingsIndex].indexOf("MotoGP") >= 0 ? "motogp" : "f1"; racingSettingsIndex = 0; pushOverlay("racingSettings") }
     }
     function openSelectedAlert() {
         if (!alertItems.length) return
@@ -270,6 +490,137 @@ Window {
             }
             return
         }
+        if (overlay === "racingSettings") {
+            if (position === 2) racingSettingsIndex = (racingSettingsIndex + 2) % 3
+            else if (position === 8) racingSettingsIndex = (racingSettingsIndex + 1) % 3
+            else if (position === 4 || position === 5 || position === 6) dashboardState.adjustRacingSetting(racingSettingsKind, racingSettingsIndex, position === 4 ? -1 : 1)
+            return
+        }
+        if (overlay === "racingSession") {
+            if (position === 4 || position === 6) { racingDetailPage = 1 - racingDetailPage; racingInfoIndex = 0 }
+            else if (position === 2) { if (racingDetailPage === 0) racingResultIndex = Math.max(0, racingResultIndex - 1); else racingInfoIndex = Math.max(0, racingInfoIndex - 1) }
+            else if (position === 8) { if (racingDetailPage === 0) racingResultIndex = Math.min(Math.max(0, (racingSession.results || []).length - 1), racingResultIndex + 1); else racingInfoIndex = Math.min(Math.max(0, racingInfoRows.length - 1), racingInfoIndex + 1) }
+            else if (position === 5 && racingDetailPage === 0 && (racingSession.results || []).length) {
+                racingDriverId = racingSession.results[racingResultIndex].id; racingDriverLive = false; racingDriverPage = 0; racingDriverIndex = 0
+                dashboardState.selectRacingDriver(familyId, racingEventId, racingSessionId, racingDriverId)
+                pushOverlay("racingDriver")
+            } else if (position === 5) dashboardState.refreshRacingDetails(familyId)
+            return
+        }
+        if (overlay === "racingDriver") {
+            if (position === 4 || position === 6) { racingDriverPage = (racingDriverPage + (position === 4 ? racingDriverTabs.length - 1 : 1)) % racingDriverTabs.length; racingDriverIndex = 0 }
+            else if (position === 2) racingDriverIndex = Math.max(0, racingDriverIndex - 1)
+            else if (position === 8) racingDriverIndex = Math.min(Math.max(0, racingDriverRows.length - 1), racingDriverIndex + 1)
+            else if (position === 5 && !racingDriverLive) dashboardState.refreshRacingDetails(familyId)
+            return
+        }
+        if (overlay === "racingList" || overlay === "racingEvent" || overlay === "racingTable" || overlay === "racingTiming") {
+            if (overlay === "racingTiming" && (position === 4 || position === 6)) { racingTimingPage = (racingTimingPage + (position === 4 ? 2 : 1)) % 3; racingInfoIndex = 0; return }
+            if (overlay === "racingTiming" && racingTimingPage !== 0) {
+                if (position === 2) racingInfoIndex = Math.max(0, racingInfoIndex - 1)
+                else if (position === 8) racingInfoIndex = Math.min(Math.max(0, racingInfoRows.length - 1), racingInfoIndex + 1)
+                return
+            }
+            if (overlay === "racingEvent" && (position === 4 || position === 6)) { racingEventPage = (racingEventPage + (position === 4 ? 2 : 1)) % 3; racingInfoIndex = 0; return }
+            if (overlay === "racingEvent" && racingEventPage !== 0) {
+                if (position === 2) racingInfoIndex = Math.max(0, racingInfoIndex - 1)
+                else if (position === 8) racingInfoIndex = Math.min(Math.max(0, racingInfoRows.length - 1), racingInfoIndex + 1)
+                else if (position === 5) dashboardState.refreshRacingDetails(familyId)
+                return
+            }
+            if (position === 2) racingIndex = Math.max(0, racingIndex - 1)
+            else if (position === 8) racingIndex = Math.min(Math.max(0, racingRows.length - 1), racingIndex + 1)
+            else if (overlay === "racingTable" && familyId === "f1" && (position === 4 || position === 6)) { racingFocusedId = ""; racingStandingTab = 1 - racingStandingTab; racingIndex = 0 }
+            else if (position === 5 && racingRows.length) {
+                if (overlay === "racingList") {
+                    racingEventId = racingRows[racingIndex].id; racingSessionId = ""; racingFocusedId = ""; racingIndex = 0; racingEventPage = 0; racingInfoIndex = 0
+                    dashboardState.selectRacing(familyId, racingEventId, "")
+                    pushOverlay("racingEvent")
+                } else if (overlay === "racingEvent") {
+                    racingSessionId = racingRows[racingIndex].id; racingDetailPage = 0; racingResultIndex = 0; racingInfoIndex = 0
+                    dashboardState.selectRacing(familyId, racingEventId, racingSessionId)
+                    pushOverlay("racingSession")
+                } else if (overlay === "racingTiming") {
+                    racingDriverId = racingRows[racingIndex].id; racingDriverLive = true; racingDriverPage = 0; racingDriverIndex = 0
+                    pushOverlay("racingDriver")
+                }
+            }
+            return
+        }
+        if (overlay === "sportTeamPicker") {
+            if (position === 2) teamPickerIndex = Math.max(0, teamPickerIndex - 1)
+            else if (position === 8) teamPickerIndex = Math.min(teamPickerRows.length - 1, teamPickerIndex + 1)
+            else if (position === 5 && teamPickerRows.length) {
+                dashboardState.setSportFavourite(teamPickerRows[teamPickerIndex].id)
+                popOverlay()
+                teamIndex = 0; teamFocusedId = ""
+                if (overlay === "" && sportData.favourite) pushOverlay("sportTeam")
+            }
+            return
+        }
+        if (overlay === "sportTeam") {
+            if (!sportData.favourite) { if (position === 5) openTeamPicker(); return }
+            if (position === 2) teamIndex = Math.max(teamTab < 2 ? -1 : 0, teamIndex - 1)
+            else if (position === 8) teamIndex = Math.min(Math.max(0, teamRows.length - 1), teamIndex + 1)
+            else if (position === 4 || position === 6) {
+                if (teamIndex === -1 && teamTab < 2) { teamSerieAOnly = !teamSerieAOnly; teamFocusedId = "" }
+                else { teamTab = (teamTab + (position === 4 ? 3 : 1)) % 4; teamIndex = 0; teamFocusedId = "" }
+            } else if (position === 5) {
+                if (teamIndex === -1 && teamTab < 2) { teamSerieAOnly = !teamSerieAOnly; teamFocusedId = "" }
+                else if (teamTab === 2 && teamIndex === 0) openTeamPicker()
+                else if (teamTab === 2 && teamIndex === 1) dashboardState.refreshSportTeam()
+                else if (teamTab < 2 && teamRows[teamIndex]) {
+                    sportMatchId = teamRows[teamIndex].canonicalMatchId; sportTeamDetail = true
+                    sportDetailPage = 0; sportDetailOffset = 0
+                    dashboardState.selectTeamMatch(sportMatchId); pushOverlay("sportDetail")
+                }
+            }
+            return
+        }
+        if (overlay === "sportSettings") {
+            if (position === 2) sportSettingsIndex = (sportSettingsIndex + 4) % 5
+            else if (position === 8) sportSettingsIndex = (sportSettingsIndex + 1) % 5
+            else if (position === 5 && sportSettingsIndex === 0) openTeamPicker()
+            else if (position === 4 || position === 5 || position === 6) dashboardState.adjustSportSetting(sportSettingsIndex, position === 4 ? -1 : 1)
+            return
+        }
+        if (overlay === "sportList" || overlay === "sportTable") {
+            if (position === 2) sportIndex = Math.max(overlay === "sportList" && sportView !== "IN CORSO" && sportRounds.length ? -1 : 0, sportIndex - 1)
+            else if (position === 8) sportIndex = Math.min(Math.max(0, sportRows.length - 1), sportIndex + 1)
+            else if (position === 4 || position === 6) {
+                if (overlay === "sportList" && sportIndex === -1) changeSportRound(position === 4 ? -1 : 1)
+                else switchSportTab()
+            }
+            else if (position === 5 && overlay === "sportList" && sportIndex === -1) sportIndex = 0
+            else if (position === 5 && overlay === "sportList" && sportRows.length) {
+                sportTeamDetail = false
+                sportMatchId = sportRows[sportIndex].canonicalMatchId
+                sportDetailPage = 0; sportDetailOffset = 0
+                dashboardState.selectSportMatch(sportMatchId)
+                pushOverlay("sportDetail")
+            }
+            return
+        }
+        if (overlay === "sportDetail") {
+            if (sportDetailPage === 3 && position !== 4 && position !== 6) {
+                if (position === 2) fantasyPlayerIndex = Math.max(-1, fantasyPlayerIndex - 1)
+                else if (position === 8) fantasyPlayerIndex = Math.min(Math.max(0, fantasyRows.length - 1), fantasyPlayerIndex + 1)
+                else if (position === 5) {
+                    if (fantasyPlayerIndex === -1) dashboardState.refreshFantacalcio()
+                    else { fantasyTeamIndex = 1 - fantasyTeamIndex; fantasyPlayerIndex = 0; fantasyFocusedId = "" }
+                }
+                return
+            }
+            if (position === 4 || position === 6) {
+                sportDetailPage = (sportDetailPage + (position === 4 ? sportDetailTabs.length - 1 : 1)) % sportDetailTabs.length
+                sportDetailOffset = 0
+            } else if (position === 2) sportDetailOffset = Math.max(0, sportDetailOffset - 1)
+            else if (position === 8) {
+                const count = sportDetailPage === 0 ? (sportMatch.events || []).length : 0
+                sportDetailOffset = Math.min(Math.max(0, count - 4), sportDetailOffset + 1)
+            } else if (position === 5) { if (sportTeamDetail) dashboardState.selectTeamMatch(sportMatchId); else dashboardState.selectSportMatch(sportMatchId) }
+            return
+        }
         if (overlay !== "") return
         if (position === 4) navigateFamily(-1)
         else if (position === 6) navigateFamily(1)
@@ -279,7 +630,11 @@ Window {
         }
         else if (position === 2) navigateView(-1)
         else if (position === 8) navigateView(1)
-        else if (position === 5) pushOverlay("detail")
+        else if (position === 5) {
+            if (isRacing) openRacing()
+            else if (familyId === "sport") { if (sportView === "LA MIA SQUADRA") openTeam(); else if (sportView === "CLASSIFICA") openSportTable(); else openSportList() }
+            else pushOverlay("detail")
+        }
     }
 
     Connections {
@@ -338,7 +693,7 @@ Window {
 
     Rectangle { x: 0; y: 0; width: 960; height: 5; color: app.accent }
     Text { x: 44; y: 26; text: app.currentFamily.name + " · " + app.viewName(); color: app.accent; font.pixelSize: 35; font.bold: true }
-    Text { x: 790; y: 33; width: 125; horizontalAlignment: Text.AlignRight; text: (app.family + 1) + "/" + app.families.length + "  ·  " + ((app.viewIndex[app.currentFamily.slot] || 0) + 1) + "/" + app.currentFamily.views.length; color: app.muted; font.pixelSize: 23 }
+    Text { x: 790; y: 33; width: 125; horizontalAlignment: Text.AlignRight; text: (app.family + 1) + "/" + app.families.length + "  ·  " + ((app.isRacing ? app.currentFamily.views.indexOf(app.racingView) : app.familyId === "sport" ? app.sportViews.indexOf(app.sportView) : (app.viewIndex[app.currentFamily.slot] || 0)) + 1) + "/" + app.currentFamily.views.length; color: app.muted; font.pixelSize: 23 }
 
     Item {
         id: contentLayer
@@ -350,19 +705,25 @@ Window {
         HomeDay { objectName: "homeDay"; dashboard: app; visible: app.familyId === "oggi" && app.viewIndex[0] === 1; x: 44 }
         WeatherNow { objectName: "weatherNow"; dashboard: app; visible: app.familyId === "meteo" && app.viewIndex[1] === 0; x: 44 }
         WeatherForecast { objectName: "weatherForecast"; dashboard: app; visible: app.familyId === "meteo" && app.viewIndex[1] === 1; x: 44 }
+        MotorsportView { objectName: "racingPanel"; dashboard: app; visible: app.isRacing; x: 44; width: 872; height: 430 }
+        SportTeamView { objectName: "sportTeamPanel"; dashboard: app; visible: app.familyId === "sport" && app.sportView === "LA MIA SQUADRA"; x: 44; width: 872; height: 430 }
+        SportView { objectName: "sportPanel"; dashboard: app; visible: app.familyId === "sport" && app.sportView !== "LA MIA SQUADRA"; x: 44; width: 872; height: 430 }
         AccountChatGPT { objectName: "accountPanel"; dashboard: app; visible: app.familyId === "account"; x: 44; width: 872; height: 430 }
     }
 
     Rectangle { x: 44; y: 558; width: 872; height: 2; color: "#31505b" }
     Text { x: 46; y: 578; text: "4/6  ARGOMENTO"; color: app.muted; font.pixelSize: 25 }
     Text { x: 351; y: 578; text: app.familyId === "account" ? (app.accountWindows.length > 2 ? "2/8  SCORRI" : "") : "2/8  VISTA"; color: app.muted; font.pixelSize: 25 }
-    Text { x: 669; y: 578; text: app.familyId === "account" ? "9  MENU" : "5  DETTAGLI"; color: app.accent; font.pixelSize: 25 }
+    Text { x: 669; y: 578; text: app.familyId === "account" ? "9  MENU" : app.isRacing ? (app.racingView === "CLASSIFICA" ? "5 CLASSIFICA" : "5 APRI") : app.familyId === "sport" ? (app.sportView === "LA MIA SQUADRA" ? "5  SQUADRA" : app.sportView === "CLASSIFICA" ? "5  CLASSIFICA" : "5  PARTITE") : "5  DETTAGLI"; color: app.accent; font.pixelSize: 25 }
 
     UnreadAlertsBadge {
         dashboard: app
         visible: app.familyId === "oggi" && app.overlay === "" && app.unreadAlertCount > 0 && !app.bannerEvent.id && !app.urgentEvent.id
     }
-    DashboardOverlay { dashboard: app; visible: app.overlay !== ""; anchors.fill: parent }
+    DashboardOverlay { dashboard: app; visible: app.overlay !== "" && app.overlay.indexOf("sport") !== 0 && app.overlay.indexOf("racing") !== 0; anchors.fill: parent }
+    MotorsportOverlay { dashboard: app; visible: app.overlay.indexOf("racing") === 0; anchors.fill: parent }
+    SportTeamOverlay { dashboard: app; visible: app.overlay.indexOf("sportTeam") === 0; anchors.fill: parent }
+    SportOverlay { dashboard: app; visible: app.overlay.indexOf("sport") === 0 && app.overlay.indexOf("sportTeam") !== 0; anchors.fill: parent }
     EventBanner {
         dashboard: app
         visible: !!app.bannerEvent.id && app.bannerEvent.bannerSize !== "large" && app.overlay === "" && !app.urgentEvent.id

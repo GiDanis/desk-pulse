@@ -35,13 +35,19 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     qml6-module-qtquick-controls \
     qml6-module-qtquick-layouts \
     qml6-module-qtquick-window \
+    qml6-module-qtwebsockets \
+    libqt6websockets6 \
     libgl1-mesa-dri \
     evtest
 
 # Install PySide6 if not installed via apt
 if ! python3 -c 'import PySide6.QtQuick' >/dev/null 2>&1; then
     echo -e "${YELLOW}Installing PySide6 via apt/pip...${NC}"
-    apt-get install -y python3-pyside6.qtquick || python3 -m pip install --break-system-packages PySide6 requests
+    apt-get install -y python3-pyside6.qtquick python3-pyside6.qtwebsockets || python3 -m pip install --break-system-packages PySide6 requests
+fi
+# The small native WebSocket module supplies the F1 SignalR Core transport.
+if ! python3 -c 'import PySide6.QtWebSockets' >/dev/null 2>&1; then
+    apt-get install -y --no-install-recommends python3-pyside6.qtwebsockets || python3 -m pip install --break-system-packages PySide6
 fi
 
 echo -e "${YELLOW}[2/6] Configuring dedicated system user & permissions...${NC}"

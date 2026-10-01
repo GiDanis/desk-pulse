@@ -1,28 +1,30 @@
-# SmartPC Dashboard v0.5
+# SmartPC Dashboard v0.6
 
-Dashboard Qt Quick per Orange Pi Zero 3W e display Hagibis 960×640 a 60 Hz. La v0.5 applica la [specifica UX](design/ux-navigation-v2.md): un dato dominante per vista, Home dinamica, due assi di navigazione, tasti coerenti e avvisi condivisi. La board usa Orange Pi Debian 13, Qt 6, EGLFS/KMS e GPU PowerVR.
+Dashboard Qt Quick per Orange Pi Zero 3W e display Hagibis 960×640 a 60 Hz. La v0.6 applica la [specifica UX](design/ux-navigation-v2.md): un dato dominante per vista, Home dinamica, due assi di navigazione, tasti coerenti e avvisi condivisi. La board usa Orange Pi Debian 13, Qt 6, EGLFS/KMS e GPU PowerVR.
 
 ## Esperienza
 
 - **Home:** ora e meteo occupano la schermata. Una tessera «prossimo evento» compare solo quando esiste un evento futuro valido, per esempio un'allerta prevista per domani. Nessun evento viene inventato per riempire lo spazio.
 - **Nuovi avvisi:** sulle due viste Home un badge discreto nell'intestazione indica quanti avvisi della casella non sono stati letti e ricorda il tasto **3**. Compare anche per gli avvisi ambientali e dopo la fine del banner. Aprire la casella non segna tutto come letto: il badge si aggiorna quando si apre il dettaglio di ciascun evento, oppure quando l'evento scade o viene annullato. Durante banner, overlay e menu il badge resta nascosto.
-- **Orizzontale:** Oggi ↔ Meteo ↔ Account ChatGPT. Sport, Casa e PC entreranno nel carosello quando avranno dati reali. I moduli nascosti sono saltati senza lasciare schermate vuote.
-- **Verticale:** Oggi: Ora/Giornata. Meteo: Adesso/Previsioni. Ogni famiglia ricorda la propria vista.
-- **Menu:** Comandi, Impostazioni e Diagnostica. Impostazioni contiene **Aspetto e dispositivo** (tema, luminosità, stato), **Moduli visibili** e **Notifiche**. Moduli visibili mostra le famiglie disponibili, permette di mostrare o nascondere Meteo e Account ChatGPT e conserva la scelta dopo il riavvio. Oggi resta sempre visibile.
+- **Orizzontale:** Oggi ↔ Meteo ↔ Account ChatGPT ↔ Serie A ↔ F1 ↔ MotoGP. Casa e PC entreranno nel carosello quando avranno dati reali. I moduli nascosti sono saltati senza lasciare schermate vuote.
+- **Verticale:** Oggi: Ora/Giornata. Meteo: Adesso/Previsioni. Serie A: Prossime/In corso quando esiste/Risultati/Classifica. F1 e MotoGP: Programma/In corso quando esiste/Risultati/Classifica. Ogni famiglia ricorda la propria vista.
+- **Menu:** Comandi, Impostazioni e Diagnostica. Impostazioni contiene **Aspetto e dispositivo** (tema, luminosità, stato), **Moduli visibili**, **Notifiche**, **Sport · Serie A**, **Sport · F1** e **Sport · MotoGP**. Moduli visibili mostra le famiglie disponibili, permette di mostrare o nascondere Meteo, Account ChatGPT e ogni sport separatamente e conserva la scelta dopo il riavvio. Oggi resta sempre visibile.
 - **Avvisi:** il tasto 3 apre la casella da qualsiasi vista. Gli avvisi importanti ricevono un banner breve; quelli prioritari aprono un overlay. Indietro chiude l'overlay e restituisce la vista, il menu e la selezione precedenti.
 - **Notifiche:** Menu → Impostazioni → Notifiche permette sempre di attivare o disattivare la fascia di silenzio e regolare inizio e fine a passi di 15 minuti. L'impostazione iniziale è 22:00–07:00, nel fuso Europe/Rome. Il silenzio trattiene i banner fino al termine della fascia, se ancora validi; gli avvisi prioritari restano visibili. Due controlli separati permettono di disattivare le interruzioni di Meteo e Account: gli eventi rimangono consultabili nella casella, ma quella categoria non mostra banner o overlay.
 - L'intestazione non ripete il marchio o la modalità notte. Dati assenti, aggiornamento e offline sono indicati esplicitamente. La transizione tra viste dura 160 ms.
 
-| 1 Home | 2 Su | 3 Avvisi |
+| 1 Indietro | 2 Su | 3 Avvisi |
 | --- | --- | --- |
 | 4 Sinistra | **5 OK** | 6 Destra |
-| 7 Indietro | 8 Giù | 9 Menu |
+| 7 Home | 8 Giù | 9 Menu |
 
 La mini tastiera USB `413d:553a` è letta da `keypad.py`, che traduce le scorciatoie firmware esistenti nelle posizioni 1–9. I LED conservano la configurazione attuale. Sul PC si possono usare frecce, Invio, Esc e i numeri. Il menu Comandi mostra la legenda completa.
 
 ## Stato dei moduli
 
-`module_state.py` definisce l'involucro comune; `weather.py` e `account.py` espongono `moduleState`, mentre `state.py` espone a QML `weatherState`, `accountState` e `systemState`. Ogni stato usa:
+La **v0.7 Casa è in sviluppo** con API cloud Tuya dirette. `tuya_core.py` e `tuya_probe.py` permettono la prova manuale di inventario e stati Smart Life; `check_tuya.py` verifica protocollo e cache con risposte simulate. Nessuna schermata Casa o sincronizzazione periodica è ancora attiva. [Configurazione Tuya, aggiunte/modifiche e limiti](design/v07-tuya-api-setup.md), [piano aggiornato](design/v07-tuya-direct-plan.md). L'accesso reale richiede il progetto Developer collegato all'app.
+
+`module_state.py` definisce l'involucro comune; `weather.py`, `account.py` e `sport.py` espongono `moduleState`, mentre `state.py` espone a QML `weatherState`, `accountState`, `sportState`, `racingStates` (F1/MotoGP) e `systemState`. Ogni stato usa:
 
 ```json
 {
@@ -38,6 +40,62 @@ La mini tastiera USB `413d:553a` è letta da `keypad.py`, che traduce le scorcia
 `status` vale `active`, `updating`, `stale`, `offline`, `error` o `unavailable`. `updatedAt` è l'istante dell'ultima risposta valida; zero significa nessun dato. QML visualizza stato e origine, senza gestire chiamate di rete. Il provider Meteo effettua richieste in un `QRunnable`, ogni 15 minuti, con timeout di 12 secondi; salva atomicamente l'ultima risposta valida nella cache utente. La previsione comprende tre giorni. L'assenza di rete non trasforma la cache in un dato nuovo. La posizione corrente è Angri, Salerno. I dati provengono da Open-Meteo.
 
 Le preferenze del tema, della luminosità e dei moduli visibili sono salvate con `QSettings` nell'area dati dell'utente del servizio. Nessuna credenziale è scritta nel progetto o inviata a QML.
+
+## Sport · Serie A
+
+La v0.6 integra **FotMob REST diretto** per calendario completo, classifica e dettaglio; **ESPN** è la riserva quando la fonte principale non restituisce dati validi. Non servono API key o abbonamenti. Gli endpoint interni possono cambiare: un errore conserva l'ultimo dato valido e indica origine/ora. Nel fallback ESPN il calendario è limitato ai giorni vicini restituiti dalla fonte, esplicitamente indicato nella schermata.
+
+- Da Home, **4** apre MotoGP; **4, 4, 4** porta a Serie A con tutti i moduli visibili; **2/8** cambiano vista: Prossime, In corso quando presente, Risultati, Classifica. **5** apre l’elenco della vista corrente. In elenco **4/6** alternano partite e classifica, **2/8** scorrono e **5** apre il dettaglio. Classifica completa, tre righe visibili per pagina.
+- **Prossime** mostra tutte le partite future della prossima giornata, anche con lo stesso orario, tre per pagina. Le pagine si alternano ogni otto secondi, fermandosi quando si apre un pannello. **In corso** usa lo stesso riepilogo per tutti gli incontri attivi. **Classifica** è direttamente raggiungibile con 2/8 e 5 apre tutte le 20 posizioni. **Risultati** mostra l'ultimo turno; il dettaglio offre marcatori e, quando disponibili, possesso, xG, tiri in porta e moduli delle formazioni.
+- **Menu → Impostazioni → Sport** permette di scegliere squadra preferita, tessera della prossima partita in Home, stagione corrente/precedente e aggiornamento manuale. Le scelte sono persistenti. La tessera Home richiede squadra scelta e partita entro sette giorni; di default è disattivata.
+- Il timing viene acquisito con polling adattivo (riposo 6 ore, prepartita 15 minuti, avvicinamento/incontro 30 secondi), con timeout, header di cache, backoff e `Retry-After`. Una risposta valida senza cambiamenti non diventa vecchia solo perché il punteggio resta 0–0.
+- La vista **In corso** esiste quando il provider segnala un incontro attivo e plausibile. In questa release il feed è indicato **da collaudare**; il badge Live e le notifiche gol richiedono la prova durante una partita prevista nel piano. `SMARTPC_SPORT_LIVE_VERIFIED=1` è il gate tecnico, da attivare dopo la verifica, non un rilevatore automatico di qualità.
+- Notifiche disattivate inizialmente; il motore predisposto controlla evento, punteggio e pending VAR, deduplica e imposta una baseline dopo avvio/riconnessione/cambio fonte. ESPN non ha una conferma VAR dimostrata: i suoi eventi non producono overlay gol.
+
+`sport_core.py` contiene adapter, validazione, cache e policy; `sport.py` esegue rete/parsing in worker Qt. `SportView.qml` e `SportOverlay.qml` compongono le viste. Cache in `QStandardPaths.CacheLocation/sport.json` e archivi delle ultime due stagioni. Sul servizio: `/var/cache/smartpc-dashboard/SmartPC/SmartPC/`. Il registro gol è `/var/lib/smartpc-dashboard/sport-goals.json`; credenziali e dataset di prova non entrano nello stato di produzione. Dopo un riavvio offline i dati sono etichettati precedenti, senza nuovi gol. I risultati conclusi vengono ricontrollati e possono essere corretti.
+
+`check_sport.py` verifica normalizzazione, cache atomica, stato/freschezza, errori, VAR e baseline. `check_sport_ui.py` verifica navigazione, classifica completa, dettaglio, fonte visibile, preferenze e recupero offline. Gli estratti storici in `fixtures/` servono esclusivamente a queste verifiche. `verify_sport_board.py` raccoglie dati REST reali e catture/misure EGLFS; richiede il kiosk fermo per possedere il display. Il [resoconto v0.6](design/v06-sport-release.md) distingue prove completate e limiti.
+
+### La mia squadra
+
+**Serie A → La mia squadra → 5** permette di scegliere una preferita. Il calendario include **tutte le competizioni disponibili**, con filtro Solo Serie A. Quattro schede: **Calendario, Risultati, Info, Rosa**; 4/6 cambia scheda, 2/8 scorre, 5 apre una partita o conferma la scelta. In Info puoi cambiare o rimuovere la preferita e aggiornare il profilo.
+
+Preferenza e profilo sono persistenti. Allenatore, stadio, capienza, bilancio Serie A e giocatori vengono mostrati quando disponibili. Le date da confermare restano tali; in assenza del profilo completo viene dichiarato il calendario parziale Serie A. La tessera opzionale Home resta relativa alla Serie A.
+
+Adapter e worker: `sport_team_core.py`, `sport_team.py`; cache per club `sport-team-{id}.json`. Verifiche: `check_sport_team.py`, `check_sport_team_ui.py`; acquisizione dati reali sulla board: `verify_sport_team_board.py`. [Implementazione, prove sul display e limiti](design/v06-favourite-team-release.md).
+
+### Fantacalcio
+
+Nel dettaglio delle sole partite **Serie A** compare **Fantacalcio**: formazione, titolari, subentrati e panchina, con **voto base e fantavoto della Redazione Fantacalcio**. 4/6 cambia scheda, 2/8 scorre, 5 cambia squadra. Per aggiornare manualmente i voti, 2 sopra il primo calciatore e 5 su Aggiorna voti.
+
+La scheda funziona anche dal calendario della preferita. Le partite future attendono la pubblicazione; valori assenti e SV restano distinguibili. Cache atomica per giornata `fantacalcio-{stagione}-{giornata}.json`, richieste in worker e fonte/data indipendenti dal dettaglio FotMob. Un errore conserva gli ultimi voti validi.
+
+[Implementazione, fonte, verifiche sul display e limiti](design/v06-fantacalcio-release.md). Test: `check_fantacalcio.py` e `check_fantacalcio_ui.py`; acquisizione reale: `verify_fantacalcio_board.py`.
+
+## Sport · F1 e MotoGP
+
+Dal modulo Serie A, **6** apre F1 e un altro **6** MotoGP. **2/8** cambiano vista; **5** apre calendario → GP → sessione oppure la classifica completa. **4/6** nel dettaglio alternano risultati/informazioni e, nella classifica F1, Piloti/Costruttori. **1** torna alla selezione precedente. Il programma mostra subito l'orario della gara oltre alle prossime sessioni.
+
+- **F1:** Jolpica per programma, risultati Gara/Qualifiche/Sprint, Piloti e Costruttori; OpenF1 gratuito per risultati Libere/Qualifiche Sprint e stint delle sessioni concluse dal 2023; SignalR Core via QtWebSockets per il timing.
+- **MotoGP:** PulseLive per programma filtrato MotoGP, risultati delle sessioni e classifica piloti; gateway lite per il timing. Altre categorie e test sono esclusi.
+- Stagione corrente/precedente selezionabile in **Menu → Impostazioni → Sport · F1 / MotoGP**; anche prossima gara in Home, disattivata inizialmente, e aggiornamento manuale. Cache persistenti separate per sport/anno; fonte, orari italiani e dati precedenti visibili.
+- Nessuna API key o abbonamento. I badge Live richiedono il collaudo durante una sessione: `SMARTPC_F1_LIVE_VERIFIED` e `SMARTPC_MOTOGP_LIVE_VERIFIED`, entrambi inizialmente disattivati. La connessione F1 è stata provata con un referto concluso; la latenza attiva e il mapping del gateway MotoGP restano aperti.
+
+Sulla board serve `python3-pyside6.qtwebsockets`, controllato anche da `scripts/setup-board.sh`. Implementazione, controlli, catture reali, dipendenze e ripristino nel [resoconto motorsport](design/v06-motorsport-release.md).
+
+### Dettagli del weekend e delle sessioni
+
+Nel weekend **4/6** cambia tra **Sessioni / Circuito / Riepilogo**. MotoGP aggiunge lunghezza, curve, rettilineo, giri Gara/Sprint, distanza e record; nella scheda Sessione mostra le condizioni registrate di pista, aria/asfalto e umidità. F1 mostra località/paese disponibili da Jolpica e il riepilogo delle sessioni caricate.
+
+Nei risultati **5** apre i dettagli del pilota in quella sessione: posizione, tempo, punti, giri e informazioni del team/moto. F1 aggiunge griglia, variazione griglia-arrivo, giro veloce, Q1/Q2/Q3 e schede **Soste / Giri / Gomme**. La durata Jolpica delle soste è il tempo in pit lane. Gomme indica mescola, intervallo di giri e usura all'inizio dello stint. Non è prevista una preferenza pilota.
+
+Nel timing **4/6** cambia **Tempi / Pista / Direzione** e **5** apre i tempi del singolo pilota. I campi avanzati compaiono solo se ricevuti; i badge Live restano subordinati alla verifica attiva. **1 Indietro / 7 Home** sono le etichette del tastierino fisico.
+
+Non servono registrazioni o API key. OpenF1 viene interrogato fuori dalla finestra a pagamento: sessione conclusa da almeno 30 minuti; l'adapter applica anche una soglia prudente di due ore dall'inizio. Richieste opzionali in worker, cache persistente e fonti/date distinte; un errore aggiuntivo conserva il risultato principale. [Dettagli, prove reali e ripristino](design/v06-racing-details-release.md).
+
+## Revisione del codice Sport
+
+La revisione del 1 ottobre riusa le presentazioni F1/MotoGP e i referti già caricati, sposta il salvataggio Serie A nel worker e conserva i dettagli dei piloti durante gli aggiornamenti. Include protezioni alla chiusura e correzioni dei delta SignalR. **5 Aggiorna** mantiene il controllo manuale con pausa di 30 secondi. [Misure sulla board, verifiche e ripristino](design/v06-sport-code-review.md). Regressioni mirate: `check_sport_optimization.py`.
 
 ## Account ChatGPT e crediti
 
@@ -142,3 +200,21 @@ sudo systemctl restart smartpc-dashboard
 ```
 
 Il backup della v0.4 prima del motore eventi è `/var/backups/smartpc-dashboard-v04-before-events`; quello della v0.5 prima del secondo formato di banner è `/var/backups/smartpc-dashboard-v05-before-banner-sizes`; prima di cache e badge è stato salvato `/var/backups/smartpc-dashboard-v05-before-cache-badge`. Il target è 960×640 a 60 Hz. Le scene future andranno misurate sulla board. Il vecchio timer Xorg per la luminosità è disabilitato nel kiosk EGLFS; il conflitto dell'aggiornamento Xorg resta annotato nel [resoconto OS](../os/board-audit-2026-09-29.md).
+
+### Revisione Sport: dettaglio e navigazione
+
+Il dettaglio delle partite future gestisce eventi/statistiche `null`. Mostra stato, orario e stadio, poi le schede **Riepilogo / Statistiche / Formazioni**; i dati non ancora pubblicati hanno un messaggio coerente. Le formazioni disponibili mostrano tutti gli undici titolari di entrambe le squadre.
+
+- In Sport, **5** apre le partite della giornata; **2/8** scorre e **4/6** alterna Partite/Classifica.
+- Dalla prima partita, **2** porta al selettore Giornata: **4/6** cambia turno e **8** torna alle partite. Questo consente anche la consultazione dei turni precedenti.
+- Nel dettaglio, **4/6** cambia scheda, **2/8** scorre i marcatori se sono più di quattro, **5** aggiorna e **7** torna alla riga selezionata.
+
+Gli errori tecnici restano nei log; caricamento, indisponibilità e dati salvati sono indicati nella schermata. La richiesta di dettaglio usa il worker senza riscaricare il calendario; una selezione fatta durante un caricamento viene eseguita appena termina la richiesta corrente. [Verifiche e catture](./design/v06-sport-ux-fix.md).
+
+### Accesso diretto alla classifica e più partite
+
+Da **Prossime**, senza incontri attivi, premere **8 due volte** per Classifica e **5** per l’elenco completo. Se è presente In corso, serve una pressione aggiuntiva. In **Prossime / In corso**, il numero di partite e l’indice della pagina sono visibili; tre righe mostrano ciascuna le proprie squadre, orario/stato e punteggio. Gli incontri simultanei restano separati. **5** apre l’elenco con selezione stabile e 2/8 permette di consultarli manualmente.
+
+### Etichette del tastierino · 1 ottobre 2026
+
+Dopo il riscontro sul dispositivo, i suggerimenti nei pannelli e nella legenda Comandi indicano **1 Indietro** e **7 Home**. Aggiornato anche l’avviso urgente (**1 Chiudi**, **7 Home**). La revisione modifica le etichette e conserva il comportamento dei comandi esistente.

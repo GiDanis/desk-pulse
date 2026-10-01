@@ -55,6 +55,7 @@ class EventEngine:
     def __init__(self, path: Path | str) -> None:
         if path != ":memory:":
             Path(path).parent.mkdir(parents=True, exist_ok=True)
+        self.is_closed = False
         self.db = sqlite3.connect(str(path))
         self.db.row_factory = sqlite3.Row
         if path != ":memory:":
@@ -90,6 +91,8 @@ class EventEngine:
 
     def replace_source(self, source: str, values: list[dict[str, Any]], *, revision: str | None = None) -> bool:
         """Apply one *valid* provider snapshot atomically, including cancellations."""
+        if self.is_closed:
+            return False
         if revision is not None and (not isinstance(revision, str) or not revision or len(revision) > 100):
             raise ValueError("Invalid source revision")
         events = [validate_event(value) for value in values]
@@ -182,4 +185,5 @@ class EventEngine:
             self.db.execute("DELETE FROM events WHERE expires_at<?", (current - HISTORY_SECONDS,))
 
     def close(self) -> None:
+        self.is_closed = True
         self.db.close()

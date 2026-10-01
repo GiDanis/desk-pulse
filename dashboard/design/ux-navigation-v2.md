@@ -35,16 +35,18 @@ La soluzione consigliata combina la croce per esplorare le schermate con il focu
 
 ## Architettura delle schermate
 
-Le famiglie previste nell'asse orizzontale sono Oggi → Meteo → Account ChatGPT → Sport → Casa → PC; **solo le famiglie con provider e schermate pronti** entrano nel carosello. Nella v0.4 sono attive Oggi, Meteo e Account ChatGPT. Menu → Impostazioni → Moduli visibili può nascondere le famiglie disponibili, salvo Oggi che resta sempre raggiungibile. Compagno è una vista di Oggi; Aspetto e dispositivo resta nelle Impostazioni. Una famiglia futura può essere illustrata nella documentazione, senza diventare una pagina vuota nell'uso normale.
+Le famiglie previste nell'asse orizzontale sono Oggi → Meteo → Account ChatGPT → Serie A → F1 → MotoGP → Casa → PC; **solo le famiglie con provider e schermate pronti** entrano nel carosello. Nella v0.6 sono attive Oggi, Meteo, Account ChatGPT, Serie A, F1 e MotoGP. Menu → Impostazioni → Moduli visibili può nascondere le famiglie disponibili, salvo Oggi che resta sempre raggiungibile. Compagno è una vista di Oggi; Aspetto e dispositivo resta nelle Impostazioni. Una famiglia futura può essere illustrata nella documentazione, senza diventare una pagina vuota nell'uso normale.
 
-Ogni famiglia ha al massimo tre viste principali nell'asse verticale:
+Ogni famiglia ha al massimo tre viste principali nell’asse verticale. Nella revisione v0.6 Sport, richiesta dopo il riscontro sull’accessibilità della classifica, Sport ha una quarta vista soltanto in presenza di partite in corso:
 
 | Famiglia | Viste verticali previste |
 | --- | --- |
 | Oggi | Ora e riepilogo → Giornata → Compagno |
 | Meteo | Adesso → Previsioni → Allerte |
 | Account ChatGPT | Utilizzo; 2/8 scorrono le finestre quando sono più di due |
-| Sport | Prossimo evento → Live, solo quando esiste → Risultati |
+| Serie A | Prossime → In corso, quando esiste → Risultati → Classifica; 2/8 raggiunge direttamente la classifica |
+| F1 | Programma → In corso, quando disponibile → Risultati → Classifica; OK apre GP, sessioni o Piloti/Costruttori |
+| MotoGP | Programma → In corso, quando disponibile → Risultati → Classifica; solo categoria MotoGP |
 | Casa | Panoramica → Stanze; i dispositivi selezionabili si aprono con OK |
 | PC | Stato → Attività/notifiche |
 
@@ -145,4 +147,4 @@ Account ChatGPT è una famiglia di consultazione nel carosello, con piano, fines
 
 ### Stato dell'implementazione
 
-La mappa dei nove tasti, Oggi/Meteo/Account nel carosello e la scelta dei moduli visibili sono implementate nella v0.4. La v0.5 aggiunge motore eventi persistente, banner e overlay riutilizzabili, casella Avvisi, allerta ufficiale per Angri e soglie Account. Impostazioni → Notifiche contiene sempre la fascia di silenzio programmabile e le interruzioni per categoria. Gli avvisi urgenti superano la fascia oraria; disattivare esplicitamente le interruzioni di una categoria li lascia soltanto nella casella. Le schermate future entrano nel flusso solo dopo avere dati e stati utili. Restano da completare le etichette dei vicini e le famiglie Sport, Casa e PC.
+La mappa dei nove tasti, Oggi/Meteo/Account nel carosello e la scelta dei moduli visibili sono implementate nella v0.4. La v0.5 aggiunge motore eventi persistente, banner e overlay riutilizzabili, casella Avvisi, allerta ufficiale per Angri e soglie Account. Impostazioni → Notifiche contiene sempre la fascia di silenzio programmabile e le interruzioni per categoria. Gli avvisi urgenti superano la fascia oraria; disattivare esplicitamente le interruzioni di una categoria li lascia soltanto nella casella. Le schermate future entrano nel flusso solo dopo avere dati e stati utili. La v0.6 aggiunge Serie A, F1 e MotoGP con dati reali, liste paginate e selezione conservata. Restano da completare le etichette dei vicini e le famiglie Casa e PC. Il timing delle nuove discipline richiede il collaudo durante sessioni attive.

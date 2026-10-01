@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "label": "pc-targeted-follow-up",
+  "started_at": "2026-09-30T18:31:37.000452+00:00",
+  "completed_at": "2026-09-30T18:31:37.670907+00:00",
+  "scope": "daily route and numeric historical xG; no live latency measurement",
+  "checks": [
+    {
+      "name": "fotmob_daily_matches",
+      "url": "https://www.fotmob.com/api/data/matches?date=20260822",
+      "method": "GET",
+      "user_agent": "SmartPC-Dashboard/0.6 (private research)",
+      "requested_at": "2026-09-30T18:31:37.000462+00:00",
+      "http_status": 200,
+      "headers": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Cache-Control": "public, max-age=10, s-maxage=10, stale-while-revalidate=3, stale-if-error=86400",
+        "Date": "Wed, 30 Sep 2026 18:31:37 GMT",
+        "ETag": "\"h77feeupyz9n6i\""
+      },
+      "bytes": 450156,
+      "body_sha256": "804571f1146be71cfdd954dbcd2b59fd75b2002500a4e9f59f5e24f463c52bc1",
+      "json_type": "dict",
+      "top_keys": [
+        "leagues",
+        "date"
+      ],
+      "elapsed_ms": 547.8,
+      "completed_at": "2026-09-30T18:31:37.548320+00:00",
+      "serie_a": [
+        {
+          "id": 55,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "name": "fotmob_sample_xg",
+      "url": "https://www.fotmob.com/api/data/matchDetails?matchId=5749645",
+      "method": "GET",
+      "user_agent": "SmartPC-Dashboard/0.6 (private research)",
+      "requested_at": "2026-09-30T18:31:37.548415+00:00",
+      "http_status": 200,
+      "headers": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Cache-Control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=1200, stale-if-error=86400",
+        "Age": "2865",
+        "Date": "Wed, 30 Sep 2026 17:43:52 GMT",
+        "ETag": "\"q3pk3z6y1q5k89\""
+      },
+      "bytes": 259862,
+      "body_sha256": "2e62e0bd06b06871c5ab9b4e88e23a46a6fecf61a22df079a4eaedbb4277f506",
+      "json_type": "dict",
+      "top_keys": [
+        "general",
+        "header",
+        "nav",
+        "ongoing",
+        "hasPendingVAR",
+        "content",
+        "seo"
+      ],
+      "elapsed_ms": 122.3,
+      "completed_at": "2026-09-30T18:31:37.670686+00:00",
+      "xg_rows": [
+        {
+          "display": [
+            "1.05",
+            "1.23"
+          ]
+        },
+        {
+          "display": [
+            "0.20",
+            "0.67"
+          ]
+        },
+        {
+          "display": [
+            "0.85",
+            "0.56"
+          ]
+        }
+      ]
+    }
+  ]
+}

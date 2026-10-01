@@ -181,6 +181,8 @@ class EventService(QObject):
         An empty *valid* snapshot cancels that source's previous events. Network
         failures must preserve the last snapshot rather than publish an empty one.
         """
+        if getattr(self, "_closed", False):
+            return False
         changed = self._engine.replace_source(source, values)
         self._tick()
         return changed
@@ -310,6 +312,7 @@ class EventService(QObject):
         self._tick()
 
     def close(self) -> None:
+        self._closed = True
         self._banner_timer.stop()
         self._tick_timer.stop()
         self._poll_timer.stop()

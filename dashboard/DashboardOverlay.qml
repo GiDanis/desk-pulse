@@ -74,7 +74,8 @@ Item {
             delegate: Rectangle {
                 required property string modelData
                 required property int index
-                x: 0; y: 88 + index * 92; width: 872; height: 76; radius: 9
+                visible: index >= Math.floor(dashboard.settingsIndex / 3) * 3 && index < Math.floor(dashboard.settingsIndex / 3) * 3 + 3
+                x: 0; y: 88 + (index % 3) * 92; width: 872; height: 76; radius: 9
                 color: index === dashboard.settingsIndex ? "#28403f" : dashboard.panel
                 border.color: index === dashboard.settingsIndex ? dashboard.accent : dashboard.edge
                 border.width: index === dashboard.settingsIndex ? 3 : 1
@@ -94,7 +95,8 @@ Item {
                 required property var modelData
                 required property int index
                 objectName: "moduleRow" + index
-                x: 0; y: 125 + index * 94; width: 872; height: 78; radius: 9
+                visible: index >= Math.floor(dashboard.modulesIndex / 3) * 3 && index < Math.floor(dashboard.modulesIndex / 3) * 3 + 3
+                x: 0; y: 115 + (index % 3) * 76; width: 872; height: 66; radius: 9
                 color: index === dashboard.modulesIndex ? "#28403f" : dashboard.panel
                 border.color: index === dashboard.modulesIndex ? dashboard.accent : dashboard.edge
                 border.width: index === dashboard.modulesIndex ? 3 : 1
@@ -115,7 +117,8 @@ Item {
             text: "2/8 SELEZIONA     5 MOSTRA/NASCONDI     ·     OGGI RESTA SEMPRE VISIBILE"
             color: dashboard.muted; font.pixelSize: 21
         }
-        Text { visible: dashboard.overlay === "commands"; x: 0; y: 105; width: 850; text: "1 HOME     2 SU       3 AVVISI\n4 SINISTRA 5 OK       6 DESTRA\n7 INDIETRO 8 GIÙ      9 MENU"; color: dashboard.ink; font.pixelSize: 34; lineHeight: 1.7 }
+        Text { visible: dashboard.overlay === "settings"; x: 0; y: 405; text: "2/8 SELEZIONA · 5 APRI · PAGINA " + (Math.floor(dashboard.settingsIndex / 3) + 1) + "/" + Math.ceil(dashboard.settingsItems.length / 3); color: dashboard.muted; font.pixelSize: 23 }
+        Text { visible: dashboard.overlay === "commands"; x: 0; y: 105; width: 850; text: "1 INDIETRO  2 SU       3 AVVISI\n4 SINISTRA  5 OK       6 DESTRA\n7 HOME      8 GIÙ      9 MENU"; color: dashboard.ink; font.pixelSize: 34; lineHeight: 1.7 }
         Repeater {
             model: dashboard.systemLabels
             delegate: Rectangle {
@@ -145,7 +148,7 @@ Item {
             Text { x: 18; y: 14; text: "STATO"; color: dashboard.accent; font.pixelSize: 23; font.bold: true }
             Text {
                 x: 18; y: 53; width: 259
-                text: "Dashboard v0.5\nCPU " + (dashboard.dashboardState ? dashboard.dashboardState.systemState.data.cpuTemperature : "N/D") +
+                text: "Dashboard v0.6\nCPU " + (dashboard.dashboardState ? dashboard.dashboardState.systemState.data.cpuTemperature : "N/D") +
                       "\nRAM " + (dashboard.dashboardState ? dashboard.dashboardState.systemState.data.memoryUsage : "N/D") +
                       "\nAccesa da " + (dashboard.dashboardState ? dashboard.dashboardState.systemState.data.uptime : "N/D") +
                       "\nTastiera " + (dashboard.keypad && dashboard.keypad.connected ? "collegata" : "assente")
@@ -217,7 +220,7 @@ Item {
                   "Oggi · " + dashboard.dateText() + "\n" + dashboard.weatherStatus()
             color: dashboard.ink; font.pixelSize: 31; lineHeight: 1.5
         }
-        Text { x: 0; y: 522; text: "7  INDIETRO      1  HOME"; color: dashboard.accent; font.pixelSize: 27 }
+        Text { x: 0; y: 522; text: "1  INDIETRO      7  HOME"; color: dashboard.accent; font.pixelSize: 27 }
     }
 
 }

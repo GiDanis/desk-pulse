@@ -32,7 +32,7 @@ DEMO_WEATHER = {
 MIN_BRIGHTNESS = 20
 MAX_BRIGHTNESS = 100
 BRIGHTNESS_STEP = 5
-TOGGLEABLE_MODULES = ("meteo", "account")
+TOGGLEABLE_MODULES = ("meteo", "account", "sport", "f1", "motogp")
 
 
 def _account_threshold(name: str, default: int) -> int:
@@ -61,17 +61,21 @@ def _saved_bool(settings: QSettings, key: str, default: bool = True) -> bool:
 class DashboardState(QObject):
     weatherChanged = Signal()
     accountChanged = Signal()
+    sportChanged = Signal()
+    racingChanged = Signal()
     systemChanged = Signal()
     settingsChanged = Signal()
     eventChanged = Signal()
 
     def __init__(self, weather: QObject, system: QObject, account: QObject,
-                 events: EventService | None = None, demo: bool = False) -> None:
+                 events: EventService | None = None, demo: bool = False, sport: QObject | None = None, racing=None) -> None:
         super().__init__()
         self._weather = weather
         self._system = system
         self._account = account
         self._events = events
+        self._sport = sport
+        self._racing = racing or {}
         self._account_warning_percent = _account_threshold("SMARTPC_ACCOUNT_WARNING_PERCENT", 80)
         self._account_critical_percent = max(
             self._account_warning_percent,
@@ -110,6 +114,14 @@ class DashboardState(QObject):
             events.set_category_silenced("meteo", not self._weather_interruptions)
             events.set_category_silenced("account", not self._account_interruptions)
             events.changed.connect(self.eventChanged)
+        if sport is not None:
+            sport.changed.connect(self.sportChanged)
+            if events is not None:
+                sport.eventsChanged.connect(lambda values: events.publish_snapshot("sport", values))
+        for kind, service in self._racing.items():
+            service.changed.connect(self.racingChanged)
+            if events is not None:
+                service.eventsChanged.connect(lambda values, k=kind: events.publish_snapshot("sport_"+k, values))
         weather.changed.connect(self.weatherChanged)
         account.changed.connect(self.accountChanged)
         system.changed.connect(self.systemChanged)
@@ -150,6 +162,90 @@ class DashboardState(QObject):
             ], "credits": {"balance": "0", "unlimited": False}, "resetCredits": 3},
         )
 
+    @Property(bool, constant=True)
+    def sportAvailable(self) -> bool:
+        return self._sport is not None
+
+    @Property("QVariantMap", notify=sportChanged)
+    def sportState(self) -> dict[str, Any]:
+        return self._sport.moduleState if self._sport is not None else module_state(status="unavailable", source="FotMob / ESPN")
+
+    @Property('QVariantList', constant=True)
+    def racingAvailable(self):
+        return list(self._racing)
+
+    @Property('QVariantMap', notify=racingChanged)
+    def racingStates(self):
+        return {kind:service.moduleState for kind,service in self._racing.items()}
+
+    @Slot(str,str,str)
+    def selectRacing(self,kind,event_id,session_id):
+        if kind in self._racing:self._racing[kind].select(event_id,session_id)
+
+    @Slot(str,str,str,str)
+    def selectRacingDriver(self,kind,event_id,session_id,driver_id):
+        if kind in self._racing:self._racing[kind].selectDriver(event_id,session_id,driver_id)
+
+    @Slot(str)
+    def refreshRacingDetails(self,kind):
+        if kind in self._racing:self._racing[kind].refreshDetails()
+
+    @Slot(str)
+    def clearRacingSelection(self,kind):
+        if kind in self._racing:self._racing[kind].clearSelection()
+
+    @Slot(str,int,int)
+    def adjustRacingSetting(self,kind,row,direction):
+        if kind in self._racing:self._racing[kind].adjust(row,direction)
+
+    @Slot(str)
+    def selectSportMatch(self, identity: str) -> None:
+        if self._sport:
+            self._sport.selectMatch(identity)
+
+    @Slot(str)
+    def setSportFavourite(self, identity):
+        if self._sport: self._sport.setFavourite(identity)
+
+    @Slot(str)
+    def selectTeamMatch(self, identity):
+        if self._sport: self._sport.selectTeamMatch(identity)
+
+    @Slot()
+    def refreshSportTeam(self):
+        if self._sport: self._sport.refreshTeam()
+
+    @Slot()
+    def clearSportTeamSelection(self):
+        if self._sport: self._sport.clearTeamSelection()
+
+    @Slot(str)
+    def selectFantacalcio(self, identity):
+        if self._sport: self._sport.selectFantacalcio(identity)
+
+    @Slot()
+    def refreshFantacalcio(self):
+        if self._sport: self._sport.refreshFantacalcio()
+
+    @Slot()
+    def clearFantacalcio(self):
+        if self._sport: self._sport.clearFantacalcio()
+
+    @Slot(int, int)
+    def adjustSportSetting(self, row: int, direction: int) -> None:
+        if not self._sport:
+            return
+        if row == 0:
+            self._sport.cycleFavourite(direction)
+        elif row == 1:
+            self._sport.toggleHome()
+        elif row == 2:
+            self._sport.toggleGoals()
+        elif row == 3:
+            self._sport.cycleSeason(direction)
+        elif row == 4:
+            self._sport.refreshManual()
+
     @Property(int, constant=True)
     def accountWarningPercent(self) -> int:
         return self._account_warning_percent
@@ -160,7 +256,8 @@ class DashboardState(QObject):
 
     @Property("QVariantList", notify=settingsChanged)
     def visibleModules(self) -> list[str]:
-        return ["oggi"] + [module_id for module_id in TOGGLEABLE_MODULES if self._module_visible[module_id]]
+        return ["oggi"] + [module_id for module_id in TOGGLEABLE_MODULES
+                           if self._module_visible[module_id] and (module_id != "sport" or self._sport is not None) and (module_id not in ("f1","motogp") or module_id in self._racing)]
 
     @Slot(str)
     def toggleModuleVisibility(self, module_id: str) -> None:

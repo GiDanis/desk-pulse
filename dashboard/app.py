@@ -15,6 +15,8 @@ from account import AccountService
 from events import EventService
 from keypad import Keypad
 from state import DashboardState
+from sport import SportService
+from motorsport import MotorsportService
 from weather import WeatherService
 
 
@@ -119,7 +121,11 @@ def main() -> int:
     weather = WeatherService(auto_refresh=not demo)
     account = AccountService()
     events = EventService(path=":memory:" if demo else None, auto_refresh=not demo)
-    state = DashboardState(weather, system_info, account, events, demo=demo)
+    sport = SportService(auto_refresh=not demo) if not demo else None
+    racing = {kind: MotorsportService(kind) for kind in ('f1','motogp')} if not demo else {}
+    state = DashboardState(weather, system_info, account, events, demo=demo, sport=sport, racing=racing)
+    if sport: application.aboutToQuit.connect(sport.close)
+    for service in racing.values(): application.aboutToQuit.connect(service.close)
     if not demo:
         def update_account_events() -> None:
             events.ingest_account(account.moduleState, state.accountWarningPercent,

@@ -1,150 +1,147 @@
-# DeskPulse ⚡ (Italiano)
+# DeskPulse OS ⚡ (Italiano)
 
 <p align="center">
-  <b>Appliance da scrivania sempre attivo e dashboard smart per Orange Pi Zero 3W e display Hagibis 960×640 USB-C.</b>
+  <b>Il Sistema Operativo Ambientale Open-Source per Display da Scrivania e Single Board Computer.</b>
   <br>
-  <i>Interfaccia nativa Qt 6 Quick / QML con rendering diretto su DRM/KMS tramite EGLFS a 60 FPS stabili. Senza overhead X11. Senza lentezze Electron.</i>
+  <i>Accelerato su GPU a 60 FPS stabili direttamente su DRM/KMS tramite Qt 6 Quick / EGLFS. Zero overhead X11. Zero lag Electron. Solo <90 MB di RAM.</i>
 </p>
 
 ---
 
-## 📸 Schermate & Design
+## 🌟 Che cos'è DeskPulse OS?
 
-| **Home Dinamica (Ora & Prossimo Evento)** | **Meteo Live & Previsioni a 3 Giorni** |
+**DeskPulse OS** trasforma un economico single-board computer da 15–25 € (Orange Pi Zero 3W, Raspberry Pi, Radxa) abbinato a un mini monitor da scrivania (come l'Hagibis 3.5" IPS USB-C 960×640) in un vero e proprio **sistema operativo appliance sempre attivo**.
+
+Invece di far girare un pesante ambiente desktop con browser web (kiosk Chromium), DeskPulse OS esegue direttamente a livello kernel un compositore grafico QML su GPU. Funziona 24/7 come centro di controllo compatto per ora, meteo, monitoraggio crediti AI/ChatGPT, Serie A con Fantacalcio, telemetria Formula 1 e MotoGP—con risposta istantanea e comandi fisici tattili.
+
+---
+
+## 📸 Gli Spazi di Lavoro (v0.6)
+
+Un carosello a 6 spazi di lavoro fluidi, navigabili in orizzontale e verticale:
+
+| **Orologio Ambient & Shell di Sistema** | **Meteo Live & Previsioni a 3 Giorni** |
 |:---:|:---:|
-| ![Home Screen](dashboard/preview-v03.png) | ![Meteo Screen](dashboard/design/v03-meteo-preview.png) |
-| **Menu Rapido di Sistema** | **Impostazioni Schermo & Luminosità** |
-| ![Menu Overlay](dashboard/design/v03-system-menu-board.png) | ![Settings Screen](dashboard/design/v03-system-settings-board.png) |
+| ![Ambient Clock Shell](dashboard/preview-v03.png) | ![Weather Station](dashboard/design/v03-meteo-preview.png) |
+| **Command Center Formula 1** | **Monitor Campionato MotoGP** |
+| ![F1 Grand Prix Weekend](dashboard/design/evidence/v06-motorsport/f1-programme.png) | ![MotoGP Championship](dashboard/design/evidence/v06-motorsport/motogp-standings.png) |
+| **Arena Serie A & Squadra del Cuore** | **Assistente Fantacalcio con Voti Live** |
+| ![Football Hub](dashboard/design/evidence/v06-favourite-team/team-summary.png) | ![Fantacalcio Ratings](dashboard/design/evidence/v06-fantacalcio/fantacalcio-home-starters.png) |
 
 ---
 
-## ⚡ Perché DeskPulse?
+## ⚡ Perché un OS Dedicato da Scrivania?
 
-Molti progetti di smart display fai-da-te utilizzano browser pesanti (Chromium/Electron) o ROM Android sovradimensionate. Su piccoli computer a scheda singola (SBC) questo causa surriscaldamento, rallentamenti, avvii lenti ed eccessiva usura della scheda microSD.
-
-DeskPulse è progettato da zero per la **massima affidabilità come appliance embedded**:
-
-| Parametro | ⚡ **DeskPulse (EGLFS/KMS nativo)** | 🐢 **Kiosk Web / Electron** |
+| Parametro | ⚡ **DeskPulse OS (Nativo EGLFS/KMS)** | 🐢 **Kiosk Web / Electron** |
 | :--- | :--- | :--- |
-| **Tempo di Boot** | **~18 secondi** (da bootloader alla UI) | 60–90+ secondi (desktop + browser) |
-| **Consumo RAM** | **< 90 MB** | 650 MB – 1.2 GB+ |
-| **Fluidità / Frame Rate** | **60 FPS stabili** (accelerazione hardware PowerVR) | 15–30 FPS con scatti visibili |
-| **Latenza Input** | **Istantanea (polling kernel evdev)** | Dipendente dall'event loop JS |
-| **Usura MicroSD** | **Minima** (commit fs personalizzati, tmpfs, zram, log limitati) | Elevata per cache continua del browser |
-| **Resilienza Offline** | **Totale** (cache atomica, fallback, zero blocchi) | Errori di caricamento / reload infiniti |
+| **Avvio a Freddo** | **~18 secondi** (da systemd al display) | 60–90+ secondi (desktop + browser) |
+| **Consumo RAM** | **< 90 MB** (98% della RAM libera!) | 650 MB – 1.2 GB+ |
+| **Fluidità / Framerate** | **60 FPS stabili** (vsync GPU PowerVR) | 15–30 FPS con scatti visibili |
+| **Latenza di Input** | **Istantanea (polling kernel Linux evdev)** | Dipendente dall'event loop di JS |
+| **Protezione MicroSD** | **Commit a 30s, tmpfs, zram, zero scritture inutili** | Scritture disco elevate che usurano la SD |
+| **Resilienza Offline** | **100% resiliente** (cache atomica persistente) | Schermate bianche o tentativi a vuoto |
+| **Costi API** | **€0 / Zero API key** (Open-Meteo, Jolpica, PulseLive) | API a pagamento o quote restrittive |
 
 ---
 
-## 🛒 Hardware Necessario
+## 🏗️ Architettura di Sistema
 
-Puoi realizzare l'intero sistema con una spesa di circa **35–45 €**:
-
-1. **SBC:** Orange Pi Zero 3W (Allwinner H618 / sun60iw2, 1GB–4GB RAM, GPU PowerVR BXM-4-64).
-2. **Display:** Hagibis 3.5" IPS USB-C Monitor (risoluzione nativa 960×640, 60 Hz, DisplayPort Alt Mode via USB-C).
-3. **Controller:** Mini tastierino macro USB a 9 tasti (ID USB `413d:553a`) o qualsiasi tastiera standard.
-4. **Memoria:** MicroSD da 16GB–32GB Classe 10 / A1.
-5. **Cavi:** Cavo USB-C con supporto video DP Alt Mode + alimentatore 5V/2A per la scheda.
+```text
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            DeskPulse OS Shell                               │
+│  [Orologio]  •  [Meteo]  •  [AI/Codex]  •  [Serie A]  •  [F1]  •  [MotoGP]  │
+├─────────────────────────────────────────────────────────────────────────────┤
+│               Compositore Accelerato su GPU Qt 6 Quick / QML                │
+│                60 FPS Hardware VSync via GPU PowerVR BXM-4-64               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                    Piano Grafico Diretto DRM/KMS (EGLFS)                    │
+│            (Bypassa X11 e Wayland • Gestione diretta input evdev)           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│             Kernel Linux 6.6 con Patch Hardware DP-AltMode PLL              │
+│       Protezione MicroSD (swap zram, tmpfs in /tmp, commit fs a 30s)        │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## 🚀 Installazione Chiavi in Mano
+## 🚀 I Moduli di DeskPulse OS (v0.6)
 
-### 1. Sistema Operativo di Base
-DeskPulse gira su Debian 13 (Trixie) o Armbian Minimal.
-- Puoi scrivere la scheda SD dal PC con il tool sicuro:
-  ```bash
-  sudo ./scripts/flash-sd.sh /percorso/a/immagine.img /dev/sdX
-  ```
-- Oppure configurare Wi-Fi headless e chiavi SSH prima del primo avvio:
-  ```bash
-  sudo ./scripts/configure-wifi-local.py
-  ```
+1. **🕒 Home & Orologio Ambient:** Tipografia ad alto contrasto per visione da scrivania. Mostra automaticamente la card dell'evento o allerta meteo futura solo quando presente.
+2. **⛅ Stazione Meteo Live:** Dati orari e previsione a 3 giorni via Open-Meteo con cache atomica locale offline.
+3. **🤖 Monitor Quote AI & Codex:** Percentuale finestre ChatGPT, orari di ripristino e saldo crediti sincronizzati in sicurezza via SSH dal PC locale.
+4. **⚽ Hub Serie A & Squadra del Cuore:** Calendario completo, classifica a 20 squadre, formazioni ufficiali, statistiche e modulo **Fantacalcio** con titolari, panchinari e pagelle/voti della Redazione.
+5. **🏎️ Command Center Formula 1:** Calendario GP con fusi italiani, classifiche Piloti e Costruttori (Jolpica), dettagli stint/gomme (OpenF1) e **live timing SignalR WebSocket** in tempo reale via QtWebSockets.
+6. **🏍️ Paddock MotoGP:** Calendario, caratteristiche circuiti, classifiche Sprint e Gara e classifica mondiale piloti (PulseLive).
 
-### 2. Installazione Automatica sulla Scheda
-Una volta effettuato l'accesso SSH sulla tua Orange Pi:
+---
+
+## 🛒 Hardware Necessario (~35–45 €)
+
+1. **SBC:** Orange Pi Zero 3W (Allwinner H618, 1GB–4GB RAM, GPU PowerVR). Compatibile con altre board Linux ARM64.
+2. **Display:** Monitor USB-C Hagibis 3.5" IPS (960×640 a 60 Hz con DisplayPort Alt Mode).
+3. **Controller:** Mini tastierino USB 9 tasti (ID `413d:553a`) o normale tastiera.
+4. **Memoria:** Scheda MicroSD da 16GB–32GB Classe 10 / A1.
+5. **Cavi:** Cavo USB-C con supporto video DP + alimentazione per lo schermo, alimentatore 5V/2A per la scheda.
+
+---
+
+## ⚡ Installazione Chiavi in Mano
+
+### 1. Sistema Operativo Base
+Installa Debian 13 o Armbian Minimal sulla scheda SD:
 ```bash
-# Clona il repository
+sudo ./scripts/flash-sd.sh /percorso/immagine.img /dev/sdX
+```
+Configura Wi-Fi headless e chiavi SSH prima dell'avvio:
+```bash
+sudo ./scripts/configure-wifi-local.py
+```
+
+### 2. Setup Automatico sulla Scheda
+Accedi via SSH alla tua Orange Pi ed esegui:
+```bash
 git clone https://github.com/GiDanis/desk-pulse.git
 cd desk-pulse
-
-# Esegui l'installer automatico
 sudo ./scripts/setup-board.sh
 ```
 
-Lo script `setup-board.sh`:
-- Installa Qt 6 Quick, PySide6, driver DRM/KMS e tutte le dipendenze.
-- Crea l'utente di sistema dedicato `smartpc` con i permessi per `/dev/dri/card0` e `/dev/input`.
-- Configura `/etc/smartpc/eglfs-kms.json` per il rendering diretto su GPU.
-- Installa e abilita il servizio systemd `smartpc-dashboard.service`.
-- Disabilita display manager non necessari (LightDM) per liberare memoria.
+Lo script installa tutte le librerie Qt6, PySide6, QtWebSockets, configura l'utente `smartpc` e abilita l'avvio automatico del servizio al boot.
 
 ---
 
-## 💻 Test in Locale su PC
+## 🎮 Comandi & Navigazione Tastierino
 
-Puoi avviare la dashboard direttamente sul tuo computer Linux per provarla o sviluppare nuovi moduli:
-
-```bash
-# Installa dipendenze
-pip install PySide6 requests
-
-# Avvia finestra desktop (960x640)
-./dashboard/run.sh --desktop
-
-# Oppure avvia in modalità demo con eventi simulati
-./dashboard/run.sh --demo
-```
-
----
-
-## 🎮 Controlli & Navigazione
-
-La navigazione a due assi è studiata sia per il tastierino 3×3 fisico sia per le frecce della tastiera:
+Progettato per mini tastierino a matrice 3×3 o frecce della tastiera:
 
 ```text
 ┌──────────────┬──────────────┬──────────────┐
-│    1 Home    │     2 Su     │   3 Avvisi   │
+│  1 Indietro  │     2 Su     │   3 Avvisi   │
 ├──────────────┼──────────────┼──────────────┤
-│  4 Sinistra  │   5 OK/Invio │   6 Destra   │
+│  4 Sinistra  │  5 Seleziona │   6 Destra   │
 ├──────────────┼──────────────┼──────────────┤
-│  7 Indietro  │    8 Giù     │    9 Menu    │
+│    7 Home    │    8 Giù     │    9 Menu    │
 └──────────────┴──────────────┴──────────────┘
 ```
 
-- **Carosello Orizzontale (Tasti 4 / 6):** Oggi (Home) ↔ Meteo Live ↔ Monitor AI / ChatGPT.
-- **Navigazione Verticale (Tasti 2 / 8):** Approfondimento nelle viste dei moduli:
-  - *Oggi:* Orologio grande ↕ Panoramica giornata.
-  - *Meteo:* Condizioni attuali ↕ Previsioni a 3 giorni.
-- **Menu (Tasto 9):**
-  - **Aspetto:** Temi (Auto / Giorno / Notte), Luminosità (manuale e fasce orarie automatiche).
-  - **Moduli Visibili:** Mostra o nascondi i singoli moduli (scelta salvata tra i riavvii).
-  - **Diagnostica:** FPS effettivi della GPU, temperature e carico di sistema.
+- **Carosello Orizzontale (Tasti 4 / 6):** Oggi ↔ Meteo ↔ AI/Codex ↔ Serie A ↔ F1 ↔ MotoGP.
+- **Navigazione Verticale (Tasti 2 / 8):** Viste di dettaglio (es. Calendario ↕ Classifica ↕ Risultati).
+- **Azione / Aggiorna (Tasto 5):** Apre i dettagli dell'incontro/GP o forza un aggiornamento dati.
+- **Tasto Rapido Home (Tasto 7):** Torna istantaneamente all'orologio principale da qualsiasi profondità.
+- **Menu di Sistema (Tasto 9):** Regolazione aspetto (temi, orari luminosità automatica), moduli visibili e diagnostica GPU/CPU.
 
 ---
 
-## 🛰️ Sincronizzazione PC & Monitor ChatGPT / Codex
+## 🗺️ Roadmap Prossime Versioni
 
-DeskPulse include un monitor delle quote di utilizzo AI & Codex. Interroga il server locale Codex App sul tuo PC e invia le statistiche alla board via SSH **senza trasmettere token privati, chiavi API o identificativi personali**:
-
-Installa il timer systemd sul tuo PC di lavoro per sincronizzare i dati ogni 10 minuti:
-```bash
-cp dashboard/systemd/smartpc-account-sync.* ~/.config/systemd/user/
-systemctl --user daemon-reload
-systemctl --user enable --now smartpc-account-sync.timer
-```
-
----
-
-## 🔧 Patch Kernel: USB-C DisplayPort Alt Mode
-
-Il monitor Hagibis 3.5" richiede il DisplayPort Alt Mode via USB-C. Su Allwinner H618 (sun60iw2), il kernel vendor originale presenta un clock CMN PLL1 non abilitato che provoca timeout nel link training DP.
-
-DeskPulse include la patch funzionante e verificata in [`os/kernel-patches/`](os/kernel-patches/):
-- `0001-sun60iw2-enable-cmn-pll-for-dp-altmode.patch`: Abilita il clock del PHY in `combo0_configure_usb_dp()`.
-- Consente al link DP di agganciare stabilmente i 5.4 Gbit/s a 960×640 @ 60 Hz.
+- [x] **v0.4:** Compositore diretto EGLFS/KMS, Home dinamica, Meteo Open-Meteo.
+- [x] **v0.5:** Motore eventi persistente, allerte Protezione Civile, badge notifiche.
+- [x] **v0.6:** Hub Serie A, Squadra del Cuore, Fantacalcio, F1 & MotoGP con telemetria live SignalR.
+- [ ] **v0.7:** **Smart Home Dashboard** — Integrazione nativa locale Tuya & Home Assistant.
+- [ ] **v0.8:** **Spotify Connect & Media Player** — Copertina album e controlli musicali fisici.
+- [ ] **v0.9:** **PC Hardware Telemetry HUD** — Temperature CPU/GPU del PC da lavoro inviate via LAN.
 
 ---
 
 ## 📄 Licenza
 
-Distribuito sotto Licenza MIT. Consulta [LICENSE](LICENSE) per tutti i dettagli.
+Distribuito sotto Licenza MIT. Consulta il file [LICENSE](LICENSE) per ulteriori dettagli.

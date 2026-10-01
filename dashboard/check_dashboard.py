@@ -82,7 +82,7 @@ def main() -> None:
     assert window.property("family") == 1
     assert visible_screen() == "weatherNow"
     press(8, True)
-    assert window.property("viewIndex").toVariant() == [0, 1, 0]
+    assert window.property("viewIndex").toVariant() == [0, 1, 0, 0, 0, 0]
     assert visible_screen() == "weatherForecast"
     press(4, True)
     assert window.property("family") == 0
@@ -92,7 +92,7 @@ def main() -> None:
     press(2, True)
     assert visible_screen() == "homeNow"
     press(6, True)
-    assert window.property("viewIndex").toVariant() == [0, 1, 0]
+    assert window.property("viewIndex").toVariant() == [0, 1, 0, 0, 0, 0]
     press(5)
     press(9)
     press(3)

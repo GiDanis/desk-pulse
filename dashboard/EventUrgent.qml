@@ -39,7 +39,7 @@ Item {
     Rectangle { x: 44; y: 526; width: 872; height: 2; color: dashboard.edge }
     Text {
         x: 44; y: 552; width: 872
-        text: "5 DETTAGLI          7 CHIUDI          1 HOME"
+        text: "5 DETTAGLI          1 CHIUDI          7 HOME"
         color: dashboard.accent; font.pixelSize: 27
     }
 }
