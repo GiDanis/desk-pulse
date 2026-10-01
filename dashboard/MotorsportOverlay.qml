@@ -19,7 +19,7 @@ Item {
     readonly property var session: dashboard.racingSession
     readonly property var rows: timing ? ((racingInfo.live || {}).rows || []) : dashboard.racingRows
     readonly property int pageStart: Math.floor(Math.max(0, dashboard.racingIndex) / 3) * 3
-    function settingValue(index) { return index === 0 ? "" + (racingInfo.selectedYear || racingInfo.year || "—") : index === 1 ? (racingInfo.showOnHome ? "ATTIVO" : "DISATTIVO") : "AGGIORNA" }
+    function settingValue(index) { return index === 0 ? "" + (racingInfo.selectedYear || racingInfo.year || "—") : index === 1 ? (racingInfo.showOnHome ? "ATTIVO" : "DISATTIVO") : "APRI" }
     function acquired(seconds) { return seconds ? new Date(seconds * 1000).toLocaleString(Qt.locale("it_IT"), "dd/MM hh:mm") : "" }
     function sourceFooter() {
         if (racingInfo.detailLoading) return "Aggiornamento…"
@@ -66,7 +66,7 @@ Item {
             Text { visible: root.table || root.timing; x: 688; y: 29; width: 167; horizontalAlignment: Text.AlignRight; text: modelData.value || "—"; color: dashboard.accent; font.pixelSize: 29; font.bold: true; elide: Text.ElideRight }
         }
     }
-    Text { visible: !settings && !detail && !infoPage && !root.rows.length; x: 44; y: 210; width: 872; text: root.programme ? "Programma non ancora pubblicato.\nPuoi aggiornare i dati dalle impostazioni dello sport." : "Dati non disponibili"; color: dashboard.muted; font.pixelSize: 29; wrapMode: Text.WordWrap }
+    Text { visible: !settings && !detail && !infoPage && !root.rows.length; x: 44; y: 210; width: 872; text: root.programme ? "Programma non ancora pubblicato.\nAggiorna da Impostazioni › Dati e aggiornamenti." : "Dati non disponibili"; color: dashboard.muted; font.pixelSize: 29; wrapMode: Text.WordWrap }
     Text { visible: !settings && !detail && !infoPage; x: 44; y: 502; width: 872; text: root.rows.length ? (dashboard.racingIndex + 1) + "/" + root.rows.length + " · 2/8 SCORRI" + (root.eventList || root.programme || root.timing ? " · 5 APRI" : root.table && dashboard.familyId === "f1" ? " · 4/6 PILOTI / COSTRUTTORI" : "") : ""; color: dashboard.muted; font.pixelSize: 23 }
     Item {
         visible: root.detail; x: 44; y: 195; width: 872; height: 332
@@ -106,7 +106,7 @@ Item {
         Text { y: 307; width: 872; text: root.infoRows.length ? (root.infoIndex + 1) + "/" + root.infoRows.length + " · 2/8 SCORRI" + (root.driver && dashboard.racingDriverPane === "GIRI" && dashboard.racingDriver.lapTimesPartial ? " · ELENCO PARZIALE" : "") : ""; color: dashboard.muted; font.pixelSize: 22 }
     }
     Repeater {
-        model: root.settings ? ["Stagione", "Prossima gara in Home", "Dati dello sport"] : []
+        model: root.settings ? ["Stagione", "Prossima gara in Home", "Dati e aggiornamenti"] : []
         delegate: Rectangle {
             required property string modelData
             required property int index
@@ -115,7 +115,7 @@ Item {
             Text { x: 580; width: 274; anchors.verticalCenter: parent.verticalCenter; horizontalAlignment: Text.AlignRight; text: root.settingValue(index); color: dashboard.accent; font.pixelSize: 28 }
         }
     }
-    Text { visible: settings; x: 44; y: 427; width: 872; text: "2/8 SELEZIONA · 4/6 REGOLA · 5 CAMBIA\nCalendario, risultati e classifiche salvati sul dispositivo."; color: dashboard.muted; font.pixelSize: 23; lineHeight: 1.4 }
+    Text { visible: settings; x: 44; y: 427; width: 872; text: dashboard.racingSettingsIndex === 2 ? "5 APRI DATI E AGGIORNAMENTI\nUn unico menu per aggiornare tutte le fonti." : "2/8 SELEZIONA · 4/6 REGOLA · 5 CAMBIA\nCalendario, risultati e classifiche salvati sul dispositivo."; color: dashboard.muted; font.pixelSize: 23; lineHeight: 1.4 }
     Text { objectName: "racingFooter"; visible: !settings; x: 44; y: 551; width: 872; text: root.sourceFooter(); color: dashboard.muted; font.pixelSize: 21; elide: Text.ElideRight }
     Text { x: 44; y: 592; text: (root.tabs.length > 1 ? "4/6 SCHEDE · " : "") + (root.driver && !dashboard.racingDriverLive || root.detail && dashboard.racingDetailPage === 1 || root.programme && dashboard.racingEventPage > 0 ? "5 AGGIORNA · " : "") + "1 INDIETRO · 7 HOME"; color: dashboard.accent; font.pixelSize: 23 }
 }

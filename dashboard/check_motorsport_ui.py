@@ -6,7 +6,6 @@ import os
 from pathlib import Path
 import tempfile
 import time
-from unittest.mock import patch
 
 os.environ["XDG_CONFIG_HOME"] = tempfile.mkdtemp(prefix="smartpc-racing-ui-")
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
@@ -215,6 +214,10 @@ def main():
     # rows available without a Live badge or an unsolicited page jump.
     press(4)
     f1 = services["f1"]
+    # This phase injects a connected stream into a service with auto-refresh
+    # disabled. Its normal age tick correctly calls ensure(False), which would
+    # disconnect that synthetic stream at an arbitrary point between keypresses.
+    f1._age.stop()
     f1._offline = False
     f1._error = ""
     now = time.time()
@@ -262,6 +265,7 @@ def main():
     assert (
         value("racingView") == "IN CORSO" and not value("racingData")["live"]["active"]
     )
+    f1._age.start()
     press(6)
     press(9)
     press(8)
@@ -270,6 +274,10 @@ def main():
     for _ in range(5):
         press(8)
     assert value("settingsIndex") == 5
+    press(5)
+    assert value("overlay") == "integrations"
+    press(8)
+    press(8)
     press(5)
     assert (
         value("overlay") == "racingSettings" and value("racingSettingsKind") == "motogp"

@@ -231,7 +231,3 @@ class BulletinProvider:
         cache_error = self._save(payload)
         return BulletinSnapshot(snapshot.events, snapshot.key, snapshot.fetched_at,
                                 snapshot.checked_at, False, unchanged, cache_error)
-
-
-def fetch_alerts(now: float) -> list[dict[str, Any]]:
-    return BulletinProvider(default_bulletin_cache_path()).refresh(now).events

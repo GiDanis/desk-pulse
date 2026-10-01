@@ -19,7 +19,7 @@ args = parser.parse_args()
 root = Path(args.directory)
 root.mkdir(parents=True, exist_ok=True)
 os.environ['XDG_CONFIG_HOME'] = tempfile.mkdtemp(prefix='smartpc-v06-render-')
-from sport_core import HTTPClient, FOTMOB, ESPN, read_cache, refresh_snapshot, refresh_detail, save_cache
+from sport_core import HTTPClient, read_cache, refresh_snapshot, refresh_detail, save_cache
 
 if args.mode == 'fetch':
     client = HTTPClient()
@@ -190,7 +190,7 @@ def table():
     keypad.keyPressed.emit(7)
     keypad.keyPressed.emit(9)
     window.setProperty('menuIndex',1);keypad.keyPressed.emit(5)
-    window.setProperty('settingsIndex',3);keypad.keyPressed.emit(5)
+    window.setProperty('settingsIndex',5);keypad.keyPressed.emit(5);keypad.keyPressed.emit(5)
     QTimer.singleShot(150,settings)
 def settings():
     capture('sport-settings.png')

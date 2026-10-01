@@ -15,15 +15,16 @@ from PySide6.QtCore import (
 )
 from module_state import module_state
 from fantacalcio_core import (
-    Client,
     SOURCE,
     page_key,
     eligible,
     presentation,
+    selected_teams,
     read_cache,
     save_cache,
 )
 from sport_core import ProviderError
+from fantacalcio_live import FantasyClient, live_window
 
 
 class Signals(QObject):
@@ -31,7 +32,7 @@ class Signals(QObject):
 
 
 class Worker(QRunnable):
-    def __init__(self, client, key, path, offline, ttl):
+    def __init__(self, client, key, path, offline, ttl, match=None):
         super().__init__()
         self.signals = Signals()
         self.client = client
@@ -39,17 +40,25 @@ class Worker(QRunnable):
         self.path = path
         self.offline = offline
         self.ttl = ttl
+        self.match = deepcopy(match or {})
         self.cache_error = ""
 
     def run(self):
         try:
             if self.offline:
                 raise ProviderError("Rete Fantacalcio disabilitata")
-            page = self.client.get(self.key, self.ttl)
-            try:
-                save_cache(self.path, page)
-            except (OSError, ValueError):
-                self.cache_error = "Cache voti non salvata"
+            page = (
+                self.client.get_for_match(self.key, self.ttl, self.match)
+                if hasattr(self.client, "get_for_match")
+                else self.client.get(self.key, self.ttl)
+            )
+            if not page.get("provisional"):
+                try:
+                    historical = deepcopy(page)
+                    historical.pop("liveNotice", None)
+                    save_cache(self.path, historical)
+                except (OSError, ValueError):
+                    self.cache_error = "Cache voti non salvata"
             self.signals.finished.emit(page, None)
         except Exception as error:
             self.signals.finished.emit(None, error)
@@ -63,10 +72,11 @@ class FantacalcioService(QObject):
         self.directory = Path(directory)
         self.auto = auto_refresh
         self.closed = False
-        self.client = Client()
+        self.client = FantasyClient(self.directory)
         self.match = {}
         self.key = ""
         self.page = None
+        self.live_page = None
         self.from_cache = False
         self.error = ""
         self.cache_error = ""
@@ -86,8 +96,8 @@ class FantacalcioService(QObject):
         return self.directory / ("fantacalcio-" + key.replace("/", "-") + ".json")
 
     def interval(self):
-        if self.match.get("status") in ("live", "half_time"):
-            return 90
+        if live_window(self.match):
+            return 30
         kickoff = self.match.get("kickoffUtc") or 0
         return 300 if kickoff and time.time() - kickoff < 86400 else 21600
 
@@ -98,39 +108,57 @@ class FantacalcioService(QObject):
             self.timer.stop()
             self.key = key
             self.page = read_cache(self.path(key), key) if key else None
+            self.live_page = None
             self.from_cache = bool(self.page)
             self.error = ""
             self.cache_error = ""
             self.failures = 0
         self.changed.emit()
+        current_page = self.display_page()
         if (
             self.auto
             and key
-            and self.match.get("status") in ("live", "half_time", "finished")
             and (
-                not self.page
+                live_window(self.match)
+                or self.match.get("status") in ("live", "half_time", "finished")
+            )
+            and (
+                not current_page
                 or self.from_cache
-                or time.time() - self.page["fetchedAt"] >= self.interval()
+                and not current_page.get("provisional")
+                or time.time() - current_page["fetchedAt"] >= self.interval()
             )
         ):
             self.refresh()
 
+    def display_page(self):
+        if (
+            self.live_page
+            and live_window(self.match)
+            and time.time() - self.live_page["fetchedAt"] <= 120
+            and len(selected_teams(self.live_page, self.match)) == 2
+        ):
+            return self.live_page
+        return self.page
+
     @Property("QVariantMap", notify=changed)
     def moduleState(self):
-        data = presentation(self.page, self.match)
-        at = self.page.get("fetchedAt", 0) if self.page else 0
+        page = self.display_page()
+        data = presentation(page, self.match)
+        at = page.get("fetchedAt", 0) if page else 0
         data.update(
             selectedMatchId=self.match.get("canonicalMatchId", ""),
             loading=bool(self.worker),
-            fromCache=self.from_cache,
+            fromCache=self.from_cache and not data.get("provisional"),
             cacheError=self.cache_error,
         )
         data["message"] = (
             "Voti disponibili solo per le partite di Serie A."
             if not eligible(self.match)
             else (
-                "Formazioni e voti saranno disponibili dopo la pubblicazione."
+                "Formazioni disponibili vicino al calcio d’inizio; voti durante la partita."
                 if self.match.get("status") == "scheduled"
+                and not live_window(self.match)
                 else (
                     "Attendo la giornata dal dettaglio della partita."
                     if not self.key
@@ -144,7 +172,7 @@ class FantacalcioService(QObject):
         )
         status = (
             "offline"
-            if self.error and self.page
+            if self.error and page
             else (
                 "error"
                 if self.error
@@ -153,9 +181,9 @@ class FantacalcioService(QObject):
                     if self.worker
                     else (
                         "stale"
-                        if self.page
-                        and (self.from_cache or time.time() - at > self.interval())
-                        else "active" if self.page else "unavailable"
+                        if page
+                        and (data["fromCache"] or time.time() - at > self.interval())
+                        else "active" if page else "unavailable"
                     )
                 )
             )
@@ -171,11 +199,19 @@ class FantacalcioService(QObject):
         if (
             self.worker
             or not self.key
-            or self.match.get("status") not in ("live", "half_time", "finished")
+            or not (
+                live_window(self.match)
+                or self.match.get("status") in ("live", "half_time", "finished")
+            )
         ):
             return
         w = Worker(
-            self.client, self.key, self.path(self.key), self.offline, self.interval()
+            self.client,
+            self.key,
+            self.path(self.key),
+            self.offline,
+            self.interval(),
+            self.match,
         )
         w.signals.finished.connect(self._finished)
         self.worker = w
@@ -189,6 +225,8 @@ class FantacalcioService(QObject):
         # Bypass the short memory TTL, retaining valid disk data on failure.
         if hasattr(self.client, "pages"):
             self.client.pages.pop(self.key, None)
+        if hasattr(self.client, "live"):
+            self.client.live.pages.pop(self.key, None)
         self.refresh()
 
     @Slot(object, object)
@@ -202,7 +240,14 @@ class FantacalcioService(QObject):
                 self.refresh()
             return
         if page:
-            self.page = page
+            if page.get("provisional"):
+                self.live_page = page
+            else:
+                self.page = page
+                if self.match.get("status") == "finished" and presentation(
+                    page, self.match
+                ).get("published"):
+                    self.live_page = None
             self.from_cache = False
             self.error = ""
             self.cache_error = w.cache_error
@@ -227,6 +272,7 @@ class FantacalcioService(QObject):
         self.match = {}
         self.key = ""
         self.page = None
+        self.live_page = None
         self.from_cache = False
         self.error = ""
         self.cache_error = ""

@@ -1,6 +1,5 @@
 """Editorial source, match identity, player joins and vote/cache semantics."""
 
-from copy import deepcopy
 import json
 from pathlib import Path
 import tempfile

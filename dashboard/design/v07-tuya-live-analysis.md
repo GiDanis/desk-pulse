@@ -1,51 +1,62 @@
-# v0.7 Casa · analisi delle prime chiamate reali
+# v0.7 Casa · verifica delle chiamate reali
 
-**Data: 1 ottobre 2026. Stato: autenticazione verificata; analisi dei dispositivi ancora incompleta.**
+**1 ottobre 2026. Stato aggiornato: accesso API riuscito, 16 dispositivi rilevati e specifiche/stati letti per quattro dispositivi.** Il provider periodico e la schermata Casa restano da implementare; affidabilità fisica, propagazione delle modifiche e quote non sono ancora collaudate.
 
-Le credenziali fornite dall'utente erano state inserite nella guida Markdown. Client ID, Client Secret e Project Code sono stati trasferiti nel file privato `/home/giuseppe/.config/smartpc/tuya-cloud.json`, con permessi `600`, e rimossi dalla guida. Nessuna chiave o token è riportata qui o negli output diagnostici. Non sono state copiate credenziali sulla Orange Pi.
+## Problemi identificati e risolti
 
-## Risultati reali
+L'UID inizialmente configurato non coincideva con quello degli account collegati. L'API diagnostica ha restituito un elenco completo di 16 dispositivi con un solo UID: è stato usato quell'UID per correggere il file privato. Non sono stati salvati identificativi o credenziali in questo documento. L'UID del token del progetto e l'UID dell'account configurato erano diversi; non abbiamo usato l'UID del token come sostituto di quello dell'app.
 
-| Prova | Esito osservato |
-| --- | --- |
-| Token su Western Europe | Ottenuto; firma e credenziali accettate |
-| Token su Central Europe | Ottenuto; firma e credenziali accettate |
-| Refresh token su Western Europe | Rinnovo reale riuscito, senza token di business nella firma |
-| Lettura diagnostica dei dispositivi degli account collegati | Rifiutata sui due endpoint europei con `28841107` |
-| Motivo indicato dalla risposta Tuya | Data center sospeso; richiesta di abilitarlo nella piattaforma cloud |
-| Inventario completo filtrato per UID su Central Europe | Tentato dopo la configurazione fornita dall'utente; rifiutato con `28841107`, data center ancora sospeso |
-| Specifiche e stati di dispositivi | Non eseguiti: elenco non disponibile |
-| Comandi ai dispositivi | Nessuno |
+Dopo questa correzione funzionano sia l'inventario generale con filtro `tuyaUser`, sia l'inventario specifico Smart Home: entrambi restituiscono 16 dispositivi. La query delle case restituisce una casa. Il precedente `28841107` (data center sospeso) non compare più nelle nuove prove. Nella prima serie di questo controllo le API per UID restituivano invece `1106`; dopo aver corretto l'UID, le stesse chiamate sono riuscite. La diagnosi non può quindi essere ridotta al solo stato del data center.
 
-Eseguite **13 richieste reali di sola lettura/autenticazione**: sei richieste di token iniziale, un refresh, quattro letture diagnostiche e due letture dell'inventario per UID su Central Europe. Il token non viene persistito. La lettura diagnostica ha usato `GET /v1.0/iot-01/associated-users/devices`, documentata da Tuya per gli account associati al progetto, con limite di una pagina. Non è un fallback attivato nel provider e non è stata salvata una risposta grezza. [API diagnostica](https://developer.tuya.com/en/docs/cloud/fc19523d18?id=Kakr4p8nq5xsc).
+Un confronto indipendente con la funzione `_calculate_sign` del connector ufficiale ha trovato un difetto nella firma dei parametri contenenti caratteri speciali: il client firmava i valori codificati nella URL, mentre il connector firma i valori originali ordinati. Corretto separando il percorso da firmare dalla URL codificata per il trasporto. Il difetto non influiva sulla prima pagina con l'UID alfanumerico; avrebbe influenzato cursori particolari ed elenchi di ID separati da virgole. [Connector Python ufficiale](https://github.com/tuya/tuya-connector-python/blob/master/tuya_connector/openapi.py), [regole delle firme](https://developer.tuya.com/en/docs/iot/new-singnature?id=Kbw0q34cs2e5g).
 
-L'autenticazione riuscita su entrambi gli endpoint **non identifica il data center effettivo dell'account** e non prova il diritto di leggere i dispositivi. Il codice `28841107` è stato associato alla sospensione leggendo la risposta reale, senza stampare il messaggio grezzo; non è stata diagnosticata una scadenza o una quota esaurita.
+Il confronto dopo la correzione coincide nei tre casi: filtro UID, cursore con spazio/segno più/slash, elenco di più ID. La richiesta reale dei protocolli con 16 ID separati da virgole è riuscita dopo la correzione. Aggiunto un test di regressione con risultato della firma congelato e verificato separatamente sul codice ufficiale.
 
-## Passaggio necessario nella console
+## Chiamate controllate
 
-1. Aprire il progetto Tuya e verificare/abilitare il data center dove è registrato l'account Smart Life.
-2. Verificare che **Devices → Link App Account** contenga l'account autorizzato tramite QR, con **Automatic Link**. Il **Project Code non è l'UID**: l'UID necessario è quello dell'account collegato.
-3. **Completato:** l'utente ha indicato Central Europe e l'UID; inseriti nel file privato. Client ID e Client Secret sono già presenti. Ripetuta l'acquisizione: il token riesce, la GET dell'inventario continua a restituire data center sospeso. Nessun elenco vuoto o dato di dispositivo è stato ricevuto.
-4. Verificare servizi **IoT Core / Smart Home Basic Service** autorizzati al progetto, quota e scadenza nell'API Explorer. Non è stato acquistato o attivato un piano a pagamento.
+Endpoint effettivo: `https://openapi.tuyaeu.com` (Central Europe). Tutte le richieste sono GET; corpo vuoto, timestamp in millisecondi, HMAC-SHA256 maiuscolo. Token solo in memoria; credenziali nel file privato con permessi 600. Nessun comando, modifica di dispositivo o associazione effettuata.
 
-Tuya distingue sottoscrizione del servizio e autorizzazione del progetto a chiamarlo. [Gestione dei servizi API](https://developer.tuya.com/en/docs/iot/applying-for-api-group-permissions?id=Ka6vf012u6q76), [collegamento account Smart Life](https://developer.tuya.com/en/docs/developer/apply-cloud-api-key?id=Kff30z8sv62ah).
+| Scopo | Percorso e parametri | Esito reale |
+| --- | --- | --- |
+| Token iniziale | `/v1.0/token?grant_type=1` | Riuscito |
+| Rinnovo | `/v1.0/token/{refresh_token}`, firma senza access token | Riuscito nella prova precedente |
+| Inventario del provider | `/v1.3/iot-03/devices`, `source_type=tuyaUser`, `source_id={UID}`, `page_size=100` | 16 dispositivi, risposta completa |
+| Confronto Smart Home | `/v1.0/users/{uid}/devices`, `page_no=1`, `page_size=20` | 16 dispositivi |
+| Case dell'account | `/v1.0/users/{uid}/homes` | Una casa |
+| Diagnosi account collegati | `/v1.0/iot-01/associated-users/devices`, `size=100` | 16 dispositivi, un UID distinto |
+| Specifiche | `/v1.2/iot-03/devices/{device_id}/specification` | Riuscite sui quattro dispositivi selezionati |
+| Stati | `/v1.0/iot-03/devices/{device_id}/status` | Riusciti sui quattro dispositivi selezionati |
+| Protocolli | `/v1.0/iot-03/devices/protocol`, `device_ids={16 ID}` | 6 Zigbee, 4 Wi-Fi, 6 senza protocollo dichiarato |
 
-Per il controllo puntuale: sullo stesso progetto aprire **Overview → Edit** e verificare Central Europe tra i data center selezionati/salvati; poi confrontare il numero di dispositivi di **All Devices** nel medesimo data center e lo stato/scadenza di **IoT Core**. Il controllo di quota o scadenza serve a completare la diagnosi; non è una causa già provata del codice osservato. [Modifica dei data center del progetto](https://developer.tuya.com/en/docs/iot/manage-projects?id=Ka49p0n8vkzm6).
+L'API generale non era un percorso inventato o privo di filtro: Tuya documenta `tuyaUser` e `source_id=UID`. È elencata nel gruppo General Device Management; la disponibilità va comunque verificata per il progetto. Le API Smart Home sono state confrontate realmente e non usate come un fallback silenzioso su tutti gli utenti. [Inventario generale](https://developer.tuya.com/en/docs/cloud/dc413408fe?id=Kc09y2ons2i3b), [inventario Smart Home](https://developer.tuya.com/en/docs/cloud/ad2823ae46?id=Kconjtzq1vk1q), [API protocolli](https://developer.tuya.com/en/docs/cloud/674e547ab8?id=Kbejlela50w87).
 
-## Prove ancora necessarie per completare l'analisi
+Il provider mantiene l'inventario generale paginato che ora funziona. La risposta Smart Home è una lista con paginazione a numero di pagina: non sarebbe corretto sostituire soltanto il percorso mantenendo il parser/cursore dell'API generale.
 
-| Prova | Evidenza da raccogliere |
-| --- | --- |
-| Inventario per UID | Numero e categorie confrontati con Smart Life, hub/sottodispositivi e disponibilità |
-| Luce, presa e sensore Zigbee | Codici realmente esposti, tipi, scale, unità e valori mancanti |
-| Cambio di stato dall'app o dal pulsante | Variazione ricevuta dal cloud e ritardo misurato; mai chiamare «attuale» un dato non verificato |
-| Dispositivo disalimentato | Comportamento di `online` e distinzione dall'ultimo stato riportato; richiede intervento fisico dell'utente |
-| Aggiunta/rinomina/rimozione | Propagazione dell'elenco, stabilità dell'identificativo, comportamento dopo una nuova associazione |
-| Ripartenza offline/riconnessione | Cache precedente riconoscibile, nessuna cancellazione per errore e nessuna falsa conferma |
-| Budget API | Quota/scadenza effettive e frequenza sostenibile; durata della trial non ancora nota |
+## Evidenza dei dispositivi
 
-Le prove di rete interrotta, token non valido, cache atomica e isolamento account sono coperte da regressioni con risposte simulate. Questa copertura non sostituisce la verifica sul cloud e sui dispositivi fisici. Il rinnovo del token è ora dimostrato anche contro il servizio reale.
+Disponibilità al momento della verifica: **7 online e 9 offline secondo Tuya**. Le etichette Wi-Fi/Zigbee derivano dall'API protocolli, non dal nome o dal solo flag di sottodispositivo. I sei protocolli mancanti restano non determinati; tra questi figurano gateway e dispositivi con nomi IR/RF, senza attribuire loro un protocollo per supposizione.
 
-**Regressioni aggiornate: 21 controlli superati sul PC e 21 sulla Orange Pi.** Aggiunta la verifica del codice `28841107`: diagnosi esplicita, nessun retry continuo e nessuna perdita della cache. Confermata l'assenza delle credenziali fornite nei file Markdown/Python/JSON/QML della directory dashboard.
+| Dispositivo | Protocollo da API | Disponibilità cloud | Ultimo stato riportato letto |
+| --- | --- | --- | --- |
+| T & H Sensor | Zigbee | Online | 28,2 °C; umidità 43%; batteria 30% |
+| Zigbee Plug | Zigbee | Offline | `switch_1=true`; ultimo valore potenza 48 W |
+| Lampada scrivania | Wi-Fi | Offline | `switch_led=true`; modalità white |
+| Sensore di movimento | Zigbee | Offline | `pir=none`; batteria 82% |
 
-La sospensione non va aggirata con retry continui: il client mostra una diagnosi specifica e conserva l'ultima cache valida. La dashboard Casa, i preferiti e lo scheduling restano da integrare dopo aver verificato i payload reali. La v0.7 non è conclusa.
+**Offline non significa spento.** La risposta di stato della presa e della lampada continua a contenere `true` mentre l'inventario dice `online=false`. Per il prodotto: testo dominante «Offline», stato del commutatore qualificato come precedente, nessuna conferma di raggiungibilità o di esecuzione. La riuscita della GET non rende fisicamente attuale quel valore.
+
+Le scale sono lette dalle specifiche: temperatura 28,2 °C, corrente 201 mA e tensione 239 V sono esempi normalizzati. I campi strutturati/non supportati (come `colour_data_v2` o bitmap `fault`) restano da verificare, senza traduzioni arbitrarie. I valori di luminosità/temperatura colore senza unità non vengono convertiti automaticamente in percentuale o kelvin.
+
+## Verifiche software e dati conservati
+
+- **22 controlli superati sul PC e 22 sulla Orange Pi**, inclusi firma dei cursori, token, cache atomica, errori, isolamento account e normalizzazione. Le prove sulla board usano risposte simulate e non modificano il kiosk.
+- Seconda acquisizione reale: ancora 16 dispositivi, zero aggiunte/rimozioni/rinomine; cache completa normalizzata salvata atomicamente.
+- In questo controllo sono state effettuate **25 chiamate Tuya**: confronto degli endpoint, scoperta dell'UID corretto, letture su quattro dispositivi e verifica finale dei protocolli. Le due prove iniziali della firma hanno consultato GitHub senza chiamare Tuya.
+- Credenziali, token, local key, IP, coordinate e risposte grezze non vengono scritti nei file della dashboard. Credenziali rimosse dalla guida e mantenute soltanto nel file privato del PC; nessuna trasferita sulla Orange Pi.
+- Riepilogo normalizzato in `~/.cache/smartpc/tuya-api-verification.json`; inventario in `~/.cache/smartpc/tuya-inventory.json`. Entrambi privati con permessi 600. Il riepilogo non contiene UID, ID dei dispositivi o segreti.
+
+## Analisi ancora da completare
+
+L'accesso alle API e la lettura dei payload sono ora dimostrati. Per chiudere l'analisi di affidabilità servono ancora confronto con Smart Life/dispositivi fisici, cambi di stato e ritardo misurato, disalimentazione e recupero, aggiunta/rinomina/rimozione reali, quota e scadenza effettive di IoT Core. Nessuna di queste prove è stata dichiarata conclusa sulla sola base della GET.
+
+La schermata dovrà distinguere cloud raggiungibile, dispositivo offline e dato precedente; selezionare massimo quattro dispositivi per ID stabile; applicare polling/backoff entro la quota. Worker Qt, scheduling, cache degli stati con provenienza/freschezza e riavvio offline restano lavoro della v0.7. Il probe attuale è manuale e non è una release completa.

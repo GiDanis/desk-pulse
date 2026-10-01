@@ -19,7 +19,7 @@ from account import AccountService
 from events import EventService
 from state import DashboardState
 from sport import SportService
-from sport_core import presentation, save_cache, read_cache, refresh_detail
+from sport_core import save_cache, refresh_detail
 from weather import WeatherService
 
 

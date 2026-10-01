@@ -120,14 +120,19 @@ class CloudClient:
         self.scope = hashlib.sha256('\n'.join((config.endpoint, config.access_id, config.uid)).encode()).hexdigest()
 
     def _call(self, path: str, params: dict | None = None, *, token: str = ''):
+        sign_path = path
         if params:
-            path += '?' + urlencode(sorted(params.items()))
+            ordered = sorted(params.items())
+            # Official connector signs decoded values; urllib encodes the wire URL.
+            # Signing the encoded URL changes signatures for cursors containing +/ .
+            sign_path += '?' + '&'.join(f'{key}={value}' for key, value in ordered)
+            path += '?' + urlencode(ordered)
         timestamp = str(int(self.clock() * 1000))
         headers = {
             'client_id': self.config.access_id, 't': timestamp,
             'sign_method': 'HMAC-SHA256', 'Accept': 'application/json',
             'User-Agent': 'SmartPC-Casa/0.7',
-            'sign': signature(self.config.access_id, self.config.access_secret, path, timestamp, token=token),
+            'sign': signature(self.config.access_id, self.config.access_secret, sign_path, timestamp, token=token),
         }
         if token:
             headers['access_token'] = token

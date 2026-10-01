@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 import os
+import time
 from typing import Any
 
 from PySide6.QtCore import QObject, Property, QSettings, Signal, Slot
@@ -65,6 +66,7 @@ class DashboardState(QObject):
     racingChanged = Signal()
     systemChanged = Signal()
     settingsChanged = Signal()
+    accountThresholdsChanged = Signal()
     eventChanged = Signal()
 
     def __init__(self, weather: QObject, system: QObject, account: QObject,
@@ -86,6 +88,11 @@ class DashboardState(QObject):
         self._demo_event = False
         self._demo_alert_scenario = "nessuno"
         self._settings = QSettings("SmartPC", "Dashboard")
+        self._account_warning_percent = _saved_int(self._settings, "account/warningPercent", min(99, self._account_warning_percent), 1, 99)
+        self._account_critical_percent = max(self._account_warning_percent + 1,
+            _saved_int(self._settings, "account/criticalPercent", self._account_critical_percent, 2, 100))
+        self._animations_enabled = _saved_bool(self._settings, "animationsEnabled", True)
+        self._last_source_refresh: dict[str, float] = {}
         self._module_visible = {
             module_id: _saved_bool(self._settings, f"moduleVisible/{module_id}")
             for module_id in TOGGLEABLE_MODULES
@@ -142,11 +149,39 @@ class DashboardState(QObject):
     @Property("QVariantMap", notify=systemChanged)
     def systemState(self) -> dict[str, Any]:
         return module_state(
-            status="active", source="Orange Pi", updated_at=datetime.now().timestamp(),
-            data={"cpuTemperature": self._system.cpuTemperature,
-                  "memoryUsage": self._system.memoryUsage,
-                  "uptime": self._system.uptimeText},
+            status="active", source="Linux", updated_at=self._system.updatedAt,
+            data=self._system.data,
         )
+
+    @Slot(bool)
+    def setSystemInfoVisible(self, visible: bool) -> None:
+        self._system.setMonitoring(visible)
+
+    @Slot()
+    def refreshSystemInfo(self) -> None:
+        self._system.refresh()
+
+    @Slot(str, result=bool)
+    def refreshSource(self, source: str) -> bool:
+        """Manual refresh keeps provider guards and adds a 30-second cooldown."""
+        now = time.monotonic()
+        if self._demo or now - self._last_source_refresh.get(source, -60) < 30:
+            return False
+        action = {
+            "meteo": self._weather.refresh,
+            "account": self._account.refresh,
+        }.get(source)
+        if source == "alerts" and self._events:
+            action = self._events.refresh_weather_alerts
+        elif source == "sport" and self._sport:
+            action = self._sport.refreshManual
+        elif source in self._racing:
+            action = lambda: self._racing[source].adjust(2, 1)
+        if action:
+            self._last_source_refresh[source] = now
+            action()
+            return True
+        return False
 
     @Property("QVariantMap", notify=accountChanged)
     def accountState(self) -> dict[str, Any]:
@@ -246,13 +281,39 @@ class DashboardState(QObject):
         elif row == 4:
             self._sport.refreshManual()
 
-    @Property(int, constant=True)
+    @Property(int, notify=settingsChanged)
     def accountWarningPercent(self) -> int:
         return self._account_warning_percent
 
-    @Property(int, constant=True)
+    @Property(int, notify=settingsChanged)
     def accountCriticalPercent(self) -> int:
         return self._account_critical_percent
+
+    @Slot(int, int)
+    def adjustAccountSetting(self, row: int, direction: int) -> None:
+        if row not in (0, 1) or not direction:
+            return
+        step = 5 if direction > 0 else -5
+        if row == 0:
+            self._account_warning_percent = max(1, min(self._account_critical_percent - 1, self._account_warning_percent + step))
+        else:
+            self._account_critical_percent = max(self._account_warning_percent + 1, min(100, self._account_critical_percent + step))
+        self._settings.setValue("account/warningPercent", self._account_warning_percent)
+        self._settings.setValue("account/criticalPercent", self._account_critical_percent)
+        self._settings.sync()
+        self.settingsChanged.emit()
+        self.accountThresholdsChanged.emit()
+
+    @Property(bool, notify=settingsChanged)
+    def animationsEnabled(self) -> bool:
+        return self._animations_enabled
+
+    @Slot()
+    def toggleAnimations(self) -> None:
+        self._animations_enabled = not self._animations_enabled
+        self._settings.setValue("animationsEnabled", self._animations_enabled)
+        self._settings.sync()
+        self.settingsChanged.emit()
 
     @Property("QVariantList", notify=settingsChanged)
     def visibleModules(self) -> list[str]:

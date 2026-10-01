@@ -537,7 +537,7 @@ def refresh_snapshot(client: HTTPClient, previous: dict | None, now: float, *, s
             past = [d for d in dates if d < date][-3:]
             future = [d for d in dates if d > date][:3]
             for other in past + future:
-                extra, extra_at = client.get(ESPN + 'scoreboard?dates=' + other)
+                extra, _ = client.get(ESPN + 'scoreboard?dates=' + other)
                 updates += [parse_espn_event(e, season) for e in extra.get('events', [])]
         merge_fixtures(snapshot, updates, acquired)
         snapshot['fetchedAt'] = acquired

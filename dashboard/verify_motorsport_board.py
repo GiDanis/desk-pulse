@@ -27,7 +27,6 @@ from motorsport_core import (
     refresh,
     load_event,
     save_cache,
-    read_cache,
     present,
 )
 from sport_core import ROME
@@ -284,6 +283,9 @@ steps.extend(
                 press(8),
                 press(5),
                 window.setProperty("settingsIndex", 5),
+                press(5),
+                press(8),
+                press(8),
                 press(5),
             ),
             "motogp-settings",

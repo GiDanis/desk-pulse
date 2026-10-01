@@ -126,6 +126,10 @@ def main() -> None:
     press(5)
     assert window.property("overlay") == "settings"
     press(5)
+    assert window.property("overlay") == "appearance"
+    press(7)
+    press(8)
+    press(5)
     assert window.property("overlay") == "system"
     quick_window = shiboken6.wrapInstance(shiboken6.getCppPointer(window)[0], QQuickWindow)
 
@@ -136,7 +140,6 @@ def main() -> None:
 
     system_row = next(item for item in visual_items(quick_window.contentItem()) if item.objectName() == "systemRow0")
     assert system_row.isVisible(), "system settings are missing"
-    press(8)
     press(6)
     assert state.brightnessMode == "manual"
     press(8)
@@ -177,6 +180,7 @@ def main() -> None:
     assert screens["accountPanel"].property("visible")
     press(9)
     press(5)
+    press(8)
     press(8)
     press(5)
     press(8)
@@ -239,12 +243,15 @@ def main() -> None:
     press(9)
     window.setProperty("menuIndex", 1)
     press(5)
-    window.setProperty("settingsIndex", 2)
+    window.setProperty("settingsIndex", 3)
     press(5)
     assert window.property("overlay") == "notifications"
+    press(5)
+    assert window.property("overlay") == "notificationQuiet"
     was_enabled = state.quietHoursEnabled
     press(5)
     assert state.quietHoursEnabled != was_enabled
+    press(5)  # Enable the time range before adjusting it.
     press(8)
     old_start = state.quietStartMinute
     press(6)
@@ -252,9 +259,11 @@ def main() -> None:
     persisted = DashboardState(weather, system, account, demo=True)
     assert persisted.quietHoursEnabled == state.quietHoursEnabled
     assert persisted.quietStartMinute == state.quietStartMinute
+    press(7)
     press(8)
-    press(8)
-    assert window.property("notificationIndex") == 3
+    press(5)
+    assert window.property("overlay") == "notificationCategories"
+    assert window.property("categoryIndex") == 0
     old_weather_interruptions = state.weatherInterruptions
     press(5)
     assert state.weatherInterruptions != old_weather_interruptions
@@ -262,8 +271,8 @@ def main() -> None:
     events.set_demo_scenario("urgente")
     application.processEvents()
     press(7)
-    assert window.property("overlay") == "notifications"
-    assert window.property("notificationIndex") == 3, "urgent notice lost settings focus"
+    assert window.property("overlay") == "notificationCategories"
+    assert window.property("categoryIndex") == 0, "urgent notice lost settings focus"
     events.set_demo_scenario("nessuno")
     press(1)
     events.set_quiet(False, 22 * 60, 7 * 60)

@@ -388,11 +388,6 @@ def moto_timing(raw, snapshot, acquired, now, verified=False):
         if event.get("shortName") != head.get("event_shortname"):
             continue
         for s in event["sessions"]:
-            date = (
-                datetime.fromtimestamp(s["start"], ROME).strftime("%Y%m%d")
-                if s["start"]
-                else ""
-            )
             # Date in the gateway is local to the track; compare session time +/- a day
             # plus strict session timing ID, rather than misreading it as Italy midnight.
             gateway = str(head.get("datet", ""))

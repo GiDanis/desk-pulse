@@ -1,0 +1,30 @@
+name: 💡 Feature or Workspace Request
+description: Propose a new DeskPulse OS workspace, integration, or hardware port.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have an idea for a new **DeskPulse OS** workspace (e.g. Home Assistant, Spotify, Crypto, System Stats) or a port to another SBC? Let's discuss it!
+  - type: input
+    id: title
+    attributes:
+      label: Workspace / Feature Name
+      placeholder: Home Assistant Native Dashboard
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature Description
+      description: Describe what you'd like to see and the problem it solves.
+    validations:
+      required: true
+  - type: textarea
+    id: api_source
+    attributes:
+      label: Data Source & API Details
+      description: Is there a free, open, or local API available for this data?
+      placeholder: Local Home Assistant REST/WebSocket API with long-lived access token.
+    validations:
+      required: false

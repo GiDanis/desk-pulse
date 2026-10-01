@@ -12,12 +12,14 @@
   <a href="https://www.qt.io/"><img src="https://img.shields.io/badge/Compositor-Qt%206%20%7C%20QML%20EGLFS-41CD52?style=for-the-badge&logo=qt&logoColor=white" alt="Qt 6 QML"></a>
   <img src="https://img.shields.io/badge/Display-Hagibis%20960%C3%97640%20%40%2060Hz-00C49F?style=for-the-badge" alt="Hagibis Display">
   <img src="https://img.shields.io/badge/Graphics-Locked%2060%20FPS-8A2BE2?style=for-the-badge" alt="60 FPS">
+  <img src="https://img.shields.io/badge/24h%20Soak%20Test-Passed%20(0%20Crashes)-success?style=for-the-badge" alt="24h Stability">
   <img src="https://img.shields.io/badge/RAM%20Footprint-%3C%2090%20MB-brightgreen?style=for-the-badge" alt="Low RAM">
   <a href="https://github.com/GiDanis/desk-pulse/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-informational?style=for-the-badge" alt="MIT License"></a>
 </p>
 
 <p align="center">
-  <a href="#-os-workspaces-v06">Workspaces</a> •
+  <a href="#-whats-new-in-v061">What's New in v0.6.1</a> •
+  <a href="#-os-workspaces">Workspaces</a> •
   <a href="#-why-a-dedicated-desk-os">Why Desk OS?</a> •
   <a href="#-architecture">Architecture</a> •
   <a href="#-hardware-bom">Hardware BOM</a> •
@@ -39,7 +41,27 @@ Instead of treating the board as a desktop computer running a slow browser kiosk
 
 ---
 
-## 📸 OS Workspaces (v0.6)
+## ✨ What's New in v0.6.1
+
+The **v0.6.1** release brings modular architectural refinement, enhanced live sports tracking, and verified long-term hardware reliability:
+
+- ⚙️ **Modular Settings & System Info Engine:**
+  - Extracted clean `SettingsPanel.qml` and `DeviceInfo.qml` components for crisp, responsive navigation.
+  - Non-blocking asynchronous Wi-Fi signal quality monitoring (%) via Linux `nmcli` without active scanning or leaking credentials.
+  - Real-time hardware vitals (IP address, board CPU temperature, memory, disk usage).
+- 🌙 **Advanced Notification & Quiet Hours Management:**
+  - Dedicated Quiet Hours (*"Fascia silenzio"*) with automatic night muting of non-urgent banners.
+  - Granular on-screen alert toggles for Weather, ChatGPT quotas, and Favourite Team goal banners.
+- 🎩 **Fantacalcio Live Assistant:**
+  - Real-time matchday ratings and vote sync during active Serie A matches.
+  - Dedicated starters, bench, substitutes, and SV distinction.
+- 🛡️ **24-Hour Continuous Operation Soak Test:**
+  - Documented 24-hour continuous burn-in run on the physical Orange Pi Zero 3W (`os/diagnostics/2026-10-01-24h/`).
+  - Zero memory leaks, thermal equilibrium at ~43°C, and `NRestarts=0` stability.
+
+---
+
+## 📸 OS Workspaces
 
 DeskPulse OS features a seamless 6-workspace horizontal carousel, with deep 2-axis vertical navigation for each workspace:
 
@@ -66,6 +88,7 @@ DeskPulse OS was engineered from the kernel up as an **always-on appliance**:
 | **Frame Rate & Fluidity** | **Locked 60 FPS** (PowerVR hardware vsync) | 15–30 FPS with visible stutter |
 | **Input Latency** | **Instant (direct Linux evdev kernel polling)** | Laggy JavaScript DOM event loop |
 | **MicroSD Card Protection** | **Tuned 30s journal, tmpfs, zram, atomic cache** | Constant disk writes destroy SD cards |
+| **24/7 Reliability** | **Verified 24h Soak Test (0 crashes, ~43°C)** | High risk of browser tab crashes |
 | **Offline Resilience** | **100% resilient** (cached state, graceful fallbacks) | Error screens, infinite reload loops |
 | **API Costs** | **$0 / Zero API Keys** (Open-Meteo, Jolpica, PulseLive) | Expensive subscription APIs |
 
@@ -103,7 +126,7 @@ Live atmospheric conditions, hourly trends, and a 3-day forecast powered by Open
 Tracks ChatGPT & OpenAI Codex plan limits, usage percentages, reset countdowns, and available credits. Syncs securely over your local network via SSH from your PC workstation **without ever exposing private tokens, passwords, or API keys**.
 
 ### 4. ⚽ Serie A Football Hub & Favourite Team HUD
-Full season fixtures, live 20-team league standings, and deep match details (lineups, match statistics, goalscorers). Select your favourite club (*"Squadra del Cuore"*) for a dedicated team view with upcoming matches, squad list, and stadium info. Includes **Fantacalcio** starting XI, bench, and official editorial ratings.
+Full season fixtures, live 20-team league standings, and deep match details (lineups, match statistics, goalscorers). Select your favourite club (*"Squadra del Cuore"*) for a dedicated team view with upcoming matches, squad list, and stadium info. Includes **Fantacalcio** starting XI, bench, and live editorial ratings.
 
 ### 5. 🏎️ Formula 1 Grand Prix Command Center
 Full season calendar with local weekend start times, race results, and driver/constructor world championship standings powered by Jolpica. Features **real-time SignalR WebSocket live timing** via QtWebSockets, tracking positions, lap times, gaps, tyre compounds, and pit stops.
@@ -194,9 +217,10 @@ DeskPulse OS is built for physical tactile feedback using a 3×3 matrix macro ke
 - **Action / Refresh (Key 5):** Open match/GP details, expand standings, or trigger an immediate data refresh.
 - **Quick Jump (Key 7):** Instant return to the primary Home Clock from any depth.
 - **System Menu (Key 9):**
+  - **Notifications:** Quiet hours schedule and category-level alert muting.
   - **Appearance:** Theme (Auto / Day / Night), Brightness (Manual & Circadian schedules).
   - **Module Visibility:** Toggle workspaces on or off (persisted across reboots).
-  - **Diagnostics:** GPU framerate, memory usage, CPU temperature.
+  - **Device Info:** Wi-Fi signal quality (%), CPU temperature, IP, RAM and storage vitals.
 
 ---
 
@@ -215,6 +239,7 @@ DeskPulse OS includes the verified kernel fix in [`os/kernel-patches/`](os/kerne
 - [x] **v0.4:** Direct EGLFS/KMS compositor, dynamic Home, and Open-Meteo weather.
 - [x] **v0.5:** Persistent event engine, Civil Protection alerts, and unread notification badges.
 - [x] **v0.6:** Serie A Football Hub, Favourite Team HUD, Fantacalcio, F1 & MotoGP with SignalR live timing.
+- [x] **v0.6.1:** **Modular Settings Engine, Live Wi-Fi Monitoring, Fantacalcio Live & 24h Soak Verification.**
 - [ ] **v0.7:** **Smart Home Dashboard** — Native local Tuya & Home Assistant integration.
 - [ ] **v0.8:** **Spotify Connect & Media Player** — Album art display and physical track controls.
 - [ ] **v0.9:** **PC Hardware Telemetry HUD** — Real-time CPU/GPU temperatures and loads streamed over LAN.

@@ -11,7 +11,7 @@ Item {
     Text { y: 37; width: 660; text: (root.team.name || "") + (root.team.formation ? " · " + root.team.formation : ""); color: dashboard.accent; font.pixelSize: 30; font.bold: true; elide: Text.ElideRight }
     Text { x: 662; y: 42; width: 210; horizontalAlignment: Text.AlignRight; text: "5 CAMBIA SQUADRA"; color: dashboard.muted; font.pixelSize: 20 }
     Rectangle { y: 81; width: 872; height: 39; radius: 6; color: dashboard.fantasyPlayerIndex === -1 ? "#28403f" : "transparent"; border.width: 2; border.color: dashboard.fantasyPlayerIndex === -1 ? dashboard.accent : "transparent" }
-    Text { x: 12; y: 89; width: 580; text: dashboard.fantasyPlayerIndex === -1 ? "5 AGGIORNA VOTI · 8 CALCIATORI" : "TITOLARI · SUBENTRATI · PANCHINA"; color: dashboard.muted; font.pixelSize: 20; font.bold: true }
+    Text { x: 12; y: 89; width: 580; text: dashboard.fantasyPlayerIndex === -1 ? "5 AGGIORNA VOTI · 8 CALCIATORI" : fantasy.provisional ? "PROVVISORI · FANTAVOTO CALCOLATO" : "TITOLARI · SUBENTRATI · PANCHINA"; color: dashboard.muted; font.pixelSize: 20; font.bold: true }
     Text { x: 589; y: 89; width: 133; horizontalAlignment: Text.AlignHCenter; text: "VOTO BASE"; color: dashboard.muted; font.pixelSize: 20; font.bold: true }
     Text { x: 735; y: 89; width: 125; horizontalAlignment: Text.AlignHCenter; text: "FANTAVOTO"; color: dashboard.accent; font.pixelSize: 20; font.bold: true }
     Repeater {

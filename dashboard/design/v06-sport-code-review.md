@@ -69,3 +69,19 @@ Per ripristinare: fermare il servizio, ripristinare da quel backup i file elenca
 ## Limiti rimasti
 
 Il collaudo durante una sessione realmente attiva e quello delle notifiche gol restano aperti secondo i criteri precedenti. I badge Live mantengono gli stessi gate di verifica. Questa revisione non certifica 60 fps e non aggiunge account, costi o nuovi provider.
+
+
+## Pulizia successiva: codice inutilizzato
+
+Eseguita il 1 ottobre 2026 dopo l’integrazione del feed Fantacalcio. Controllati riferimenti Python/QML e chiamanti prima delle rimozioni:
+
+- Import inutilizzati nei provider e negli script di verifica/test (inclusi `mapping`, `timezone`, `patch` e alias non usati).
+- Vecchio wrapper `weather_alerts.fetch_alerts`, senza chiamanti: il servizio eventi usa direttamente `BulletinProvider`, con il suo stato persistente.
+- Proprietà `SportView.match`, mai letta; variabile locale della data MotoGP, calcolata e mai usata; nome residuo `extra_at` nel recupero ESPN, sostituito da `_` senza cambiare la richiesta.
+- Vecchia immagine `dashboard/preview.png`, priva di riferimenti. I README usano `preview-v03.png`.
+
+Fixture storiche, cache, fonti di riserva, callback Qt/HTMLParser, utilità eseguibili e documentazione delle verifiche rimangono funzionali. Nessun nuovo test che ripeta le rimozioni: riutilizzate le prove di comportamento esistenti.
+
+Verifica: **46 test** sia locali sia sulla Orange Pi (11 Serie A, 11 motorsport, 7 voti pubblicati, 11 feed Fantacalcio, 6 bollettino meteo), più i tre controlli QML Serie A/Fantacalcio/motorsport, tutti passati. Nessun import Python al livello del modulo risulta inutilizzato dall’analisi AST, ricontrollata dopo la pulizia. L’analisi statica non è una garanzia universale di assenza di codice morto; callback e accessi dinamici sono stati valutati separatamente.
+
+Distribuiti i sei file runtime modificati; controllo SHA-256 e stato del servizio registrati nel [report](evidence/v06-cleanup/deploy.json). Backup: `/var/backups/smartpc-dashboard-cleanup-20261001/dashboard`.

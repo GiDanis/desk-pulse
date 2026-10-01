@@ -12,9 +12,9 @@ Item {
     function settingValue(index) {
         if (index === 0) return (sportInfo.teams || []).find(t => t.id === sportInfo.favourite)?.name || "Nessuna"
         if (index === 1) return sportInfo.showOnHome ? "ATTIVO" : "DISATTIVO"
-        if (index === 2) return sportInfo.liveVerified ? (sportInfo.goalsEnabled ? "ATTIVE" : "DISATTIVE") : "DA COLLAUDARE"
+        if (index === 2) return "APRI"
         if (index === 3) return sportInfo.selectedSeason || "—"
-        return "AGGIORNA"
+        return "APRI"
     }
     Rectangle { anchors.fill: parent; color: dashboard.color }
     readonly property int listStart: Math.floor(Math.max(0, dashboard.sportIndex) / 3) * 3
@@ -120,11 +120,11 @@ Item {
         }
     }
     SportFantasy { dashboard: root.dashboard; visible: root.detail && dashboard.sportDetailPage === 3; x: 44; y: 146; width: 872; height: 420 }
-    Text { objectName: "fantasySourceText"; visible: root.detail && dashboard.sportDetailPage === 3; x: 44; y: 552; width: 872; text: "Fonte " + dashboard.fantasyState.source + " · " + (dashboard.fantasyData.loading ? "Caricamento voti…" : dashboard.fantasyState.error || dashboard.fantasyData.cacheError || dashboard.fantasyData.warning || (dashboard.fantasyState.updatedAt ? new Date(dashboard.fantasyState.updatedAt * 1000).toLocaleString(Qt.locale("it_IT"), "dd/MM hh:mm") + (dashboard.fantasyState.status === "offline" || dashboard.fantasyState.status === "stale" ? " · Dati salvati" : "") : dashboard.fantasyData.message || "Voti in attesa")); color: dashboard.fantasyState.error ? "#efbd75" : dashboard.muted; font.pixelSize: 20; elide: Text.ElideRight }
+    Text { objectName: "fantasySourceText"; visible: root.detail && dashboard.sportDetailPage === 3; x: 44; y: 552; width: 872; text: "Fonte " + dashboard.fantasyState.source + " · " + (dashboard.fantasyData.loading ? "Caricamento voti…" : dashboard.fantasyState.error || dashboard.fantasyData.cacheError || dashboard.fantasyData.warning || dashboard.fantasyData.liveNotice || (dashboard.fantasyState.updatedAt ? new Date(dashboard.fantasyState.updatedAt * 1000).toLocaleString(Qt.locale("it_IT"), "dd/MM hh:mm") + (dashboard.fantasyState.status === "offline" || dashboard.fantasyState.status === "stale" ? " · Dati salvati" : "") : dashboard.fantasyData.message || "Voti in attesa")); color: dashboard.fantasyState.error ? "#efbd75" : dashboard.muted; font.pixelSize: 20; elide: Text.ElideRight }
     Text { visible: root.detail && dashboard.sportDetailPage !== 3; x: 44; y: 552; width: 872; text: root.loading ? "Caricamento dettaglio…" : root.detailError || (root.match.detailFetchedAt ? "Fonte " + (root.match.provider === "fotmob" ? "FotMob" : "ESPN") + " · Dettaglio " + new Date(root.match.detailFetchedAt * 1000).toLocaleString(Qt.locale("it_IT"), "dd/MM hh:mm") + ((dashboard.sportTeamDetail ? dashboard.teamState.status : dashboard.sport.status) === "offline" || (dashboard.sportTeamDetail ? dashboard.teamState.status : dashboard.sport.status) === "stale" ? " · Dati salvati" : "") : "Dettaglio da aggiornare · 5 AGGIORNA"); color: root.detailError ? "#efbd75" : dashboard.muted; font.pixelSize: 21; elide: Text.ElideRight }
     Text { visible: settings; x: 44; y: 94; width: 872; text: "Serie A · seleziona la squadra e i riepiloghi desiderati."; color: dashboard.muted; font.pixelSize: 24 }
     Repeater {
-        model: root.settings ? ["Squadra preferita", "Prossima Serie A in Home", "Notifiche gol", "Stagione", "Dati Sport"] : []
+        model: root.settings ? ["Squadra preferita", "Prossima Serie A in Home", "Notifiche gol", "Stagione", "Dati e aggiornamenti"] : []
         delegate: Rectangle {
             required property string modelData
             required property int index
@@ -136,6 +136,6 @@ Item {
             Text { x: 476; width: 378; anchors.verticalCenter: parent.verticalCenter; horizontalAlignment: Text.AlignRight; text: root.settingValue(index); color: dashboard.accent; font.pixelSize: 27; elide: Text.ElideRight }
         }
     }
-    Text { visible: settings; x: 44; y: 481; width: 872; text: "2/8 SELEZIONA · 4/6 REGOLA · 5 CAMBIA\nGol disponibili dopo il collaudo durante una partita."; color: dashboard.muted; font.pixelSize: 22; lineHeight: 1.4 }
+    Text { visible: settings; x: 44; y: 481; width: 872; text: dashboard.sportSettingsIndex === 4 ? "5 APRI DATI E AGGIORNAMENTI\nUn unico menu per aggiornare tutte le fonti." : dashboard.sportSettingsIndex === 2 ? "5 APRI NOTIFICHE / AVVISI A SCHERMO\nLe notifiche si regolano nel menu dedicato." : "2/8 SELEZIONA · 4/6 REGOLA · 5 CAMBIA\nPreferenze Serie A e Fantacalcio salvate sul dispositivo."; color: dashboard.muted; font.pixelSize: 22; lineHeight: 1.4 }
     Text { x: 44; y: 592; text: root.detail ? dashboard.sportDetailPage === 3 ? "4/6 SCHEDE   ·   5 SQUADRA   ·   1 INDIETRO   ·   7 HOME" : "4/6 SCHEDE   ·   5 AGGIORNA   ·   1 INDIETRO   ·   7 HOME" : "1  INDIETRO      7  HOME"; color: dashboard.accent; font.pixelSize: 23 }
 }

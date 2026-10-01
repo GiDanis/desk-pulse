@@ -94,8 +94,9 @@ class TuyaChecks(unittest.TestCase):
             parsed = urlsplit(url)
             self.assertEqual(parse_qs(parsed.query)['source_id'], [CONFIG.uid])
             self.assertEqual(parse_qs(parsed.query)['source_type'], ['tuyaUser'])
+            query = '&'.join(f'{key}={value[0]}' for key, value in sorted(parse_qs(parsed.query).items()))
             self.assertEqual(headers['sign'], signature(CONFIG.access_id, CONFIG.access_secret,
-                             parsed.path + '?' + parsed.query, headers['t'], token=headers['access_token']))
+                             parsed.path + '?' + query, headers['t'], token=headers['access_token']))
             self.assertEqual(timeout, 12)
         self.assertEqual(parse_qs(urlsplit(transport.calls[2][0]).query)['last_row_key'], ['next +/'])
         persisted = self.cache.read_text()
@@ -103,6 +104,15 @@ class TuyaChecks(unittest.TestCase):
             self.assertNotIn(secret, persisted)
         self.assertEqual(self.cache.stat().st_mode & 0o777, 0o600)
         self.assertEqual(read_inventory(self.cache, api.scope), snapshot)
+
+    def test_cursor_encoding_matches_official_python_connector(self):
+        # Frozen result independently checked against TuyaOpenAPI._calculate_sign.
+        transport = ScriptedTransport(ok([]))
+        api = CloudClient(CONFIG, transport=transport, clock=lambda: 1790840000)
+        api._call('/v1.3/iot-03/devices', {'last_row_key': 'next +/', 'page_size': 100}, token='example_token')
+        url, headers, _ = transport.calls[0]
+        self.assertIn('last_row_key=next+%2B%2F', url)
+        self.assertEqual(headers['sign'], '5A131B4BE7F7C8351521649AAFA67BF697E98DB488BC3E94C7633F1A006B5609')
 
     def test_second_page_failure_preserves_last_complete_inventory(self):
         api, _ = client(token(), page([device()], total=1), page([], True, 'next'),

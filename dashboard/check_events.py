@@ -23,6 +23,21 @@ def event(*, priority: int = 2, starts: float = NOW - 10, expires: float = NOW +
 
 
 class EventChecks(unittest.TestCase):
+    def test_notification_categories_apply_at_all_hours_without_hiding_inbox(self) -> None:
+        for priority in (2, 3):
+            for quiet in (False, True):
+                for silenced in (False, True):
+                    with self.subTest(priority=priority, quiet=quiet, silenced=silenced):
+                        engine = EventEngine(":memory:")
+                        engine.replace_source("test", [event(priority=priority)])
+                        snapshot = engine.snapshot(now=NOW, quiet=quiet,
+                            silenced_categories=frozenset({"test"} if silenced else {"other"}))
+                        self.assertEqual(bool(snapshot["banner"]), priority == 2 and not quiet and not silenced)
+                        self.assertEqual(bool(snapshot["urgent"]), priority == 3 and not silenced)
+                        self.assertEqual(snapshot["inbox"][0]["id"], "test:1")
+                        self.assertEqual(snapshot["unreadCount"], 1)
+                        engine.close()
+
     def test_unread_count_survives_delivery_and_restart_but_not_reading_or_expiry(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "events.sqlite3"

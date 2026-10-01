@@ -223,9 +223,15 @@ Window {
     property var overlayStack: []
     property int menuIndex: 0
     property int settingsIndex: 0
+    property int optionIndex: 0
+    property int infoPage: 0
+    property int infoIndex: 0
     property int modulesIndex: 0
     property int systemIndex: 0
     property int notificationIndex: 0
+    property int quietIndex: 0
+    property int categoryIndex: 0
+    property int sourceIndex: 0
     property int alertIndex: 0
     property var selectedAlert: ({})
     property int accountIndex: 0
@@ -271,10 +277,8 @@ Window {
         ? (dashboardState.brightnessMode === "manual" ? dashboardState.manualBrightness
            : (daytime ? dashboardState.dayBrightness : dashboardState.nightBrightness))
         : 100
-    readonly property var menuItems: ["Comandi", "Impostazioni", "Diagnostica"]
-    readonly property var settingsItems: ["Aspetto e dispositivo", "Moduli visibili", "Notifiche", "Sport · Serie A"].concat(dashboardState && (dashboardState.racingAvailable || []).indexOf("f1") >= 0 ? ["Sport · F1"] : []).concat(dashboardState && (dashboardState.racingAvailable || []).indexOf("motogp") >= 0 ? ["Sport · MotoGP"] : [])
-    readonly property var systemLabels: ["Tema", "Luminosità", "Manuale", "Giorno auto", "Notte auto", "Giorno dalle", "Notte dalle"]
-    readonly property var notificationLabels: ["Fascia di silenzio", "Dalle", "Alle", "Interruzioni Meteo", "Interruzioni Account"]
+    readonly property var menuItems: ["Comandi", "Impostazioni", "Informazioni", "Diagnostica"]
+    readonly property var settingsItems: settingsPanel.entries.map(row => row.title)
 
     function two(value) { return (value < 10 ? "0" : "") + value }
     function timeText() { return two(now.getHours()) + ":" + two(now.getMinutes()) }
@@ -329,11 +333,9 @@ Window {
         if (index === 6) return two(dashboardState.nightStartHour) + ":00"
         return ""
     }
-    function adjustSystem(direction) {
-        if (dashboardState) dashboardState.adjustDisplaySetting(systemIndex, direction)
-    }
     function animateMove(direction) {
         moveAnimation.stop()
+        if (dashboardState && !dashboardState.animationsEnabled) { contentLayer.x = 0; return }
         contentLayer.x = direction * 20
         moveAnimation.start()
     }
@@ -401,14 +403,13 @@ Window {
     function selectMenu() {
         if (menuIndex === 0) pushOverlay("commands")
         else if (menuIndex === 1) { settingsIndex = 0; pushOverlay("settings") }
-        else if (menuIndex === 2) { toggleDiagnostics(); overlay = ""; overlayStack = [] }
+        else if (menuIndex === 2) { infoPage = 0; infoIndex = 0; pushOverlay("info") }
+        else if (menuIndex === 3) { toggleDiagnostics(); overlay = ""; overlayStack = [] }
     }
-    function selectSettings() {
-        if (settingsIndex === 0) { systemIndex = 0; pushOverlay("system") }
-        else if (settingsIndex === 1) { modulesIndex = 1; pushOverlay("modules") }
-        else if (settingsIndex === 2) { notificationIndex = 0; pushOverlay("notifications") }
-        else if (settingsIndex === 3) { sportSettingsIndex = 0; pushOverlay("sportSettings") }
-        else if (settingsIndex >= 4) { racingSettingsKind = settingsItems[settingsIndex].indexOf("MotoGP") >= 0 ? "motogp" : "f1"; racingSettingsIndex = 0; pushOverlay("racingSettings") }
+    function selectSettings() { settingsPanel.activate(1) }
+    function openSourceSettings(source) {
+        pushOverlay("sources")
+        sourceIndex = Math.max(0, settingsPanel.sourceEntries.findIndex(row => row.target === source))
     }
     function openSelectedAlert() {
         if (!alertItems.length) return
@@ -451,37 +452,12 @@ Window {
             return
         }
         if (overlay === "menu") {
-            if (position === 2) menuIndex = (menuIndex + menuItems.length - 1) % menuItems.length
-            else if (position === 8) menuIndex = (menuIndex + 1) % menuItems.length
+            if (position === 2) menuIndex = Math.max(0, menuIndex - 1)
+            else if (position === 8) menuIndex = Math.min(menuItems.length - 1, menuIndex + 1)
             else if (position === 5) selectMenu()
             return
         }
-        if (overlay === "settings") {
-            if (position === 2) settingsIndex = (settingsIndex + settingsItems.length - 1) % settingsItems.length
-            else if (position === 8) settingsIndex = (settingsIndex + 1) % settingsItems.length
-            else if (position === 5) selectSettings()
-            return
-        }
-        if (overlay === "modules") {
-            if (position === 2) modulesIndex = modulesIndex === 1 ? allFamilies.length - 1 : modulesIndex - 1
-            else if (position === 8) modulesIndex = modulesIndex === allFamilies.length - 1 ? 1 : modulesIndex + 1
-            else if (position === 4 || position === 5 || position === 6) toggleModule(modulesIndex)
-            return
-        }
-        if (overlay === "system") {
-            if (position === 2) systemIndex = (systemIndex + systemLabels.length - 1) % systemLabels.length
-            else if (position === 8) systemIndex = (systemIndex + 1) % systemLabels.length
-            else if (position === 4) adjustSystem(-1)
-            else if (position === 6 || position === 5) adjustSystem(1)
-            return
-        }
-        if (overlay === "notifications") {
-            if (position === 2) notificationIndex = (notificationIndex + notificationLabels.length - 1) % notificationLabels.length
-            else if (position === 8) notificationIndex = (notificationIndex + 1) % notificationLabels.length
-            else if (position === 4) dashboardState.adjustNotificationSetting(notificationIndex, -1)
-            else if (position === 6 || position === 5) dashboardState.adjustNotificationSetting(notificationIndex, 1)
-            return
-        }
+        if (settingsPanel.handleKey(position) || deviceInfo.handleKey(position)) return
         if (overlay === "alerts") {
             if (alertItems.length) {
                 if (position === 2) alertIndex = Math.max(0, alertIndex - 1)
@@ -491,9 +467,10 @@ Window {
             return
         }
         if (overlay === "racingSettings") {
-            if (position === 2) racingSettingsIndex = (racingSettingsIndex + 2) % 3
-            else if (position === 8) racingSettingsIndex = (racingSettingsIndex + 1) % 3
-            else if (position === 4 || position === 5 || position === 6) dashboardState.adjustRacingSetting(racingSettingsKind, racingSettingsIndex, position === 4 ? -1 : 1)
+            if (position === 2) racingSettingsIndex = Math.max(0, racingSettingsIndex - 1)
+            else if (position === 8) racingSettingsIndex = Math.min(2, racingSettingsIndex + 1)
+            else if (position === 5 && racingSettingsIndex === 2) openSourceSettings(racingSettingsKind)
+            else if ((position === 4 || position === 5 || position === 6) && racingSettingsIndex < 2) dashboardState.adjustRacingSetting(racingSettingsKind, racingSettingsIndex, position === 4 ? -1 : 1)
             return
         }
         if (overlay === "racingSession") {
@@ -578,10 +555,12 @@ Window {
             return
         }
         if (overlay === "sportSettings") {
-            if (position === 2) sportSettingsIndex = (sportSettingsIndex + 4) % 5
-            else if (position === 8) sportSettingsIndex = (sportSettingsIndex + 1) % 5
+            if (position === 2) sportSettingsIndex = Math.max(0, sportSettingsIndex - 1)
+            else if (position === 8) sportSettingsIndex = Math.min(4, sportSettingsIndex + 1)
             else if (position === 5 && sportSettingsIndex === 0) openTeamPicker()
-            else if (position === 4 || position === 5 || position === 6) dashboardState.adjustSportSetting(sportSettingsIndex, position === 4 ? -1 : 1)
+            else if (position === 5 && sportSettingsIndex === 2) { pushOverlay("notificationCategories"); categoryIndex = 2 }
+            else if (position === 5 && sportSettingsIndex === 4) openSourceSettings("sport")
+            else if ((position === 4 || position === 5 || position === 6) && sportSettingsIndex < 4 && sportSettingsIndex !== 2) dashboardState.adjustSportSetting(sportSettingsIndex, position === 4 ? -1 : 1)
             return
         }
         if (overlay === "sportList" || overlay === "sportTable") {
@@ -645,7 +624,10 @@ Window {
         if (dashboardState && dashboardState.firstRun) pushOverlay("commands")
         if (dashboardState) dashboardState.setBannerAvailable(overlay === "")
     }
-    onOverlayChanged: if (dashboardState) dashboardState.setBannerAvailable(overlay === "")
+    onOverlayChanged: if (dashboardState) {
+        dashboardState.setBannerAvailable(overlay === "")
+        dashboardState.setSystemInfoVisible(overlay === "info")
+    }
     function syncClock() {
         const d = new Date()
         if (d.getMinutes() !== app.now.getMinutes() || d.getDate() !== app.now.getDate()) {
@@ -720,7 +702,9 @@ Window {
         dashboard: app
         visible: app.familyId === "oggi" && app.overlay === "" && app.unreadAlertCount > 0 && !app.bannerEvent.id && !app.urgentEvent.id
     }
-    DashboardOverlay { dashboard: app; visible: app.overlay !== "" && app.overlay.indexOf("sport") !== 0 && app.overlay.indexOf("racing") !== 0; anchors.fill: parent }
+    DashboardOverlay { dashboard: app; visible: !settingsPanel.active && app.overlay !== "info" && app.overlay !== "" && app.overlay.indexOf("sport") !== 0 && app.overlay.indexOf("racing") !== 0; anchors.fill: parent }
+    SettingsPanel { id: settingsPanel; dashboard: app; visible: active; anchors.fill: parent }
+    DeviceInfo { id: deviceInfo; dashboard: app; visible: app.overlay === "info"; anchors.fill: parent }
     MotorsportOverlay { dashboard: app; visible: app.overlay.indexOf("racing") === 0; anchors.fill: parent }
     SportTeamOverlay { dashboard: app; visible: app.overlay.indexOf("sportTeam") === 0; anchors.fill: parent }
     SportOverlay { dashboard: app; visible: app.overlay.indexOf("sport") === 0 && app.overlay.indexOf("sportTeam") !== 0; anchors.fill: parent }

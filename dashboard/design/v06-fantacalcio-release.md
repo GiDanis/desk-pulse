@@ -2,6 +2,8 @@
 
 Implementata e installata sull’Orange Pi il **1 ottobre 2026**.
 
+**Aggiornamento:** [feed anonimo live, stagione persistente e recupero dello storico](v06-fantacalcio-live.md). Il documento collegato aggiorna la frequenza live a 30 secondi, aggiunge la finestra prepartita e distingue i fantavoti live calcolati dai valori pubblicati descritti qui.
+
 ## Funzione e comandi
 
 Aprendo una partita **Serie A**, il dettaglio ha quattro schede: **Riepilogo, Statistiche, Formazioni, Fantacalcio**. La quarta scheda è disponibile anche aprendo la partita da **La mia squadra**. Per le altre competizioni il dettaglio conserva le tre schede precedenti.

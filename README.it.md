@@ -8,15 +8,27 @@
 
 ---
 
-## 🌟 Che cos'è DeskPulse OS?
+## 🌟 Novità della Versione v0.6.1
 
-**DeskPulse OS** trasforma un economico single-board computer da 15–25 € (Orange Pi Zero 3W, Raspberry Pi, Radxa) abbinato a un mini monitor da scrivania (come l'Hagibis 3.5" IPS USB-C 960×640) in un vero e proprio **sistema operativo appliance sempre attivo**.
+Il rilascio **v0.6.1** introduce una profonda rifinitura architetturale, gestione avanzata delle notifiche e la verifica di stabilità 24h su hardware reale:
 
-Invece di far girare un pesante ambiente desktop con browser web (kiosk Chromium), DeskPulse OS esegue direttamente a livello kernel un compositore grafico QML su GPU. Funziona 24/7 come centro di controllo compatto per ora, meteo, monitoraggio crediti AI/ChatGPT, Serie A con Fantacalcio, telemetria Formula 1 e MotoGP—con risposta istantanea e comandi fisici tattili.
+- ⚙️ **Motore Impostazioni Modulare & Info Dispositivo:**
+  - Componenti dedicati `SettingsPanel.qml` e `DeviceInfo.qml` per una navigazione istantanea e chiara.
+  - Monitoraggio asincrono della qualità segnale Wi-Fi (%) tramite `nmcli` senza scansioni di rete o esposizione di credenziali.
+  - Telemetria hardware in tempo reale (temperatura CPU della board, IP, memoria RAM e stato disco).
+- 🌙 **Gestione Notifiche & Fascia Silenzio:**
+  - Fascia oraria di silenzio personalizzabile (*Quiet Hours*) con muting automatico notturno degli avvisi non urgenti.
+  - Controllo granulare delle categorie a schermo per Meteo, quote ChatGPT e notifiche gol.
+- 🎩 **Fantacalcio Live:**
+  - Supporto per voti e pagelle in tempo reale durante le partite in corso della Serie A.
+  - Visualizzazione titolari, panchina e gestione coerente dei senza voto (SV).
+- 🛡️ **Soak Test di Stabilità 24 Ore Superato:**
+  - Documentato test di funzionamento continuo per 24 ore sulla Orange Pi fisica (`os/diagnostics/2026-10-01-24h/`).
+  - Zero memory leak, equilibrio termico a circa 43°C e stabilità `NRestarts=0`.
 
 ---
 
-## 📸 Gli Spazi di Lavoro (v0.6)
+## 📸 Gli Spazi di Lavoro
 
 Un carosello a 6 spazi di lavoro fluidi, navigabili in orizzontale e verticale:
 
@@ -39,6 +51,7 @@ Un carosello a 6 spazi di lavoro fluidi, navigabili in orizzontale e verticale:
 | **Fluidità / Framerate** | **60 FPS stabili** (vsync GPU PowerVR) | 15–30 FPS con scatti visibili |
 | **Latenza di Input** | **Istantanea (polling kernel Linux evdev)** | Dipendente dall'event loop di JS |
 | **Protezione MicroSD** | **Commit a 30s, tmpfs, zram, zero scritture inutili** | Scritture disco elevate che usurano la SD |
+| **Affidabilità 24/7** | **Soak Test 24h Verificato (0 crash, ~43°C)** | Rischio elevato di freeze del browser |
 | **Resilienza Offline** | **100% resiliente** (cache atomica persistente) | Schermate bianche o tentativi a vuoto |
 | **Costi API** | **€0 / Zero API key** (Open-Meteo, Jolpica, PulseLive) | API a pagamento o quote restrittive |
 
@@ -64,17 +77,6 @@ Un carosello a 6 spazi di lavoro fluidi, navigabili in orizzontale e verticale:
 
 ---
 
-## 🚀 I Moduli di DeskPulse OS (v0.6)
-
-1. **🕒 Home & Orologio Ambient:** Tipografia ad alto contrasto per visione da scrivania. Mostra automaticamente la card dell'evento o allerta meteo futura solo quando presente.
-2. **⛅ Stazione Meteo Live:** Dati orari e previsione a 3 giorni via Open-Meteo con cache atomica locale offline.
-3. **🤖 Monitor Quote AI & Codex:** Percentuale finestre ChatGPT, orari di ripristino e saldo crediti sincronizzati in sicurezza via SSH dal PC locale.
-4. **⚽ Hub Serie A & Squadra del Cuore:** Calendario completo, classifica a 20 squadre, formazioni ufficiali, statistiche e modulo **Fantacalcio** con titolari, panchinari e pagelle/voti della Redazione.
-5. **🏎️ Command Center Formula 1:** Calendario GP con fusi italiani, classifiche Piloti e Costruttori (Jolpica), dettagli stint/gomme (OpenF1) e **live timing SignalR WebSocket** in tempo reale via QtWebSockets.
-6. **🏍️ Paddock MotoGP:** Calendario, caratteristiche circuiti, classifiche Sprint e Gara e classifica mondiale piloti (PulseLive).
-
----
-
 ## 🛒 Hardware Necessario (~35–45 €)
 
 1. **SBC:** Orange Pi Zero 3W (Allwinner H618, 1GB–4GB RAM, GPU PowerVR). Compatibile con altre board Linux ARM64.
@@ -87,31 +89,18 @@ Un carosello a 6 spazi di lavoro fluidi, navigabili in orizzontale e verticale:
 
 ## ⚡ Installazione Chiavi in Mano
 
-### 1. Sistema Operativo Base
-Installa Debian 13 o Armbian Minimal sulla scheda SD:
 ```bash
-sudo ./scripts/flash-sd.sh /percorso/immagine.img /dev/sdX
-```
-Configura Wi-Fi headless e chiavi SSH prima dell'avvio:
-```bash
-sudo ./scripts/configure-wifi-local.py
-```
-
-### 2. Setup Automatico sulla Scheda
-Accedi via SSH alla tua Orange Pi ed esegui:
-```bash
+# Accedi via SSH alla tua board
 git clone https://github.com/GiDanis/desk-pulse.git
 cd desk-pulse
 sudo ./scripts/setup-board.sh
 ```
 
-Lo script installa tutte le librerie Qt6, PySide6, QtWebSockets, configura l'utente `smartpc` e abilita l'avvio automatico del servizio al boot.
+Lo script configura automaticamente pacchetti Qt6, permessi utente `smartpc`, file di configurazione EGLFS e servizio systemd con avvio immediato a 60 FPS.
 
 ---
 
 ## 🎮 Comandi & Navigazione Tastierino
-
-Progettato per mini tastierino a matrice 3×3 o frecce della tastiera:
 
 ```text
 ┌──────────────┬──────────────┬──────────────┐
@@ -127,15 +116,16 @@ Progettato per mini tastierino a matrice 3×3 o frecce della tastiera:
 - **Navigazione Verticale (Tasti 2 / 8):** Viste di dettaglio (es. Calendario ↕ Classifica ↕ Risultati).
 - **Azione / Aggiorna (Tasto 5):** Apre i dettagli dell'incontro/GP o forza un aggiornamento dati.
 - **Tasto Rapido Home (Tasto 7):** Torna istantaneamente all'orologio principale da qualsiasi profondità.
-- **Menu di Sistema (Tasto 9):** Regolazione aspetto (temi, orari luminosità automatica), moduli visibili e diagnostica GPU/CPU.
+- **Menu di Sistema (Tasto 9):** Regolazione aspetto (temi, luminosità), notifiche (fascia silenzio), moduli visibili e telemetria hardware in tempo reale.
 
 ---
 
-## 🗺️ Roadmap Prossime Versioni
+## 🗺️ Roadmap
 
 - [x] **v0.4:** Compositore diretto EGLFS/KMS, Home dinamica, Meteo Open-Meteo.
 - [x] **v0.5:** Motore eventi persistente, allerte Protezione Civile, badge notifiche.
 - [x] **v0.6:** Hub Serie A, Squadra del Cuore, Fantacalcio, F1 & MotoGP con telemetria live SignalR.
+- [x] **v0.6.1:** **Architettura Impostazioni Modulare, Wi-Fi Live, Fantacalcio Live & Verifica 24h.**
 - [ ] **v0.7:** **Smart Home Dashboard** — Integrazione nativa locale Tuya & Home Assistant.
 - [ ] **v0.8:** **Spotify Connect & Media Player** — Copertina album e controlli musicali fisici.
 - [ ] **v0.9:** **PC Hardware Telemetry HUD** — Temperature CPU/GPU del PC da lavoro inviate via LAN.

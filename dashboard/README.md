@@ -22,7 +22,7 @@ La mini tastiera USB `413d:553a` è letta da `keypad.py`, che traduce le scorcia
 
 ## Stato dei moduli
 
-La **v0.7 Casa è in sviluppo** con API cloud Tuya dirette. `tuya_core.py` e `tuya_probe.py` permettono la prova manuale di inventario e stati Smart Life; `check_tuya.py` verifica protocollo e cache con risposte simulate. Nessuna schermata Casa o sincronizzazione periodica è ancora attiva. Token e rinnovo verificati sul cloud reale; lettura dispositivi impedita dal data center sospeso (`28841107`). [Configurazione Tuya, aggiunte/modifiche e limiti](design/v07-tuya-api-setup.md), [analisi reale](design/v07-tuya-live-analysis.md), [piano aggiornato](design/v07-tuya-direct-plan.md).
+La **v0.7 Casa è in sviluppo** con API cloud Tuya dirette. `tuya_core.py` e `tuya_probe.py` permettono la prova manuale di inventario e stati Smart Life; `check_tuya.py` verifica protocollo e cache con risposte simulate (22 controlli su PC e board). Nessuna schermata Casa o sincronizzazione periodica è ancora attiva. Sul cloud reale: token/rinnovo, 16 dispositivi, protocolli e specifiche/stati di quattro dispositivi letti con successo. UID e firma dei cursori corretti; collaudo fisico ancora necessario. [Configurazione Tuya, aggiunte/modifiche e limiti](design/v07-tuya-api-setup.md), [analisi reale](design/v07-tuya-live-analysis.md), [piano aggiornato](design/v07-tuya-direct-plan.md).
 
 `module_state.py` definisce l'involucro comune; `weather.py`, `account.py` e `sport.py` espongono `moduleState`, mentre `state.py` espone a QML `weatherState`, `accountState`, `sportState`, `racingStates` (F1/MotoGP) e `systemState`. Ogni stato usa:
 
@@ -68,9 +68,9 @@ Adapter e worker: `sport_team_core.py`, `sport_team.py`; cache per club `sport-t
 
 Nel dettaglio delle sole partite **Serie A** compare **Fantacalcio**: formazione, titolari, subentrati e panchina, con **voto base e fantavoto della Redazione Fantacalcio**. 4/6 cambia scheda, 2/8 scorre, 5 cambia squadra. Per aggiornare manualmente i voti, 2 sopra il primo calciatore e 5 su Aggiorna voti.
 
-La scheda funziona anche dal calendario della preferita. Le partite future attendono la pubblicazione; valori assenti e SV restano distinguibili. Cache atomica per giornata `fantacalcio-{stagione}-{giornata}.json`, richieste in worker e fonte/data indipendenti dal dettaglio FotMob. Un errore conserva gli ultimi voti validi.
+La scheda funziona anche dal calendario della preferita. Vicino al calcio d’inizio e durante la partita tenta il feed anonimo Fantacalcio ogni 30 secondi: voti provvisori e fantavoto calcolato espliciti. La stagione viene identificata una sola volta e salvata in `fantacalcio-seasons.json`. Lo storico conserva i voti pubblicati della redazione; valori assenti e SV restano distinguibili. Cache atomica per giornata `fantacalcio-{stagione}-{giornata}.json`, richieste in worker e fonte/data indipendenti dal dettaglio FotMob. Un errore conserva gli ultimi voti validi.
 
-[Implementazione, fonte, verifiche sul display e limiti](design/v06-fantacalcio-release.md). Test: `check_fantacalcio.py` e `check_fantacalcio_ui.py`; acquisizione reale: `verify_fantacalcio_board.py`.
+[Implementazione, fonte, verifiche sul display e limiti](design/v06-fantacalcio-release.md). [Feed live, cache stagionale, storico e verifiche](design/v06-fantacalcio-live.md). Test: `check_fantacalcio.py`, `check_fantacalcio_live.py` e `check_fantacalcio_ui.py`; acquisizione reale: `verify_fantacalcio_board.py` e `verify_fantacalcio_live.py`. Ricezione e latenza durante una partita attiva restano da verificare.
 
 ## Sport · F1 e MotoGP
 
@@ -109,7 +109,7 @@ La sincronizzazione manuale dal PC è:
 python3 dashboard/account_sync.py
 ```
 
-`SMARTPC_ACCOUNT_HOST` può sostituire l'host SSH predefinito `smartpc@192.168.1.179`; `--identity` seleziona una chiave diversa. Le unità in `dashboard/systemd/` installate in `~/.config/systemd/user/` eseguono il controllo ogni 10 minuti mentre il PC è acceso; il timer utente richiede che il servizio systemd dell'utente sia attivo anche dopo il logout. Per verificarle: `systemctl --user status smartpc-account-sync.timer` e `systemctl --user start smartpc-account-sync.service`. L'integrazione è di sola lettura: non acquista crediti né consuma i reset disponibili. La pagina evidenzia l'utilizzo dall'80% e dal 95%; queste soglie si possono cambiare con `SMARTPC_ACCOUNT_WARNING_PERCENT` e `SMARTPC_ACCOUNT_CRITICAL_PERCENT` nell'ambiente del servizio dashboard, poi riavviandolo. Il motore eventi crea una voce ambientale all'80% e un banner al 95%, solo da dati ancora aggiornati; non ripete l'avviso a ogni sincronizzazione.
+`SMARTPC_ACCOUNT_HOST` può sostituire l'host SSH predefinito `smartpc@192.168.1.179`; `--identity` seleziona una chiave diversa. Le unità in `dashboard/systemd/` installate in `~/.config/systemd/user/` eseguono il controllo ogni 10 minuti mentre il PC è acceso; il timer utente richiede che il servizio systemd dell'utente sia attivo anche dopo il logout. Per verificarle: `systemctl --user status smartpc-account-sync.timer` e `systemctl --user start smartpc-account-sync.service`. L'integrazione è di sola lettura: non acquista crediti né consuma i reset disponibili. La pagina evidenzia l'utilizzo dall'80% e dal 95%; queste soglie si possono cambiare in **Impostazioni → Account ChatGPT** senza riavvio. Le variabili `SMARTPC_ACCOUNT_WARNING_PERCENT` e `SMARTPC_ACCOUNT_CRITICAL_PERCENT` forniscono i valori iniziali quando non esistono preferenze salvate. Il motore eventi crea una voce ambientale all'80% e un banner al 95%, solo da dati ancora aggiornati; non ripete l'avviso a ogni sincronizzazione.
 
 ## Motore eventi e allerta meteo
 
@@ -170,7 +170,7 @@ Per provare sul PC il layout senza rete:
 
 `F12` apre il pannello demo: si possono cambiare meteo online/offline/assente, tessera evento e scenari Avvisi (nessuno, prossimo, banner, banner grande, urgente). I tasti della dashboard continuano a cambiare vista. La demo non chiama Open-Meteo o il bollettino ufficiale e usa un database eventi in memoria, separato dagli avvisi reali.
 
-`Main.qml` gestisce navigazione e composizione; `HomeNow.qml`, `HomeDay.qml`, `WeatherNow.qml`, `WeatherForecast.qml` e `AccountChatGPT.qml` sono le viste indipendenti. `DashboardOverlay.qml` contiene menu e impostazioni. Una nuova famiglia va aggiunta al registro `allFamilies` in `Main.qml`, insieme alle sue viste e al relativo provider; solo dopo entra in **Moduli visibili**. In modalità `--device`, `run.sh` nasconde il cursore software di EGLFS anche quando la mini tastiera USB espone un'interfaccia mouse.
+`Main.qml` gestisce navigazione e composizione; `HomeNow.qml`, `HomeDay.qml`, `WeatherNow.qml`, `WeatherForecast.qml` e `AccountChatGPT.qml` sono le viste indipendenti. `DashboardOverlay.qml` contiene il menu e gli avvisi; `SettingsPanel.qml` contiene le impostazioni e `DeviceInfo.qml` le informazioni del dispositivo. Una nuova famiglia va aggiunta al registro `allFamilies` in `Main.qml`, insieme alle sue viste e al relativo provider; solo dopo entra in **Moduli visibili**. In modalità `--device`, `run.sh` nasconde il cursore software di EGLFS anche quando la mini tastiera USB espone un'interfaccia mouse.
 
 ## Verifiche e ripristino
 
@@ -218,3 +218,20 @@ Da **Prossime**, senza incontri attivi, premere **8 due volte** per Classifica e
 ### Etichette del tastierino · 1 ottobre 2026
 
 Dopo il riscontro sul dispositivo, i suggerimenti nei pannelli e nella legenda Comandi indicano **1 Indietro** e **7 Home**. Aggiornato anche l’avviso urgente (**1 Chiudi**, **7 Home**). La revisione modifica le etichette e conserva il comportamento dei comandi esistente.
+
+
+### Impostazioni e Informazioni · 1 ottobre 2026
+
+**Menu → Impostazioni** divide le preferenze in **Aspetto**, **Luminosità**, **Moduli visibili**, **Notifiche**, **Account ChatGPT**, **Sport** e **Dati e aggiornamenti**. Sport contiene Serie A/Fantacalcio, F1 e MotoGP quando i rispettivi servizi sono disponibili. Le liste mostrano quattro righe alla volta, fermano il focus ai bordi e conservano la selezione al ritorno dal sottomenu.
+
+Aspetto separa tema e animazioni dalle regolazioni della luce. I livelli inattivi sono indicati in grigio: il valore manuale si modifica in modalità manuale, quelli giorno/notte in automatico. Gli orari restano condivisi con il tema automatico. La regolazione attenua l'immagine e conserva il limite minimo del 20%; non modifica la retroilluminazione fisica.
+
+Account permette di modificare le soglie di avviso e utilizzo critico, salvate separatamente e applicate senza riavvio. La soglia critica rimane superiore a quella di avviso. **Notifiche** apre due sottomenu: **Fascia silenzio** (attivazione, dalle, alle) e **Avvisi sullo schermo** (Meteo, Account e notifiche gol quando Sport è disponibile). Il silenzio orario sospende solo i banner; gli urgenti delle categorie abilitate restano visibili. Disabilitare Meteo o Account nasconde invece banner e urgenti a qualsiasi ora, conservando gli avvisi nell'elenco. I gol conservano il requisito del collaudo live e rispettano la fascia silenzio. Sport rimanda al menu Notifiche per questa preferenza.
+
+**Dati e aggiornamenti** è l'unico menu per gli aggiornamenti manuali delle fonti: mostra stato e ultima acquisizione, con una pausa minima di 30 secondi tra richieste. Account rilegge soltanto la cache già sincronizzata dal PC. Le impostazioni Sport/F1/MotoGP rimandano alla stessa pagina con la fonte preselezionata; Informazioni è in sola lettura. Restano le azioni specifiche per acquisire il dettaglio di una partita o sessione nelle relative viste.
+
+**Menu → Informazioni** è indipendente dalle impostazioni, con schede **Dispositivo / Risorse / Rete / Dati**. Include versione, board, sistema operativo, kernel, runtime Qt/Python, display, tastierino, fuso orario, temperature CPU/GPU, CPU del processo, RAM disponibile e RAM/picco RSS della dashboard, swap, spazio libero, uptime scheda/processo, IP/interfaccia e stato delle fonti. Le misure mancanti sono N/D; una rete locale collegata non certifica la raggiungibilità di Internet.
+
+`system_info.py` prepara uno snapshot all'avvio e lo aggiorna ogni cinque secondi solo quando Info è aperta. I getter restituiscono dati già raccolti senza I/O o notifiche durante la lettura: questo elimina la causa dei binding circolari osservati nei vecchi getter. Se il driver non espone `/proc/net/wireless`, il segnale Wi-Fi usa la qualità percentuale di NetworkManager: lettura asincrona con `nmcli --rescan no`, al massimo ogni 30 secondi mentre Info è aperta e timeout di 2,5 secondi. Le percentuali non vengono convertite in dBm. Il testo delle informazioni usa il rendering nativo Qt, verificato su EGLFS. Le etichette del tastierino restano **1 Indietro / 7 Home**, come confermate sul dispositivo.
+
+`check_settings.py` verifica preferenze isolate, navigazione e ritorno dai sottomenu, luminosità, notifiche, soglie, aggiornamenti centralizzati, Info in sola lettura, pausa delle richieste, getter senza effetti collaterali, lettura Wi-Fi asincrona e cambi simulati della connessione del tastierino. `--capture-dir` salva le schermate; per EGLFS il servizio va prima fermato e poi riavviato. [Prima revisione](design/settings-menu-2026-10-01.md) e [riorganizzazione del 2 ottobre](design/settings-clarity-2026-10-02.md).

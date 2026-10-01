@@ -13,7 +13,7 @@ import time
 import unicodedata
 import urllib.error
 import urllib.request
-from sport_core import ROME, ProviderError, club_id, mapping, number, text
+from sport_core import ROME, ProviderError, club_id, number, text
 
 SOURCE = "Redazione Fantacalcio"
 BASE = "https://www.fantacalcio.it/voti-fantacalcio-serie-a/"
@@ -167,7 +167,13 @@ def parse_page(html, key, acquired):
             link = row.first("a", "player-link")
             if not link.attrs:
                 continue  # Coaches are not footballers.
-            pid = link.attrs.get("href", "").rstrip("/").rsplit("/", 1)[-1]
+            identity = re.search(
+                r"/serie-a/squadre/[^/]+/[^/]+/(\d+)(?:/"
+                + re.escape(key.split("/")[0])
+                + r")?/?$",
+                link.attrs.get("href", ""),
+            )
+            pid = identity.group(1) if identity else ""
             if not pid.isdigit():
                 raise ValueError("Identità calciatore Fantacalcio errata")
             cells = [n for n in row.children if n.tag == "td"]
@@ -231,7 +237,7 @@ def validate(page):
         or not math.isfinite(at)
         or not 0 < at <= time.time() + 300
         or not isinstance(teams, list)
-        or len(teams) > 20
+        or not 1 <= len(teams) <= 20
     ):
         raise ValueError("Cache Fantacalcio non valida")
     seen = set()
@@ -278,7 +284,11 @@ def read_cache(path, key):
             return None
         envelope = json.loads(Path(path).read_text())
         page = envelope["page"]
-        if envelope.get("schemaVersion") != 1 or page.get("key") != key:
+        if (
+            envelope.get("schemaVersion") != 1
+            or page.get("key") != key
+            or page.get("provisional")
+        ):
             return None
         validate(page)
         return page
@@ -287,6 +297,8 @@ def read_cache(path, key):
 
 
 def save_cache(path, page):
+    if page.get("provisional"):
+        raise ValueError("I voti live non sovrascrivono lo storico pubblicato")
     validate(page)
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -363,15 +375,7 @@ def aliases(player):
     return values - {""}
 
 
-def presentation(page, match):
-    result = {
-        "eligible": eligible(match),
-        "teams": [],
-        "published": False,
-        "warning": "",
-    }
-    if not result["eligible"]:
-        return result
+def selected_teams(page, match):
     key = page_key(match)
     kickoff = match.get("kickoffUtc")
     selected = []
@@ -383,6 +387,21 @@ def presentation(page, match):
             == (match.get("homeTeamId"), match.get("awayTeamId"))
             and abs(t["kickoffUtc"] - kickoff) <= 1800
         ]
+    return selected
+
+
+def presentation(page, match):
+    result = {
+        "eligible": eligible(match),
+        "teams": [],
+        "published": False,
+        "warning": "",
+        "provisional": bool(page and page.get("provisional")),
+        "liveNotice": page.get("liveNotice", "") if page else "",
+    }
+    if not result["eligible"]:
+        return result
+    selected = selected_teams(page, match)
     for side in ("home", "away"):
         roster = next(
             (l for l in match.get("lineups", []) if l.get("side") == side), {}

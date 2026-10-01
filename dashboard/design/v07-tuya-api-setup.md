@@ -1,6 +1,6 @@
 # v0.7 Casa · prova delle API Tuya
 
-**1 ottobre 2026.** Percorso scelto: API cloud Tuya. Implementati `tuya_core.py`, client di sola lettura senza dipendenze aggiuntive, e `tuya_probe.py`, prova manuale. Token e rinnovo verificati sul cloud reale; lettura dispositivi impedita dal data center sospeso (`28841107`). [Risultati e prove ancora necessarie](v07-tuya-live-analysis.md). Schermata Casa, preferiti, scheduling e riconnessione automatica dopo un'interruzione di rete restano da integrare. Nessun comando ai dispositivi.
+**1 ottobre 2026.** Percorso scelto: API cloud Tuya. Implementati `tuya_core.py`, client di sola lettura senza dipendenze aggiuntive, e `tuya_probe.py`, prova manuale. Token/rinnovo, inventario di 16 dispositivi e specifiche/stati di quattro dispositivi verificati sul cloud reale. Corretto l'UID dell'account e la firma dei cursori con caratteri speciali. [Risultati e prove ancora necessarie](v07-tuya-live-analysis.md). Schermata Casa, preferiti, scheduling e riconnessione automatica dopo un'interruzione di rete restano da integrare. Nessun comando ai dispositivi.
 
 ## Collegamento iniziale
 
@@ -19,7 +19,7 @@ Confrontare l'elenco API con l'app: dispositivi condivisi, hub e modelli partico
 
 ## Configurazione privata sul PC
 
-Configurazione in `/home/giuseppe/.config/smartpc/tuya-cloud.json`, fuori dal progetto, con permessi `600`. Client ID e Client Secret forniti dall'utente sono già stati trasferiti qui; anche Central Europe e l'UID sono configurati. Il blocco attuale è la risposta di data center sospeso, non un campo mancante:
+Configurazione in `/home/giuseppe/.config/smartpc/tuya-cloud.json`, fuori dal progetto, con permessi `600`. Client ID e Client Secret forniti dall'utente sono già stati trasferiti qui; Central Europe e l'UID corretto, ricavato dall'unico account restituito dall'API dei dispositivi associati, sono configurati. Il precedente errore di data center sospeso non compare più; l'inventario funziona:
 
 | Campo | Valore dalla console |
 | --- | --- |
@@ -83,7 +83,7 @@ Dimensionare il polling sulla quota effettiva: un elenco di una pagina ogni cinq
 
 ## Verifiche e prossimo passo
 
-`check_tuya.py`: **21 controlli superati sul PC e 21 sulla Orange Pi** il 1 ottobre 2026, più verifica di sintassi Python sul PC. Coprono vettori pubblici delle firme, paginazione, token, cache atomica, isolamento account, errori e sensori, inclusa la nuova diagnosi di data center sospeso. Sulla board sono stati eseguiti in una directory temporanea senza modificare il kiosk, con risposte simulate. Separatamente, **token e rinnovo sono verificati sul cloud reale**; accesso ai dispositivi, compatibilità, rendering e affidabilità della v0.7 restano non verificati. Nessuna misura RAM, FPS o latenza degli stati dei dispositivi eseguita in questa fase.
+`check_tuya.py`: **22 controlli superati sul PC e 22 sulla Orange Pi** il 1 ottobre 2026, più verifica di sintassi Python sul PC. Coprono vettori pubblici delle firme, firma dei cursori speciali, paginazione, token, cache atomica, isolamento account, errori e sensori. Sulla board sono stati eseguiti in una directory temporanea senza modificare il kiosk, con risposte simulate. Separatamente, **token/rinnovo, inventario, protocolli e letture di quattro dispositivi sono verificati sul cloud reale dal PC**. Confronto fisico, compatibilità di tutte le funzioni, rendering e affidabilità della v0.7 restano non verificati. Nessuna misura RAM, FPS o latenza delle variazioni degli stati eseguita in questa fase.
 
 Con l'account configurato: confrontare luce, presa e sensore Zigbee con l'app; cambiare stato fisicamente/dall'app; misurare ritardo e disponibilità con dispositivo disalimentato; provare aggiunte/rinomine/rimozioni. Poi integrare worker Qt, selezione persistente, quattro tessere, backoff, offline e reboot senza rete.
 

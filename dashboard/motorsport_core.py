@@ -1,7 +1,7 @@
 """Validated F1/Jolpica and MotoGP/PulseLive adapters; no Qt or credentials."""
 
 from copy import deepcopy
-from datetime import datetime, timezone
+from datetime import datetime
 import json
 from pathlib import Path
 import time

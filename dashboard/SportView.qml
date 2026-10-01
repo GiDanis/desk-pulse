@@ -5,7 +5,6 @@ Item {
     required property var dashboard
     readonly property var sportState: dashboard.sport
     readonly property var sportInfo: dashboard.sportData
-    readonly property var match: dashboard.sportMatch
     readonly property bool results: dashboard.sportView === "RISULTATI"
     function stamp(seconds) {
         return seconds ? new Date(seconds * 1000).toLocaleString(Qt.locale("it_IT"), "dd/MM hh:mm") : "—"

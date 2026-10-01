@@ -1,0 +1,56 @@
+name: 🐛 Bug Report
+description: Report an issue, rendering glitch, or board hardware incompatibility.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report an issue with **DeskPulse OS**! Please provide the details below so we can reproduce and fix it.
+  - type: input
+    id: hardware
+    attributes:
+      label: SBC & Hardware Board
+      description: What board are you running? (e.g. Orange Pi Zero 3W, Raspberry Pi, Radxa Zero, PC Desktop)
+      placeholder: Orange Pi Zero 3W (4GB RAM)
+    validations:
+      required: true
+  - type: input
+    id: display
+    attributes:
+      label: Display Model & Resolution
+      description: What screen are you using? (e.g. Hagibis 3.5" USB-C 960x640, HDMI monitor, DSI screen)
+      placeholder: Hagibis 3.5" USB-C (960x640 @ 60Hz)
+    validations:
+      required: true
+  - type: input
+    id: os_version
+    attributes:
+      label: OS & Kernel Version
+      description: Output of `uname -a` or Linux distribution.
+      placeholder: Linux orangepizero3w 6.6.98-sun60iw2 (Debian 13 Trixie)
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce the behavior?
+      placeholder: |
+        1. Boot board with service running
+        2. Navigate with key 4 to F1
+        3. Observe...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs
+      description: Output of `journalctl -u smartpc-dashboard -n 50` or terminal output.
+      render: shell

@@ -1,6 +1,6 @@
 # SmartPC · v0.7 Casa · proposta semplificata con cloud Tuya diretto
 
-**Revisione:** 1 ottobre 2026. **Decisione approvata:** procedere con API cloud Tuya dirette. **Stato:** client di lettura e probe implementati; token e rinnovo reali verificati, lettura dispositivi impedita dal data center sospeso (`28841107`). Schermata Casa e provider periodico ancora da sviluppare. [Configurazione](v07-tuya-api-setup.md), [analisi reale](v07-tuya-live-analysis.md).
+**Revisione:** 1 ottobre 2026. **Decisione approvata:** procedere con API cloud Tuya dirette. **Stato:** client di lettura e probe implementati; token/rinnovo, inventario di 16 dispositivi, protocolli e letture su quattro dispositivi verificati sul cloud reale. UID e firma dei cursori corretti; 22 controlli offline superati su PC e board. Schermata Casa, collaudo fisico e provider periodico ancora da sviluppare. [Configurazione](v07-tuya-api-setup.md), [analisi reale](v07-tuya-live-analysis.md).
 
 ## Decisione di lavoro
 
@@ -58,4 +58,6 @@ Il dato cloud resta «ultimo stato riportato»: una chiamata riuscita non prova 
 - Cache precedente evidente, recupero dopo reboot senza rete e nessuna falsa conferma.
 - Fonti, dipendenze, configurazione e rollback documentati.
 
-**Prossimo passaggio:** seguire la guida e verificare l'accesso reale. Il client gestisce inventario paginato, token, specifiche/stati e cache atomica normalizzata. I test offline non dimostrano il comportamento dei dispositivi reali; la v0.7 resta in sviluppo.
+**Prossimo passaggio:** confrontare stati e variazioni con Smart Life e dispositivi fisici, verificare quota/scadenza e integrare provider/UI. Il client gestisce inventario paginato, token, specifiche/stati e cache atomica normalizzata; l'accesso reale è ora verificato. La v0.7 resta in sviluppo.
+
+**Proposta di economia delle chiamate:** verificata una risposta Smart Home cumulativa con disponibilità e stati dei dispositivi selezionati. Per il provider valutare questo adapter e specifiche in cache, evitando GET separate a ogni tessera. Base cinque minuti, un minuto durante consultazione con budget; [calcoli e policy proposta](v07-tuya-polling-budget.md). Scheduling non ancora implementato.
