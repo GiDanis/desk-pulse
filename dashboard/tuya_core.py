@@ -140,6 +140,8 @@ class CloudClient:
             code = raw_code if re.fullmatch(r'[0-9]{1,12}', raw_code) else 'unknown'
             kind = 'token' if code in ('1010', '1011') else 'api'
             # Never echo provider msg, body, URL, secrets or headers.
+            if code == '28841107':
+                raise TuyaError('api', 'Tuya API 28841107: data center sospeso; abilitarlo nella console del progetto.', code)
             raise TuyaError(kind, f'Tuya API {code}; controllare autorizzazione, data center e servizi.', code)
         if 'result' not in payload:
             raise TuyaError('invalid', 'Risposta Tuya priva del risultato.')

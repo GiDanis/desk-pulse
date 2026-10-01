@@ -183,6 +183,19 @@ class TuyaChecks(unittest.TestCase):
         self.assertNotIn(CONFIG.access_secret, str(caught.exception))
         self.assertNotIn(CONFIG.access_secret, repr(CONFIG))
 
+    def test_suspended_data_center_is_actionable_without_retry_or_cache_loss(self):
+        api, transport = client(token(), page([device()]),
+                                {'success': False, 'code': 28841107, 'msg': CONFIG.access_secret})
+        synchronize(api, self.cache)
+        before = self.cache.read_bytes()
+        with self.assertRaises(TuyaError) as caught:
+            synchronize(api, self.cache)
+        self.assertEqual(caught.exception.code, '28841107')
+        self.assertIn('data center sospeso', str(caught.exception))
+        self.assertNotIn(CONFIG.access_secret, str(caught.exception))
+        self.assertEqual(len(transport.calls), 3)
+        self.assertEqual(self.cache.read_bytes(), before)
+
     def test_http_quota_and_redirect_do_not_expose_response_or_retry(self):
         for code, kind in ((429, 'quota'), (302, 'http')):
             with self.subTest(code=code):

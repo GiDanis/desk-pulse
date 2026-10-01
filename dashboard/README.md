@@ -22,7 +22,7 @@ La mini tastiera USB `413d:553a` è letta da `keypad.py`, che traduce le scorcia
 
 ## Stato dei moduli
 
-La **v0.7 Casa è in sviluppo** con API cloud Tuya dirette. `tuya_core.py` e `tuya_probe.py` permettono la prova manuale di inventario e stati Smart Life; `check_tuya.py` verifica protocollo e cache con risposte simulate. Nessuna schermata Casa o sincronizzazione periodica è ancora attiva. [Configurazione Tuya, aggiunte/modifiche e limiti](design/v07-tuya-api-setup.md), [piano aggiornato](design/v07-tuya-direct-plan.md). L'accesso reale richiede il progetto Developer collegato all'app.
+La **v0.7 Casa è in sviluppo** con API cloud Tuya dirette. `tuya_core.py` e `tuya_probe.py` permettono la prova manuale di inventario e stati Smart Life; `check_tuya.py` verifica protocollo e cache con risposte simulate. Nessuna schermata Casa o sincronizzazione periodica è ancora attiva. Token e rinnovo verificati sul cloud reale; lettura dispositivi impedita dal data center sospeso (`28841107`). [Configurazione Tuya, aggiunte/modifiche e limiti](design/v07-tuya-api-setup.md), [analisi reale](design/v07-tuya-live-analysis.md), [piano aggiornato](design/v07-tuya-direct-plan.md).
 
 `module_state.py` definisce l'involucro comune; `weather.py`, `account.py` e `sport.py` espongono `moduleState`, mentre `state.py` espone a QML `weatherState`, `accountState`, `sportState`, `racingStates` (F1/MotoGP) e `systemState`. Ogni stato usa:
 

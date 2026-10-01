@@ -1,6 +1,6 @@
 # SmartPC · v0.7 Casa · proposta semplificata con cloud Tuya diretto
 
-**Revisione:** 1 ottobre 2026. **Decisione approvata:** procedere con API cloud Tuya dirette. **Stato:** client di lettura e probe implementati; accesso reale non verificato, schermata Casa e provider periodico ancora da sviluppare. [Configurazione e prova API](v07-tuya-api-setup.md).
+**Revisione:** 1 ottobre 2026. **Decisione approvata:** procedere con API cloud Tuya dirette. **Stato:** client di lettura e probe implementati; token e rinnovo reali verificati, lettura dispositivi impedita dal data center sospeso (`28841107`). Schermata Casa e provider periodico ancora da sviluppare. [Configurazione](v07-tuya-api-setup.md), [analisi reale](v07-tuya-live-analysis.md).
 
 ## Decisione di lavoro
 
