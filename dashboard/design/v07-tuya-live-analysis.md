@@ -13,11 +13,11 @@ Le credenziali fornite dall'utente erano state inserite nella guida Markdown. Cl
 | Refresh token su Western Europe | Rinnovo reale riuscito, senza token di business nella firma |
 | Lettura diagnostica dei dispositivi degli account collegati | Rifiutata sui due endpoint europei con `28841107` |
 | Motivo indicato dalla risposta Tuya | Data center sospeso; richiesta di abilitarlo nella piattaforma cloud |
-| Inventario completo filtrato per UID | Non eseguito: UID non configurato e data center da verificare |
+| Inventario completo filtrato per UID su Central Europe | Tentato dopo la configurazione fornita dall'utente; rifiutato con `28841107`, data center ancora sospeso |
 | Specifiche e stati di dispositivi | Non eseguiti: elenco non disponibile |
 | Comandi ai dispositivi | Nessuno |
 
-Eseguite **9 richieste reali di sola lettura/autenticazione**: quattro richieste di token iniziale, un refresh, tre tentativi diagnostici su Western Europe e uno su Central Europe. Il token non viene persistito. La lettura diagnostica ha usato `GET /v1.0/iot-01/associated-users/devices`, documentata da Tuya per gli account associati al progetto, con limite di una pagina. Non è un fallback attivato nel provider e non è stata salvata una risposta grezza. [API diagnostica](https://developer.tuya.com/en/docs/cloud/fc19523d18?id=Kakr4p8nq5xsc).
+Eseguite **13 richieste reali di sola lettura/autenticazione**: sei richieste di token iniziale, un refresh, quattro letture diagnostiche e due letture dell'inventario per UID su Central Europe. Il token non viene persistito. La lettura diagnostica ha usato `GET /v1.0/iot-01/associated-users/devices`, documentata da Tuya per gli account associati al progetto, con limite di una pagina. Non è un fallback attivato nel provider e non è stata salvata una risposta grezza. [API diagnostica](https://developer.tuya.com/en/docs/cloud/fc19523d18?id=Kakr4p8nq5xsc).
 
 L'autenticazione riuscita su entrambi gli endpoint **non identifica il data center effettivo dell'account** e non prova il diritto di leggere i dispositivi. Il codice `28841107` è stato associato alla sospensione leggendo la risposta reale, senza stampare il messaggio grezzo; non è stata diagnosticata una scadenza o una quota esaurita.
 
@@ -25,10 +25,12 @@ L'autenticazione riuscita su entrambi gli endpoint **non identifica il data cent
 
 1. Aprire il progetto Tuya e verificare/abilitare il data center dove è registrato l'account Smart Life.
 2. Verificare che **Devices → Link App Account** contenga l'account autorizzato tramite QR, con **Automatic Link**. Il **Project Code non è l'UID**: l'UID necessario è quello dell'account collegato.
-3. Compilare `endpoint` e `uid` nel file privato. Client ID e Client Secret sono già presenti.
+3. **Completato:** l'utente ha indicato Central Europe e l'UID; inseriti nel file privato. Client ID e Client Secret sono già presenti. Ripetuta l'acquisizione: il token riesce, la GET dell'inventario continua a restituire data center sospeso. Nessun elenco vuoto o dato di dispositivo è stato ricevuto.
 4. Verificare servizi **IoT Core / Smart Home Basic Service** autorizzati al progetto, quota e scadenza nell'API Explorer. Non è stato acquistato o attivato un piano a pagamento.
 
 Tuya distingue sottoscrizione del servizio e autorizzazione del progetto a chiamarlo. [Gestione dei servizi API](https://developer.tuya.com/en/docs/iot/applying-for-api-group-permissions?id=Ka6vf012u6q76), [collegamento account Smart Life](https://developer.tuya.com/en/docs/developer/apply-cloud-api-key?id=Kff30z8sv62ah).
+
+Per il controllo puntuale: sullo stesso progetto aprire **Overview → Edit** e verificare Central Europe tra i data center selezionati/salvati; poi confrontare il numero di dispositivi di **All Devices** nel medesimo data center e lo stato/scadenza di **IoT Core**. Il controllo di quota o scadenza serve a completare la diagnosi; non è una causa già provata del codice osservato. [Modifica dei data center del progetto](https://developer.tuya.com/en/docs/iot/manage-projects?id=Ka49p0n8vkzm6).
 
 ## Prove ancora necessarie per completare l'analisi
 

@@ -19,7 +19,7 @@ Confrontare l'elenco API con l'app: dispositivi condivisi, hub e modelli partico
 
 ## Configurazione privata sul PC
 
-Configurazione in `/home/giuseppe/.config/smartpc/tuya-cloud.json`, fuori dal progetto, con permessi `600`. Client ID e Client Secret forniti dall'utente sono già stati trasferiti qui; restano da compilare endpoint e UID:
+Configurazione in `/home/giuseppe/.config/smartpc/tuya-cloud.json`, fuori dal progetto, con permessi `600`. Client ID e Client Secret forniti dall'utente sono già stati trasferiti qui; anche Central Europe e l'UID sono configurati. Il blocco attuale è la risposta di data center sospeso, non un campo mancante:
 
 | Campo | Valore dalla console |
 | --- | --- |
