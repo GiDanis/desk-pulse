@@ -2,6 +2,8 @@
 
 Tre modi di organizzare la Home mantenendo palette e stile neo-retro della dashboard: A Orologio, B Moduli, C Compagno. La tavola è esplorativa: testi e dati sono dimostrativi e alcuni dettagli vanno ricondotti alla mappatura reale del tastierino.
 
+> **Studio storico:** mappa diretta e prescrizioni 7/8/9 qui sotto appartengono al prototipo iniziale, superato dalla [navigazione v2](ux-navigation-v2.md) e dal [MasterPlan](release-masterplan.md). A/B/C restano riferimenti di composizione per le [presentazioni v0.6.6](theme-engine-presentation-spec.md), non contratti input correnti.
+
 ## Vincoli d’uso
 
 - Display 960×640 su diagonale 3,5″: pochi elementi, testo ad alto contrasto e gerarchia leggibile a distanza.

@@ -2,6 +2,8 @@
 
 Questa proposta sostituisce la mappa di navigazione della bozza v1. **Aggiornamento v0.4:** Account ChatGPT entra nel carosello orizzontale; Menu → Impostazioni → Moduli visibili permette di scegliere le famiglie mostrate. La dashboard QML e il tastierino installati sulla Orange Pi applicano ora questa navigazione.
 
+**Aggiornamento v0.6.6 · 2 ottobre 2026:** lo studio resta riferimento di interazione; esempi/versioni futuri e numero massimo di viste vanno letti con il [MasterPlan corrente](release-masterplan.md), che sostituisce PC con Rete. Il [contratto presentation](theme-engine-presentation-spec.md) usa i principi UX senza fissare un'unica impaginazione. Mappa fisica e guide 1/7 da riconciliare in T0; il runtime gestisce 1 Home e 7 Back.
+
 ## Decisione consigliata
 
 SmartPC dovrebbe comportarsi come un **display ambientale che diventa un'interfaccia direzionale quando si preme un tasto**. La Home mostra ora e meteo; aggiunge il prossimo evento solo quando esiste. Il tastierino ha una croce direzionale stabile, un tasto OK e un tasto Indietro. Lo scorrimento orizzontale cambia argomento; quello verticale cambia vista dello stesso argomento. Le azioni dentro una vista si aprono con OK e si chiudono con Indietro.

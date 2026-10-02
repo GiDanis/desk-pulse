@@ -6,11 +6,12 @@ import os
 from pathlib import Path
 import tempfile
 import time
+from unittest.mock import patch
 
 os.environ["XDG_CONFIG_HOME"] = tempfile.mkdtemp(prefix="smartpc-racing-ui-")
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 os.environ.setdefault("QT_QUICK_BACKEND", "software")
-from PySide6.QtCore import QObject, QUrl, Signal, QThreadPool
+from PySide6.QtCore import QObject, QUrl, Signal, QThreadPool, QDateTime
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from app import SystemInfo
@@ -18,6 +19,7 @@ from account import AccountService
 from events import EventService
 from weather import WeatherService
 from sport import SportService
+from theme_test_support import configure_appearance, assert_theme_keeps_selection
 from state import DashboardState
 from motorsport import MotorsportService
 from motorsport_core import save_cache
@@ -41,6 +43,10 @@ def main():
         )["snapshot"]
         for kind in ("f1", "motogp")
     }
+    # Fixture sessions must stay in their acquisition-time context. Otherwise
+    # a session passes while the test ages, changing the expected empty state.
+    fixture_clock = patch('time.time', return_value=min(data['fetchedAt'] for data in sources.values()))
+    fixture_clock.start()
     services = {
         kind: MotorsportService(
             kind, auto_refresh=False, cache_directory=directory, initial=data
@@ -66,6 +72,7 @@ def main():
         racing=services,
     )
     state.markCommandsSeen()
+    configure_appearance(state)
     keypad = Keypad()
     engine = QQmlApplicationEngine()
     errors = []
@@ -74,6 +81,8 @@ def main():
     engine.load(QUrl.fromLocalFile(str(Path(__file__).with_name("Main.qml"))))
     assert engine.rootObjects()
     window = engine.rootObjects()[0]
+    window.findChild(QObject, 'clockTimer').setProperty('running', False)
+    window.setProperty('now', QDateTime.fromSecsSinceEpoch(int(min(data['fetchedAt'] for data in sources.values()))))
 
     def value(key):
         item = window.property(key)
@@ -127,9 +136,10 @@ def main():
         settle()
         assert value("overlay") == "racingSession"
         selected_session = value("racingSessionId")
+        assert_theme_keeps_selection(app,window,state,("overlay","racingEventId","racingSessionId","racingIndex","racingFocusedId","racingDetailPage"))
         assert "ancora iniziare" in window.findChild(
             QObject, "racingEmptyResult"
-        ).property("text")
+        ).property("text"), (kind, value('racingSession'), window.findChild(QObject, 'racingEmptyResult').property('text'))
         press(6)
         assert value("racingDetailPage") == 1
         press(3)
@@ -323,6 +333,7 @@ def main():
     events.close()
     QThreadPool.globalInstance().waitForDone(3000)
     assert not errors, errors
+    fixture_clock.stop()
     print(
         "Motorsport QML: HID routing, F1/MotoGP, GP/session focus, future empty states, full results/standings, constructors, bookmarks, settings pages, hidden modules, offline/current and previous year PASS"
     )

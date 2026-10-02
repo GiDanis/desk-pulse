@@ -1,0 +1,210 @@
+"""Pure theme resolver: complete snapshots, inheritance, validation and catalogs."""
+from __future__ import annotations
+from copy import deepcopy
+import hashlib
+import json
+import math
+from pathlib import Path
+import re
+
+ROOT=Path(__file__).parent
+ID=re.compile(r'^[a-z][a-z0-9_.-]{0,63}$')
+HEX=re.compile(r'^#[0-9a-fA-F]{6}$')
+FIELDS={'schemaVersion','id','name','version','extends','tokens','palettes','presentations','motion','scene','iconSetId','iconApiVersion','iconOverrides','assets','requirements'}
+
+class ThemeError(ValueError):
+    def __init__(self,path,message):
+        self.path=path; self.message=message
+        super().__init__(f'{path}: {message}')
+
+def read_json(path):
+    path=Path(path)
+    if path.stat().st_size>128*1024: raise ThemeError(str(path),'manifest troppo grande')
+    def unique(pairs):
+        result={}
+        for key,value in pairs:
+            if key in result: raise ValueError('chiave duplicata: '+key)
+            result[key]=value
+        return result
+    try: return json.loads(path.read_text(encoding='utf-8'),object_pairs_hook=unique)
+    except (ValueError,UnicodeError) as error: raise ThemeError(str(path),'JSON non valido') from error
+
+def merge(left,right):
+    result=deepcopy(left)
+    for key,value in right.items():
+        result[key]=merge(result[key],value) if isinstance(value,dict) and isinstance(result.get(key),dict) else deepcopy(value)
+    return result
+
+def contained(base,path):
+    if not isinstance(path,str) or not path: raise ThemeError('path','percorso richiesto')
+    base=Path(base).resolve(); result=(base/path).resolve()
+    if not result.is_relative_to(base): raise ThemeError(str(path),'percorso fuori dal pacchetto')
+    return result
+
+def contrast(a,b):
+    def lum(color):
+        rgb=[int(color[i:i+2],16)/255 for i in (1,3,5)]
+        rgb=[x/12.92 if x<=.04045 else ((x+.055)/1.055)**2.4 for x in rgb]
+        return sum(x*y for x,y in zip(rgb,(.2126,.7152,.0722)))
+    hi,lo=sorted((lum(a),lum(b)),reverse=True)
+    return (hi+.05)/(lo+.05)
+
+class ThemeCatalog:
+    def __init__(self,user_directory=None,root=ROOT):
+        self.root=Path(root); self.user_directory=Path(user_directory) if user_directory else None
+        self.contract=read_json(self.root/'themes/token-contract.json')['tokens']
+        self.presentations={}; self.recipes={}; self.icon_sets={}; self.packs={}; self.directories={}; self.errors=[]
+        self.reload()
+
+    def reload(self):
+        self.errors=[]; self.packs={}; self.directories={}; self.asset_cache={}
+        self.contract=read_json(self.root/'themes/token-contract.json')['tokens']
+        self.icon_renderers=read_json(self.root/'icons/renderers.json')['renderers']
+        self.scene_renderers=read_json(self.root/'scenes/registry.json')['renderers']
+        self.presentations={row['id']:row for row in read_json(self.root/'presentations/registry.json')['presentations']}
+        self.recipes=read_json(self.root/'motion/registry.json')['recipes']
+        self.icon_sets=read_json(self.root/'icons/catalog.json')['sets']
+        # Extensions are distributed application code, not imported theme data.
+        for file in sorted((self.root/'extensions').glob('*/manifest.json')):
+            ext=read_json(file)
+            if ext.get('apiVersion')!=1: raise ThemeError(str(file),'API estensione non supportata')
+            for row in ext.get('presentations',[]):
+                self._register(self.presentations,row['id'],row,file)
+            for identifier,row in ext.get('recipes',{}).items(): self._register(self.recipes,identifier,row,file)
+            for identifier,row in ext.get('iconRenderers',{}).items(): self._register(self.icon_renderers,identifier,row,file)
+            for identifier,row in ext.get('sceneRenderers',{}).items(): self._register(self.scene_renderers,identifier,row,file)
+            for identifier,row in ext.get('iconSets',{}).items(): self._register(self.icon_sets,identifier,row,file)
+            for path,descriptor in ext.get('tokens',{}).items():
+                if not path.startswith('ext.') or path in self.contract: raise ThemeError(path,'namespace duplicato/non valido')
+                self.contract[path]=descriptor
+        folders=[self.root/'themes/packs']+([self.user_directory] if self.user_directory else [])
+        for folder in folders:
+            for file in sorted(folder.glob('*/theme.json')):
+                try:
+                    pack=read_json(file); self.validate_pack(pack)
+                    if pack['id'] in self.packs: raise ThemeError(pack['id'],'ID duplicato')
+                    self.packs[pack['id']]=pack; self.directories[pack['id']]=file.parent
+                except (OSError,ThemeError) as error: self.errors.append(str(error))
+        for identifier in list(self.packs):
+            try:
+                for variant in ('day','night'): self.resolve(identifier,variant=variant,check_assets=False)
+            except (OSError,ThemeError) as error:
+                self.errors.append(str(error)); self.packs.pop(identifier,None)
+        if 'base' not in self.packs: raise ThemeError('base','fallback distribuito mancante/non valido')
+
+    def _register(self,registry,identifier,row,file):
+        if not ID.fullmatch(identifier) or identifier in registry: raise ThemeError(str(file),'ID estensione duplicato/non valido')
+        if isinstance(row,dict) and 'file' in row:
+            contained(self.root,row['file'])
+        registry[identifier]=deepcopy(row)
+
+    def validate_pack(self,pack):
+        if not isinstance(pack,dict) or type(pack.get('schemaVersion')) is not int or pack.get('schemaVersion')!=1: raise ThemeError('schemaVersion','formato non supportato')
+        unknown=set(pack)-FIELDS
+        if unknown: raise ThemeError(sorted(unknown)[0],'campo sconosciuto')
+        if not isinstance(pack.get('id'),str) or not ID.fullmatch(pack['id']): raise ThemeError('id','ID non valido')
+        if not isinstance(pack.get('name'),str) or not 1<=len(pack['name'])<=80: raise ThemeError('name','nome non valido')
+        if not isinstance(pack.get('version'),str) or not re.fullmatch(r'\d+\.\d+\.\d+',pack['version']): raise ThemeError('version','versione semantica richiesta')
+        for field in ('tokens','palettes','presentations','motion','scene','iconOverrides'):
+            if not isinstance(pack.get(field,{}),dict): raise ThemeError(field,'oggetto richiesto')
+        if set(pack.get('palettes',{}))-{'day','night'}: raise ThemeError('palettes','variante sconosciuta')
+        self.validate_tokens(pack.get('tokens',{}))
+        for variant,values in pack.get('palettes',{}).items(): self.validate_tokens(values)
+        if pack.get('extends') is not None and (not isinstance(pack['extends'],str) or not ID.fullmatch(pack['extends'])): raise ThemeError('extends','ID genitore non valido')
+        if not isinstance(pack.get('iconSetId','builtin.plain'),str): raise ThemeError('iconSetId','ID richiesto')
+        if not isinstance(pack.get('requirements',[]),list) or not all(isinstance(x,str) for x in pack.get('requirements',[])): raise ThemeError('requirements','lista di capacità richiesta')
+        if pack.get('iconApiVersion',1)!=1: raise ThemeError('iconApiVersion','API non supportata')
+        if not isinstance(pack.get('assets',[]),list): raise ThemeError('assets','lista richiesta')
+        if len(pack.get('assets',[]))>64: raise ThemeError('assets','troppe risorse')
+        if set(pack.get('requirements',[]))-{'presentation1','motion1','icons1','scene1'}: raise ThemeError('requirements','capacità non supportata')
+
+    def validate_tokens(self,values):
+        if not isinstance(values,dict): raise ThemeError('tokens','oggetto richiesto')
+        for path,value in values.items():
+            spec=self.contract.get(path)
+            if not spec: raise ThemeError(path,'token sconosciuto')
+            kind=spec['type']
+            valid=HEX.fullmatch(value) if kind=='color' and isinstance(value,str) else isinstance(value,str) and len(value)<=120 if kind=='string' else type(value) is bool if kind=='bool' else type(value) is int if kind=='int' else type(value) in (int,float) and math.isfinite(value) if kind=='real' else False
+            if not valid: raise ThemeError(path,'tipo/valore non valido')
+            if 'minimum' in spec and not spec['minimum']<=value<=spec['maximum']: raise ThemeError(path,'fuori intervallo')
+
+    def chain(self,identifier,seen=()):
+        if not isinstance(identifier,str): raise ThemeError('id','ID richiesto')
+        if identifier in seen: raise ThemeError('extends','ciclo di eredità')
+        if len(seen)>8: raise ThemeError('extends','eredità troppo profonda')
+        pack=self.packs.get(identifier)
+        if not pack: raise ThemeError('id','tema o genitore non disponibile: '+identifier)
+        return (self.chain(pack['extends'],seen+(identifier,)) if pack.get('extends') else [])+[pack]
+
+    def resolve(self,identifier,overrides=None,variant='day',motion_mode='normal',check_assets=True):
+        if variant not in ('day','night') or motion_mode not in ('normal','reduced','off'): raise ThemeError('environment','policy non valida')
+        resolved={'tokens':{path:deepcopy(spec['default']) for path,spec in self.contract.items()},'palettes':{'day':{},'night':{}},'presentations':{},'motion':{},'scene':{'enabled':False,'renderer':'builtin.actor','skin':'plain'},'iconSetId':'builtin.plain','iconOverrides':{},'assets':[]}
+        chain=self.chain(identifier); assets={}
+        for pack in chain:
+            resolved=merge(resolved,{key:pack[key] for key in ('tokens','palettes','presentations','motion','scene','iconSetId','iconOverrides') if key in pack})
+            for asset in pack.get('assets',[]):
+                if not isinstance(asset,dict) or not isinstance(asset.get('id'),str) or not ID.fullmatch(asset['id']): raise ThemeError('assets.id','ID non valido')
+                path=contained(self.directories[pack['id']],asset.get('path',''))
+                if not path.is_file() or path.stat().st_size>8*1024*1024: raise ThemeError(asset['id'],'risorsa mancante/troppo grande')
+                if asset.get('type') not in ('font','image','data'): raise ThemeError(asset['id'],'tipo risorsa non supportato')
+                digest=asset.get('sha256','')
+                if check_assets:
+                    stamp=(str(path),path.stat().st_size,path.stat().st_mtime_ns)
+                    digest=self.asset_cache.get(stamp)
+                    if digest is None:
+                        with path.open('rb') as stream: digest=hashlib.file_digest(stream,'sha256').hexdigest()
+                        self.asset_cache[stamp]=digest
+                    if asset.get('sha256') and digest!=asset['sha256']: raise ThemeError(asset['id'],'hash non corrispondente')
+                assets[asset['id']]={**asset,'file':str(path),'sha256':digest}
+        resolved['assets']=list(assets.values())
+        resolved['tokens']=merge(resolved['tokens'],resolved['palettes'][variant])
+        overrides={} if overrides is None else overrides
+        if not isinstance(overrides,dict): raise ThemeError('overrides','oggetto richiesto')
+        if set(overrides)-{'tokens','presentations','motion','scene','iconOverrides','iconSetId'}: raise ThemeError('overrides','campo sconosciuto')
+        resolved=merge(resolved,overrides)
+        for section in ('tokens','presentations','motion','scene','iconOverrides'):
+            if not isinstance(resolved.get(section),dict): raise ThemeError(section,'oggetto richiesto')
+        self.validate_tokens(resolved['tokens'])
+        for path,spec in self.contract.items():
+            if 'effectiveMaximum' in spec and resolved['tokens'][path]*resolved['tokens']['typography.textScale']>spec['effectiveMaximum']: raise ThemeError(path,'dimensione effettiva incompatibile con il layout standard')
+        for text in ('textPrimary','textSecondary'):
+            for surface in ('surface','surfaceFocused','backgroundOverlay','background','bannerSurface'):
+                if contrast(resolved['tokens']['colors.'+text],resolved['tokens']['colors.'+surface])<4.5: raise ThemeError('contrast.'+text+'.'+surface,'contrasto inferiore a 4,5:1')
+        if contrast(resolved['tokens']['colors.accent'],resolved['tokens']['colors.surfaceFocused'])<3: raise ThemeError('contrast.focus','indicatore insufficiente')
+        required={content for row in self.presentations.values() if row.get('fallback') for content in row['contentIds']}
+        if required-set(resolved['presentations']): raise ThemeError('presentations','contenuti obbligatori mancanti')
+        for content,identifier_p in resolved['presentations'].items():
+            if not isinstance(identifier_p,str): raise ThemeError('presentations.'+content,'ID richiesto')
+            row=self.presentations.get(identifier_p)
+            if not row or content not in row['contentIds']: raise ThemeError('presentations.'+content,'presentazione incompatibile')
+            if not contained(self.root,row['file']).is_file(): raise ThemeError('presentations.'+content,'componente mancante')
+        for event,recipe in resolved['motion'].items():
+            if not isinstance(recipe,dict) or not isinstance(recipe.get('recipe'),str) or recipe.get('recipe') not in self.recipes: raise ThemeError('motion.'+event,'ricetta non disponibile')
+            allowed=self.recipes[recipe['recipe']].get('events')
+            if allowed is not None and event not in allowed: raise ThemeError('motion.'+event,'ricetta incompatibile con questo evento')
+            if event=='urgent.present' and (recipe['recipe']!='builtin.cut' or recipe.get('durationMs')!=0): raise ThemeError('motion.urgent.present','gli avvisi urgenti richiedono presentazione immediata')
+            if type(recipe.get('durationMs')) not in (int,float) or not 0<=recipe['durationMs']<=600: raise ThemeError('motion.'+event,'durata non valida')
+            if type(recipe.get('distancePx')) not in (int,float) or not 0<=recipe['distancePx']<=80: raise ThemeError('motion.'+event,'ampiezza non valida')
+            for parameter,spec in self.recipes[recipe['recipe']].get('parameters',{}).items():
+                if parameter in recipe and (type(recipe[parameter]) not in (int,float) or not math.isfinite(recipe[parameter]) or not spec['minimum']<=recipe[parameter]<=spec['maximum']): raise ThemeError('motion.'+event+'.'+parameter,'parametro non valido')
+            if recipe.get('easing') not in ('linear','outCubic','outQuad','inOutQuad'): raise ThemeError('motion.'+event,'curva non supportata')
+        if not isinstance(resolved['iconSetId'],str) or resolved['iconSetId'] not in self.icon_sets: raise ThemeError('iconSetId','set non disponibile')
+        if sum(Path(a['file']).stat().st_size for a in resolved['assets'])>24*1024*1024: raise ThemeError('assets','budget file per tema superato')
+        scene=resolved['scene']
+        if type(scene.get('enabled')) is not bool or not isinstance(scene.get('renderer'),str) or scene.get('renderer') not in self.scene_renderers: raise ThemeError('scene','renderer non disponibile')
+        resolved.pop('palettes')
+        resolved.update(themeId=identifier,themeVersion=chain[-1]['version'],variant=variant,motionMode=motion_mode)
+        resolved['presentationRegistry']=deepcopy(self.presentations); resolved['motionRegistry']=deepcopy(self.recipes)
+        resolved['iconRegistry']=deepcopy(self.icon_renderers)
+        resolved['sceneRegistry']=deepcopy(self.scene_renderers)
+        resolved['icons']=merge(self.icon_sets[resolved['iconSetId']],resolved['iconOverrides'])
+        for key,icon in resolved['icons'].items():
+            if not ID.fullmatch(key) or not isinstance(icon,(str,dict)): raise ThemeError('icons.'+key,'descrittore non valido')
+            if isinstance(icon,dict):
+                if icon.get('backend') not in ('geometry','glyph','image','component'): raise ThemeError('icons.'+key,'backend sconosciuto')
+                if icon.get('backend')=='geometry' and not isinstance(icon.get('symbol'),str): raise ThemeError('icons.'+key,'simbolo richiesto')
+                if icon.get('backend')=='component' and (not isinstance(icon.get('renderer'),str) or icon.get('renderer') not in self.icon_renderers): raise ThemeError('icons.'+key,'renderer sconosciuto')
+                if icon.get('backend')=='glyph' and (not isinstance(icon.get('glyph'),str) or len(icon['glyph'])!=1 or not isinstance(icon.get('family'),str)): raise ThemeError('icons.'+key,'glifo/famiglia non valido')
+                if icon.get('backend')=='image' and (not isinstance(icon.get('asset'),str) or icon.get('asset') not in assets or assets[icon['asset']]['type']!='image'): raise ThemeError('icons.'+key,'asset sconosciuto')
+        resolved['parents']=[{'id':p['id'],'version':p['version']} for p in chain]
+        return resolved

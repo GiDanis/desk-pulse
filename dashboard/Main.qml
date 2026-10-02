@@ -1,17 +1,27 @@
 import QtQuick
+import "themes"
+import "components"
 
 Window {
     id: app
+    property StyleFacade style: Theme
     width: 960; height: 640
     minimumWidth: 960; minimumHeight: 640
     maximumWidth: 960; maximumHeight: 640
     visible: true
     visibility: Window.FullScreen
     title: "SmartPC"
-    color: app.night ? "#0b1219" : "#101923"
+    color: app.style.background
 
     property var keypad: null
     property var dashboardState: null
+    readonly property string activeContentId: familyId === "oggi" ? (viewIndex[0] === 0 ? "home.now" : "home.day") : familyId === "meteo" ? (viewIndex[1] === 0 ? "weather.now" : "weather.forecast") : familyId === "account" ? "account.usage" : familyId === "sport" ? (sportView === "LA MIA SQUADRA" ? "sport.team" : "sport.overview") : "racing.overview"
+    onActiveContentIdChanged: if (themeService) themeService.setActiveContent(activeContentId)
+    readonly property var themeService: dashboardState ? dashboardState.appearance : null
+    Binding { target: Theme; property: "service"; value: app.themeService }
+    Binding { target: Theme; property: "fallbackNight"; value: app.night }
+    onNightChanged: Qt.callLater(function() { if (app.themeService) app.themeService.setVariant(app.night ? "night" : "day") })
+    Timer { interval: 0; running: true; onTriggered: if (app.themeService) app.themeService.setVariant(app.night ? "night" : "day") }
     property date now: new Date()
     // Add a family only when its provider and screens are ready.
     readonly property var allFamilies: [
@@ -99,6 +109,7 @@ Window {
     onSportDetailTabsChanged: Qt.callLater(function() { if (sportDetailPage >= sportDetailTabs.length) sportDetailPage = 0 })
     onSportDetailPageChanged: {
         fantasyTeamIndex = 0; fantasyPlayerIndex = 0; fantasyFocusedId = ""
+        Qt.callLater(animateTab)
         Qt.callLater(function() {
             if (!dashboardState) return
             if (overlay === "sportDetail" && sportDetailPage === 3 && sportIsSerieA) dashboardState.selectFantacalcio(sportMatchId)
@@ -144,7 +155,7 @@ Window {
     readonly property var sportFixtures: sportData.fixtures || []
     readonly property var sportOverviewMatches: sportView === "IN CORSO" ? ((sportData.activeMatches || []).length ? sportData.activeMatches : sportMatch.status === "finished" ? [sportMatch] : []) :
         (sportData.upcoming || []).filter(m => !sportData.upcoming[0].round || m.round === sportData.upcoming[0].round)
-    readonly property int sportOverviewPages: Math.max(1, Math.ceil(sportOverviewMatches.length / 3))
+    readonly property int sportOverviewPages: Math.max(1, Math.ceil(sportOverviewMatches.length / app.style.overviewRows))
     onSportOverviewPagesChanged: sportOverviewPage = Math.min(sportOverviewPage, sportOverviewPages - 1)
     onSportViewChanged: sportOverviewPage = 0
     Timer {
@@ -243,11 +254,11 @@ Window {
     property real p95Ms: 0
     property var frameIntervals: []
 
-    readonly property color ink: night ? "#cddbd8" : "#e9f1ef"
-    readonly property color muted: night ? "#93a9ae" : "#b3c2c7"
-    readonly property color accent: night ? "#69bfa8" : "#6de0be"
-    readonly property color panel: night ? "#14232c" : "#1c2d38"
-    readonly property color edge: night ? "#29424b" : "#35525d"
+    readonly property color ink: app.style.textPrimary
+    readonly property color muted: app.style.textSecondary
+    readonly property color accent: app.style.accent
+    readonly property color panel: app.style.surface
+    readonly property color edge: app.style.border
     readonly property var weekdays: ["domenica", "lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato"]
     readonly property var months: ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"]
     readonly property var weather: dashboardState ? dashboardState.weatherState : ({version: 1, status: "unavailable", source: "Open-Meteo", updatedAt: 0, data: {}, error: ""})
@@ -273,6 +284,11 @@ Window {
                                     : now.getHours() >= dayStartHour || now.getHours() < nightStartHour
     readonly property bool night: dashboardState && dashboardState.nightMode === "night"
                                   || (!dashboardState || dashboardState.nightMode === "auto") && !daytime
+    readonly property int minuteOfDay: now.getHours()*60+now.getMinutes()
+    readonly property bool quietActive: dashboardState && dashboardState.quietHoursEnabled &&
+        (dashboardState.quietStartMinute < dashboardState.quietEndMinute
+        ? minuteOfDay >= dashboardState.quietStartMinute && minuteOfDay < dashboardState.quietEndMinute
+        : minuteOfDay >= dashboardState.quietStartMinute || minuteOfDay < dashboardState.quietEndMinute)
     readonly property int brightnessPercent: dashboardState
         ? (dashboardState.brightnessMode === "manual" ? dashboardState.manualBrightness
            : (daytime ? dashboardState.dayBrightness : dashboardState.nightBrightness))
@@ -333,12 +349,10 @@ Window {
         if (index === 6) return two(dashboardState.nightStartHour) + ":00"
         return ""
     }
-    function animateMove(direction) {
-        moveAnimation.stop()
-        if (dashboardState && !dashboardState.animationsEnabled) { contentLayer.x = 0; return }
-        contentLayer.x = direction * 20
-        moveAnimation.start()
+    function animateMove(direction, vertical) {
+        navigationMotion.play(contentLayer, vertical ? "navigate.view" : "navigate.family", direction, vertical)
     }
+
     function navigateFamily(direction) {
         familyId = families[(family + direction + families.length) % families.length].id
         animateMove(direction)
@@ -355,9 +369,10 @@ Window {
             names[familyId] = currentFamily.views[indices[slot]]; racingViewNames = names
         }
         if (familyId === "sport") { sportView = currentFamily.views[indices[slot]]; sportMatchId = sportView === "IN CORSO" && (sportData.activeMatches || []).length ? sportData.activeMatches[0].canonicalMatchId : "" }
-        animateMove(direction)
+        animateMove(direction, true)
     }
     function home() {
+        if (themeService && themeService.editing) themeService.cancel()
         if (dashboardState) { dashboardState.clearSportTeamSelection(); dashboardState.clearFantacalcio() }
         sportTeamDetail = false
         if (isRacing && dashboardState) dashboardState.clearRacingSelection(familyId)
@@ -374,6 +389,7 @@ Window {
         stack.push(overlay)
         overlayStack = stack
         overlay = target
+        if (target === "appearance" && themeService) themeService.beginEdit()
     }
     function popOverlay() {
         if ((overlay === "racingEvent" || overlay === "racingTiming") && dashboardState) dashboardState.clearRacingSelection(familyId)
@@ -381,6 +397,7 @@ Window {
         if (overlay === "sportDetail" && sportTeamDetail && dashboardState) dashboardState.clearSportTeamSelection()
         if (overlay === "sportTable") sportTableIndex = sportIndex
         if (overlay === "commands" && dashboardState) dashboardState.markCommandsSeen()
+        if (overlay === "appearance" && themeService && themeService.editing) themeService.cancel()
         const previous = overlay
         const stack = overlayStack.slice()
         overlay = stack.length ? stack.pop() : ""
@@ -621,6 +638,7 @@ Window {
         function onKeyPressed(position) { app.activateKey(position) }
     }
     Component.onCompleted: {
+        if (themeService) themeService.setActiveContent(activeContentId)
         if (dashboardState && dashboardState.firstRun) pushOverlay("commands")
         if (dashboardState) dashboardState.setBannerAvailable(overlay === "")
     }
@@ -634,7 +652,7 @@ Window {
             app.now = d
         }
     }
-    Timer { interval: 1000; repeat: true; running: true; onTriggered: app.syncClock() }
+    Timer { objectName: "clockTimer"; interval: 1000; repeat: true; running: true; onTriggered: app.syncClock() }
     onFrameSwapped: {
         if (!diagnostics) return
         const stamp = Date.now()
@@ -657,6 +675,7 @@ Window {
 
     Item {
         anchors.fill: parent
+        objectName: "inputOwner"
         focus: true
         Keys.onPressed: event => {
             if (event.key === Qt.Key_Left) app.activateKey(4)
@@ -674,74 +693,122 @@ Window {
     }
 
     Rectangle { x: 0; y: 0; width: 960; height: 5; color: app.accent }
-    Text { x: 44; y: 26; text: app.currentFamily.name + " · " + app.viewName(); color: app.accent; font.pixelSize: 35; font.bold: true }
-    Text { x: 790; y: 33; width: 125; horizontalAlignment: Text.AlignRight; text: (app.family + 1) + "/" + app.families.length + "  ·  " + ((app.isRacing ? app.currentFamily.views.indexOf(app.racingView) : app.familyId === "sport" ? app.sportViews.indexOf(app.sportView) : (app.viewIndex[app.currentFamily.slot] || 0)) + 1) + "/" + app.currentFamily.views.length; color: app.muted; font.pixelSize: 23 }
+    AppText { style: app.style; x: 44; y: 26; text: app.currentFamily.name + " · " + app.viewName(); color: app.accent; font.pixelSize: app.style.font35; font.weight: (true ) ? app.style.headingWeight : app.style.bodyWeight}
+    AppText { style: app.style; x: 790; y: 33; width: 125; horizontalAlignment: Text.AlignRight; text: (app.family + 1) + "/" + app.families.length + "  ·  " + ((app.isRacing ? app.currentFamily.views.indexOf(app.racingView) : app.familyId === "sport" ? app.sportViews.indexOf(app.sportView) : (app.viewIndex[app.currentFamily.slot] || 0)) + 1) + "/" + app.currentFamily.views.length; color: app.muted; font.pixelSize: app.style.font23 }
 
     Item {
         id: contentLayer
         objectName: "contentLayer"
         x: 0; y: 90; width: 960; height: 455
-        NumberAnimation { id: moveAnimation; target: contentLayer; property: "x"; to: 0; duration: 160; easing.type: Easing.OutCubic }
-
-        HomeNow { objectName: "homeNow"; dashboard: app; visible: app.familyId === "oggi" && app.viewIndex[0] === 0; x: 44 }
-        HomeDay { objectName: "homeDay"; dashboard: app; visible: app.familyId === "oggi" && app.viewIndex[0] === 1; x: 44 }
-        WeatherNow { objectName: "weatherNow"; dashboard: app; visible: app.familyId === "meteo" && app.viewIndex[1] === 0; x: 44 }
-        WeatherForecast { objectName: "weatherForecast"; dashboard: app; visible: app.familyId === "meteo" && app.viewIndex[1] === 1; x: 44 }
-        MotorsportView { objectName: "racingPanel"; dashboard: app; visible: app.isRacing; x: 44; width: 872; height: 430 }
-        SportTeamView { objectName: "sportTeamPanel"; dashboard: app; visible: app.familyId === "sport" && app.sportView === "LA MIA SQUADRA"; x: 44; width: 872; height: 430 }
-        SportView { objectName: "sportPanel"; dashboard: app; visible: app.familyId === "sport" && app.sportView !== "LA MIA SQUADRA"; x: 44; width: 872; height: 430 }
-        AccountChatGPT { objectName: "accountPanel"; dashboard: app; visible: app.familyId === "account"; x: 44; width: 872; height: 430 }
+        ViewHost { objectName: "homeNow"; contentId: "home.now"; controller: app; style: app.style; active: app.familyId === "oggi" && app.viewIndex[0] === 0; interactive: active && app.overlay === "" && !app.urgentEvent.id; x: 44 }
+        ViewHost { objectName: "homeDay"; contentId: "home.day"; controller: app; style: app.style; active: app.familyId === "oggi" && app.viewIndex[0] === 1; interactive: active && app.overlay === "" && !app.urgentEvent.id; x: 44 }
+        ViewHost { objectName: "weatherNow"; contentId: "weather.now"; controller: app; style: app.style; active: app.familyId === "meteo" && app.viewIndex[1] === 0; interactive: active && app.overlay === "" && !app.urgentEvent.id; x: 44 }
+        ViewHost { objectName: "weatherForecast"; contentId: "weather.forecast"; controller: app; style: app.style; active: app.familyId === "meteo" && app.viewIndex[1] === 1; interactive: active && app.overlay === "" && !app.urgentEvent.id; x: 44 }
+        ViewHost { objectName: "racingPanel"; contentId: "racing.overview"; controller: app; style: app.style; active: app.isRacing; interactive: active && app.overlay === "" && !app.urgentEvent.id; x: 44 }
+        ViewHost { objectName: "sportTeamPanel"; contentId: "sport.team"; controller: app; style: app.style; active: app.familyId === "sport" && app.sportView === "LA MIA SQUADRA"; interactive: active && app.overlay === "" && !app.urgentEvent.id; x: 44 }
+        ViewHost { objectName: "sportPanel"; contentId: "sport.overview"; controller: app; style: app.style; active: app.familyId === "sport" && app.sportView !== "LA MIA SQUADRA"; interactive: active && app.overlay === "" && !app.urgentEvent.id; x: 44 }
+        ViewHost { objectName: "accountPanel"; contentId: "account.usage"; controller: app; style: app.style; active: app.familyId === "account"; interactive: active && app.overlay === "" && !app.urgentEvent.id; x: 44 }
     }
 
-    Rectangle { x: 44; y: 558; width: 872; height: 2; color: "#31505b" }
-    Text { x: 46; y: 578; text: "4/6  ARGOMENTO"; color: app.muted; font.pixelSize: 25 }
-    Text { x: 351; y: 578; text: app.familyId === "account" ? (app.accountWindows.length > 2 ? "2/8  SCORRI" : "") : "2/8  VISTA"; color: app.muted; font.pixelSize: 25 }
-    Text { x: 669; y: 578; text: app.familyId === "account" ? "9  MENU" : app.isRacing ? (app.racingView === "CLASSIFICA" ? "5 CLASSIFICA" : "5 APRI") : app.familyId === "sport" ? (app.sportView === "LA MIA SQUADRA" ? "5  SQUADRA" : app.sportView === "CLASSIFICA" ? "5  CLASSIFICA" : "5  PARTITE") : "5  DETTAGLI"; color: app.accent; font.pixelSize: 25 }
+    AppText { style: app.style; x: 44; y: 614; width: 872; font.pixelSize: app.style.font18; color: SemanticStyle.warning; visible: (app.dashboardState && !!app.dashboardState.themeRecoveryError || app.themeService && app.themeService.status === "recovery") && !app.urgentEvent.id; text: app.dashboardState && app.dashboardState.themeRecoveryError ? "ASPETTO DI RECUPERO · ripristinare il pacchetto software" : "ASPETTO DI RECUPERO · controllare Impostazioni → Aspetto" }
+    MotionController { id: navigationMotion }
+    MotionController { id: tabMotion }
+    function animateTab() {
+        if (!urgentEvent.id && overlay !== "") tabMotion.play(overlay === "sportTeam" ? teamOverlay : overlay.indexOf("racing") === 0 ? racingOverlay : sportOverlay,"tab.change",1,false)
+    }
+    onTeamTabChanged: animateTab()
+    onRacingStandingTabChanged: animateTab()
+    SceneHost { style: app.style; familyId: app.familyId; suspended: app.overlay !== "" || !!app.urgentEvent.id || app.night || app.quietActive }
+    onUrgentEventChanged: if (urgentEvent.id) { navigationMotion.settle(); tabMotion.settle() }
 
-    UnreadAlertsBadge {
+    Rectangle { x: 44; y: 558; width: 872; height: 2; color: app.style.divider }
+    AppText { style: app.style; x: 46; y: 578; text: "4/6  ARGOMENTO"; color: app.muted; font.pixelSize: app.style.font25 }
+    AppText { style: app.style; x: 351; y: 578; text: app.familyId === "account" ? (app.accountWindows.length > 2 ? "2/8  SCORRI" : "") : "2/8  VISTA"; color: app.muted; font.pixelSize: app.style.font25 }
+    AppText { style: app.style; x: 669; y: 578; text: app.familyId === "account" ? "9  MENU" : app.isRacing ? (app.racingView === "CLASSIFICA" ? "5 CLASSIFICA" : "5 APRI") : app.familyId === "sport" ? (app.sportView === "LA MIA SQUADRA" ? "5  SQUADRA" : app.sportView === "CLASSIFICA" ? "5  CLASSIFICA" : "5  PARTITE") : "5  DETTAGLI"; color: app.accent; font.pixelSize: app.style.font25 }
+
+    UnreadAlertsBadge { style: app.style;
         dashboard: app
         visible: app.familyId === "oggi" && app.overlay === "" && app.unreadAlertCount > 0 && !app.bannerEvent.id && !app.urgentEvent.id
     }
-    DashboardOverlay { dashboard: app; visible: !settingsPanel.active && app.overlay !== "info" && app.overlay !== "" && app.overlay.indexOf("sport") !== 0 && app.overlay.indexOf("racing") !== 0; anchors.fill: parent }
-    SettingsPanel { id: settingsPanel; dashboard: app; visible: active; anchors.fill: parent }
-    DeviceInfo { id: deviceInfo; dashboard: app; visible: app.overlay === "info"; anchors.fill: parent }
-    MotorsportOverlay { dashboard: app; visible: app.overlay.indexOf("racing") === 0; anchors.fill: parent }
-    SportTeamOverlay { dashboard: app; visible: app.overlay.indexOf("sportTeam") === 0; anchors.fill: parent }
-    SportOverlay { dashboard: app; visible: app.overlay.indexOf("sport") === 0 && app.overlay.indexOf("sportTeam") !== 0; anchors.fill: parent }
-    EventBanner {
-        dashboard: app
-        visible: !!app.bannerEvent.id && app.bannerEvent.bannerSize !== "large" && app.overlay === "" && !app.urgentEvent.id
+    AnimatedLayer {
+        anchors.fill: parent; active: !settingsPanel.active && app.overlay !== "info" && app.overlay !== "" && app.overlay.indexOf("sport") !== 0 && app.overlay.indexOf("racing") !== 0; preempted: !!app.urgentEvent.id
+        eventPrefix: "panel"
+        DashboardOverlay { style: parent.style; dashboard: app; visible: true; anchors.fill: parent }
     }
-    EventLargeBanner {
-        dashboard: app
-        visible: !!app.bannerEvent.id && app.bannerEvent.bannerSize === "large" && app.overlay === "" && !app.urgentEvent.id
+    AnimatedLayer {
+        anchors.fill: parent; active: settingsPanel.active; preempted: !!app.urgentEvent.id
+        eventPrefix: "panel"
+        SettingsPanel { style: parent.style; id: settingsPanel; dashboard: app; visible: true; anchors.fill: parent }
     }
-    EventUrgent { dashboard: app; visible: !!app.urgentEvent.id; anchors.fill: parent }
+    AnimatedLayer {
+        anchors.fill: parent; active: app.overlay === "info"; preempted: !!app.urgentEvent.id
+        eventPrefix: "panel"
+        DeviceInfo { style: parent.style; id: deviceInfo; dashboard: app; visible: true; anchors.fill: parent }
+    }
+    AnimatedLayer {
+        anchors.fill: parent; active: app.overlay.indexOf("racing") === 0; preempted: !!app.urgentEvent.id
+        eventPrefix: "panel"
+        MotorsportOverlay { id: racingOverlay; style: parent.style; dashboard: app; visible: true; anchors.fill: parent }
+    }
+    AnimatedLayer {
+        anchors.fill: parent; active: app.overlay.indexOf("sportTeam") === 0; preempted: !!app.urgentEvent.id
+        eventPrefix: "panel"
+        SportTeamOverlay { id: teamOverlay; style: parent.style; dashboard: app; visible: true; anchors.fill: parent }
+    }
+    AnimatedLayer {
+        anchors.fill: parent; active: app.overlay.indexOf("sport") === 0 && app.overlay.indexOf("sportTeam") !== 0; preempted: !!app.urgentEvent.id
+        eventPrefix: "panel"
+        SportOverlay { id: sportOverlay; style: parent.style; dashboard: app; visible: true; anchors.fill: parent }
+    }
+    AnimatedLayer {
+        anchors.fill: parent; active: !!app.bannerEvent.id && app.bannerEvent.bannerSize !== "large" && app.overlay === "" && !app.urgentEvent.id; preempted: !!app.urgentEvent.id
+        eventPrefix: "banner"; exitAllowed: !app.bannerEvent.id && app.overlay === ""
+        EventBanner { style: parent.style;
+            dashboard: app
+            visible: true
+        }
+    }
+    AnimatedLayer {
+        anchors.fill: parent; active: !!app.bannerEvent.id && app.bannerEvent.bannerSize === "large" && app.overlay === "" && !app.urgentEvent.id; preempted: !!app.urgentEvent.id
+        eventPrefix: "banner"; exitAllowed: !app.bannerEvent.id && app.overlay === ""
+        EventLargeBanner { style: parent.style;
+            dashboard: app
+            visible: true
+        }
+    }
+    EventUrgent { style: app.style; dashboard: app; visible: !!app.urgentEvent.id; anchors.fill: parent }
 
     Rectangle {
         visible: app.diagnostics
-        x: 618; y: 7; width: 298; height: 42; radius: 6; color: "#273e48"
-        Text { anchors.centerIn: parent; text: app.measuredFps.toFixed(1) + " fps · p95 " + app.p95Ms.toFixed(0) + " ms"; color: app.ink; font.pixelSize: 20 }
+        x: 618; y: 7; width: 298; height: 42; radius: app.style.radiusButton; color: app.style.debugSurface
+        AppText { style: app.style; anchors.centerIn: parent; text: app.measuredFps.toFixed(1) + " fps · p95 " + app.p95Ms.toFixed(0) + " ms"; color: app.ink; font.pixelSize: app.style.font20 }
     }
     Rectangle {
         id: devPanel
         visible: false
-        x: 494; y: 105; width: 420; height: 237; radius: 10
-        color: "#304750"; border.color: app.accent; border.width: 2
-        Text { x: 16; y: 12; text: "PANNELLO DEMO · F12"; color: app.accent; font.pixelSize: 23; font.bold: true }
-        Text { x: 16; y: 53; text: "Meteo: " + (app.dashboardState ? app.dashboardState.demoScenario : "—"); color: app.ink; font.pixelSize: 22 }
-        Text { x: 16; y: 91; text: "Clic: online / offline / assente"; color: app.ink; font.pixelSize: 19
+        x: 494; y: 105; width: 420; height: 237; radius: app.style.radiusPanel
+        color: app.style.demoSurface; border.color: app.accent; border.width: app.style.borderWidth
+        AppText { style: app.style; x: 16; y: 12; text: "PANNELLO DEMO · F12"; color: app.accent; font.pixelSize: app.style.font23; font.weight: (true ) ? app.style.headingWeight : app.style.bodyWeight}
+        AppText { style: app.style; x: 16; y: 53; text: "Meteo: " + (app.dashboardState ? app.dashboardState.demoScenario : "—"); color: app.ink; font.pixelSize: app.style.font22 }
+        AppText { style: app.style; x: 16; y: 91; text: "Clic: online / offline / assente"; color: app.ink; font.pixelSize: app.style.font19
             MouseArea { anchors.fill: parent; onClicked: app.dashboardState.cycleDemoWeather() } }
-        Text { x: 16; y: 133; text: "Clic: prossimo evento on/off"; color: app.ink; font.pixelSize: 19
+        AppText { style: app.style; x: 16; y: 133; text: "Clic: prossimo evento on/off"; color: app.ink; font.pixelSize: app.style.font19
             MouseArea { anchors.fill: parent; onClicked: app.dashboardState.toggleDemoEvent() } }
-        Text { x: 16; y: 175; text: "Avvisi: " + (app.dashboardState ? app.dashboardState.demoAlertScenario : "—"); color: app.ink; font.pixelSize: 19
+        AppText { style: app.style; x: 16; y: 175; text: "Avvisi: " + (app.dashboardState ? app.dashboardState.demoAlertScenario : "—"); color: app.ink; font.pixelSize: app.style.font19
             MouseArea { anchors.fill: parent; onClicked: app.dashboardState.cycleDemoAlert() } }
     }
     Rectangle {
-        anchors.fill: parent
-        color: "black"
-        opacity: 1 - app.brightnessPercent / 100
+        id: dimmingLayer
+        anchors.fill: parent; color: "black"
+        readonly property real targetOpacity: 1 - app.brightnessPercent / 100
+        opacity: 0
         visible: opacity > 0
-        Behavior on opacity { NumberAnimation { duration: 180 } }
+        onTargetOpacityChanged: {
+            const previous = opacity
+            opacity = targetOpacity
+            brightnessMotion.play(dimmingLayer,"brightness.change",1,false,{propertyName:"opacity",valueFrom:previous,valueTo:targetOpacity})
+        }
+        Component.onCompleted: opacity = targetOpacity
+        MotionController { id: brightnessMotion }
     }
 }

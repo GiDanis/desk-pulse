@@ -11,6 +11,7 @@ from copy import deepcopy
 parser = argparse.ArgumentParser()
 parser.add_argument("--directory")
 parser.add_argument("--capture", action="store_true")
+parser.add_argument("--capture-dir", type=Path)
 parser.add_argument("--offline-only", action="store_true")
 args = parser.parse_args()
 os.environ["XDG_CONFIG_HOME"] = tempfile.mkdtemp(prefix="smartpc-team-check-")
@@ -33,6 +34,7 @@ from app import SystemInfo
 from weather import WeatherService
 from account import AccountService
 from events import EventService
+from theme_test_support import configure_appearance
 from state import DashboardState
 from keypad import KeyDecoder, KEY_POSITIONS
 
@@ -150,6 +152,7 @@ weather = WeatherService(auto_refresh=False)
 account = AccountService(path=root / "missing-account.json")
 state = DashboardState(weather, SystemInfo(), account, events, sport=sport)
 state.markCommandsSeen()
+configure_appearance(state)
 engine = QQmlApplicationEngine()
 warnings = []
 engine.warnings.connect(lambda values: warnings.extend(str(v) for v in values))
@@ -177,12 +180,14 @@ def settle():
 
 
 def capture(name):
-    if not args.capture:
+    if not args.capture and not args.capture_dir:
         return
     settle()
     img = window.grabWindow()
     assert not img.isNull() and img.width() == 960 and img.height() == 640
-    assert img.save(str(root / (name + ".png")))
+    target=args.capture_dir or root
+    target.mkdir(parents=True,exist_ok=True)
+    assert img.save(str(target / (name + ".png")))
 
 
 decoder = KeyDecoder()

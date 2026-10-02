@@ -79,7 +79,7 @@ Un carosello a 6 spazi di lavoro fluidi, navigabili in orizzontale e verticale:
 
 ## 🛒 Hardware Necessario (~35–45 €)
 
-1. **SBC:** Orange Pi Zero 3W (Allwinner H618, 1GB–4GB RAM, GPU PowerVR). Compatibile con altre board Linux ARM64.
+1. **SBC:** Orange Pi Zero 3W (Allwinner A733 sulla scheda collaudata, GPU PowerVR BXM-4-64). Compatibile con altre board Linux ARM64.
 2. **Display:** Monitor USB-C Hagibis 3.5" IPS (960×640 a 60 Hz con DisplayPort Alt Mode).
 3. **Controller:** Mini tastierino USB 9 tasti (ID `413d:553a`) o normale tastiera.
 4. **Memoria:** Scheda MicroSD da 16GB–32GB Classe 10 / A1.
@@ -104,11 +104,11 @@ Lo script configura automaticamente pacchetti Qt6, permessi utente `smartpc`, fi
 
 ```text
 ┌──────────────┬──────────────┬──────────────┐
-│  1 Indietro  │     2 Su     │   3 Avvisi   │
+│   1 Home    │     2 Su     │   3 Avvisi   │
 ├──────────────┼──────────────┼──────────────┤
 │  4 Sinistra  │  5 Seleziona │   6 Destra   │
 ├──────────────┼──────────────┼──────────────┤
-│    7 Home    │    8 Giù     │    9 Menu    │
+│ 7 Indietro  │    8 Giù     │    9 Menu    │
 └──────────────┴──────────────┴──────────────┘
 ```
 
@@ -126,9 +126,16 @@ Lo script configura automaticamente pacchetti Qt6, permessi utente `smartpc`, fi
 - [x] **v0.5:** Motore eventi persistente, allerte Protezione Civile, badge notifiche.
 - [x] **v0.6:** Hub Serie A, Squadra del Cuore, Fantacalcio, F1 & MotoGP con telemetria live SignalR.
 - [x] **v0.6.1:** **Architettura Impostazioni Modulare, Wi-Fi Live, Fantacalcio Live & Verifica 24h.**
-- [ ] **v0.7:** **Smart Home Dashboard** — Integrazione nativa locale Tuya & Home Assistant.
-- [ ] **v0.8:** **Spotify Connect & Media Player** — Copertina album e controlli musicali fisici.
-- [ ] **v0.9:** **PC Hardware Telemetry HUD** — Temperature CPU/GPU del PC da lavoro inviate via LAN.
+
+Versione runtime: **v0.6.6 Theme Engine**, migrata dalla baseline v0.6.5. Il [MasterPlan dei rilasci](dashboard/design/release-masterplan.md), aggiornato al 2 ottobre 2026, distingue allineamento versione/manifest, verifiche completate e collaudi live rimasti.
+
+- [x] **v0.6.6:** **Theme Engine** — Base/Functional, layout e animazioni sostituibili, editor, pacchetti personali e scene persistenti. [Uso e sviluppo](dashboard/design/theme-engine-implementation-guide.md), [collaudo e limiti](dashboard/design/v066-migration-report.md).
+- [ ] **v0.7:** **Casa / Smart Life** — Cloud Tuya diretto; analisi/probe API disponibili, polling/UI di produzione da realizzare.
+- [ ] **v0.8:** **Rete locale** — Panoramica dei dispositivi e informazioni osservabili dalla board, con eventuali dati router; nessun agent sui computer.
+- [ ] **v0.8.1 (facoltativa):** Metadati router verificati e profili Hardware/Cyberdeck aggiuntivi.
+- [ ] **v0.9:** Compagno animato e profilo Cozy.
+- [ ] **v0.10:** Memoria del compagno e scene AI validate.
+- [ ] **v1.0:** Stabilità integrata, installazione, aggiornamento e recupero.
 
 ---
 

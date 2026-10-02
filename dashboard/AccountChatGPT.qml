@@ -1,7 +1,10 @@
 import QtQuick
+import "themes"
+import "components"
 
 Item {
     id: root
+    property StyleFacade style: Theme
     required property var dashboard
     readonly property var account: dashboard.account
     readonly property var accountInfo: dashboard.accountData
@@ -22,38 +25,38 @@ Item {
         return minutes + " min"
     }
     function usageColor(used) {
-        if (!current) return dashboard.muted
-        if (used >= dashboard.accountCriticalPercent) return "#f28c82"
-        if (used >= dashboard.accountWarningPercent) return "#efbd75"
-        return dashboard.accent
+        if (!current) return root.style.textSecondary
+        if (used >= dashboard.accountCriticalPercent) return SemanticStyle.accountCritical
+        if (used >= dashboard.accountWarningPercent) return SemanticStyle.warning
+        return root.style.accent
     }
 
     Rectangle {
-        x: 0; y: 0; width: 872; height: 88; radius: 9
-        color: dashboard.panel; border.color: dashboard.edge
-        Text { x: 20; y: 11; text: "PIANO"; color: dashboard.muted; font.pixelSize: 21; font.bold: true }
-        Text {
+        x: 0; y: 0; width: 872; height: 88; radius: root.style.radiusRow
+        color: root.style.surface; border.color: root.style.border
+        AppText { style: root.style; x: 20; y: 11; text: "PIANO"; color: root.style.textSecondary; font.pixelSize: root.style.font21; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
+        AppText { style: root.style;
             x: 20; y: 35; width: 290
             text: root.accountInfo.plan ? String(root.accountInfo.plan).toUpperCase() : "NON DISPONIBILE"
-            color: dashboard.ink; font.pixelSize: root.accountInfo.plan ? 36 : 27; font.bold: true
+            color: root.style.textPrimary; font.pixelSize: root.accountInfo.plan ? root.style.font36 : root.style.font27; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight
         }
-        Text {
+        AppText { style: root.style;
             x: 332; y: 17; width: 518; horizontalAlignment: Text.AlignRight
             text: root.current ? "AGGIORNATO · " + root.stamp(root.account.updatedAt) :
                   root.account.status === "stale" ? "NON AGGIORNATO · " + root.stamp(root.account.updatedAt) :
                   root.account.status === "unavailable" ? "ACCOUNT NON DISPONIBILE" : "ERRORE DATI ACCOUNT"
-            color: root.current ? dashboard.accent : "#efbd75"
-            font.pixelSize: 22; font.bold: true
+            color: root.current ? root.style.accent : SemanticStyle.warning
+            font.pixelSize: root.style.font22; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight
         }
-        Text {
+        AppText { style: root.style;
             x: 332; y: 49; width: 518; horizontalAlignment: Text.AlignRight
             text: "Fonte: " + root.account.source
-            color: dashboard.muted; font.pixelSize: 21
+            color: root.style.textSecondary; font.pixelSize: root.style.font21
         }
     }
 
-    Text { x: 0; y: 103; text: "UTILIZZO DEL PIANO"; color: dashboard.accent; font.pixelSize: 24; font.bold: true }
-    Text {
+    AppText { style: root.style; x: 0; y: 103; text: "UTILIZZO DEL PIANO"; color: root.style.accent; font.pixelSize: root.style.font24; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
+    AppText { style: root.style;
         x: 575; y: 105; width: 297; horizontalAlignment: Text.AlignRight
         visible: root.hasData && (dashboard.accountWindows.length > 2 || root.current && root.highestUsage >= dashboard.accountWarningPercent)
         text: root.current && root.highestUsage >= dashboard.accountCriticalPercent ?
@@ -62,66 +65,66 @@ Item {
                   "UTILIZZO ELEVATO" + (dashboard.accountWindows.length > 2 ? " · 2/8" : "") :
               "2/8 SCORRI · " + (dashboard.accountIndex + 1) + "/" + (dashboard.accountWindows.length - 1)
         color: root.current && root.highestUsage >= dashboard.accountWarningPercent
-               ? root.usageColor(root.highestUsage) : dashboard.muted
-        font.pixelSize: 19; font.bold: root.current && root.highestUsage >= dashboard.accountWarningPercent
+               ? root.usageColor(root.highestUsage) : root.style.textSecondary
+        font.pixelSize: root.style.font19; font.weight: (root.current && root.highestUsage >= dashboard.accountWarningPercent) ? root.style.headingWeight : root.style.bodyWeight
     }
     Repeater {
         model: root.hasData ? dashboard.accountWindows.slice(dashboard.accountIndex, dashboard.accountIndex + 2) : []
         delegate: Rectangle {
             required property var modelData
             required property int index
-            x: 0; y: 134 + index * 102; width: 872; height: 94; radius: 9
-            color: dashboard.panel; border.color: dashboard.edge
-            Text {
+            x: 0; y: 134 + index * 102; width: 872; height: 94; radius: root.style.radiusRow
+            color: root.style.surface; border.color: root.style.border
+            AppText { style: root.style;
                 x: 18; y: 11; width: 590
                 text: modelData.label + " · " + root.duration(modelData.windowDurationMins)
-                color: dashboard.ink; font.pixelSize: 27; font.bold: true; elide: Text.ElideRight
+                color: root.style.textPrimary; font.pixelSize: root.style.font27; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight
             }
-            Text {
+            AppText { style: root.style;
                 x: 18; y: 49
                 text: "Ripristino " + root.stamp(modelData.resetsAt)
-                color: dashboard.muted; font.pixelSize: 21
+                color: root.style.textSecondary; font.pixelSize: root.style.font21
             }
-            Text {
+            AppText { style: root.style;
                 x: 605; y: 12; width: 248; horizontalAlignment: Text.AlignRight
                 text: modelData.usedPercent + "% usato"
                 color: root.usageColor(modelData.usedPercent)
-                font.pixelSize: 26; font.bold: true
+                font.pixelSize: root.style.font26; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight
             }
-            Rectangle { x: 606; y: 63; width: 246; height: 13; radius: 6; color: dashboard.edge }
+            Rectangle { x: 606; y: 63; width: 246; height: 13; radius: root.style.radiusButton; color: root.style.border }
             Rectangle {
                 x: 606; y: 63; width: 246 * Math.min(100, modelData.usedPercent) / 100
-                height: 13; radius: 6; color: root.usageColor(modelData.usedPercent)
+                height: 13; radius: root.style.radiusButton; color: root.usageColor(modelData.usedPercent)
             }
         }
     }
-    Text {
+    AppText { style: root.style;
         visible: !root.hasData; x: 0; y: 155; width: 850
         text: root.account.error || "Dati di utilizzo non ancora disponibili"
-        color: dashboard.ink; font.pixelSize: 30; wrapMode: Text.WordWrap
+        color: root.style.textPrimary; font.pixelSize: root.style.font30; wrapMode: Text.WordWrap
     }
 
     Rectangle {
-        x: 0; y: 342; width: 423; height: 76; radius: 9
-        color: dashboard.panel; border.color: dashboard.edge
-        Text { x: 18; y: 8; text: "CREDITI DISPONIBILI"; color: dashboard.muted; font.pixelSize: 20; font.bold: true }
-        Text {
+        x: 0; y: 342; width: 423; height: 76; radius: root.style.radiusRow
+        color: root.style.surface; border.color: root.style.border
+        AppText { style: root.style; x: 18; y: 8; text: "CREDITI DISPONIBILI"; color: root.style.textSecondary; font.pixelSize: root.style.font20; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
+        AppText { style: root.style;
             x: 18; y: 34
             text: !root.hasData || !root.accountInfo.credits ? "DATO NON DISPONIBILE" :
                   root.accountInfo.credits.unlimited ? "ILLIMITATI" :
                   root.accountInfo.credits.balance !== "" ? root.accountInfo.credits.balance : "DATO NON DISPONIBILE"
-            color: dashboard.ink; font.pixelSize: 26; font.bold: true
+            color: root.style.textPrimary; font.pixelSize: root.style.font26; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight
         }
     }
     Rectangle {
-        x: 449; y: 342; width: 423; height: 76; radius: 9
-        color: dashboard.panel; border.color: dashboard.edge
-        Text { x: 18; y: 8; text: "RESET DEL LIMITE"; color: dashboard.muted; font.pixelSize: 20; font.bold: true }
-        Text {
+        x: 449; y: 342; width: 423; height: 76; radius: root.style.radiusRow
+        color: root.style.surface; border.color: root.style.border
+        AppText { style: root.style; x: 18; y: 8; text: "RESET DEL LIMITE"; color: root.style.textSecondary; font.pixelSize: root.style.font20; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
+        AppText { style: root.style;
             x: 18; y: 34
             text: !root.hasData || root.accountInfo.resetCredits === null || root.accountInfo.resetCredits === undefined
                   ? "DATO NON DISPONIBILE" : root.accountInfo.resetCredits + " disponibili"
-            color: dashboard.ink; font.pixelSize: 26; font.bold: true
+            color: root.style.textPrimary; font.pixelSize: root.style.font26; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight
         }
     }
 }

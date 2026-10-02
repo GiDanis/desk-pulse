@@ -7,6 +7,9 @@ import os
 import time
 from typing import Any
 
+from theme_service import ThemeService
+from theme_core import ThemeError
+
 from PySide6.QtCore import QObject, Property, QSettings, Signal, Slot
 
 from module_state import module_state
@@ -17,6 +20,7 @@ DEMO_WEATHER = {
     "location": "ANGRI · SALERNO",
     "temperature": "18°",
     "description": "Sereno",
+    "code": 0,
     "feels_like": "17°C",
     "humidity": "64%",
     "rain_probability": "10%",
@@ -24,9 +28,9 @@ DEMO_WEATHER = {
     "gusts": "14 km/h",
     "precipitation": "0.0 mm",
     "forecast": [
-        {"day": "OGGI", "description": "Sereno", "high": "21°", "low": "14°", "rain": "10%"},
-        {"day": "DOMANI", "description": "Nuvoloso", "high": "20°", "low": "13°", "rain": "30%"},
-        {"day": "DOPODOMANI", "description": "Pioggia", "high": "18°", "low": "12°", "rain": "75%"},
+        {"code":0,"day": "OGGI", "description": "Sereno", "high": "21°", "low": "14°", "rain": "10%"},
+        {"code":3,"day": "DOMANI", "description": "Nuvoloso", "high": "20°", "low": "13°", "rain": "30%"},
+        {"code":61,"day": "DOPODOMANI", "description": "Pioggia", "high": "18°", "low": "12°", "rain": "75%"},
     ],
 }
 
@@ -91,7 +95,13 @@ class DashboardState(QObject):
         self._account_warning_percent = _saved_int(self._settings, "account/warningPercent", min(99, self._account_warning_percent), 1, 99)
         self._account_critical_percent = max(self._account_warning_percent + 1,
             _saved_int(self._settings, "account/criticalPercent", self._account_critical_percent, 2, 100))
-        self._animations_enabled = _saved_bool(self._settings, "animationsEnabled", True)
+        self._theme_recovery_error = ""
+        try:
+            self._appearance = ThemeService(self)
+            self._appearance.changed.connect(self.settingsChanged)
+        except (ThemeError, OSError) as error:
+            self._appearance = None
+            self._theme_recovery_error = str(error)
         self._last_source_refresh: dict[str, float] = {}
         self._module_visible = {
             module_id: _saved_bool(self._settings, f"moduleVisible/{module_id}")
@@ -306,14 +316,22 @@ class DashboardState(QObject):
 
     @Property(bool, notify=settingsChanged)
     def animationsEnabled(self) -> bool:
-        return self._animations_enabled
+        return self._appearance is not None and self._appearance.resolvedAppearance["motionMode"] != "off"
 
     @Slot()
     def toggleAnimations(self) -> None:
-        self._animations_enabled = not self._animations_enabled
-        self._settings.setValue("animationsEnabled", self._animations_enabled)
-        self._settings.sync()
-        self.settingsChanged.emit()
+        if self._appearance is None: return
+        self._appearance.beginEdit()
+        self._appearance.setSection("motionMode", "off" if self.animationsEnabled else "normal")
+        self._appearance.apply()
+
+    @Property(str, constant=True)
+    def themeRecoveryError(self):
+        return self._theme_recovery_error
+
+    @Property(QObject, constant=True)
+    def appearance(self):
+        return self._appearance
 
     @Property("QVariantList", notify=settingsChanged)
     def visibleModules(self) -> list[str]:
@@ -408,7 +426,7 @@ class DashboardState(QObject):
 
     @Property(str, notify=settingsChanged)
     def nightMode(self) -> str:
-        return self._night_mode
+        return self._appearance.resolvedAppearance.get("paletteMode", self._night_mode) if self._appearance else self._night_mode
 
     @Property(str, notify=settingsChanged)
     def brightnessMode(self) -> str:
@@ -456,9 +474,12 @@ class DashboardState(QObject):
         if not step:
             return
         if row == 0:
+            if self._appearance is None: return
             modes = ("auto", "day", "night")
-            self._night_mode = modes[(modes.index(self._night_mode) + step) % len(modes)]
-            key, value = "nightMode", self._night_mode
+            self._appearance.beginEdit()
+            self._appearance.setSection("paletteMode", modes[(modes.index(self.nightMode) + step) % len(modes)])
+            self._appearance.apply()
+            return
         elif row == 1:
             self._brightness_mode = "manual" if self._brightness_mode == "auto" else "auto"
             key, value = "brightnessMode", self._brightness_mode

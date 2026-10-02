@@ -11,6 +11,7 @@ import time
 parser = argparse.ArgumentParser()
 parser.add_argument("--directory")
 parser.add_argument("--capture", action="store_true")
+parser.add_argument("--capture-dir", type=Path)
 parser.add_argument("--offline-only", action="store_true")
 args = parser.parse_args()
 os.environ["XDG_CONFIG_HOME"] = tempfile.mkdtemp(prefix="smartpc-fanta-config-")
@@ -39,6 +40,7 @@ from app import SystemInfo
 from weather import WeatherService
 from account import AccountService
 from events import EventService
+from theme_test_support import configure_appearance, assert_theme_keeps_selection
 from state import DashboardState
 from keypad import KeyDecoder, KEY_POSITIONS
 
@@ -157,6 +159,7 @@ state = DashboardState(
     sport=sport,
 )
 state.markCommandsSeen()
+configure_appearance(state)
 engine = QQmlApplicationEngine()
 warnings = []
 engine.warnings.connect(lambda values: warnings.extend(str(v) for v in values))
@@ -177,7 +180,7 @@ def value(name):
 
 
 def capture(name):
-    if not args.capture:
+    if not args.capture and not args.capture_dir:
         return
     deadline = time.monotonic() + 0.16
     while time.monotonic() < deadline:
@@ -185,7 +188,9 @@ def capture(name):
         time.sleep(0.005)
     img = window.grabWindow()
     assert not img.isNull() and img.width() == 960 and img.height() == 640
-    assert img.save(str(root / (name + ".png")))
+    target=args.capture_dir or root
+    target.mkdir(parents=True,exist_ok=True)
+    assert img.save(str(target / (name + ".png")))
 
 
 codes = {v: k for k, v in KEY_POSITIONS.items()}
@@ -216,6 +221,7 @@ press(6)
 assert value("sportDetailPage") == 3 and value("fantasyData")["published"]
 assert value("fantasyState")["source"] == "Redazione Fantacalcio"
 assert len(value("fantasyRows")) == 23
+assert_theme_keeps_selection(app,window,state,("overlay","sportMatchId","sportDetailPage","fantasyTeamIndex","fantasyPlayerIndex","fantasyFocusedId"))
 capture("fantacalcio-home-starters")
 for _ in range(23):
     press(8)

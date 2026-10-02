@@ -4,6 +4,8 @@
 
 ## Decisione di lavoro
 
+**Collocazione nel piano del 2 ottobre:** v0.7 ancora in analisi e prototipo della sorgente, dopo il Theme Engine v0.6.6 proposto. Il [MasterPlan dei rilasci](release-masterplan.md) descrive implementazione periodica, budget, UI e prove fisiche necessari al rilascio. L'esistenza del probe non equivale a Casa integrata.
+
 Sviluppare un piccolo provider Python che collega SmartPC direttamente al cloud Tuya. Home Assistant rimane un'alternativa. Il risultato di prodotto resta quello del MasterPlan: poche tessere leggibili, ultimi stati riconoscibili, riconnessione automatica e nessuna falsa conferma. Il primo passo implementato è la prova OpenAPI senza dipendenze aggiuntive.
 
 ```text

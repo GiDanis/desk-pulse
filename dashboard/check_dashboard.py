@@ -1,6 +1,7 @@
 """Fast QML regression check for navigation and the v0.3 state contract."""
 
 from __future__ import annotations
+from theme_test_support import wait_ready, wait_save
 
 import os
 import tempfile
@@ -22,6 +23,7 @@ import shiboken6  # noqa: E402
 from app import SystemInfo  # noqa: E402
 from account import AccountService  # noqa: E402
 from events import EventService  # noqa: E402
+from theme_test_support import configure_appearance
 from state import DashboardState  # noqa: E402
 from weather import WeatherService  # noqa: E402
 from weather_alerts import BulletinProvider  # noqa: E402
@@ -44,6 +46,7 @@ def main() -> None:
     events = EventService(path=Path(os.environ["XDG_CONFIG_HOME"]) / "events.sqlite3", auto_refresh=False)
     keypad = FakeKeypad()
     state = DashboardState(weather, system, account, events, demo=True)
+    configure_appearance(state)
     engine.setInitialProperties({"keypad": keypad, "dashboardState": state})
     engine.load(QUrl.fromLocalFile(str(Path(__file__).with_name("Main.qml"))))
     assert engine.rootObjects(), "QML failed to load"
@@ -54,7 +57,8 @@ def main() -> None:
         name: window.findChild(QObject, name)
         for name in ("homeNow", "homeDay", "weatherNow", "weatherForecast", "accountPanel")
     }
-    assert all(screens.values()), "a QML screen is missing"
+    assert all(screens.values()), "a QML host is missing"
+    wait_ready(application,window)
 
     def visible_screen() -> str:
         visible = [name for name, screen in screens.items() if screen.property("visible")]
@@ -67,6 +71,8 @@ def main() -> None:
     def press(position: int, transition: bool = False) -> None:
         keypad.keyPressed.emit(position)
         application.processEvents()
+        wait_ready(application,window)
+        wait_save(application,state.appearance)
         if transition:
             QTimer.singleShot(240, application.quit)
             application.exec()

@@ -1,28 +1,30 @@
-# SmartPC Dashboard v0.6
+# DeskPulse / SmartPC Dashboard
 
-Dashboard Qt Quick per Orange Pi Zero 3W e display Hagibis 960×640 a 60 Hz. La v0.6 applica la [specifica UX](design/ux-navigation-v2.md): un dato dominante per vista, Home dinamica, due assi di navigazione, tasti coerenti e avvisi condivisi. La board usa Orange Pi Debian 13, Qt 6, EGLFS/KMS e GPU PowerVR.
+Dashboard Qt Quick per Orange Pi Zero 3W e display Hagibis 960×640 a 60 Hz. La v0.6.6 applica la [specifica UX](design/ux-navigation-v2.md): un dato dominante per vista, Home dinamica, due assi di navigazione, tasti coerenti e avvisi condivisi. La board usa Orange Pi Debian 13, Qt 6, EGLFS/KMS e GPU PowerVR.
+
+**Versione corrente: v0.6.6 Theme Engine · 2 ottobre 2026.** Base/Functional completi, presentazioni sostituibili, animazioni Normal/Reduced/Off, editor con preview/apply/cancel, import/export e host di scena persistente. [Guida](design/theme-engine-implementation-guide.md), [collaudo sulla scheda e limiti](design/v066-migration-report.md). Il [MasterPlan](design/release-masterplan.md) conserva Casa/Tuya nella v0.7 e Rete locale nella v0.8, senza agent sui computer. Prove live Sport e probe Casa rimangono distinte dal rilascio del motore.
 
 ## Esperienza
 
 - **Home:** ora e meteo occupano la schermata. Una tessera «prossimo evento» compare solo quando esiste un evento futuro valido, per esempio un'allerta prevista per domani. Nessun evento viene inventato per riempire lo spazio.
 - **Nuovi avvisi:** sulle due viste Home un badge discreto nell'intestazione indica quanti avvisi della casella non sono stati letti e ricorda il tasto **3**. Compare anche per gli avvisi ambientali e dopo la fine del banner. Aprire la casella non segna tutto come letto: il badge si aggiorna quando si apre il dettaglio di ciascun evento, oppure quando l'evento scade o viene annullato. Durante banner, overlay e menu il badge resta nascosto.
-- **Orizzontale:** Oggi ↔ Meteo ↔ Account ChatGPT ↔ Serie A ↔ F1 ↔ MotoGP. Casa e PC entreranno nel carosello quando avranno dati reali. I moduli nascosti sono saltati senza lasciare schermate vuote.
+- **Orizzontale:** Oggi ↔ Meteo ↔ Account ChatGPT ↔ Serie A ↔ F1 ↔ MotoGP. Casa e Rete locale entreranno nel carosello quando avranno dati reali. I moduli nascosti sono saltati senza lasciare schermate vuote.
 - **Verticale:** Oggi: Ora/Giornata. Meteo: Adesso/Previsioni. Serie A: Prossime/In corso quando esiste/Risultati/Classifica. F1 e MotoGP: Programma/In corso quando esiste/Risultati/Classifica. Ogni famiglia ricorda la propria vista.
-- **Menu:** Comandi, Impostazioni e Diagnostica. Impostazioni contiene **Aspetto e dispositivo** (tema, luminosità, stato), **Moduli visibili**, **Notifiche**, **Sport · Serie A**, **Sport · F1** e **Sport · MotoGP**. Moduli visibili mostra le famiglie disponibili, permette di mostrare o nascondere Meteo, Account ChatGPT e ogni sport separatamente e conserva la scelta dopo il riavvio. Oggi resta sempre visibile.
+- **Menu:** Comandi, Impostazioni, Informazioni e Diagnostica. Impostazioni contiene Aspetto, Luminosità, Moduli, Notifiche, Account ChatGPT, Sport e Dati e aggiornamenti. Notifiche separa Fascia silenzio e Avvisi sullo schermo; gli aggiornamenti manuali delle fonti hanno un unico punto centrale. Informazioni è autonoma e in sola lettura. Moduli permette di mostrare o nascondere Meteo, Account e ogni sport; la scelta è persistente e Oggi resta sempre visibile. [Revisione dei menu](design/settings-clarity-2026-10-02.md).
 - **Avvisi:** il tasto 3 apre la casella da qualsiasi vista. Gli avvisi importanti ricevono un banner breve; quelli prioritari aprono un overlay. Indietro chiude l'overlay e restituisce la vista, il menu e la selezione precedenti.
 - **Notifiche:** Menu → Impostazioni → Notifiche permette sempre di attivare o disattivare la fascia di silenzio e regolare inizio e fine a passi di 15 minuti. L'impostazione iniziale è 22:00–07:00, nel fuso Europe/Rome. Il silenzio trattiene i banner fino al termine della fascia, se ancora validi; gli avvisi prioritari restano visibili. Due controlli separati permettono di disattivare le interruzioni di Meteo e Account: gli eventi rimangono consultabili nella casella, ma quella categoria non mostra banner o overlay.
-- L'intestazione non ripete il marchio o la modalità notte. Dati assenti, aggiornamento e offline sono indicati esplicitamente. La transizione tra viste dura 160 ms.
+- L'intestazione non ripete il marchio o la modalità notte. Dati assenti, aggiornamento e offline sono indicati esplicitamente. Base usa scorrimenti di 160 ms; Functional dissolvenze di 120 ms. La policy Ridotto/Disattivo e i parametri dei pacchetti regolano il movimento.
 
-| 1 Indietro | 2 Su | 3 Avvisi |
+| 1 Home | 2 Su | 3 Avvisi |
 | --- | --- | --- |
 | 4 Sinistra | **5 OK** | 6 Destra |
-| 7 Home | 8 Giù | 9 Menu |
+| 7 Indietro | 8 Giù | 9 Menu |
 
 La mini tastiera USB `413d:553a` è letta da `keypad.py`, che traduce le scorciatoie firmware esistenti nelle posizioni 1–9. I LED conservano la configurazione attuale. Sul PC si possono usare frecce, Invio, Esc e i numeri. Il menu Comandi mostra la legenda completa.
 
 ## Stato dei moduli
 
-La **v0.7 Casa è in sviluppo** con API cloud Tuya dirette. `tuya_core.py` e `tuya_probe.py` permettono la prova manuale di inventario e stati Smart Life; `check_tuya.py` verifica protocollo e cache con risposte simulate (22 controlli su PC e board). Nessuna schermata Casa o sincronizzazione periodica è ancora attiva. Sul cloud reale: token/rinnovo, 16 dispositivi, protocolli e specifiche/stati di quattro dispositivi letti con successo. UID e firma dei cursori corretti; collaudo fisico ancora necessario. [Configurazione Tuya, aggiunte/modifiche e limiti](design/v07-tuya-api-setup.md), [analisi reale](design/v07-tuya-live-analysis.md), [piano aggiornato](design/v07-tuya-direct-plan.md).
+La **v0.7 Casa è in analisi e prototipo della sorgente**, con API cloud Tuya dirette. `tuya_core.py` e `tuya_probe.py` permettono la prova manuale di inventario e stati Smart Life; `check_tuya.py` verifica protocollo e cache con risposte simulate (22 controlli su PC e board). Nessuna schermata Casa o sincronizzazione periodica è ancora attiva. Sul cloud reale: token/rinnovo, 16 dispositivi, protocolli e specifiche/stati di quattro dispositivi letti con successo. UID e firma dei cursori corretti; collaudo fisico ancora necessario. [Configurazione Tuya, aggiunte/modifiche e limiti](design/v07-tuya-api-setup.md), [analisi reale](design/v07-tuya-live-analysis.md), [piano aggiornato](design/v07-tuya-direct-plan.md).
 
 `module_state.py` definisce l'involucro comune; `weather.py`, `account.py` e `sport.py` espongono `moduleState`, mentre `state.py` espone a QML `weatherState`, `accountState`, `sportState`, `racingStates` (F1/MotoGP) e `systemState`. Ogni stato usa:
 
@@ -89,7 +91,7 @@ Nel weekend **4/6** cambia tra **Sessioni / Circuito / Riepilogo**. MotoGP aggiu
 
 Nei risultati **5** apre i dettagli del pilota in quella sessione: posizione, tempo, punti, giri e informazioni del team/moto. F1 aggiunge griglia, variazione griglia-arrivo, giro veloce, Q1/Q2/Q3 e schede **Soste / Giri / Gomme**. La durata Jolpica delle soste è il tempo in pit lane. Gomme indica mescola, intervallo di giri e usura all'inizio dello stint. Non è prevista una preferenza pilota.
 
-Nel timing **4/6** cambia **Tempi / Pista / Direzione** e **5** apre i tempi del singolo pilota. I campi avanzati compaiono solo se ricevuti; i badge Live restano subordinati alla verifica attiva. **1 Indietro / 7 Home** sono le etichette del tastierino fisico.
+Nel timing **4/6** cambia **Tempi / Pista / Direzione** e **5** apre i tempi del singolo pilota. I campi avanzati compaiono solo se ricevuti; i badge Live restano subordinati alla verifica attiva. **1 Home / 7 Indietro** corrispondono alla mappa conservata dal decoder.
 
 Non servono registrazioni o API key. OpenF1 viene interrogato fuori dalla finestra a pagamento: sessione conclusa da almeno 30 minuti; l'adapter applica anche una soglia prudente di due ore dall'inizio. Richieste opzionali in worker, cache persistente e fonti/date distinte; un errore aggiuntivo conserva il risultato principale. [Dettagli, prove reali e ripristino](design/v06-racing-details-release.md).
 
@@ -189,7 +191,7 @@ Verifica v0.5 del 30/09/2026:
 
 La v0.2 aveva già superato i test di meteo online, cache offline e riavvio senza Wi-Fi. Sul dispositivo, il servizio riparte automaticamente dopo un crash; la configurazione è in [smartpc-dashboard.service](../os/system/smartpc-dashboard.service). La scena diagnostica visualizza FPS e intervallo p95 tra frame, ma un valore basso su una schermata ferma è normale: non misura da solo la fluidità delle transizioni. `benchmark.py` misura intervalli di frame mentre simula cambi di vista sul renderer EGLFS/GPU; va eseguito con il servizio fermo. `soak.py` osserva memoria, temperatura e stabilità del servizio senza inviare input.
 
-Prima di installare una nuova versione sulla board, salvare `/opt/smartpc/dashboard` in `/var/backups/`. Il backup della v0.3 precedente al modulo Account è `/var/backups/smartpc-dashboard-v03-before-account`. Per ripristinare, copiare i file salvati nella cartella dell'app e riavviare il servizio; disabilitare anche `smartpc-account-sync.timer` sul PC se la funzione non serve più. Non serve Git per questo passaggio; la creazione del repository è rimandata.
+Prima di installare una nuova versione sulla board, salvare `/opt/smartpc/dashboard` in `/var/backups/`. Il backup della v0.3 precedente al modulo Account è `/var/backups/smartpc-dashboard-v03-before-account`. Per ripristinare, copiare i file salvati nella cartella dell'app e riavviare il servizio; disabilitare anche `smartpc-account-sync.timer` sul PC se la funzione non serve più. Git e il repository pubblico esistono; per ogni release allineare commit, tag, versione Info e manifest dei file installati, conservando anche il backup della distribuzione precedente.
 
 Controlli utili:
 
@@ -217,7 +219,7 @@ Da **Prossime**, senza incontri attivi, premere **8 due volte** per Classifica e
 
 ### Etichette del tastierino · 1 ottobre 2026
 
-Dopo il riscontro sul dispositivo, i suggerimenti nei pannelli e nella legenda Comandi indicano **1 Indietro** e **7 Home**. Aggiornato anche l’avviso urgente (**1 Chiudi**, **7 Home**). La revisione modifica le etichette e conserva il comportamento dei comandi esistente.
+La revisione precedente riportava **1 Indietro / 7 Home** nelle guide. La riconciliazione T0 della v0.6.6 ha rilevato la contraddizione con il decoder: le guide ora indicano **1 Home / 7 Indietro**, conservando la mappa sorgente. Scancode e tasti Qt sono verificati automaticamente; una nuova pressione umana sul dispositivo non è attribuita a questo collaudo.
 
 
 ### Impostazioni e Informazioni · 1 ottobre 2026
@@ -232,6 +234,6 @@ Account permette di modificare le soglie di avviso e utilizzo critico, salvate s
 
 **Menu → Informazioni** è indipendente dalle impostazioni, con schede **Dispositivo / Risorse / Rete / Dati**. Include versione, board, sistema operativo, kernel, runtime Qt/Python, display, tastierino, fuso orario, temperature CPU/GPU, CPU del processo, RAM disponibile e RAM/picco RSS della dashboard, swap, spazio libero, uptime scheda/processo, IP/interfaccia e stato delle fonti. Le misure mancanti sono N/D; una rete locale collegata non certifica la raggiungibilità di Internet.
 
-`system_info.py` prepara uno snapshot all'avvio e lo aggiorna ogni cinque secondi solo quando Info è aperta. I getter restituiscono dati già raccolti senza I/O o notifiche durante la lettura: questo elimina la causa dei binding circolari osservati nei vecchi getter. Se il driver non espone `/proc/net/wireless`, il segnale Wi-Fi usa la qualità percentuale di NetworkManager: lettura asincrona con `nmcli --rescan no`, al massimo ogni 30 secondi mentre Info è aperta e timeout di 2,5 secondi. Le percentuali non vengono convertite in dBm. Il testo delle informazioni usa il rendering nativo Qt, verificato su EGLFS. Le etichette del tastierino restano **1 Indietro / 7 Home**, come confermate sul dispositivo.
+`system_info.py` prepara uno snapshot all'avvio e lo aggiorna ogni cinque secondi solo quando Info è aperta. I getter restituiscono dati già raccolti senza I/O o notifiche durante la lettura: questo elimina la causa dei binding circolari osservati nei vecchi getter. Se il driver non espone `/proc/net/wireless`, il segnale Wi-Fi usa la qualità percentuale di NetworkManager: lettura asincrona con `nmcli --rescan no`, al massimo ogni 30 secondi mentre Info è aperta e timeout di 2,5 secondi. Le percentuali non vengono convertite in dBm. Il testo delle informazioni usa il rendering nativo Qt, verificato su EGLFS. Le guide v0.6.6 sono allineate al decoder: **1 Home / 7 Indietro**; il limite della verifica fisica è dichiarato nel resoconto.
 
 `check_settings.py` verifica preferenze isolate, navigazione e ritorno dai sottomenu, luminosità, notifiche, soglie, aggiornamenti centralizzati, Info in sola lettura, pausa delle richieste, getter senza effetti collaterali, lettura Wi-Fi asincrona e cambi simulati della connessione del tastierino. `--capture-dir` salva le schermate; per EGLFS il servizio va prima fermato e poi riavviato. [Prima revisione](design/settings-menu-2026-10-01.md) e [riorganizzazione del 2 ottobre](design/settings-clarity-2026-10-02.md).

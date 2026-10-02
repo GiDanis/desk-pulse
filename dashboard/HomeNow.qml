@@ -1,12 +1,16 @@
 import QtQuick
+import "themes"
+import "components"
 
 Item {
+    id: visualRoot
+    property StyleFacade style: Theme
     required property var dashboard
     width: 872; height: 455
-    Text { x: -8; y: 0; text: dashboard.timeText(); color: dashboard.ink; font.pixelSize: 152; font.weight: Font.Light }
-    Text { x: 4; y: 182; text: dashboard.dateText(); color: dashboard.muted; font.pixelSize: 31 }
-    Rectangle { x: 0; y: 239; width: 872; height: 2; color: "#31505b" }
-    InfoCard {
+    AppText { style: visualRoot.style; x: -8; y: 0; text: dashboard.timeText(); color: visualRoot.style.textPrimary; role: "display"; font.pixelSize: visualRoot.style.font152; font.weight: visualRoot.style.clockWeight }
+    AppText { style: visualRoot.style; x: 4; y: 182; text: dashboard.dateText(); color: visualRoot.style.textSecondary; font.pixelSize: visualRoot.style.font31 }
+    Rectangle { x: 0; y: 239; width: 872; height: 2; color: visualRoot.style.divider }
+    InfoCard { style: visualRoot.style;
         x: 0; y: 263; width: dashboard.hasEvent ? 520 : 872; height: 157
         night: dashboard.night
         heading: "METEO · ANGRI"
@@ -14,7 +18,7 @@ Item {
         detail: dashboard.weatherData.temperature ? (dashboard.weatherData.description || "") + "  ·  " + dashboard.weatherStatus() : dashboard.weatherStatus()
         compact: dashboard.hasEvent || !dashboard.weatherData.temperature
     }
-    InfoCard {
+    InfoCard { style: visualRoot.style;
         visible: dashboard.hasEvent
         x: 538; y: 263; width: 334; height: 157
         night: dashboard.night

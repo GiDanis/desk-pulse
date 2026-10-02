@@ -13,10 +13,12 @@ os.environ.setdefault('QT_QUICK_BACKEND', 'software')
 from PySide6.QtCore import QObject, QTimer, QUrl, Signal, QThreadPool, QMetaObject
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
+from theme_test_support import current_item, wait_ready, assert_theme_keeps_selection
 from keypad import KeyDecoder, KEY_POSITIONS
 from app import SystemInfo
 from account import AccountService
 from events import EventService
+from theme_test_support import configure_appearance
 from state import DashboardState
 from sport import SportService
 from sport_core import save_cache, refresh_detail
@@ -44,6 +46,7 @@ def main():
     account = AccountService(path=directory/'missing.json')
     state = DashboardState(weather, SystemInfo(), account, events, demo=True, sport=sport)
     state.markCommandsSeen()
+    configure_appearance(state)
     keypad = Keypad()
     engine = QQmlApplicationEngine()
     qml_errors = []
@@ -66,16 +69,17 @@ def main():
         decoder.feed(1, 42, 0); decoder.feed(1, 29, 0)
         keypad.keyPressed.emit(decoded)
         app.processEvents()
+        wait_ready(app,window)
     press(4)
     assert value('familyId') == 'sport'
     assert value('sportView') == 'PROSSIME'
     assert value('sportMatch')['homeTeam']
-    assert 'FotMob' in window.findChild(QObject, 'sportSourceText').property('text')
+    assert 'FotMob' in current_item(app,window,'sportPanel').findChild(QObject, 'sportSourceText').property('text')
     press(8)
     assert value('sportView') == 'RISULTATI'  # No empty Live page.
     press(8)
     assert value('sportView') == 'CLASSIFICA' and value('overlay') == ''
-    panel = window.findChild(QObject, 'sportPanel')
+    panel = current_item(app,window,'sportPanel')
     assert len(panel.property('rows').toVariant()) == 3
     press(5)
     assert value('overlay') == 'sportTable'
@@ -98,6 +102,7 @@ def main():
     sport._offline = True
     press(5)
     assert value('overlay') == 'sportDetail'
+    assert_theme_keeps_selection(app,window,state,('overlay','sportMatchId','sportDetailPage','sportIndex','sportFocusedId'))
     selected = value('sportMatchId')
     press(3); press(7)
     assert value('overlay') == 'sportDetail' and value('sportMatchId') == selected

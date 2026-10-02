@@ -140,7 +140,7 @@ Calendar, circuit specifications, Sprint & Grand Prix classifications, and rider
 
 Build your own DeskPulse OS station for **~$40–$50**:
 
-1. **SBC:** [Orange Pi Zero 3W](http://www.orangepi.org/html/hardWare/computerAndCar/details/Orange-Pi-Zero-3W.html) (Allwinner H618, 1GB–4GB RAM, PowerVR GPU). Compatible with other ARM64 SBCs.
+1. **SBC:** [Orange Pi Zero 3W](http://www.orangepi.org/html/hardWare/computerAndCar/details/Orange-Pi-Zero-3W.html) (Allwinner A733 on the tested board, PowerVR BXM-4-64 GPU). Compatible with other ARM64 SBCs.
 2. **Display:** [Hagibis 3.5" IPS USB-C Monitor](https://www.hagibis.com/) (960×640 native resolution, 60 Hz, USB-C DisplayPort Alt Mode).
 3. **Controller:** 9-Key USB Macro Keypad (USB ID `413d:553a`) or standard keyboard.
 4. **Storage:** 16GB–32GB Class 10 / A1 MicroSD card.
@@ -204,11 +204,11 @@ DeskPulse OS is built for physical tactile feedback using a 3×3 matrix macro ke
 
 ```text
 ┌──────────────┬──────────────┬──────────────┐
-│    1 Back    │     2 Up     │   3 Alerts   │
+│    1 Home    │     2 Up     │   3 Alerts   │
 ├──────────────┼──────────────┼──────────────┤
 │    4 Left    │ 5 Select/Ref │   6 Right    │
 ├──────────────┼──────────────┼──────────────┤
-│    7 Home    │    8 Down    │    9 Menu    │
+│   7 Back    │    8 Down    │    9 Menu    │
 └──────────────┴──────────────┴──────────────┘
 ```
 
@@ -226,7 +226,7 @@ DeskPulse OS is built for physical tactile feedback using a 3×3 matrix macro ke
 
 ## 🔧 Kernel Patch: USB-C DP Alt Mode
 
-The Hagibis 3.5" monitor requires USB-C DisplayPort Alternate Mode. On the Allwinner H618 (sun60iw2), the stock vendor kernel has an unasserted CMN PLL1 clock issue that causes DP link training timeouts.
+The Hagibis 3.5" monitor requires USB-C DisplayPort Alternate Mode. On the tested Allwinner A733 (sun60iw2), the stock vendor kernel has an unasserted CMN PLL1 clock issue that causes DP link training timeouts.
 
 DeskPulse OS includes the verified kernel fix in [`os/kernel-patches/`](os/kernel-patches/):
 - `0001-sun60iw2-enable-cmn-pll-for-dp-altmode.patch`: Corrects PHY initialization in `combo0_configure_usb_dp()`.
@@ -240,9 +240,16 @@ DeskPulse OS includes the verified kernel fix in [`os/kernel-patches/`](os/kerne
 - [x] **v0.5:** Persistent event engine, Civil Protection alerts, and unread notification badges.
 - [x] **v0.6:** Serie A Football Hub, Favourite Team HUD, Fantacalcio, F1 & MotoGP with SignalR live timing.
 - [x] **v0.6.1:** **Modular Settings Engine, Live Wi-Fi Monitoring, Fantacalcio Live & 24h Soak Verification.**
-- [ ] **v0.7:** **Smart Home Dashboard** — Native local Tuya & Home Assistant integration.
-- [ ] **v0.8:** **Spotify Connect & Media Player** — Album art display and physical track controls.
-- [ ] **v0.9:** **PC Hardware Telemetry HUD** — Real-time CPU/GPU temperatures and loads streamed over LAN.
+
+Runtime version: **v0.6.6 Theme Engine**, migrated from the v0.6.5 baseline. See the [release MasterPlan](dashboard/design/release-masterplan.md), updated October 2, 2026, for the version/manifest reconciliation, completed checks and remaining live validation.
+
+- [x] **v0.6.6:** **Theme Engine** — Base/Functional, replaceable layouts and motion, editor, personal packs and persistent scenes. [Usage/development](dashboard/design/theme-engine-implementation-guide.md), [verification and limits](dashboard/design/v066-migration-report.md).
+- [ ] **v0.7:** **Smart Home** — Direct Tuya cloud integration; analysis/API probes exist, production polling/UI are pending.
+- [ ] **v0.8:** **Local Network Overview** — Devices and information collected by the board, with optional router data; no agents on client computers.
+- [ ] **v0.8.1 (optional):** Verified router metadata and additional Hardware/Cyberdeck profiles.
+- [ ] **v0.9:** Animated companion and Cozy profile.
+- [ ] **v0.10:** Companion memory and validated AI scene planning.
+- [ ] **v1.0:** Integrated reliability, installation, upgrades and recovery.
 
 ---
 

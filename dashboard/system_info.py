@@ -4,6 +4,8 @@ from __future__ import annotations
 import os
 import platform
 import shutil
+from version import VERSION
+
 import socket
 import struct
 import sys
@@ -74,7 +76,7 @@ class SystemInfo(QObject):
         for path in ("/etc/armbian-release", "/etc/orangepi-release"):
             board_release.update(line.split("=", 1) for line in read_text(path).splitlines() if "=" in line)
         self._static = {
-            "version": "DeskPulse v0.6", "hostname": socket.gethostname(),
+            "version": "DeskPulse v" + VERSION, "hostname": socket.gethostname(),
             "model": board_release.get("BOARD_NAME", "").strip('"') or read_text("/sys/firmware/devicetree/base/model") or platform.machine(),
             "os": os_release.get("PRETTY_NAME", platform.system()).strip('"'),
             "kernel": platform.release(), "python": platform.python_version(),

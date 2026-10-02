@@ -34,6 +34,7 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     qml6-module-qtquick \
     qml6-module-qtquick-controls \
     qml6-module-qtquick-layouts \
+    qml6-module-qtquick-shapes \
     qml6-module-qtquick-window \
     qml6-module-qtwebsockets \
     libqt6websockets6 \
@@ -64,10 +65,20 @@ chown -R smartpc:smartpc /var/lib/smartpc-dashboard /var/cache/smartpc-dashboard
 chmod 750 /var/lib/smartpc-dashboard /var/cache/smartpc-dashboard
 
 echo -e "${YELLOW}[3/6] Deploying DeskPulse dashboard to /opt/smartpc/dashboard...${NC}"
-mkdir -p /opt/smartpc/dashboard
-cp -ru "$REPO_DIR/dashboard/"* /opt/smartpc/dashboard/
+# Build a complete recursive distribution; cp -u can retain removed files.
+STAGING_DIR="$(mktemp -d /opt/smartpc-stage.XXXXXX)"
+python3 "$REPO_DIR/scripts/package-dashboard.py" build --source "$REPO_DIR/dashboard" --output "$STAGING_DIR/dashboard"
+python3 "$REPO_DIR/scripts/package-dashboard.py" verify "$STAGING_DIR/dashboard"
+mkdir -p /opt/smartpc /var/backups
+if [[ -d /opt/smartpc/dashboard ]]; then
+    tar -czf "/var/backups/smartpc-before-$(date +%Y%m%d-%H%M%S).tar.gz" -C /opt/smartpc dashboard
+    systemctl stop smartpc-dashboard.service || true
+    mv /opt/smartpc/dashboard "$STAGING_DIR/previous"
+fi
+mv "$STAGING_DIR/dashboard" /opt/smartpc/dashboard
 chown -R smartpc:smartpc /opt/smartpc
 chmod +x /opt/smartpc/dashboard/run.sh
+# Keep the previous checkout until the service starts successfully.
 
 echo -e "${YELLOW}[4/6] Setting up KMS / EGLFS graphics configuration...${NC}"
 mkdir -p /etc/smartpc
@@ -96,6 +107,19 @@ fi
 echo -e "${YELLOW}[6/6] Enabling and starting DeskPulse dashboard...${NC}"
 systemctl enable smartpc-dashboard.service
 systemctl restart smartpc-dashboard.service
+DEPLOY_PID="$(systemctl show -p MainPID --value smartpc-dashboard.service)"
+sleep 8
+if ! systemctl is-active --quiet smartpc-dashboard.service || [[ "$DEPLOY_PID" == "0" ]] || [[ "$(systemctl show -p MainPID --value smartpc-dashboard.service)" != "$DEPLOY_PID" ]]; then
+    if [[ -d "$STAGING_DIR/previous" ]]; then
+        systemctl stop smartpc-dashboard.service || true
+        mv /opt/smartpc/dashboard "$STAGING_DIR/failed"
+        mv "$STAGING_DIR/previous" /opt/smartpc/dashboard
+        systemctl start smartpc-dashboard.service
+    fi
+    echo "Dashboard start failed; previous distribution restored." >&2
+    exit 1
+fi
+rm -rf "$STAGING_DIR"
 
 echo ""
 echo -e "${GREEN}======================================================${NC}"

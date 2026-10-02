@@ -1,6 +1,10 @@
 # DeskPulse / SmartPC — temi grafici ed esperienza d’uso
 
-**Revisione 2.3 · 1 ottobre 2026.** Studio operativo per Orange Pi Zero 3W con SoC Allwinner A733, display Hagibis IPS da 3,5″, superficie QML 960×640, controllo fisico 3×3. La revisione conserva i cinque riferimenti visivi e integra l’armonizzazione fra l’azione stabile Home e la vista Giornata, la prevenzione da ritenzione d'immagine IPS (pixel-shift) e la selezione concreta dei font candidati aperti. Le proposte restano da implementare e collaudare; la lettura dei sorgenti e dei resoconti esistenti non costituisce un nuovo collaudo sulla board.
+**Revisione 2.5 · 2 ottobre 2026.** Studio operativo per Orange Pi Zero 3W con SoC Allwinner A733, display Hagibis IPS da 3,5″, superficie QML 960×640, controllo fisico 3×3. La revisione conserva i cinque riferimenti visivi e integra l’armonizzazione fra l’azione stabile Home e la vista Giornata, la prevenzione da ritenzione d'immagine IPS (pixel-shift) e la selezione concreta dei font candidati aperti. Le proposte restano da implementare e collaudare; la lettura dei sorgenti e dei resoconti esistenti non costituisce un nuovo collaudo sulla board.
+
+**Riferimento per i rilasci:** [MasterPlan aggiornato](release-masterplan.md), baseline v0.6.5. Theme Engine v0.6.6 proposto; Casa/Tuya v0.7 in analisi/probe; v0.8 Rete locale sostituisce la telemetria del PC. I concept storici non aggiungono funzioni al perimetro. Verificare in T0 la corrispondenza tra tasti fisici Home/Indietro e guide 1/7 prima della migrazione.
+
+**Approfondimento v0.6.6:** [architettura e scelta dello stack](theme-engine-construction-spec.md), [presentazioni alternative e compagno persistente](theme-engine-presentation-spec.md), [animazioni](theme-engine-motion-spec.md), [migrazione](ux-theme-adaptation-plan.md). I vecchi esempi sono spunti. L'engine comprende token, layout/visualizzazioni registrabili, motion, scene e asset; non impone cinque layout o una sola durata di animazione. L'[inventario](evidence/v066-theme-analysis/README.md) verifica i file installati in sola lettura; non attesta un nuovo benchmark o rilascio.
 
 ## 1. Decisione progettuale
 
@@ -240,7 +244,7 @@ Un’azione già inviata non è annullata dal semplice cambio pagina. Mostrare �
 
 ### Famiglie attuali e future
 
-La lettura dei sorgenti al 30 settembre mostra **Oggi → Meteo → Account ChatGPT → Sport**, filtrate dalle preferenze e dalla disponibilità Sport. Casa e PC restano sviluppi del MasterPlan; Compagno è una vista prevista di Oggi. Non aggiungere pagine vuote per questi moduli.
+La lettura dei sorgenti al 30 settembre mostra **Oggi → Meteo → Account ChatGPT → Sport**, filtrate dalle preferenze e dalla disponibilità Sport. Casa e Rete locale restano sviluppi del MasterPlan; Compagno è una vista prevista di Oggi. Non aggiungere pagine vuote per questi moduli.
 
 La v0.6 Sport offre Prossime, eventuale In corso, Risultati e Classifica. Il percorso dettagliato e i limiti del live sono nel [resoconto v0.6](./v06-sport-ux-fix.md). Questa analisi non riporta Sport a un vecchio placeholder né sposta Account fuori dal carosello.
 
@@ -307,63 +311,17 @@ Componenti comuni: titolo di vista, dato principale, card informativa, stato del
 
 Le coppie sono candidate; il contrasto va controllato per ogni ruolo e stato, inclusi testo secondario, focus, banner e attenuazione notte. Non attribuiamo un esito di contrasto a palette non ancora implementate.
 
-#### Architettura software: Singleton `Theme.qml`
+#### Architettura software: facade, presentazioni e motion
 
-**Proposta architetturale:** un singleton QML in una directory dedicata `dashboard/themes/`, importato dai componenti. Un oggetto Python esposto come context property sarebbe una soluzione diversa; per questo studio scegliamo il singleton QML. `pragma Singleton` da solo non basta: occorre anche dichiarare il tipo nel `qmldir`. [Singleton QML · Qt](https://doc.qt.io/qt-6.8/qml-singleton.html).
+La facade `Theme.qml` espone token tipizzati, ma è soltanto uno dei livelli dell'engine. Il catalogo e il resolver Python leggono pacchetti JSON validati; le visualizzazioni QML si registrano con Presentation API e vengono ospitate da ViewHost. MotionController esegue ricette per evento; SceneHost conserva gli attori fra schermate. La [specifica](theme-engine-construction-spec.md) sostituisce gli snippet monolitici di questo studio.
 
-Esempio di struttura da implementare, non file runtime già aggiunti da questa revisione:
+`pragma Singleton` e `qmldir` registrano la facade per engine; le viste non contengono switch per profilo. [Singleton QML · Qt](https://doc.qt.io/qt-6.8/qml-singleton.html).
 
-```text
-dashboard/
-  themes/
-    qmldir
-    Theme.qml
-  fonts/
-    [file font e relative licenze da scegliere]
-```
+Un tema standard modifica dati e seleziona capacità disponibili. Nuove visualizzazioni, scene o animazioni si aggiungono come estensioni QML con API, lifecycle e fallback; una nuova capacità non richiede la riscrittura delle viste di tutti gli altri temi. Stato applicativo e controller rimangono fuori dal visuale sostituibile.
 
-```text
-# dashboard/themes/qmldir
-singleton Theme 1.0 Theme.qml
-```
+Base conserva inizialmente la Home attuale; Functional prova una Home centrata con gli stessi contenuti. Palette, layout, font, movimento e scena possono essere combinati dall'utente. I concept A/B/C guidano ruoli diversi e non reintroducono le vecchie scorciatoie numeriche. [Contratto delle presentazioni](theme-engine-presentation-spec.md).
 
-Estratto dei token per i soli profili iniziali Base e Functional:
-
-```qml
-// dashboard/themes/Theme.qml
-pragma Singleton
-import QtQuick
-
-QtObject {
-    property string activeProfile: "base"
-    readonly property var availableProfiles: ["base", "functional"]
-    readonly property string resolvedProfile:
-        availableProfiles.indexOf(activeProfile) >= 0 ? activeProfile : "base"
-    readonly property bool functional: resolvedProfile === "functional"
-    readonly property color background:    functional ? "#151515" : "#101923"
-    readonly property color surface:       functional ? "#242424" : "#192a36"
-    readonly property color accent:        functional ? "#f5a623" : "#68d5c6"
-    readonly property color textPrimary:   functional ? "#f0f0ee" : "#f4f6f7"
-    readonly property color textSecondary: functional ? "#a0a09e" : "#8ea5ac"
-    readonly property int radiusCard:      functional ? 6 : 13
-    readonly property int spacingUnit:     8
-    readonly property int motionDuration:  180
-}
-```
-
-Esempio di importazione in un componente nella directory `dashboard/`:
-
-```qml
-import QtQuick
-import "themes" as Appearance
-
-Rectangle {
-    color: Appearance.Theme.surface
-    radius: Appearance.Theme.radiusCard
-}
-```
-
-I componenti esistenti ([InfoCard.qml](../InfoCard.qml), [WeatherNow.qml](../WeatherNow.qml), [Main.qml](../Main.qml)) sostituiscono gradualmente i valori hardcoded con i token. Completare anche font, focus, stati ed effetti della notte prima di considerare il profilo completo. Hardware, Cozy e Cyberdeck rimangono nello studio, ma non appaiono nel selettore finché i loro token non sono implementati. Un nome non supportato usa Base; non presenta un profilo diverso con colori indistinguibili dalla Base.
+Hardware, Cozy e Cyberdeck restano nello studio; non appaiono nel selettore finché le rispettive capacità non sono distribuite e verificate. Il compagno reale resta v0.9, ma la sua continuità fra viste viene preparata già dalla v0.6.6 con un host e un attore di prova.
 
 ### Leggibilità e accessibilità
 
@@ -377,6 +335,8 @@ I componenti esistenti ([InfoCard.qml](../InfoCard.qml), [WeatherNow.qml](../Wea
 - Evitare nomi account e informazioni domestiche personali sulla Home come impostazione iniziale; il dettaglio volontario può mostrarle quando necessarie.
 
 ### Movimento e cambio tema
+
+Il [contratto motion](theme-engine-motion-spec.md) approfondisce ricette per evento, curve, ampiezze, interruzioni, Normal/Reduced/Off e continuità delle scene. Le durate di questa analisi sono candidati, non limiti alle animazioni del compagno.
 
 Proposta iniziale: transizioni di 160–220 ms, con direzione coerente all’asse; focus aggiornato immediatamente; modalità ridotta con transizione minima. Non animare tutto il contenuto a ogni polling. Il cane usa asset precaricati e attività limitata durante la consultazione.
 
@@ -393,17 +353,17 @@ La [mappa UX v2](./ux-navigation-v2.md) è il riferimento dei comandi già svilu
 | Area | Riscontro nei sorgenti / resoconti | Miglioramento da sviluppare |
 | --- | --- | --- |
 | Home | Meteo espanso senza evento già presente | Prototipare `5 · Riepilogo` stabile e selezione interna per ID; verificare titoli lunghi |
-| Famiglie | Oggi, Meteo, Account, Sport; visibilità configurabile | Orientamento con posizione e vicini, senza testata di branding |
+| Famiglie | Oggi, Meteo, Account, Serie A, F1 e MotoGP; visibilità configurabile | Orientamento con posizione e vicini, senza testata di branding |
 | Verticale | Viste principali e alcuni menu circolari; liste Avvisi e Sport limitate ai bordi | Applicare la scelta decisa: fine corsa verticale anche in viste e sottomenu |
 | Impostazioni | In vari controlli 5 incrementa o inverte come 6; nei moduli anche 4/6 invertono | Distinguere regolazione numerica, attivazione esplicita e conferma; etichette coerenti |
 | Sport | Elenco giornata, tab, dettaglio e ritorno implementati; gate live non concluso | Verificare manualmente il tastierino e la leggibilità; non ampliare la Home prima delle preferenze |
 | Avvisi | Inbox, stato letto, banner e priorità già presenti | Riapertura nell’inbox con ultimo ID valido selezionato; ritorno all’origine e gestione delle scadenze |
 | Rotazione Sport | Gruppi di partite alternati ogni otto secondi, con pannelli chiusi | Sospendere anche dopo input manuale; riprendere dopo inattività configurata |
 | Input | Decoder filtra rilascio e auto-repeat | Acquisire eventuali duplicati prima di introdurre filtri temporali; evitare doppi invii di comandi pendenti |
-| Temi | Colori e parametri ancora distribuiti nei componenti | Introdurre token condivisi; poi due profili iniziali |
+| Temi | Colori, font, geometrie e motion distribuiti | Resolver/facade, presentazioni e scene registrabili; due profili e due composizioni Home |
 | Prestazioni | Esiste una misura breve v0.6, con limiti dichiarati nel resoconto | Misurare le scene del tema scelto sulla board; nessuna etichetta 60 FPS costante nella UI normale |
 
-La roadmap aggiornata del MasterPlan mantiene v0.7 Casa, v0.8 PC, v0.9 Cane e v0.10 Memoria/AI. Il lavoro grafico attraversa queste versioni: il sistema comune viene prima della produzione di molte scene del cane.
+La roadmap aggiornata colloca il sistema comune nella **v0.6.6 Theme Engine**, prima di **v0.7 Casa/Tuya** e **v0.8 Rete locale**. Hardware/Cyberdeck possono seguire nella v0.8.1 facoltativa; Cozy arriva con **v0.9 Cane**, poi **v0.10 Memoria/AI**. I riferimenti storici a PC/Cyberdeck si applicano alla presentazione di Rete e diagnostica, senza introdurre agent o metriche hardware dei client.
 
 ## 10. Piano di affinamento e criteri di uscita
 

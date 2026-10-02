@@ -1,5 +1,6 @@
 """Settings regression and optional 960×640 captures; isolated, no network."""
 from __future__ import annotations
+from theme_test_support import wait_ready, wait_save
 
 import argparse
 import json
@@ -26,6 +27,7 @@ import shiboken6
 
 from account import AccountService
 from events import EventService
+from theme_test_support import configure_appearance
 from state import DashboardState
 from system_info import SystemInfo, wifi_quality
 from weather import WeatherService
@@ -58,6 +60,7 @@ sport = SportService(auto_refresh=False, cache_path=directory / "sport.json", st
 racing = {kind: MotorsportService(kind, auto_refresh=False, cache_directory=directory) for kind in ("f1", "motogp")}
 state = DashboardState(weather, system, account, events, demo=True, sport=sport, racing=racing)
 state.markCommandsSeen()
+configure_appearance(state)
 engine.setInitialProperties({"keypad": keypad, "dashboardState": state})
 engine.load(QUrl.fromLocalFile(str(Path(__file__).with_name("Main.qml"))))
 assert engine.rootObjects(), messages
@@ -84,6 +87,8 @@ def wait(milliseconds=100):
 def press(position):
     keypad.keyPressed.emit(position)
     application.processEvents()
+    wait_ready(application,window)
+    wait_save(application,state.appearance)
 
 
 def capture(name):
@@ -115,13 +120,18 @@ press(5)
 assert value("overlay") == "appearance"
 capture("appearance")
 press(8)
-press(5)
+for _ in range(3):
+    if state.appearance.resolvedAppearance["motionMode"] == "off": break
+    press(4)
 assert not state.animationsEnabled
+window.setProperty("optionIndex",12)
+press(5)
 press(1)
 press(6)
 assert window.findChild(QObject, "contentLayer").property("x") == 0
 assert not DashboardState(weather, system, account, demo=True).animationsEnabled
 state.toggleAnimations()
+wait_save(application,state.appearance)
 
 setting("Luminosità")
 assert value("overlay") == "system"

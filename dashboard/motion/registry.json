@@ -1,0 +1,91 @@
+{
+  "apiVersion": 1,
+  "recipes": {
+    "builtin.slide": {
+      "file": "motion/SlideRecipe.qml",
+      "apiVersion": 1,
+      "parameters": {
+        "opacityFrom": {
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "name": "Scorrimento",
+      "events": [
+        "navigate.family",
+        "navigate.view",
+        "panel.enter",
+        "panel.exit",
+        "banner.enter",
+        "banner.exit",
+        "focus.change",
+        "tab.change",
+        "data.update",
+        "layout.swap"
+      ]
+    },
+    "builtin.fade": {
+      "file": "motion/FadeRecipe.qml",
+      "apiVersion": 1,
+      "parameters": {
+        "opacityFrom": {
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "name": "Dissolvenza",
+      "events": [
+        "navigate.family",
+        "navigate.view",
+        "panel.enter",
+        "panel.exit",
+        "banner.enter",
+        "banner.exit",
+        "focus.change",
+        "tab.change",
+        "data.update",
+        "layout.swap"
+      ]
+    },
+    "builtin.cut": {
+      "file": "motion/CutRecipe.qml",
+      "apiVersion": 1,
+      "parameters": {
+        "opacityFrom": {
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "name": "Immediato",
+      "events": [
+        "navigate.family",
+        "navigate.view",
+        "panel.enter",
+        "panel.exit",
+        "banner.enter",
+        "banner.exit",
+        "focus.change",
+        "tab.change",
+        "data.update",
+        "layout.swap",
+        "urgent.present"
+      ]
+    },
+    "builtin.sceneMove": {
+      "apiVersion": 1,
+      "file": "motion/SceneMoveRecipe.qml",
+      "name": "Spostamento scena",
+      "events": [
+        "scene.relocate"
+      ]
+    },
+    "builtin.value": {
+      "apiVersion": 1,
+      "name": "Interpolazione valore",
+      "file": "motion/ValueRecipe.qml",
+      "events": [
+        "brightness.change"
+      ]
+    }
+  }
+}

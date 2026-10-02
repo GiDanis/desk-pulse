@@ -34,6 +34,13 @@ def validate_event(value: dict[str, Any]) -> dict[str, Any]:
     event["notificationRank"] = event.get("notificationRank", event["priority"])
     if type(event["notificationRank"]) is not int or not 1 <= event["notificationRank"] <= 100:
         raise ValueError("Invalid event notification rank")
+    severity = event.get("weatherSeverity", "")
+    if severity not in ("", "gialla", "arancione", "rossa"):
+        raise ValueError("Invalid weather severity")
+    # Compatible with caches written before structured severity was introduced.
+    if not severity and event["source"] == "weather-alert":
+        severity = {2: "gialla", 3: "arancione", 4: "rossa"}.get(event["notificationRank"], "")
+    event["weatherSeverity"] = severity
     for key in ("issuedAt", "startsAt", "expiresAt"):
         if type(event.get(key)) not in (int, float) or not math.isfinite(event[key]) or event[key] < 0:
             raise ValueError(f"Invalid event {key}")

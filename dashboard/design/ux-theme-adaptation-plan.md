@@ -1,299 +1,208 @@
-# Piano Operativo: Architettura dei Temi e Adattamento UX
+# v0.6.6 — Piano di migrazione UX, Theme, Presentation e Motion
 
-**Revisione 1.0 · 1 ottobre 2026**  
-Documento di specifica tecnica ed esecutiva per la trasformazione della dashboard DeskPulse / SmartPC in un sistema **ad alta personalizzabilità e a basso costo di manutenzione**.
+**Aggiornamento attuazione v0.6.6:** il piano è implementato nei sorgenti. Contratti effettivi, uso e limiti sono nella [guida del motore](theme-engine-implementation-guide.md); stato dei gate e prove sulla scheda nel [resoconto di migrazione](v066-migration-report.md). Gli snippet di analisi illustrano alternative; per il formato eseguibile usare schema, registry ed esempi distribuiti.
+**Revisione 2.2 · 2 ottobre 2026 · analisi esecutiva, nessun runtime modificato.**
 
----
+Riferimenti: [architettura](theme-engine-construction-spec.md), [visualizzazioni e compagno](theme-engine-presentation-spec.md), [animazioni](theme-engine-motion-spec.md), [MasterPlan](release-masterplan.md), [inventario verificato](evidence/v066-theme-analysis/README.md).
 
-## 1. Obiettivo e Filosofia del Progetto
+Questo piano individua **dove e perché intervenire** sulla dashboard in uso. Evita una sostituzione meccanica degli esadecimali: una migrazione completa deve comprendere tipografia, geometry, focus, composizioni, animazioni e conservazione dello stato.
 
-Il principio cardine è: **"Personalizzare molto modificando pochissimo"**.
+## 1. Vincoli acquisiti e stato iniziale
 
-Attualmente, per cambiare lo stile o l'estetica della dashboard (es. passare dallo stile neo-retro attuale a uno stile *Braun Functional* o *Nothing Industrial*) bisognerebbe modificare a mano più di 15 file QML e rincorrere oltre 48 valori esadecimali sparsi.
+Il runtime è una Window QML 960×640; app.py crea provider e DashboardState, quindi inietta keypad/stato e carica Main da file locale. Main possiede navigazione, stack overlay e selezioni di Sport/Racing. I figli ricevono l'intero `dashboard`.
 
-### I 3 Pilastri dell'Architettura
+Non esistono ancora ThemeService, registry di presentazioni o scene. Le viste sono create insieme e selezionate tramite `visible`; lo stato di visibilità dei provider è gestito da Main. È una base su cui migrare incrementalmente, senza riscrivere i servizi di dati.
 
-```mermaid
-flowchart TD
-    subgraph Architettura a Tre Livelli
-        T["LIVELLO 1: Theme Engine (dashboard/themes/Theme.qml)"]
-        C["LIVELLO 2: Componenti Base Condivisi (Card, Focus, Divider, Header)"]
-        M["LIVELLO 3: Viste e Moduli Applicativi (Oggi, Meteo, Sport, Casa, PC, Cane)"]
-    end
+**Il 2 ottobre i 44 file runtime installati confrontati coincidono con il locale.** Differiscono quattro script di test installati. Il manifest e i limiti dell'ispezione sono nel documento di evidenza. Le modifiche documentali già presenti al momento di questa analisi sono preservate; HEAD da solo non descrive la baseline di prodotto.
 
-    T -->|"Espone Token semantici (colori, font, raggi, metriche)"| C
-    C -->|"Fornisce mattoni standard privi di stili hardcoded"| M
-    P["Python Backend (state.py)"] -->|"Persiste activeTheme su QSettings"| T
-```
+## 2. Mappa degli interventi Python, input e distribuzione
 
-1. **Separazione Totale tra Logica e Presentazione:** I moduli applicativi (Oggi, Meteo, Sport, Casa, PC) e la gestione dei tasti non devono conoscere colori, font o raggi di curvatura.
-2. **Design Tokens Semantici Centralizzati:** Tutte le decisioni visive risiedono in un unico **Singleton QML** (`dashboard/themes/Theme.qml`).
-3. **Invarianza della UX a 9 Tasti:** Il cambio di tema modifica radicalmente l'aspetto (palette, densità, tipografia, angoli, accenti grafici), ma **mantiene identici i contratti di navigazione** (4/6 orizzontale, 2/8 verticale, 1 Home, 5 Azione, 7 Back, 3 Avvisi, 9 Menu).
+| File attuale | Riscontro | Intervento proposto | Rischio/verifica |
+| --- | --- | --- | --- |
+| [app.py](../app.py) | Crea tutti i servizi e inietta iniziali in Main | Creare ThemeService/registry con vita dell'app; preparare Base/font; iniettare contesto esplicito | Avvio prima del primo frame; chiusura worker; niente seconda istanza provider |
+| [state.py](../state.py) | QSettings SmartPC/Dashboard, nightMode e animationsEnabled | Adapter Appearance; motionMode/legacy; proprietà separate per stile e dati | Preferenze preesistenti identiche; una scelta tema non emette segnali dei provider |
+| [system_info.py](../system_info.py) | Versione hardcoded DeskPulse v0.6; dati dispositivo | Sorgente unica della build; eventuale tema/presentation/renderer in Info | Lettura pura; non avvia acquisizioni o motion |
+| [keypad.py](../keypad.py) | Posizioni da codici HID; release/repeat filtrati | Nessun cambio necessario al decoder; prova fisica T0 | Guide 1/7 devono coincidere con azioni effettive |
+| [events.py](../events.py) / [event_core.py](../event_core.py) | Durata banner, urgente, inbox/mark-read e disponibilità | Conservare policy; fornire presenter visuale senza nuove ingest/dismiss | Doppio banner, durata lettura, preemption e lettura eventi invariati |
+| [weather_alerts.py](../weather_alerts.py) | Normalizza allerta; EventUrgent ora deduce “rossa” dal titolo | Aggiungere livello ufficiale strutturato opzionale e adapter di stile; separare gli eventi Account | Evento meteo/account corretti; cache/event ID non cambiati per il tema |
+| Provider meteo/account/sport/racing | Stato e acquisizioni separati dalla UI | Nessuna riscrittura per Theme; adapter di PresentationContext | Contare select/clear/refetch durante cambio visuale |
+| [run.sh](../run.sh) | Desktop/device/PySide e fallback QML-only | Includere fallback Base senza backend; percorsi font/data locali | Qt 6.8 board e 6.11 PC; niente qrc non registrato |
+| [setup-board.sh](../../scripts/setup-board.sh) | Copia ricorsiva con cp -ru | Manifest della distribuzione per themes/components/motion/font/asset | cp -u non identifica build né rimuove file obsoleti; validare staged deploy |
+| [service](../../os/system/smartpc-dashboard.service) | ProtectSystem=strict, StateDirectory/CacheDirectory | Storage temi utente nel percorso scrivibile; mantenere permessi | Nessuna scrittura in /opt, funzionamento col vero utente del kiosk |
 
----
+File nuovi proposti: theme_core.py, theme_service.py, theme_cli.py, facade/schema/packs/fallback, components, motion e registry/host delle presentazioni. I nomi dettagliati del registry possono essere definiti in T1; il contratto è nella specifica presentation.
 
-## 2. Analisi del Debito Tecnico Esistente (Mappatura dei 48 Hardcode)
+## 3. Main.qml: confine più delicato
 
-La scansione del codice sorgente attuale rivela che l'interfaccia ha un principio di palette in `Main.qml` (`ink`, `muted`, `accent`, `panel`, `edge`), ma soffre di frammentazione nei componenti:
+[Main.qml](../Main.qml), punti individuati nel sorgente letto:
 
-| Valore Esadecimale Attuale | Dove si trova nel codice | Ruolo Semantico Proposto | Token di Destinazione in `Theme.qml` |
-| :--- | :--- | :--- | :--- |
-| `#28403f` | 12 occorrenze (`SettingsPanel`, `SportOverlay`, `MotorsportOverlay`, `DashboardOverlay`, `SportFantasy`) | Sfondo della riga / card selezionata con focus attivo | `Theme.surfaceFocused` |
-| `#0b1219` | 5 occorrenze (`DashboardOverlay`, `SettingsPanel`, `DeviceInfo`, `EventUrgent`, `Main.qml`) | Sfondo a tutto schermo degli overlay modali e notte | `Theme.backgroundOverlay` / `Theme.background` |
-| `#efbd75` | 8 occorrenze (`SportView`, `MotorsportView`, `SportTeamView`, `SportTeamOverlay`, `EventUrgent`) | Testo di avviso, dato in cache (*stale*), o warning | `Theme.warning` / `Theme.textMutedStatus` |
-| `#31505b` | 3 occorrenze (`Main.qml`, `HomeNow.qml`, `WeatherNow.qml`) | Linea orizzontale di separazione e regola superiore | `Theme.divider` |
-| `#14232c` / `#1c2d38` | `InfoCard.qml`, `Main.qml` | Superficie normale delle schede (notte / giorno) | `Theme.surface` |
-| `#29424b` / `#35525d` | `InfoCard.qml`, `Main.qml` | Bordo sottile delle card non selezionate | `Theme.border` |
-| `#69bfa8` / `#6de0be` | `InfoCard.qml`, `Main.qml` | Accento primario (titoli card, selezione attiva) | `Theme.accent` |
-| `#cddbd8` / `#e9f1ef` | `InfoCard.qml`, `Main.qml` | Testo primario ad alto contrasto | `Theme.textPrimary` |
-| `#93a9ae` / `#b3c2c7` | `InfoCard.qml`, `Main.qml` | Testo secondario, timestamp e microtesti | `Theme.textSecondary` |
-| `radius: 13` / `9` / `6` | Sparsi in `InfoCard`, `SettingsPanel`, `SportFantasy` | Raggio di curvatura delle superfici | `Theme.radiusCard`, `Theme.radiusPill` |
+| Zona | Comportamento attuale | Intervento |
+| --- | --- | --- |
+| Inizio Window | Sfondo giorno/notte letterale, geometria 960×640 | Theme background, shell/viewport stabile |
+| Righe 246–250 | ink/muted/accent/panel/edge | Alias temporanei a Theme, poi consumatori espliciti |
+| Righe 269–280 | day/night e brightness derivati | Ingresso variante al resolver; luminosità rimane controllo separato |
+| Righe 335–351 | animateMove/navigateFamily/navigateView | Controller motion con eventi distinti e assi coerenti |
+| Righe 440 e seguenti | activateKey e branch dei pannelli | Conservare router; esporre action IDs e guide comuni |
+| Righe 681–695 | contentLayer e figli sempre istanziati | ViewHost, PresentationContext e sostituzione visuale controllata |
+| Righe 716–734 circa | Overlay, banner e urgente | Lifecycle presenter; priorità separata da animazione |
+| Ultime righe | Diagnostics/devPanel e maschera black | Token per debug; black tecnico documentato; policy motion per brightness |
 
----
+Le posizioni sono riferimenti dell'inventario iniziale, non indirizzi permanenti dopo le modifiche.
 
-## 3. Struttura del Theme Engine (`dashboard/themes/`)
+Sequenza consigliata:
 
-### Struttura delle Directory
+1. Aggiungere il servizio/facade senza cambiare il rendering.
+2. Collegare gli alias esistenti ai token: molte viste migrano subito nelle superfici comuni.
+3. Estrarre il context della Home e una lista senza spostare lo stato del router.
+4. Introdurre ViewHost e due presentazioni Home, conservando le selezioni fuori dai visuali.
+5. Migrare gli altri contesti e sostituire `dashboard.*` nei nuovi componenti.
+6. Tokenizzare tipografia/forme/metriche per ruolo e collegare le ricette motion.
+7. Rimuovere alias temporanei solo quando i consumatori e i harness sono aggiornati.
 
-```text
-dashboard/
-  ├── themes/
-  │    ├── qmldir              # Registrazione singleton per QtQuick
-  │    └── Theme.qml           # Motore dei token e definizione dei profili
-  ├── fonts/
-  │    ├── Inter-Regular.ttf   # Testo UI universale (SIL Open Font License)
-  │    ├── Inter-SemiBold.ttf  # Titoli e bottoni
-  │    └── JetBrainsMono-Bold.ttf # Numeri tabulari orologio e statistiche
-```
+Non trasformare Main in un nuovo monolite contenente tutte le palette, scene e ricette.
 
-### Registrazione del Singleton: `dashboard/themes/qmldir`
+## 4. Copertura completa delle 21 superfici QML
 
-```text
-singleton Theme 1.0 Theme.qml
-```
+| File | Da migrare | Prove specifiche |
+| --- | --- | --- |
+| [Main.qml](../Main.qml) | Shell, header/footer, content host, palette, motion, debug | Cambio in stack e in transizione; alias/policy coerenti |
+| [InfoCard.qml](../InfoCard.qml) | Palette duplicata night, radius13, font condizionati dalla lunghezza | Temperatura/messaggio assente/titolo lungo; larghezze 334/520/872 |
+| [HomeNow.qml](../HomeNow.qml) | Orologio152, data31, divider, card/event geometry | Evento presente/assente; due presentazioni; nessuno spazio vuoto |
+| [HomeDay.qml](../HomeDay.qml) | Card e valori del riepilogo | Data/meteo/cache/evento opzionale |
+| [WeatherNow.qml](../WeatherNow.qml) | Dato principale, linea, card | Temperatura negativa, dato assente, description lunga |
+| [WeatherForecast.qml](../WeatherForecast.qml) | Righe91, radius10, font/colonne | Tre giorni, lista vuota, ° e percentuali |
+| [AccountChatGPT.qml](../AccountChatGPT.qml) | Piano/barre/crediti, usageColor e soglie | 0/1/2/molte finestre; cache, critico, crediti omessi |
+| [DashboardOverlay.qml](../DashboardOverlay.qml) | Menu/Comandi/Avvisi/dettaglio, focus, sfondo | Stack multilivello, primo avvio, mark-read solo su dettaglio |
+| [SettingsPanel.qml](../SettingsPanel.qml) | Sfondo/focus, pagina da quattro righe, editor Aspetto | Densità e paginazione, sottomenu Notifiche, bozza/cancel/apply |
+| [DeviceInfo.qml](../DeviceInfo.qml) | Font NativeRendering, tab, righe, guida | Informazioni sola lettura; font/frame compare senza rimuovere workaround alla cieca |
+| [SportView.qml](../SportView.qml) | Tre righe, status, classifica e punteggi | Prossime/live/risultati/classifica; gate live conservato |
+| [SportOverlay.qml](../SportOverlay.qml) | Liste4/tab/detail, lineup/stats, settings collegati | Round selector -1, selezione per ID, dettaglio e font lunghi |
+| [SportTeamView.qml](../SportTeamView.qml) | Squadra/placeholder/status | Nessuna preferita; cache; nome/stadio lungo |
+| [SportTeamOverlay.qml](../SportTeamOverlay.qml) | Picker, tab, info/rosa, row paging | Ultima riga, filtro/coppe, ritorno alla stessa partita |
+| [SportFantasy.qml](../SportFantasy.qml) | Cinque righe dense, colonne voto/SV, focus | Zero e voto assente/SV; provvisori/pubblicati, ultimo giocatore |
+| [MotorsportView.qml](../MotorsportView.qml) | Programma/risultati/timing/classifica | F1/MotoGP, stato del feed, sorgente corretta |
+| [MotorsportOverlay.qml](../MotorsportOverlay.qml) | Tutti i dettagli/sessioni/piloti/tabelle, tab e focus | Cambio layout durante timing, ID pilota/sessione, campi mancanti |
+| [EventBanner.qml](../EventBanner.qml) | Presenter, piccolo/grande, fondo, font e motion | Scadenza, sostituzione, nessun doppio mark-read |
+| [EventLargeBanner.qml](../EventLargeBanner.qml) | Wrapper che riusa EventBanner | Copertura ereditata, objectName e geometria mantenuti |
+| [EventUrgent.qml](../EventUrgent.qml) | SemanticStyle, layout, priorità e guida corretta | Meteo/account/demo, title lungo, accesso immediato durante motion |
+| [UnreadAlertsBadge.qml](../UnreadAlertsBadge.qml) | Radius/border/font, stato non letto | Non duplica banner; count corretto e clic/input invariati |
 
-### Specifica dei Token: `dashboard/themes/Theme.qml`
+**Regola di revisione:** ogni esadecimale residuo viene classificato come tema, significato di dominio o tecnico. Ogni misura residua indica se è struttura del viewport o un token del componente. “Zero numeri nel QML” non è l'obiettivo: i limiti di un layout e le unità del grafico restano codice di composizione.
 
-Il singleton espone ruoli semantici che reagiscono a due fattori combinati:
-1. **`activeProfile`**: Il tema scelto dall'utente (`"base"`, `"functional"`, `"hardware"`, `"cozy"`, `"cyberdeck"`).
-2. **`isNight`**: L'attenuazione automatica o manuale ereditata dallo stato giorno/notte della board.
+## 5. Componenti comuni: estrarre comportamento visuale, non dati
 
-```qml
-pragma Singleton
-import QtQuick
+| Componente | Contratto utile |
+| --- | --- |
+| AppText | Ruolo tipografico, famiglia/peso effettivo, wrap/elide, fonte stile iniettabile |
+| AppIcon | IconId semantico, stile tipizzato, box ottico, renderer/fallback; nessun input proprio |
+| Surface / InfoCard | Superficie, bordi/raggi, inset e slots contenuto |
+| SelectableRow | selected/enabled/pressed, ID, metriche e feedback; selezione logica esterna |
+| DataStatus | status/source/timestamp, testo e simbolo; tinta semantica |
+| TabStrip | ID/tab corrente, indicazione e motion; controller decide il tab |
+| ViewHeader | Contesto/indice; stile e collocazione configurabili |
+| KeyGuide | Action IDs e mappa input unica; il tema cambia presentazione, non testo numerico arbitrario |
+| ViewHost | Lifecycle del visuale, preparazione, stato applicativo persistente |
+| SceneHost | Continuazione attori fra viste, ancoraggi e preemption |
 
-QtObject {
-    id: theme
+Iniziare da un componente usato almeno in Home/menu e una lista Sport. Non inventare una libreria generale con decine di controlli inutilizzati.
 
-    // Collegamento con lo stato di sistema (iniettato da Main.qml o Python)
-    property string activeProfile: "base"
-    property bool isNight: false
-    property bool animationsEnabled: true
+Preview deve poter fornire `style` diverso dal globale, con la stessa API di alias tipizzati della facade attiva; non duplicare i controlli a mano per ogni tema né passare mappe raw ai binding dei componenti standard. I componenti di recupero e l'urgente mantengono un percorso di fallback leggibile.
 
-    readonly property var availableProfiles: [
-        { id: "base",       name: "Neo-Retro Base", detail: "Sobrio, verde acqua e navy scuro" },
-        { id: "functional", name: "Braun Functional", detail: "Bauhaus, contrasto elevato e giallo ambra" },
-        { id: "hardware",   name: "Nothing Industrial", detail: "Dot-matrix, tecnico, accento rosso/arancio" },
-        { id: "cozy",       name: "Nordic Companion", detail: "Pastello caldo, salvia e forme morbide" },
-        { id: "cyberdeck",  name: "Dev Cyberdeck", detail: "Fosforo verde, terminale e telemetria" }
-    ]
+Strategia icone: [catalogo e backend](theme-engine-icon-spec.md). Base conserva inizialmente testo/geometrie; T1 prova AppIcon su simbolo sistema e meteo senza cambiare tutte le viste. WeatherNow/Home/Forecast ricevono iconId dal code già normalizzato; non dal testo description o dalla palette notte. La stella preferito di SportTeamOverlay può migrare allo stesso contratto senza cambiare la selezione. Stemmi/mescole reali richiedono dati e asset disponibili, non nuove acquisizioni nel tema. Qualificare Shape, glifi ed eventuale decoder SVG sulla Qt board; tenere il renderer del compagno nel SceneHost.
 
-    readonly property string resolvedProfile: {
-        for (let i = 0; i < availableProfiles.length; ++i) {
-            if (availableProfiles[i].id === activeProfile) return activeProfile
-        }
-        return "base"
-    }
+## 6. Regressioni da prevenire
 
-    // ==========================================
-    // 1. COLORI DI SUPERFICIE E SFONDO
-    // ==========================================
-    readonly property color background: {
-        if (resolvedProfile === "functional") return "#151515"
-        if (resolvedProfile === "hardware")   return "#111215"
-        if (resolvedProfile === "cozy")       return "#18171c"
-        if (resolvedProfile === "cyberdeck")  return "#070e17"
-        return isNight ? "#0b1219" : "#101923" // base
-    }
+- Getter di stile che interrogano disco/rete o emettono segnali durante lettura.
+- Layout switch che richiama selectMatch/clearFantacalcio per via di onCompleted/onDestruction.
+- ID selezionato perso perché il delegate appartiene al vecchio visuale.
+- Paginazione rimasta /4 dopo il cambio densità.
+- Asset caricati durante una transizione; cache font illimitata dopo molte preview.
+- Controller condiviso accidentalmente fra più QQmlApplicationEngine nei test.
+- Theme.qml che accede a context property non iniettate nel harness.
+- Token in `var` mutati senza NOTIFY e binding interrotti da setter JS.
+- Banner invisibile a fine animazione o un visuale di uscita che continua a ricevere input.
+- Urgente nascosto da scene, scrim, staging o transizione di tema.
+- La voce “Palette” che perde il precedente nightMode, o Off che riattiva vecchie animazioni.
+- Valori semanticamente errati: stale presentato come errore critico, assente come zero, tint di tema usata per allerta ufficiale.
+- Pretendere che NativeRendering in DeviceInfo possa essere rimosso senza confronto visivo e prestazionale.
+- Aggiornare la snapshot del tema durante ogni frame del tween; nascondere refusi con fallback per campo o `value || default` che elimina raggio 0.
+- Cercare visuali caricati pigramente prima della readiness, conservare riferimenti distrutti o trovare objectName duplicati nello staging.
+- Chiamare forceActiveFocus in ogni onLoaded; il candidato sottrae input a un menu/urgente aperto durante il caricamento.
+- Registrare tutti i font del catalogo o considerare removeApplicationFont una prova di rilascio delle texture GPU.
+- Icon-font con glifi mancanti/fallback estranei, ID/PUA sparsi nei consumatori o sourceSize SVG legata a una dimensione animata.
 
-    readonly property color surface: {
-        if (resolvedProfile === "functional") return "#242424"
-        if (resolvedProfile === "hardware")   return "#1c1d22"
-        if (resolvedProfile === "cozy")       return "#26232b"
-        if (resolvedProfile === "cyberdeck")  return "#101d28"
-        return isNight ? "#14232c" : "#1c2d38" // base
-    }
+## 7. Programma delle prove
 
-    readonly property color surfaceFocused: {
-        if (resolvedProfile === "functional") return "#363636"
-        if (resolvedProfile === "hardware")   return "#2c2a27"
-        if (resolvedProfile === "cozy")       return "#38323f"
-        if (resolvedProfile === "cyberdeck")  return "#13312b"
-        return "#28403f" // base
-    }
+Non eseguire adesso i collaudi runtime per una modifica documentale. Durante l'implementazione, riusare e parametrizzare i harness esistenti, **senza diminuire le aspettative di prodotto per farli passare**.
 
-    readonly property color border: {
-        if (resolvedProfile === "functional") return "#383838"
-        if (resolvedProfile === "hardware")   return "#3a3b40"
-        if (resolvedProfile === "cozy")       return "#413a4a"
-        if (resolvedProfile === "cyberdeck")  return "#1c3c3a"
-        return isNight ? "#29424b" : "#35525d" // base
-    }
+| Gruppo | Harness attuali rilevanti | Nuove verifiche |
+| --- | --- | --- |
+| Base/navigation | check_dashboard.py, check_settings.py | Entrambi i temi, input guide, editor, dimensioni e fallback |
+| Eventi | check_events.py, check_weather_alerts.py | Presenter lifecycle, structured severity, invarianti inbox/durata |
+| Calcio | check_sport_ui.py, check_sport_team_ui.py | ID e richieste invariati sotto theme/presentation swap |
+| Fantacalcio | check_fantacalcio.py, check_fantacalcio_ui.py | SV/zero/voti, ultimo giocatore, layout ampio |
+| Motorsport | check_motorsport.py, check_motorsport_ui.py | Timing/sessione/pilota, preemption, cache e tab |
+| Motore puro, nuovo | check_theme_core.py proposto | Merge/eredità/cicli/API/range/contrasto/errore/id duplicate |
+| QML engine, nuovo | check_theme_ui.py proposto | Facade per engine, snapshot, due layout, ready/error/fallback |
+| Motion/presentation, nuovo | check_theme_motion.py proposto | Cut/interrupt/reduced/off, input rapido, attore persistente |
+| Board | verify_*_board.py esistenti + harness Theme proposto | Catture EGLFS, motion traces, font e risorse reali |
 
-    readonly property color divider: {
-        if (resolvedProfile === "functional") return "#404040"
-        if (resolvedProfile === "hardware")   return "#2a2b30"
-        if (resolvedProfile === "cozy")       return "#3a3442"
-        if (resolvedProfile === "cyberdeck")  return "#15332f"
-        return "#31505b" // base
-    }
+Le quattro copie di test diverse sulla board vanno confrontate: non copiarle automaticamente sul locale e non dichiarare passata una suite usando una revisione ignota. Ogni run registra commit/manifest dei harness.
 
-    // ==========================================
-    // 2. COLORI TIPOGRAFICI E ACCENTI
-    // ==========================================
-    readonly property color textPrimary: {
-        if (resolvedProfile === "functional") return "#f0f0ee"
-        if (resolvedProfile === "hardware")   return "#f4f4f0"
-        if (resolvedProfile === "cozy")       return "#f2ebdd"
-        if (resolvedProfile === "cyberdeck")  return "#e7f5ee"
-        return isNight ? "#cddbd8" : "#e9f1ef" // base
-    }
+Le prove usano XDG_CONFIG_HOME/cache/eventi isolati e dati controllati. Sport in demo non è creato dal launcher: per copertura usare fixture e servizi finti dei harness Sport, non assumere che F12 produca tutte le discipline.
 
-    readonly property color textSecondary: {
-        if (resolvedProfile === "functional") return "#a0a09e"
-        if (resolvedProfile === "hardware")   return "#94969e"
-        if (resolvedProfile === "cozy")       return "#a8a1b2"
-        if (resolvedProfile === "cyberdeck")  return "#6f9e90"
-        return isNight ? "#93a9ae" : "#b3c2c7" // base
-    }
+### 7.1 Adeguamenti obbligatori dei harness
 
-    readonly property color accent: {
-        if (resolvedProfile === "functional") return "#f5a623" // Giallo ambra Braun
-        if (resolvedProfile === "hardware")   return "#ff3b30" // Rosso Nothing / Safety Orange
-        if (resolvedProfile === "cozy")       return "#8ecae6" // Salvia / pastello morbido
-        if (resolvedProfile === "cyberdeck")  return "#00ffa3" // Fosforo verde CRT
-        return isNight ? "#69bfa8" : "#6de0be" // Verde acqua base
-    }
+Prima dei Loader dinamici, separare assert di comportamento e assert sulla presentazione. In check_dashboard gli host persistenti sostituiscono i riferimenti alle viste eager; in check_sport_ui fonte/testi/righe si verificano sotto il currentItem pronto o nel contesto, secondo il ruolo dell'asserzione. Non rimuovere assert sui dati per far passare il nuovo layout. Attendere readiness della revisione e fallire su error/timeout; riacquisire i riferimenti dopo ogni swap.
 
-    readonly property color warning:  "#efbd75"
-    readonly property color critical: "#f08779"
+Gli script attuali usano FakeKeypad/keyPressed: conservarli e aggiungere prove Qt keyboard/focus, perché quei segnali bypassano activeFocus. Includere owner attivo, menu/urgente arrivati durante load, candidato obsoleto, errore/cancel, editor e doppio OK. Le [regole host e focus](theme-engine-presentation-spec.md#61-identità-degli-host-readiness-e-compatibilità-dei-test) diventano prerequisiti di T1, non una riparazione a fine T3.
 
-    // ==========================================
-    // 3. GEOMETRIE, RAGGI E SPAZIATURE
-    // ==========================================
-    readonly property int radiusCard: {
-        if (resolvedProfile === "functional") return 3  // Angoli quasi retti
-        if (resolvedProfile === "hardware")   return 6  // Tecnico
-        if (resolvedProfile === "cozy")       return 18 // Molto morbido
-        if (resolvedProfile === "cyberdeck")  return 2  // Spigoli vivi
-        return 13 // Base neo-retro
-    }
+Per il bridge verificare: schema ↔ alias tipizzati, snapshot completa e nuova revisione, raggio 0, refuso respinto, singleton per engine e preview isolata. Misurare contatori di pubblicazione/binding: animare x/opacity senza cambi di stile non deve ripubblicare token; un cambio discreto resta misurabile per conversioni e fan-out. Nessuna soglia prestazionale inventata dal conteggio dei lookup.
 
-    readonly property int radiusButton: {
-        if (resolvedProfile === "functional") return 2
-        if (resolvedProfile === "cozy")       return 12
-        return 6
-    }
+Per i font includere primo uso, glifi/pesi/qualità/renderType, memoria di picco durante staging e plateau dopo cambi ripetuti, anche con scene/compagno di prova. Registrare risorse applicative vive e cache Qt/driver osservabili separatamente; il solo PSS non certifica la memoria GPU. [Review con evidenze e gate](theme-engine-risk-review.md).
 
-    readonly property int borderWidthCard: resolvedProfile === "functional" || resolvedProfile === "cyberdeck" ? 1 : 2
-    readonly property int borderWidthFocus: 2
+Per le icone verificare ID/glifo/asset sconosciuto, box/clipping, semantica meteo/offline, preview isolata e sostituzione del backend senza cambiare la vista. Confrontare cold/warm sullo stesso contenuto, includendo geometria/glyph/decoding e swap con motion. L'assenza attuale di Image non costituisce una soglia o un vincolo da mantenere.
 
-    // ==========================================
-    // 4. TIPOGRAFIA E FONT FAMILY
-    // ==========================================
-    property string fontBodyName: "Inter"
-    property string fontNumbersName: "JetBrains Mono"
+## 8. Matrice visuale e di personalizzazione
 
-    // Fallback sicuro sui font
-    readonly property string fontFamilyBody: fontBodyLoader.status === FontLoader.Ready ? fontBodyLoader.name : "sans-serif"
-    readonly property string fontFamilyNumbers: fontNumbersLoader.status === FontLoader.Ready ? fontNumbersLoader.name : "monospace"
+Copertura minima:
 
-    FontLoader { id: fontBodyLoader; source: "qrc:/fonts/Inter-Regular.ttf" }
-    FontLoader { id: fontNumbersLoader; source: "qrc:/fonts/JetBrainsMono-Bold.ttf" }
+- Due preset × giorno/notte × Normal/Reduced/Off per i percorsi principali.
+- Normale/Ampia e densità Regolare/Ampia con nomi/testi lunghi.
+- Home con/senza evento, Meteo assente/offline, Account con soglie e campi omessi.
+- Settings, Info, inbox/detail/banner piccolo/grande/urgente.
+- Tutte le tab/calendari/rosa/voti/timing/piloti delle viste rilasciate.
+- Terzo tema derivato e un'estensione presentation di prova per dimostrare espandibilità.
+- Attore geometrico persistente fra Home/Meteo: test infrastrutturale, non il cane prodotto.
+- Errori di font, pack, presentation, save e theme ID; cold/warm start offline.
+- Cambio con stack aperto, nuova densità e input rapido.
 
-    // ==========================================
-    // 5. MOVIMENTO E DINAMICA
-    // ==========================================
-    readonly property int motionDuration: animationsEnabled ? 180 : 0
-}
-```
+Non serve moltiplicare meccanicamente ogni scenario provider per ogni valore del raggio. La validazione numerica copre il contratto; il test UI copre combinazioni rappresentative e gli estremi che possono rompere il layout.
 
----
+Catture 960×640 ispezionate direttamente, con contenuto identico prima/dopo. Scene e animazioni richiedono anche tracce temporali; uno screenshot non dimostra fluidità.
 
-## 4. Integrazione con Python (`dashboard/state.py`)
+## 9. Fasi eseguibili, inclusa l'estensibilità profonda
 
-Per consentire la memorizzazione permanente del tema scelto dall'utente:
+| Fase | Attività | Done verificabile |
+| --- | --- | --- |
+| T0 | Manifest, quattro harness, versione, guide input, screenshot/font, baseline | Distribuzione e test identificabili; incongruenze annotate/risolte |
+| T1 | Schema/facade/resolver + ViewHost + motion + SceneHost di prova | Qt board carica; due Home, una lista e un banner; attore continuo |
+| T2a | Main/InfoCard/Home/Meteo, componenti comuni e normal/reduced/off | Prima parte Base equivalente, senza I/O per frame |
+| T2b | Overlay/settings/Info/Avvisi e tutti i moduli Sport/Racing | 21 superfici coperte, test routing/events passati |
+| T3 | Functional e composizione alternativa, personalizzazioni guidate | Aspetto chiaramente diverso in type/layout/motion, stessi contenuti |
+| T4 | Editor bozza, preview, catalogo, import/export, save/recovery | Terzo tema ed estensione registrati; reboot e fallimento save |
+| T5 | Board visual/motion/perf, manifest, packaging e rollback | Gate del MasterPlan e delle tre specifiche chiusi |
 
-### Modifiche a `state.py`:
-1. **Lettura all'avvio in `__init__`:**
-   ```python
-   self._active_theme: str = self._settings.value("activeTheme", "base", type=str)
-   ```
-2. **Proprietà esposta a QML:**
-   ```python
-   @Property(str, notify=activeThemeChanged)
-   def activeTheme(self) -> str:
-       return self._active_theme
+Queste sono fasi tecniche, non sottoversioni già assegnate. Casa/Rete possono iniziare a sviluppare nuovi visuali sul contratto solo dopo T1 stabile; il loro rilascio non viene dichiarato dal Theme Engine.
 
-   @Slot(str)
-   def setActiveTheme(self, theme_id: str) -> None:
-       if theme_id != self._active_theme:
-           self._active_theme = theme_id
-           self._settings.setValue("activeTheme", theme_id)
-           self._settings.sync()
-           self.activeThemeChanged.emit(theme_id)
-   ```
-3. **Integrazione in `SettingsPanel.qml`:**
-   Nel menu `9 → Impostazioni → Aspetto`, trasformare la voce "Tema" in un selettore a carosello tra i profili registrati (`Base`, `Braun Functional`, `Nothing Hardware`, `Cozy`, `Cyberdeck`), lasciando la modalità notte come sottomenu o voce separata ("Modalità scura: Auto / Giorno / Notte").
+## 10. Deploy e ritorno alla baseline
 
----
+Prima T5: backup della distribuzione completa, manifest/hashes, preferenze e pacchetti utente. Runtime e dati personali sono separati; non distribuire cache/account/events come asset di un tema.
 
-## 5. Piano di Migrazione Step-by-Step (Senza Regressioni)
+Preparare una copia staged, verificarla su Qt board e controllare permessi. La finestra EGLFS richiede pianificazione perché possiede il display; le prove headless isolate possono precederla senza fermare il kiosk.
 
-La migrazione è strutturata in 4 passaggi sequenziali per verificare che ogni componente continui a funzionare senza interrompere la suite di test esistente (`check_dashboard.py`, `check_sport_ui.py`).
+Il deploy deve includere cartelle QML, qmldir, JSON/schema, fallback, font/licenze e asset. Una lista di soli *.py/*.qml di primo livello non basta più. Verificare il manifest ricorsivo dopo l'installazione.
 
-```mermaid
-sequenceDiagram
-    participant Dev as Sviluppo
-    participant Engine as themes/Theme.qml
-    participant State as Python state.py
-    participant QML as Componenti QML
-    participant Board as Orange Pi / Display
+Rollback: ripristinare l'intera distribuzione precedente, rimuovendo i file nuovi non previsti nel relativo manifest; conservare i dati utente e le chiavi legacy. Riavviare e verificare input, Home e font. Non usare il semplice cp -a di un vecchio backup come prova che tutti i file nuovi siano spariti.
 
-    Dev->>Engine: 1. Crea Theme.qml + qmldir con token
-    Dev->>State: 2. Aggiunge activeTheme persistente su QSettings
-    Dev->>QML: 3. Migra InfoCard, Main, Overlay sostituendo hardcode
-    Dev->>Board: 4. Verifica 60 FPS e commutazione live senza riavvio
-```
-
-### Fase 1: Creazione dell'Infrastruttura (Nessun impatto visivo)
-* Creare `dashboard/themes/qmldir` e `dashboard/themes/Theme.qml`.
-* Aggiungere `import "themes"` in [`Main.qml`](file:///home/giuseppe/Documenti/Workspace/SmartPC/dashboard/Main.qml).
-* Collegare `Theme.activeProfile` a `dashboardState.activeTheme`.
-* *Verifica:* Eseguire `./dashboard/run.sh --desktop`; l'app deve avviarsi identica a prima.
-
-### Fase 2: Bonifica dei Componenti Chiave
-* **[`InfoCard.qml`](file:///home/giuseppe/Documenti/Workspace/SmartPC/dashboard/InfoCard.qml):** Sostituire i colori hardcoded interni con `Theme.surface`, `Theme.border`, `Theme.textPrimary`, `Theme.radiusCard`.
-* **[`HomeNow.qml`](file:///home/giuseppe/Documenti/Workspace/SmartPC/dashboard/HomeNow.qml):** Applicare `Theme.fontFamilyNumbers` all'orologio gigante e `Theme.divider` alla linea divisoria.
-* **[`DashboardOverlay.qml`](file:///home/giuseppe/Documenti/Workspace/SmartPC/dashboard/DashboardOverlay.qml):** Sostituire `#0b1219` e `#28403f` con `Theme.background` e `Theme.surfaceFocused`.
-* *Verifica:* Eseguire `python3 dashboard/check_dashboard.py` per accertarsi che i contratti di test non siano stati alterati.
-
-### Fase 3: Bonifica dei Moduli Estesi
-* **Sport & Motorsport:** Sostituire le occorrenze di `#28403f` e `#efbd75` in [`SportOverlay.qml`](file:///home/giuseppe/Documenti/Workspace/SmartPC/dashboard/SportOverlay.qml), [`MotorsportOverlay.qml`](file:///home/giuseppe/Documenti/Workspace/SmartPC/dashboard/MotorsportOverlay.qml) e [`SettingsPanel.qml`](file:///home/giuseppe/Documenti/Workspace/SmartPC/dashboard/SettingsPanel.qml).
-* *Verifica:* Eseguire `python3 dashboard/check_sport_ui.py`.
-
-### Fase 4: Abilitazione del Profilo "Braun Functional"
-* Completare i valori del tema `functional` in `Theme.qml`.
-* Aggiungere il controllo nel menu `Aspetto`.
-* Verificare la commutazione istantanea tra *Base* e *Functional* a runtime.
-
----
-
-## 6. Cosa Diventa Possibile Dopo Questa Riforma?
-
-Una volta completata l'architettura a token, la dashboard acquisisce capacità avanzate con sforzo minimo:
-
-1. **Creare un nuovo tema richiede solo 20 righe:** Per creare un tema "Cyberpunk", non si toccano file di logica o viste, ma si aggiunge solo una colonna di colori in `Theme.qml`.
-2. **Supporto per Font Personalizzati:** Caricando un font dot-matrix in `dashboard/fonts/`, si può abilitare un'estetica stile sintetizzatore Teenage Engineering solo impostando `Theme.fontFamilyBody = "DotMatrix"`.
-3. **Adattabilità a Display Diversi:** Se in futuro si vorrà supportare un display 4″ o 7″, basterà scalare i token di spaziatura (`spacingUnit`) e di font (`fontHeroSize`, `fontBodySize`) in un unico file.
-4. **Prestazioni Garantite:** Zero duplicazioni di istanze QML, zero logiche pesanti a runtime; i binding delle proprietà QML commutano i colori e i font in un singolo fotogramma del display (~16 ms).
+Nessun deploy, modifica delle preferenze o restart è stato eseguito per questa analisi.
