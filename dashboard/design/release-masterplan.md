@@ -1,6 +1,6 @@
 # DeskPulse / SmartPC — MasterPlan dei rilasci
 
-**Revisione 2.4 · 2 ottobre 2026 · Europe/Rome**  
+**Revisione 2.4 · 2 ottobre 2026 · Europe/Rome**
 **Baseline corrente: v0.6.6 Theme Engine. Prossima milestone: v0.7 Casa/Smart Life.**
 
 Questo documento aggiorna il piano della chat **Dashboard Orange Pi MasterPlan** dopo la lettura delle chat **Dashboard Orange Pi v0.1**, **v0.2**, **v0.3**, **v0.4**, **v0.5**, **v0.6**, **v0.6.5**, **v0.7** e **Dashboard Orange Pi Theme**, dei sorgenti e dei resoconti locali. È il riferimento per sequenza, perimetro e criteri di uscita delle prossime versioni. I resoconti dei rilasci conservano le evidenze delle singole prove.
