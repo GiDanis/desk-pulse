@@ -13,8 +13,9 @@ HEX=re.compile(r'^#[0-9a-fA-F]{6}$')
 FIELDS={'schemaVersion','id','name','version','extends','tokens','palettes','presentations','motion','scene','iconSetId','iconApiVersion','iconOverrides','assets','requirements'}
 
 class ThemeError(ValueError):
-    def __init__(self,path,message):
+    def __init__(self,path,message,*,issues=None):
         self.path=path; self.message=message
+        self.issues=issues or []
         super().__init__(f'{path}: {message}')
 
 def read_json(path):
@@ -48,6 +49,35 @@ def contrast(a,b):
         return sum(x*y for x,y in zip(rgb,(.2126,.7152,.0722)))
     hi,lo=sorted((lum(a),lum(b)),reverse=True)
     return (hi+.05)/(lo+.05)
+
+
+def contrast_rules():
+    """One product contrast contract shared by runtime and authoring diagnostics."""
+    for text in ('textPrimary','textSecondary'):
+        for surface in ('surface','surfaceFocused','backgroundOverlay','background','bannerSurface'):
+            yield 'colors.'+text, 'colors.'+surface, 4.5, 'contrast.'+text+'.'+surface
+    yield 'colors.accent', 'colors.surfaceFocused', 3, 'contrast.focus'
+    for mode in ('small','large','urgent','badge','inbox','detail'):
+        prefix='notifications.'+mode+'.'
+        for role in ('titleColor','bodyColor','sourceColor','accent'):
+            yield prefix+role, prefix+'surface', 3 if role=='accent' else 4.5, prefix+role
+        if mode=='inbox':
+            for role,minimum in (('titleColor',4.5),('bodyColor',4.5),('accent',3)):
+                yield prefix+role,prefix+'focusedSurface',minimum,prefix+role
+
+
+def contrast_issues(tokens):
+    issues=[]
+    for foreground,background,minimum,path in contrast_rules():
+        ratio=contrast(tokens[foreground],tokens[background])
+        if ratio < minimum:
+            message='contrasto inferiore a 4,5:1' if minimum==4.5 else 'indicatore insufficiente'
+            if background.endswith('focusedSurface'):message='contrasto insufficiente sulla selezione'
+            issues.append({'code':'contrast.minimum','path':path,'message':message,
+                           'foregroundRole':foreground,'backgroundRole':background,
+                           'foreground':tokens[foreground],'background':tokens[background],
+                           'ratio':ratio,'minimum':minimum})
+    return issues
 
 class ThemeCatalog:
     def __init__(self,user_directory=None,root=ROOT):
@@ -175,21 +205,12 @@ class ThemeCatalog:
         self.validate_tokens(resolved['tokens'])
         for path,spec in self.contract.items():
             if 'effectiveMaximum' in spec and resolved['tokens'][path]*resolved['tokens']['typography.textScale']>spec['effectiveMaximum']: raise ThemeError(path,'dimensione effettiva incompatibile con il layout standard')
-        for text in ('textPrimary','textSecondary'):
-            for surface in ('surface','surfaceFocused','backgroundOverlay','background','bannerSurface'):
-                if contrast(resolved['tokens']['colors.'+text],resolved['tokens']['colors.'+surface])<4.5: raise ThemeError('contrast.'+text+'.'+surface,'contrasto inferiore a 4,5:1')
-        if contrast(resolved['tokens']['colors.accent'],resolved['tokens']['colors.surfaceFocused'])<3: raise ThemeError('contrast.focus','indicatore insufficiente')
+        failures=contrast_issues(resolved['tokens'])
+        if failures:
+            first=failures[0]
+            raise ThemeError(first['path'],first['message'],issues=failures)
         for mode in ('small','large','urgent','badge','inbox','detail'):
             prefix = 'notifications.' + mode + '.'
-            for role in ('titleColor','bodyColor','sourceColor'):
-                if contrast(resolved['tokens'][prefix+role], resolved['tokens'][prefix+'surface']) < 4.5:
-                    raise ThemeError(prefix+role, 'contrasto inferiore a 4,5:1')
-            if contrast(resolved['tokens'][prefix+'accent'], resolved['tokens'][prefix+'surface']) < 3:
-                raise ThemeError(prefix+'accent', 'indicatore insufficiente')
-            if mode == 'inbox':
-                for role, minimum in (('titleColor',4.5),('bodyColor',4.5),('accent',3)):
-                    if contrast(resolved['tokens'][prefix+role],resolved['tokens'][prefix+'focusedSurface']) < minimum:
-                        raise ThemeError(prefix+role,'contrasto insufficiente sulla selezione')
             width, height = resolved['tokens'][prefix+'width'], resolved['tokens'][prefix+'height']
             x, offset = resolved['tokens'][prefix+'insetX'], resolved['tokens'][prefix+'insetY']
             anchor = resolved['tokens'][prefix+'anchor']

@@ -66,12 +66,28 @@ def export_pack(catalog, identifier, destination, *, new_id, overrides=None):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--store',type=Path,required=True)
+    parser.add_argument('--store',type=Path)
     commands=parser.add_subparsers(dest='command',required=True)
     commands.add_parser('list'); commands.add_parser('validate')
     install=commands.add_parser('import');install.add_argument('directory',type=Path)
     export=commands.add_parser('export');export.add_argument('theme');export.add_argument('directory',type=Path);export.add_argument('--id',required=True);export.add_argument('--overrides',type=Path)
+    for name in ('check','install','profile','kit'):
+        command=commands.add_parser(name)
+        command.add_argument('--store',type=Path,default=argparse.SUPPRESS)
+        command.add_argument('--format',choices=('text','json'),default='text')
+        command.add_argument('--qt-python',default=__import__('sys').executable)
+        if name in ('check','install'):command.add_argument('source',type=Path)
+        if name in ('check','install','kit'):command.add_argument('--profile',type=Path)
+        if name in ('check','install'):command.add_argument('--qt',action='store_true')
+        if name in ('install','profile','kit'):
+            command.add_argument('--board');command.add_argument('--identity',type=Path)
+        if name in ('profile','kit'):command.add_argument('--output',type=Path,required=name=='kit')
     args=parser.parse_args()
+    if args.command in ('check','install','profile','kit'):
+        if getattr(args,'board',None) and (args.store or getattr(args,'profile',None)):
+            parser.error('--board non può essere combinato con --store o --profile')
+        return authoring_command(args)
+    if args.store is None:parser.error('--store è obbligatorio per list/validate/import/export')
     try:
         catalog=ThemeCatalog(args.store)
         if args.command=='import': print(import_pack(args.directory,args.store))
@@ -81,5 +97,63 @@ def main():
             if args.command=='validate' and catalog.errors: return 1
     except (ThemeError,OSError) as error: parser.exit(1,str(error)+'\n')
     return 0
+
+
+def authoring_command(args):
+    import sys
+    from theme_authoring import check_project,read_profile,write_kit
+    from theme_core import ROOT
+    from theme_probe import store_path
+    from theme_transfer import BoardTransport,ProbeUnavailable,install_board,install_local,local_probe
+    try:
+        store=store_path(args.store)
+        profile=read_profile(args.profile) if getattr(args,'profile',None) else None
+        transport=None
+        if getattr(args,'board',None):
+            transport=BoardTransport(args.board,args.identity);profile=transport.profile()
+        if args.command=='profile':
+            profile=profile or local_probe({'operation':'profile','root':str(ROOT),'store':str(store)},args.qt_python)
+            report={'reportVersion':1,'operation':'profile','status':'created','profile':profile}
+            if args.output:
+                if args.output.exists():raise ThemeError('output','profilo già esistente; scegliere un nuovo file')
+                args.output.parent.mkdir(parents=True,exist_ok=True)
+                with args.output.open('x') as output:output.write(json.dumps(profile,ensure_ascii=False,indent=2)+'\n')
+                report={'reportVersion':1,'operation':'profile','status':'created','destination':str(args.output.resolve()),
+                        'qtVersion':profile['qtVersion'],'verification':profile['verification']}
+        elif args.command=='kit':report=write_kit(args.output,store=None if transport else store,profile=profile)
+        else:
+            report=check_project(args.source,store=None if transport else store,profile=profile,qt=args.qt,qt_python=args.qt_python)
+            if args.command=='install' and report['status']=='valid':
+                if not args.source.is_dir():raise ThemeError('source','install richiede una cartella contenente theme.json')
+                qt_details={}
+                def verify_payload(path):
+                    checked=check_project(path,store=None if transport else store,profile=profile,qt=args.qt,qt_python=args.qt_python)
+                    if checked['status']!='valid':raise ThemeError('staging',json.dumps(checked['issues'],ensure_ascii=False))
+                    qt_details.update(checked.get('qtProbe',{}))
+                receipt=install_board(args.source,transport,profile,verify=verify_payload) if transport else install_local(args.source,store,ROOT,verify_qt=False,verify=verify_payload)
+                report={'reportVersion':1,'operation':'install',**receipt}
+                if not transport and args.qt:
+                    report['verification']['qtResources']='verified';report['qtProbe']=qt_details
+            elif args.command=='install':report['operation']='install'
+    except ProbeUnavailable as error:
+        report={'reportVersion':1,'operation':args.command,'status':'failed' if args.command=='install' else 'notVerified',
+                'issues':[{'code':'probe.unavailable','phase':'probe','message':str(error)}]}
+    except (ThemeError,OSError,ValueError,KeyError,TypeError) as error:
+        report={'reportVersion':1,'operation':args.command,'status':'invalid',
+                'issues':[{'code':'operation.failed','phase':'operation','message':str(error)}]}
+    if args.format=='json':print(json.dumps(report,ensure_ascii=False,indent=2,allow_nan=False))
+    else:
+        print(args.command+': '+report['status'])
+        if report.get('destination'):print('Destinazione: '+report['destination'])
+        if report.get('id'):print('Tema: '+report['id'])
+        if report.get('digest'):print('SHA payload: '+report['digest'])
+        for scope,result in report.get('verification',{}).items():print(scope+': '+result)
+        if args.command=='profile' and 'profile' in report:print(json.dumps(report['profile'],ensure_ascii=False,indent=2))
+        for issue in report.get('issues',[])+report.get('warnings',[]):
+            print('['+issue.get('code','error')+'] '+issue.get('variant','')+' '+issue.get('file','')+' '+issue.get('pointer','')+' '+issue['message'])
+            if 'ratio' in issue:print(f"  Contrasto {issue['ratio']:.3f}:1; minimo {issue['minimum']}:1")
+            if issue.get('suggestion'):print('  Candidato (coppia soltanto, rivalidare): '+issue['suggestion']['value'])
+    return 1 if report['status'] in ('invalid','failed') else 2 if report['status']=='notVerified' else 0
+
 
 if __name__=='__main__':raise SystemExit(main())

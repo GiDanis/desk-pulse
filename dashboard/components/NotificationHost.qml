@@ -50,6 +50,7 @@ ViewHost {
     }
     function settleMotion() {
         exitTimer.stop(); exiting = false; motion.settle()
+        if (currentLoader) currentLoader.opacity = 1
         if (currentItem && typeof currentItem.settleMotion === "function") currentItem.settleMotion()
     }
     function enter() {
