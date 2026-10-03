@@ -1,10 +1,12 @@
 # Theme Engine — creazione tramite AI e temi completi importabili
 
-**Revisione 1.0 · 3 ottobre 2026 · Europe/Rome**
+**Revisione 1.1 · 3 ottobre 2026 · Europe/Rome**
 
 **Stato: analisi funzionale e tecnica. Le estensioni descritte qui non sono implementate.** Baseline verificata nei sorgenti: commit `c66d9c8`, dopo la migrazione delle sei superfici Avvisi. Questo documento amplia il criterio di completamento del Theme Engine sulla base dell'obiettivo chiarito dall'utente: creare il tema con l'AI, importarlo completo e applicarlo dalle impostazioni, conservando la stessa applicazione e limitando gli adattamenti sul dispositivo.
 
 Riferimenti: [MasterPlan](release-masterplan.md), [guida del runtime attuale](theme-engine-implementation-guide.md), [contratto notifiche](theme-engine-notification-spec.md), [collaudo notifiche](theme-engine-notification-migration-report.md), [architettura](theme-engine-construction-spec.md), [presentation e compagno](theme-engine-presentation-spec.md), [motion](theme-engine-motion-spec.md), [icone](theme-engine-icon-spec.md), [studio UX](themes-and-ux-analysis.md), [navigazione](ux-navigation-v2.md). [Inventario di questa analisi](evidence/theme-ai-authoring-analysis-2026-10-03/source-audit.json).
+
+**Revisione delle integrazioni dell'utente:** tooling ponte, prompt LLM e cinque concept sono inclusi nelle sezioni 11.2–11.4 come attività da implementare. La preparazione concreta, le decisioni di partenza e i confini del primo blocco sono nel [piano esecutivo](theme-engine-ai-execution-plan.md). Il ponte schema 1 anticipa authoring e diagnosi, ma non chiude il requisito del bundle con visuali nuovi.
 
 ## 1. Risultato di prodotto e criterio di completamento
 
@@ -66,6 +68,7 @@ P0 significa necessario prima di dichiarare completo il percorso dei temi creati
 | G18 | P1 | Risorse, licenze e provenienza non accompagnano sempre il progetto | Inventario risorse, attribuzioni, hash e dipendenze inclusi nell'export |
 | G19 | P1 | Diagnostica utente non distingue tutti gli esiti | Errori con fase, file e alternativa utile; nessuna falsa conferma di applicazione |
 | G20 | P2 | Compagno, rig/atlanti/shader futuri non collaudati | Contratti persistenti e profili capaci di evolvere; collaudo separato degli asset definitivi |
+| G21 | P0 per palette chiare | Colori semantici e accenti testuali non validati su tutti gli sfondi reali | Ruoli semantici adattivi, contrasto sulle superfici effettive e test delle condizioni warning/critical anche in giorno chiaro |
 
 Il piccolo superamento del budget di cambio tema già misurato resta un residuo prestazionale reale, non una nuova funzione mancante. Deve essere ripreso nel profilo di accettazione, non cancellato perché il nuovo pacchetto supera il controllo JSON.
 
@@ -201,6 +204,8 @@ I 181 token Avvisi attuali sono il contratto base, non un tetto al design. I ren
 
 La severità deve essere comprensibile anche senza il solo colore. L'AI può personalizzare gli accenti rispettando contrasto e significato; non può trasformare un dato offline in corrente, far sparire una fonte necessaria dal dettaglio o cambiare la politica della categoria. Aspetto Avvisi e Impostazioni Notifiche restano distinti: il tema non modifica quiet hours, categorie abilitate, durata, rank, letture o chiusure.
 
+**Ulteriore riscontro della review dei cinque concept:** `SemanticStyle.qml` contiene foreground warning/critical fissi, usati anche nei moduli e nei dettagli. Una superficie Braun chiara `#ecebe4` può essere accettata dopo aver corretto i testi globali, ma questi foreground restano poco leggibili. Il checker deve indicare il limite attuale; il nuovo contratto deve adattare il colore alla superficie preservando ruolo e gravità. Inoltre l'accento è usato anche per testo informativo: il solo gate di 3:1 per il focus non garantisce la policy di 4,5:1 per quel testo. G21 copre questa distinzione; una palette chiara non diventa pronta solo perché passa il JSON.
+
 Conservare il protocollo già provato: gate readiness → candidato visibile → primo frame con contenuto → acknowledgment ID/revisione/rank → unico timer degli otto secondi. Un cambio di tema, font, palette o versione non consuma di nuovo il timer e non ripresenta un avviso consegnato. Una revisione superata non viene consegnata. Urgente preempta subito anteprima/editor/scena senza dipendere da caricamenti o fade-in.
 
 La readiness dichiarata dal nuovo renderer comprende le informazioni obbligatorie e gli asset necessari, non soltanto l'esistenza del root Item. Il kit deve provare anche un root visibile con contenuto interno ancora trasparente o ritardato: la sola opacity del Loader non certifica il testo disegnato. Definire un report visuale di ruoli/aree e una readiness del contenuto, verificati nelle fixture, senza imporre nomi privati o la geometria Base. Questa dichiarazione è un contratto per codice fidato; il frame acknowledgment non diventa una prova ottica universale o una difesa da un renderer intenzionalmente scorretto.
@@ -256,6 +261,171 @@ Quattro livelli distinti: formato/integrità; tooling statico; runtime reale con
 Il preflight usa un processo separato con timeout, rete non necessaria, dataset isolati e quote di risorse. Carica tutte le superfici e i renderer dichiarati, compresi ricette/icone/scene e visuali inattivi; prova giorno/notte e motion mode. Se un tool manca, il report dice **non verificato**, non PASS. Screenshot, geometrie e input vengono controllati; il gusto non viene sostituito da un'asserzione sui pixel.
 
 PC e board possono avere differenze di font, backend o moduli. Il profilo board richiede un controllo sul runtime realmente installato, con single-window EGLFS e senza contendere GPU/CPU con suite parallele. La valutazione di un pacchetto sul dispositivo deve essere isolata dall'acquisizione e dalle preferenze reali; nessuna fixture può consegnare notifiche di prova nel servizio di produzione.
+
+### 11.2 Tooling ponte schema 1: proposta per il primo blocco
+
+L'aggiunta del tool ponte è utile: permette all'AI di ottenere subito errori utilizzabili e di trasferire un progetto senza istruzioni manuali sui percorsi. **`check` e `install` sono comandi da implementare:** oggi `theme_pack.py` espone soltanto `list`, `validate`, `import`, `export`, con `--store` obbligatorio. I due comandi nuovi sono il blocco B0 del [piano esecutivo](theme-engine-ai-execution-plan.md); non importano ancora QML o aggiornamenti dello stesso ID.
+
+Interfacce target, non comandi eseguibili al momento:
+
+```text
+python3 dashboard/theme_pack.py check <cartella_tema_o_theme.json> [--store <catalogo>] [--profile <profilo.json>] [--format text|json]
+python3 dashboard/theme_pack.py install <cartella_tema> [--store <catalogo_locale> | --board <destinazione_ssh>] [--format text|json]
+```
+
+**`check`** legge il progetto in sola lettura, rifiuta JSON duplicato/campi sconosciuti/ID invalidi e usa il validatore semantico esistente. La risoluzione avviene in un catalogo temporaneo isolato, senza importare nel catalogo reale. Valida Day e Night, eredità, tipi/range, registry, asset/hash e i vincoli geometrici dichiarati dei sei ambiti Avvisi. La conformità allo schema JSON non sostituisce il resolver. Lo schema generato e il validatore devono essere controllati insieme; non introdurre un secondo elenco di token nel CLI.
+
+I controlli che richiedono Qt — famiglie reali, glifi, immagini e metriche — usano un processo probe isolato e un profilo esplicito. Il PC non certifica automaticamente la board. Se manca il profilo o la verifica di un renderer, il risultato riporta `notVerified`; non può promettere che qualunque QML rientri nel display. I range numerici non misurano sovrapposizione, elisione o focus: questi richiedono le fixture del renderer.
+
+Diagnostica con codice stabile, fase, variante, file/JSON path, ruoli coinvolti, valore e soglia. Calcolare i rapporti tramite la stessa funzione del resolver. L'esempio proposto dall'utente viene corretto con valori calcolati:
+
+```text
+[FAIL] day colors.textSecondary (#7a7a7a) su colors.surface (#242424)
+       Contrasto: 3.616:1 (policy testo: >= 4.5:1)
+       Candidato per questa coppia: #8b8b8b -> 4.556:1
+       Verificare nuovamente tutte le superfici e i ruoli ereditati prima dell'uso.
+```
+
+`#9c9c9c` sulla stessa superficie dà 5.654:1, non 4.55:1. Un suggerimento di correzione non è un'autorizzazione a cambiare il tema: il checker non modifica i file. Propone candidati verso chiaro/scuro rispettando il ruolo e prova l'intero grafo dei contrasti. Una correzione valida soltanto per una coppia è marcata come tale; se altera altre coppie o l'identità cromatica, l'AI deve risolvere il compromesso. Gli errori indipendenti vengono raccolti senza fermarsi sempre al primo.
+
+Le soglie sono una **policy di leggibilità del prodotto**, ispirata ai criteri WCAG, non una certificazione della dashboard. La policy più prudente di 4,5:1 vale anche per testo informativo grande; il focus usa almeno 3:1. Il punto G21 aggiunge i foreground semantici e gli accenti effettivamente usati come testo. [W3C: contrasto minimo](https://www.w3.org/TR/WCAG21/#contrast-minimum), [W3C: contrasto non testuale](https://www.w3.org/TR/WCAG21/#non-text-contrast).
+
+**`install` nel ponte significa preparare nella inbox**, non importare nel catalogo o applicare il tema. Prima valida, poi copia in staging e pubblica con rename soltanto dopo la verifica dei file. Lo stesso contenuto è idempotente; un nome già ricevuto con contenuto diverso non viene sovrascritto. Per update veri serve A2/A3.
+
+Il percorso deriva da `ThemeService.store.parent / "theme-imports"`, incluso un eventuale `SMARTPC_THEME_STORE`; non si inventa una cartella differente nel tool. Con organizzazione e applicazione entrambe SmartPC, il default Linux attuale è:
+
+- PC: `~/.local/share/SmartPC/SmartPC/theme-imports/<id>/`.
+- Kiosk: `/var/lib/smartpc-dashboard/.local/share/SmartPC/SmartPC/theme-imports/<id>/`.
+
+Sono default da verificare nel profilo, non percorsi universali. Il tool remoto deve ottenere il percorso dalla configurazione del destinatario e verificare accesso/spazio/utente; non usare il HOME della shell SSH come se fosse quello del servizio. Il percorso attuale è documentato nella [guida](theme-engine-implementation-guide.md#pacchetti-personali). [Qt: QStandardPaths](https://doc.qt.io/qt-6.8/qstandardpaths.html).
+
+Per `--board`, destinazione SSH da profilo esplicito o SSH config, autenticazione esistente, trasferimento SFTP in staging e verifica sul destinatario prima di pubblicare il pacchetto. Nessuna disabilitazione del controllo host key, password nel manifest o riavvio automatico del servizio. Un profilo solo PC non autorizza a dichiarare compatibilità board; un trasferimento interrotto lascia il tema corrente intatto e produce un esito recuperabile.
+
+Ciclo d'uso attuale dopo il trasferimento riuscito:
+`9 Menu → Impostazioni → Aspetto → Importa pacchetti → Tema (4/6) → Applica e salva (5)`.
+Gli stati **ricevuto, importato, in anteprima, applicato e salvato** sono distinti. L'utente continua a scegliere l'applicazione dalle impostazioni.
+
+### 11.3 Prompt operativo: due profili di authoring
+
+Il prompt copiabile è utile come avvio, ma un testo statico non impedisce da solo allucinazioni né garantisce un tema valido. Allegare contratto, registry, profilo di capacità/famiglie e risultato del checker. La fonte dei range è il kit generato; la selezione di token sotto è un riepilogo della baseline e non restringe la personalizzazione al suo elenco.
+
+#### 11.3.1 Profilo ponte: tema JSON schema 1 con componenti disponibili
+
+Questo template produce un tema dichiarativo senza nuovi QML. Per la prima prova usa caratteri di sistema (`""`) e `assets: []`; Inter e JetBrains Mono non sono garantiti dalla dashboard e sul PC verificato non risultano installati. Usarli in seguito solo come risorse effettive dichiarate, con famiglia verificata, licenza e profilo compatibile. Nessun TTF è ottenibile scrivendo il suo nome nel JSON.
+
+````markdown
+Sei un designer UI/UX per una dashboard embedded. Crea un tema originale,
+coerente e leggibile a partire dal brief e dagli allegati tecnici.
+
+PROFILO DI USCITA: pacchetto dichiarativo SmartPC schema 1.
+Restituisci un solo blocco JSON valido, senza commenti, ellissi o testo extra.
+Questo profilo usa esclusivamente componenti già presenti; non genera QML.
+
+DATI D'USO:
+- Display 960×640; leggere a distanza su pannello da 3,5 pollici.
+- Tastierino: 1 Home, 7 Back, 4/6 famiglia, 2/8 vista, 5 azione,
+  3 Avvisi, 9 Menu. Non cambiare azioni né disponibilità dei dati.
+- Day/Night sono varianti della stessa identità; la modalità notte
+  preserva informazioni e contrasto. Nessuna affermazione medica sulla palette.
+
+CONTRATTO:
+- schemaVersion=1; version in formato x.y.z; extends="base".
+- id conforme a ^[a-z][a-z0-9_.-]{0,63}$ e non già installato.
+- Usa solo campi/token/ID del contratto e dei registry allegati.
+- tokens e palettes.day/night usano chiavi piatte con punto,
+  per esempio "colors.surface", "shape.radiusCard", "typography.uiFamily".
+  Non creare oggetti annidati colors/shape/typography nel manifest schema 1.
+- Non usare percorsi assoluti, font non verificati o capacità immaginate.
+- Prima prova: uiFamily/numbersFamily/displayFamily=""; assets=[].
+- Range riassuntivi attuali: radiusCard/Row/Pill/Button 0–24;
+  typography.textScale 0.85–1.10; metrics.listRows intero 3 o 4.
+- I contrasti sono calcolati dal checker, non stimati a vista:
+  testo informativo >=4.5:1 sulle superfici effettive;
+  indicatori >=3:1. Valgono anche i ruoli locali delle notifiche.
+- Non copiare palette chiare senza verificare foreground warning/critical:
+  se il profilo attuale non li supporta, dichiara il limite nel progetto
+  e usa una variante supportata per questa uscita JSON.
+
+PRESENTAZIONI DISPONIBILI DA VERIFICARE NEL REGISTRY ALLEGATO:
+- home.now: builtin.home.left oppure builtin.home.centered.
+- alerts.banner.small: builtin.alerts.small oppure builtin.alerts.small-rail.
+- alerts.banner.large: builtin.alerts.large oppure builtin.alerts.large-split.
+- alerts.urgent: builtin.alerts.urgent; alerts.badge: builtin.alerts.badge;
+  alerts.inbox: builtin.alerts.inbox; alerts.detail: builtin.alerts.detail.
+- Mantieni i restanti contenuti ereditati da Base.
+- Progetta piccolo e grande separatamente, con notifications.<mode>.*
+  del contratto. La durata e la consegna degli eventi non sono personalizzabili.
+
+MOTION:
+- Usa gli eventi/ricette compatibili del registry allegato.
+- Preferisci banner.small.enter/exit e banner.large.enter/exit;
+  gli alias banner.enter/exit sono compatibilità legacy.
+- Per ogni override specifica recipe, durationMs, distancePx, easing.
+- Range del resolver: durationMs 0–600, distancePx 0–80;
+  easing linear/outCubic/outQuad/inOutQuad.
+- Per questa prova preferisci tempi brevi; non è un limite creativo dell'engine.
+- urgent.present resta builtin.cut, durationMs=0, distancePx=0.
+- Ricette nuove e scene non disponibili richiedono il profilo bundle completo.
+
+STRUTTURA:
+schemaVersion, id, name, version, extends, tokens,
+palettes con day/night, presentations, motion, assets.
+Niente pseudo-JSON con "...". Usa un accento e una gerarchia coerenti con il brief,
+ma mantieni la semantica degli stati e non riservare una scheda evento vuota.
+
+BRIEF: [descrizione dell'utente]
+ALLEGATI: [contratto token, registry e profilo della versione destinataria]
+DIAGNOSTICA: [se disponibile, risultato check da correggere senza ignorare errori]
+````
+
+Lo schema e il prompt non impongono un solo font o una sola ricetta ai futuri temi. Il profilo ponte ha limiti dichiarati; i quattro ulteriori visuali Avvisi hanno già token e host propri, anche quando usano la composizione Base. Un errore del checker richiede nuova generazione/correzione, non una dichiarazione dell'LLM che il rapporto è valido.
+
+#### 11.3.2 Profilo completo: progetto e bundle con visuali nuovi
+
+L'uscita non è un singolo JSON: è un progetto con manifest, registry, QML/JS,
+facade dei token estesi, asset, licenze e report. Il relativo prompt comprende:
+
+1. Brief e grammatica visuale per pagine, shell, dettagli e sei superfici Avvisi.
+2. Versione del kit, profilo board, API dei contesti, azioni e import pubblici.
+3. Libertà di impaginazione e animazione entro lifecycle/aree protette; nessuna
+   modifica al core o al DB, nessun accesso al controller e nessun provider nuovo.
+4. Generazione dei file, esecuzione di validate/preview, correzione degli errori,
+   packaging e trasferimento; risultati non verificati dichiarati come tali.
+5. Consegna del bundle con hash identico ai file testati, anteprime reali e copertura.
+
+Il kit completo è un deliverable A4 dopo aver stabilito i contratti A1/A2.
+Il primo blocco B0 può già produrre prompt/profilo derivati dai registri esistenti;
+non deve anticipare nomi di proprietà del modulo API 2 come se fossero implementati.
+
+### 11.4 Suite pilota dei cinque concept
+
+Conservare i cinque riferimenti come **suite candidata di progetto**. Non sono temi
+installati, palette già conformi o un limite al numero di stili. I seed cromatici
+seguenti restano spunti da risolvere per tutti i ruoli, stati e varianti, non colori
+finali approvati automaticamente. Nessuna affiliazione ai marchi è implicata dai
+nomi interni dei riferimenti.
+
+| ID candidato | Livello 1: direzione con componenti attuali | Livello 2: prova del bundle completo |
+| --- | --- | --- |
+| `apple-standby` | Ora dominante, Home a sinistra, seed notte `#08080c`, ambra `#ff9f0a`, fade. La variante rossa è una scelta estetica da verificare, senza promessa di effetto biologico | Composizione tipografica originale, gerarchia/densità adattiva, Avvisi propri e shell coerente |
+| `nothing-te` | Monocromia `#0d0d0d`/`#f0f0f0`, raggi Card 2/Row 0, seed rosso `#e63946`, cut | Tipografia/matrice a punti e icone proprie, mantenendo testo informativo leggibile e cache misurata |
+| `cyberdeck-hud` | Ambra `#ffb703`, raggi tecnici Card 4, grande con `builtin.alerts.large-split`; usare soltanto dati reali disponibili | Grafici e strumenti visuali per gli stessi dati, dettagli e scene nel budget; nessuna telemetria inventata |
+| `nordic-cozy` | Salvia `#2a3d34`, sabbia/terracotta `#e07a5f`, raggi Card 18/Row 10, fade breve | Illustrazioni/icone locali e movimento discreto; scena/compagno solo nelle capacità disponibili |
+| `braun-rams` | Grigio `#232323`, bianco caldo `#f5f5f0`, seed arancio `#ff5500`, piccolo small-rail. La variante chiara `#ecebe4` richiede G21 | Layout razionale originale, ruoli semantici giorno/notte e tutti i pannelli coerenti |
+
+L'arancio `#ff5500` su `#ecebe4` ha contrasto 2.682:1: il valore scelto come
+riferimento non basta per focus o testo su quella superficie. Lo stesso colore può
+restare decorativo, oppure il tema deve scegliere un foreground/contrasto diverso
+per quei ruoli. Le coppie vanno verificate senza snaturare arbitrariamente il brief.
+
+La prima prova verticale usa **un solo concept scelto a livello implementativo**
+(`braun-rams` in variante scura come default di lavoro, non palette definitiva),
+con nuove Home, piccola e grande nei bundle. Poi si estende la stessa matrice agli
+altri quattro. La migrazione completa richiede tutti i contratti e i gate; la prima
+prova non viene presentata come copertura totale. Per pubblicare una libreria di
+cinque temi, ciascuno deve passare la matrice comune, tutte le sei superfici Avvisi
+e le proprie prove di font/asset, Day/Night e motion. Non moltiplicare cinque volte
+componenti del core né bloccare le API sul design di un solo concept.
 
 ## 12. Importazione, aggiornamento e recupero
 
@@ -337,6 +507,7 @@ La pubblicazione deve evitare conversioni ripetute delle stesse snapshot per ogn
 | --- | --- | --- |
 | `theme_pack.py` | Import/export bundle, safe extraction, update immutabili, dipendenze complete | Schema 1 continua a funzionare; nessuna installazione parziale |
 | `theme_core.py` | Schemi bundle/registri, namespace, compatibilità, copertura e ResourceRef | Validazione prima della pubblicazione; Base sempre disponibile |
+| `SemanticStyle.qml`, contratto token e usi testuali dell'accento | Ruoli semantici adattivi e validazione sulle superfici effettive, G21 | Gravità riconoscibile e leggibile in ogni variante; colori decorativi distinti dai foreground informativi |
 | `theme_service.py` | Revision identity, lease, staging di tutte le dipendenze, adattamenti separati | Draft/cancel/apply e font vecchi+candidati preservati |
 | Nuovi `theme_bundle.py`, `theme_resources.py`, `theme_lifecycle.py` | Responsabilità separate per storage/transazioni/risorse | Nomi proposti; non nuovi servizi dei provider |
 | `app.py`, modulo QML pubblico | Registrazione tipi/import path, contesti pubblici e kit tooling | Una sola istanza dei provider; API compatibile sulla board |
@@ -357,8 +528,8 @@ Gli eventi non vengono riscritti e non richiedono una nuova tabella SQLite per l
 
 | Fase | Risultato concreto | Verifica per uscire |
 | --- | --- | --- |
-| A0 · Contratti e baseline | Inventory completo superfici/azioni, compatibilità, profilo Qt/board, tracing del cambio tema | Copertura verificata contro sorgenti; gap G01–G20 tracciati; budget e residuo 150 ms espliciti |
-| A1 · API e copertura | Modulo pubblico, nuovi contesti, shell/overlay host, adattatori legacy e fixture | Nuove pagine/overlay implementati senza controller; focus/scroll/provider invariati |
+| A0 · Contratti e baseline | Inventory completo superfici/azioni, compatibilità, profilo Qt/board, tracing del cambio tema | Copertura verificata contro sorgenti; gap G01–G21 tracciati; budget e residuo 150 ms espliciti |
+| A1 · API e copertura | Modulo pubblico, nuovi contesti, shell/overlay host, adattatori legacy, ruoli semantici adattivi e fixture | Nuove pagine/overlay implementati senza controller; focus/scroll/provider invariati; T21 prima di abilitare palette chiare |
 | A2 · Bundle e risorse | Schemi, builder, import/export, namespace, URL/version identity, contenuti immutabili | Import offline su distribuzione pulita, codice/asset/motion/Avvisi inclusi; archivi invalidi respinti |
 | A3 · Lifecycle e recovery | Transazioni, update/GC, lease, override migration, supervisore | Power cut simulato, crash/block e reboot ritornano al precedente/Base, preferenze ed eventi preservati |
 | A4 · Authoring AI | Kit, brief, esempi, lint, diagnostica e preview completa | AI crea un tema nuovo usando solo il kit; output corretto dopo errori riportati, senza modificare la base |
@@ -366,6 +537,8 @@ Gli eventi non vengono riscritti e non richiedono una nuova tabella SQLite per l
 | A6 · Board e consegna | Tema AI esteticamente diverso, stress/idle/reboot/offline, distribuzione verificata | Tutti i gate sotto chiusi o residui accettati e descritti; tag/versione decisi solo a quel punto |
 
 Questa è una sequenza di dipendenze, non una stima in giorni. A1 può migrare superfici per gruppi, ma il risultato non si chiama «tema completo» finché shell, dettagli, impostazioni e Avvisi non sono coperti. Nessuna fase richiede di scegliere ora tutti i font, palette, animazioni o il compagno definitivo.
+
+Il [piano esecutivo](theme-engine-ai-execution-plan.md) aggiunge B0 come primo blocco di tooling sullo schema attuale, con prove e diagnostica proprie. B0 e la preparazione A0 possono avanzare insieme; il ponte non chiude i gate del bundle completo.
 
 Non assegnare automaticamente una nuova versione a questa analisi. La v0.6.6 installata resta baseline; il completamento dei bundle è un lavoro del Theme Engine prima di riutilizzare il nuovo contratto per Casa/Rete. Numerazione del rilascio, data e budget finali vengono stabiliti con il prototipo e i gate.
 
@@ -393,6 +566,7 @@ Non assegnare automaticamente una nuova versione a questa analisi. La v0.6.6 ins
 | T18 | 100 cambi, cold fonts/assets, idle/nascosto, soak | Budget/plateau e tutti i picchi registrati sul profilo hardware effettivo |
 | T19 | Salvataggio/configuration failure e power cut fra fasi | Nessuna falsa conferma; journal recuperabile; precedente selezionabile |
 | T20 | Percorso solo tastierino e ritorno dopo urgente | Mappa 1/7 e input owner coerenti; prova fisica distinta dai QKeyEvent |
+| T21 | Palette chiara, notte rossa e stati warning/critical/offline | Colori informativi leggibili su superfici effettive, semantica della gravità riconoscibile e nessuna attribuzione biologica alla palette |
 
 Le suite provider/eventi già esistenti restano regression gate. I test visuali di un tema non cercano nomi privati obbligatori dentro ogni renderer: cercano host/contesti/azioni stabili e readiness, riacquisendo gli oggetti dopo lo swap. Nomi privati e assert geometrici sono permessi nei test specifici di quel tema. Differenze font/backend non si nascondono con confronti pixel perfetti universali.
 

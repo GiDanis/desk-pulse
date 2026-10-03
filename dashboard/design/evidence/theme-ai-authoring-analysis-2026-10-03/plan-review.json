@@ -1,0 +1,331 @@
+{
+  "date": "2026-10-03",
+  "scope": "Documentation review; pure resolver calculations and isolated offscreen Qt font/path probe on PC. No ThemeService, QSettings writes, provider I/O, event fixtures, board connection or runtime deployment.",
+  "headBeforeReview": "63828c2981cd868e835b8fef2c697cbac5495b48",
+  "runtimeChanges": false,
+  "cli": {
+    "availableCommands": [
+      "list",
+      "validate",
+      "import",
+      "export"
+    ],
+    "globalStoreRequired": true,
+    "checkImplemented": false,
+    "installImplemented": false,
+    "help": "usage: theme_pack.py [-h] --store STORE {list,validate,import,export} ...\n\nValidated local data-pack import/export. No QML is executed from a theme pack.\n\npositional arguments:\n  {list,validate,import,export}\n\noptions:\n  -h, --help            show this help message and exit\n  --store STORE"
+  },
+  "pcProbe": {
+    "python": "/home/giuseppe/.local/share/smartpc-dev-venv/bin/python",
+    "qtVersion": "6.11.2",
+    "pysideVersion": "6.11.2",
+    "backend": "offscreen",
+    "appDataLocation": "/home/giuseppe/.local/share/SmartPC/SmartPC",
+    "defaultStore": "/home/giuseppe/.local/share/SmartPC/SmartPC/themes",
+    "defaultInbox": "/home/giuseppe/.local/share/SmartPC/SmartPC/theme-imports",
+    "fontFamilies": {
+      "Inter": false,
+      "JetBrains Mono": false
+    },
+    "boardCompatibilityVerified": false
+  },
+  "contractProbe": {
+    "tokenKeyShape": "flat dotted keys in tokens and palettes.day/night",
+    "shapeRanges": {
+      "shape.radiusCard": {
+        "alias": "radiusCard",
+        "type": "int",
+        "default": 13,
+        "minimum": 0,
+        "maximum": 24
+      },
+      "shape.radiusRow": {
+        "alias": "radiusRow",
+        "type": "int",
+        "default": 9,
+        "minimum": 0,
+        "maximum": 24
+      },
+      "shape.radiusPill": {
+        "alias": "radiusPill",
+        "type": "int",
+        "default": 7,
+        "minimum": 0,
+        "maximum": 24
+      },
+      "shape.radiusButton": {
+        "alias": "radiusButton",
+        "type": "int",
+        "default": 6,
+        "minimum": 0,
+        "maximum": 24
+      }
+    },
+    "textScale": {
+      "alias": "textScale",
+      "type": "real",
+      "default": 1.0,
+      "minimum": 0.85,
+      "maximum": 1.1
+    },
+    "listRows": {
+      "alias": "listRows",
+      "type": "int",
+      "default": 4,
+      "minimum": 3,
+      "maximum": 4
+    }
+  },
+  "contrastFunction": "dashboard/theme_core.py:contrast",
+  "contrastPairs": [
+    {
+      "foreground": "#7a7a7a",
+      "background": "#242424",
+      "ratio": 3.616362541439916
+    },
+    {
+      "foreground": "#8b8b8b",
+      "background": "#242424",
+      "ratio": 4.556090303016288
+    },
+    {
+      "foreground": "#9c9c9c",
+      "background": "#242424",
+      "ratio": 5.654058036005692
+    },
+    {
+      "foreground": "#e63946",
+      "background": "#0d0d0d",
+      "ratio": 4.66294818299139
+    },
+    {
+      "foreground": "#ff5500",
+      "background": "#ecebe4",
+      "ratio": 2.6818990500243967
+    }
+  ],
+  "firstLighterNeutralMeeting45On242424": {
+    "color": "#8b8b8b",
+    "ratio": 4.556090303016288
+  },
+  "newGap": {
+    "id": "G21",
+    "test": "T21",
+    "fixedSemanticStyleSha256": "f5c1d78cca5d68b16b3ed20d1f3f233f4293efffb3b72ceede46f39db81669f5",
+    "lightSurfaceExample": "#ecebe4",
+    "fixedColorRatios": {
+      "warning": {
+        "foreground": "#efbd75",
+        "ratio": 1.439465477311561
+      },
+      "critical": {
+        "foreground": "#f08779",
+        "ratio": 2.080115928065175
+      },
+      "accountCritical": {
+        "foreground": "#f28c82",
+        "ratio": 1.9855515871605613
+      }
+    },
+    "uses": [
+      {
+        "path": "dashboard/AccountChatGPT.qml",
+        "line": 29,
+        "role": "accountCritical"
+      },
+      {
+        "path": "dashboard/AccountChatGPT.qml",
+        "line": 30,
+        "role": "warning"
+      },
+      {
+        "path": "dashboard/AccountChatGPT.qml",
+        "line": 48,
+        "role": "warning"
+      },
+      {
+        "path": "dashboard/Main.qml",
+        "line": 800,
+        "role": "warning"
+      },
+      {
+        "path": "dashboard/MotorsportView.qml",
+        "line": 29,
+        "role": "warning"
+      },
+      {
+        "path": "dashboard/MotorsportView.qml",
+        "line": 29,
+        "role": "warning"
+      },
+      {
+        "path": "dashboard/SportOverlay.qml",
+        "line": 126,
+        "role": "warning"
+      },
+      {
+        "path": "dashboard/SportOverlay.qml",
+        "line": 127,
+        "role": "warning"
+      },
+      {
+        "path": "dashboard/SportTeamOverlay.qml",
+        "line": 69,
+        "role": "warning"
+      },
+      {
+        "path": "dashboard/SportTeamView.qml",
+        "line": 15,
+        "role": "warning"
+      },
+      {
+        "path": "dashboard/SportView.qml",
+        "line": 27,
+        "role": "warning"
+      },
+      {
+        "path": "dashboard/presentations/notifications/UrgentVisual.qml",
+        "line": 10,
+        "role": "critical"
+      },
+      {
+        "path": "dashboard/presentations/notifications/UrgentVisual.qml",
+        "line": 10,
+        "role": "warning"
+      }
+    ],
+    "limitation": "Pair calculations demonstrate a risk for light designs; they do not claim this hypothetical surface is currently active or that every listed use is text. Current contrast checks do not cover SemanticStyle foregrounds."
+  },
+  "priorAuditVerification": {
+    "sourceCommit": "c66d9c8afedadf88ce82913db0d525a8e98d6060",
+    "fileCount": 20,
+    "allHashesMatch": true,
+    "files": [
+      {
+        "path": "dashboard/theme_pack.py",
+        "sha256": "8f86e8409f8dc4dabbf79d475debce92409e6bb7a73925af663c826a59e73e77",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/theme_core.py",
+        "sha256": "48bd17116c9cbd583c020c39169bdac229c3d50e220200f7adc155cf97b29076",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/theme_service.py",
+        "sha256": "c22f2b427fe7c67ef18197bb197432b451afbff994dcdda87d6a2b2cfb16aab1",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/Main.qml",
+        "sha256": "fea041efd2f28bf04af1c0600d24957611402ed58ba719fdea7bdf6d539c8533",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/SettingsPanel.qml",
+        "sha256": "ac9439dd7c1225bca56ef9657a5be7c5c0c7d540c11d5d0c57d0f61acb6f9049",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/DashboardOverlay.qml",
+        "sha256": "76703a6addf70faccf81d60ba291cc912ba088288b2a5faed52a9febf6dee75e",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/DeviceInfo.qml",
+        "sha256": "779133af0142b534f998e0a8d1aa4f9c68ea31726875c6b1bfa2f10fe7587e6d",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/SportOverlay.qml",
+        "sha256": "6dabe29a86920732642f6bb40d88cbe026863b4b7ee988b8562052bb9d9021e7",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/SportTeamOverlay.qml",
+        "sha256": "e5cdaea9cd4468b3fc9621edc7ae84f662520f9849261bdaa7ee258af56a9911",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/MotorsportOverlay.qml",
+        "sha256": "0bfd4003e07528a930a9058c5752059087f6a678f497f0c9c2da2ae6d97f35a1",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/components/PresentationContext.qml",
+        "sha256": "7e272f87eee1c9d61ff54a1bfba887fa9269fac3f83f19a7a676fa61770a5049",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/components/NotificationContext.qml",
+        "sha256": "56ca5f2b2ef1d66cc60f069a332dfe6c3d453146d6a2c62eda4324a53bbebcde",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/components/NotificationHost.qml",
+        "sha256": "8f0140387c40ea7a0a63520180b3a11d1ea680170eecd35d5cf58f6b81db1a34",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/components/ViewHost.qml",
+        "sha256": "8738a79534beb1e6bf136db3b7b70c7c874e787a2199255aa14b2e5e547c730d",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/components/AppIcon.qml",
+        "sha256": "93934498a2981f64df44183617ec779ddbdc0f4c7ec3d013b98285de30cad38a",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/components/MotionController.qml",
+        "sha256": "d0680e7d91dce9246665d68a10679bd60d2847950b8eeefd785c6c2712b0d8ca",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/components/SceneHost.qml",
+        "sha256": "d7229522db76cae021848fe27769acce68ab4508faff78dbaf2b94a57cbd68eb",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/presentations/registry.json",
+        "sha256": "6fccbee0b6c5df0ee15ac11ad722beba94a8f860f7e2c957fc6b28717f456e2e",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/extensions/example/manifest.json",
+        "sha256": "bbcda6d54e9ae9a8f84e3a29de4f0a01a366946db94f4e97d4999d2b1194c4d1",
+        "matchesPriorAudit": true
+      },
+      {
+        "path": "dashboard/app.py",
+        "sha256": "ad557de0b01e4fa3055a568579eaf4bbb9a99bff1d2528b72bf2795ee77f88d0",
+        "matchesPriorAudit": true
+      }
+    ]
+  },
+  "candidateConcepts": {
+    "ids": [
+      "apple-standby",
+      "nothing-te",
+      "cyberdeck-hud",
+      "nordic-cozy",
+      "braun-rams"
+    ],
+    "createdOrInstalledInThisReview": false
+  },
+  "primaryReferences": [
+    "https://doc.qt.io/qt-6.8/qstandardpaths.html",
+    "https://www.w3.org/TR/WCAG21/#contrast-minimum",
+    "https://www.w3.org/TR/WCAG21/#non-text-contrast"
+  ],
+  "documentationChecks": {
+    "relativeLinksChecked": 93,
+    "brokenRelativeLinks": 0,
+    "jsonCodeBlocksParsed": 4,
+    "gapRows": 21,
+    "acceptanceRows": 21,
+    "unclosedCodeFences": 0,
+    "gitDiffCheckPassed": true,
+    "scope": "Five reviewed Markdown documents; link targets verified for existence, not external URL availability or every historical fragment."
+  }
+}
