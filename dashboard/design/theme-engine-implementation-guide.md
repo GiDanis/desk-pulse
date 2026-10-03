@@ -12,7 +12,18 @@ Base conserva il carattere di sistema e la composizione iniziale. Functional pro
 
 **Direzione di prodotto successiva:** creazione profonda tramite AI, importazione di un tema completo anche con nuovi componenti visuali e pochi adattamenti sul dispositivo. [Analisi, lacune e piano](theme-engine-ai-authoring-spec.md). Il formato bundle e il kit descritti in quella proposta non sono ancora implementati; questa guida continua a descrivere l'importazione schema 1 e l'editor attualmente disponibili.
 
-Il [piano esecutivo](theme-engine-ai-execution-plan.md) stabilisce il primo blocco di tooling e i gate successivi. `check` e `install` proposti nell'analisi non sono comandi della CLI attuale; il ponte previsto prepara l'inbox e lascia l'applicazione alla scelta del dispositivo. I cinque concept sono candidati da prototipare. Palette chiare e colori semantici sono oggetto del controllo aggiuntivo G21/T21, ancora da implementare.
+Il primo blocco B0 del [piano esecutivo](theme-engine-ai-execution-plan.md) è implementato: `check`, `install`, `profile`, `kit`; [comandi e prove](theme-engine-authoring-b0-report.md). Il ponte prepara l'inbox e lascia l'applicazione alla scelta del dispositivo. Braun scuro è il primo pilota dichiarativo; gli altri concept sono candidati da prototipare. Il checker rileva rischi di contrasto dei ruoli semantici/accenti testuali; la facade semantica adattiva e il gate completo G21/T21 restano nel blocco A1.
+
+Per generare un tema con l'AI usando i componenti disponibili:
+
+```bash
+python3 dashboard/theme_pack.py profile --board smartpc@192.168.1.179 --output target-profile.json
+python3 dashboard/theme_pack.py kit --profile target-profile.json --output ai-kit
+python3 dashboard/theme_pack.py check cartella-tema --profile target-profile.json --format json
+python3 dashboard/theme_pack.py install cartella-tema --board smartpc@192.168.1.179 --format json
+```
+
+L'AI usa `ai-kit/PROMPT.md`, contratto, schema, registry e profilo. Scegliere un ID nuovo. Il report distingue check puro, risorse Qt e runtime; `--qt` aggiunge un probe PC isolato e `--qt-python` indica un interprete con PySide6. Il trasferimento sulla board verifica anche le risorse con il Qt del destinatario. Gli indirizzi sono esempi del dispositivo verificato: usare la propria destinazione SSH e, se necessario, `--identity`.
 
 Il pannello consente palette Auto/Giorno/Notte, movimento Normale/Ridotto/Disattivo, tema e composizione Home, scala del testo 85–110%, densità delle liste, raggio delle schede, accento, famiglie per interfaccia/numeri/orologio, transizioni e scena di prova. La bozza si vede subito; **Applica e salva** la rende persistente. Back/Home o Annulla ripristinano l'ultimo aspetto salvato. Ripristina Base modifica solo la bozza. Un salvataggio fallito ripristina l'aspetto salvato e conserva la bozza per riprovare.
 

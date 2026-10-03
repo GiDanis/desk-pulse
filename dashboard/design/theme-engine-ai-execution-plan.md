@@ -1,12 +1,12 @@
 # Theme Engine — piano per avviare authoring AI e bundle completi
 
-**Revisione 1.0 · 3 ottobre 2026 · Europe/Rome**
+**Revisione 1.1 · 4 ottobre 2026 · Europe/Rome**
 
-**Stato: pronto per iniziare il primo blocco di implementazione; nuove funzioni ancora da realizzare.** Questo piano traduce la [specifica di authoring](theme-engine-ai-authoring-spec.md) in consegne verificabili. Mantiene il [MasterPlan](release-masterplan.md), i cinque riferimenti dello [studio UX](themes-and-ux-analysis.md) e il [contratto notifiche](theme-engine-notification-spec.md). Le decisioni estetiche definitive restano nel prototipo.
+**Stato: B0 implementato e collaudato; percorso completo A0–A6 ancora aperto.** [Consegna del bridge e prove](theme-engine-authoring-b0-report.md). Questo piano traduce la [specifica di authoring](theme-engine-ai-authoring-spec.md) in consegne verificabili. Mantiene il [MasterPlan](release-masterplan.md), i cinque riferimenti dello [studio UX](themes-and-ux-analysis.md) e il [contratto notifiche](theme-engine-notification-spec.md). Le decisioni estetiche definitive restano nel prototipo.
 
 ## 1. Baseline e valutazione delle aggiunte
 
-La baseline è v0.6.6 con migrazione delle sei superfici Avvisi già consegnata. Il runtime documentato è `b20ca334faac5b9b69c7802928a9dce59d0bacc4`; `c66d9c8` contiene le evidenze successive e `63828c2` l'analisi di authoring precedente. Questa revisione riguarda documenti e verifiche locali: nessun nuovo deploy o collaudo sulla board. [Inventario sorgenti](evidence/theme-ai-authoring-analysis-2026-10-03/source-audit.json), [verifiche della revisione](evidence/theme-ai-authoring-analysis-2026-10-03/plan-review.json).
+La baseline di preparazione è v0.6.6 con migrazione delle sei superfici Avvisi già consegnata, runtime `b20ca334faac5b9b69c7802928a9dce59d0bacc4`; `c66d9c8` contiene le evidenze successive e `63828c2` l'analisi di authoring precedente. La revisione del piano del 3 ottobre era esclusivamente documentale: [inventario sorgenti](evidence/theme-ai-authoring-analysis-2026-10-03/source-audit.json), [verifiche della revisione](evidence/theme-ai-authoring-analysis-2026-10-03/plan-review.json). Le prove PC/board e la distribuzione B0 del 3–4 ottobre hanno un [resoconto separato](theme-engine-authoring-b0-report.md).
 
 | Aggiunta / dubbio | Valutazione e decisione |
 | --- | --- |
@@ -37,7 +37,7 @@ Non occorre decidere adesso tutti i font, le palette o le animazioni. Schemi esa
 
 **Obiettivo:** un'AI genera un tema compatibile con il runtime attuale, riceve errori utili, li corregge e trasferisce i file integri nell'inbox. Il toolkit completo di nuovi visuali viene dopo A1/A2.
 
-### Interfacce proposte, non ancora eseguibili
+### Interfacce ora disponibili per B0
 
 ```text
 python3 dashboard/theme_pack.py check <cartella_tema_o_theme.json> [--store <catalogo>] [--profile <profilo.json>] [--format text|json]
@@ -137,4 +137,4 @@ All'avvio dell'implementazione:
 
 **Definizione di completamento B0:** comandi utilizzabili e documentati, prompt/contratti coerenti, diagnostica correggibile dall'AI, progetto trasferito integro e importato con la selezione ordinaria del dispositivo. La prova sul PC e quella sulla board sono riportate separatamente. Nessun requisito di visuali nuovi viene dichiarato chiuso da questa consegna.
 
-**Preparazione conclusa:** obiettivo, stack, profili, priorità, prima prova, invarianti delle notifiche e gate sono definiti. Restano da implementare e collaudare strumenti/API/bundle/lifecycle. Possiamo iniziare B0 senza altre scelte estetiche; la possibilità di creare e importare temi completamente nuovi si dichiara consegnata solo dopo A6.
+**B0 consegnato:** checker, diagnostica, profilo/kit schema 1 e trasferimento nell'inbox, con prova del menu e delle sei superfici del pilota. Restano API/bundle/lifecycle e kit completo A0–A6. Il prossimo blocco è A0/A1; la possibilità di importare composizioni QML completamente nuove si dichiara consegnata solo dopo A6.

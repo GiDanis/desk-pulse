@@ -1,8 +1,8 @@
 # Theme Engine — creazione tramite AI e temi completi importabili
 
-**Revisione 1.1 · 3 ottobre 2026 · Europe/Rome**
+**Revisione 1.2 · 4 ottobre 2026 · Europe/Rome**
 
-**Stato: analisi funzionale e tecnica. Le estensioni descritte qui non sono implementate.** Baseline verificata nei sorgenti: commit `c66d9c8`, dopo la migrazione delle sei superfici Avvisi. Questo documento amplia il criterio di completamento del Theme Engine sulla base dell'obiettivo chiarito dall'utente: creare il tema con l'AI, importarlo completo e applicarlo dalle impostazioni, conservando la stessa applicazione e limitando gli adattamenti sul dispositivo.
+**Stato: specifica del percorso completo; B0 schema 1 implementato, bundle/API/lifecycle nuovi ancora da realizzare.** [Consegna B0](theme-engine-authoring-b0-report.md). L'inventario iniziale si riferisce al commit `c66d9c8`, dopo la migrazione delle sei superfici Avvisi. Questo documento amplia il criterio di completamento del Theme Engine sulla base dell'obiettivo chiarito dall'utente: creare il tema con l'AI, importarlo completo e applicarlo dalle impostazioni, conservando la stessa applicazione e limitando gli adattamenti sul dispositivo.
 
 Riferimenti: [MasterPlan](release-masterplan.md), [guida del runtime attuale](theme-engine-implementation-guide.md), [contratto notifiche](theme-engine-notification-spec.md), [collaudo notifiche](theme-engine-notification-migration-report.md), [architettura](theme-engine-construction-spec.md), [presentation e compagno](theme-engine-presentation-spec.md), [motion](theme-engine-motion-spec.md), [icone](theme-engine-icon-spec.md), [studio UX](themes-and-ux-analysis.md), [navigazione](ux-navigation-v2.md). [Inventario di questa analisi](evidence/theme-ai-authoring-analysis-2026-10-03/source-audit.json).
 
@@ -264,9 +264,9 @@ PC e board possono avere differenze di font, backend o moduli. Il profilo board 
 
 ### 11.2 Tooling ponte schema 1: proposta per il primo blocco
 
-L'aggiunta del tool ponte è utile: permette all'AI di ottenere subito errori utilizzabili e di trasferire un progetto senza istruzioni manuali sui percorsi. **`check` e `install` sono comandi da implementare:** oggi `theme_pack.py` espone soltanto `list`, `validate`, `import`, `export`, con `--store` obbligatorio. I due comandi nuovi sono il blocco B0 del [piano esecutivo](theme-engine-ai-execution-plan.md); non importano ancora QML o aggiornamenti dello stesso ID.
+L'aggiunta del tool ponte permette all'AI di ottenere errori utilizzabili e di trasferire un progetto senza istruzioni manuali sui percorsi. **`check`, `install`, `profile` e `kit` sono ora implementati** nel blocco B0 del [piano esecutivo](theme-engine-ai-execution-plan.md). I precedenti `list`, `validate`, `import`, `export` conservano `--store` obbligatorio e comportamento compatibile. Il ponte non importa QML o aggiornamenti dello stesso ID. [Uso e prove](theme-engine-authoring-b0-report.md).
 
-Interfacce target, non comandi eseguibili al momento:
+Interfacce disponibili:
 
 ```text
 python3 dashboard/theme_pack.py check <cartella_tema_o_theme.json> [--store <catalogo>] [--profile <profilo.json>] [--format text|json]
@@ -394,13 +394,14 @@ facade dei token estesi, asset, licenze e report. Il relativo prompt comprende:
 5. Consegna del bundle con hash identico ai file testati, anteprime reali e copertura.
 
 Il kit completo è un deliverable A4 dopo aver stabilito i contratti A1/A2.
-Il primo blocco B0 può già produrre prompt/profilo derivati dai registri esistenti;
+Il blocco B0 produce già prompt/profilo derivati dai registri esistenti;
 non deve anticipare nomi di proprietà del modulo API 2 come se fossero implementati.
 
 ### 11.4 Suite pilota dei cinque concept
 
-Conservare i cinque riferimenti come **suite candidata di progetto**. Non sono temi
-installati, palette già conformi o un limite al numero di stili. I seed cromatici
+Conservare i cinque riferimenti come **suite candidata di progetto**. Il solo Braun
+scuro ha un pilota dichiarativo schema 1 nel blocco B0; gli altri quattro e tutti
+i visuali nuovi sono ancora candidati. Non sono un limite al numero di stili. I seed cromatici
 seguenti restano spunti da risolvere per tutti i ruoli, stati e varianti, non colori
 finali approvati automaticamente. Nessuna affiliazione ai marchi è implicata dai
 nomi interni dei riferimenti.
