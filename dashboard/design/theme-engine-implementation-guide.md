@@ -10,6 +10,8 @@ Base conserva il carattere di sistema e la composizione iniziale. Functional pro
 
 **Estensione del 3 ottobre:** piccolo/grande/urgente, badge, elenco e dettaglio sono sei presentazioni indipendenti, collegate al registry tramite `NotificationHost`. [Contratto e audit iniziale](theme-engine-notification-spec.md); [collaudo e distribuzione](theme-engine-notification-migration-report.md).
 
+**Direzione di prodotto successiva:** creazione profonda tramite AI, importazione di un tema completo anche con nuovi componenti visuali e pochi adattamenti sul dispositivo. [Analisi, lacune e piano](theme-engine-ai-authoring-spec.md). Il formato bundle e il kit descritti in quella proposta non sono ancora implementati; questa guida continua a descrivere l'importazione schema 1 e l'editor attualmente disponibili.
+
 Il pannello consente palette Auto/Giorno/Notte, movimento Normale/Ridotto/Disattivo, tema e composizione Home, scala del testo 85–110%, densità delle liste, raggio delle schede, accento, famiglie per interfaccia/numeri/orologio, transizioni e scena di prova. La bozza si vede subito; **Applica e salva** la rende persistente. Back/Home o Annulla ripristinano l'ultimo aspetto salvato. Ripristina Base modifica solo la bozza. Un salvataggio fallito ripristina l'aspetto salvato e conserva la bozza per riprovare.
 
 Gli avvisi ufficiali mantengono colori semantici riconoscibili e presentazione urgente immediata. Notte, luminosità, quiet hours e movimento hanno politiche distinte. La scena si sospende durante overlay, urgenze, notte e quiet hours; Ridotto/Disattivo escludono il movimento dell'attore. Non esiste un loop decorativo permanente di default.

@@ -1,6 +1,6 @@
 # DeskPulse / SmartPC — MasterPlan dei rilasci
 
-**Revisione 2.6 · 3 ottobre 2026 · Europe/Rome**
+**Revisione 2.7 · 3 ottobre 2026 · Europe/Rome**
 **Baseline corrente: v0.6.6 Theme Engine. Prossima milestone: v0.7 Casa/Smart Life.**
 
 Questo documento aggiorna il piano della chat **Dashboard Orange Pi MasterPlan** dopo la lettura delle chat **Dashboard Orange Pi v0.1**, **v0.2**, **v0.3**, **v0.4**, **v0.5**, **v0.6**, **v0.6.5**, **v0.7** e **Dashboard Orange Pi Theme**, dei sorgenti e dei resoconti locali. È il riferimento per sequenza, perimetro e criteri di uscita delle prossime versioni. I resoconti dei rilasci conservano le evidenze delle singole prove.
@@ -8,6 +8,8 @@ Questo documento aggiorna il piano della chat **Dashboard Orange Pi MasterPlan**
 La v0.6.6 è implementata e distribuita sulla board; [resoconto di migrazione e prove](v066-migration-report.md). Le milestone successive restano pianificate. Le etichette future indicano milestone di prodotto; non assegnano tag Git e non dichiarano funzioni implementate. Non vengono attribuiti retroattivamente numeri v0.6.x a interventi che i resoconti chiamano soltanto v0.6.
 
 La lacuna rilevata dal [check del 3 ottobre sulle notifiche](theme-engine-notification-spec.md) è stata chiusa: sei composizioni indipendenti, ruoli locali, editor/preview, animazioni e testi lunghi scorrevoli. Implementazione e installazione sono nel [resoconto dedicato](theme-engine-notification-migration-report.md), con prove di stato/rollback e limiti prestazionali misurati. Il contratto è disponibile per i moduli successivi.
+
+**Obiettivo finale chiarito il 3 ottobre:** creazione profonda dei temi tramite AI, pacchetto completo importabile e scelta dalle impostazioni con pochi adattamenti. La baseline consente pacchetti dati e visuali registrati, ma non importa ancora il codice dei nuovi visuali. Il completamento di authoring/distribuzione, comprese notifiche, shell e dettagli, è nell'[analisi dedicata](theme-engine-ai-authoring-spec.md): gap G01–G20, fasi A0–A6 e gate T01–T20. È analisi, non una nuova funzione già installata; la numerazione del rilascio resta da stabilire.
 
 ## 1. Decisioni aggiornate
 
@@ -243,4 +245,4 @@ Riferimenti: [rapporto operativo del 1 ottobre](../../os/diagnostics/2026-10-01-
 
 Nessuna nuova funzione entra come pagina vuota. Un modulo configurato continua a essere consultabile offline; nasconderlo dal carosello non equivale a disattivare il suo provider. Eventuali controlli di acquisizione, visibilità e notifiche hanno significati espliciti.
 
-**Prossimo lavoro concreto:** v0.7 Casa/Smart Life, utilizzando facade, presentazioni, notifiche, icone e motion della v0.6.6. La consegna T0–T5 è nel [resoconto originario](v066-migration-report.md); la chiusura della migrazione degli Avvisi e i limiti misurati sono nel [resoconto notifiche](theme-engine-notification-migration-report.md).
+**Prossimo lavoro concreto:** completamento del Theme Engine per [temi creati tramite AI e importati come pacchetti completi](theme-engine-ai-authoring-spec.md), prima di riutilizzare il contratto pubblico in v0.7 Casa/Smart Life. Casa resta la prossima milestone di prodotto; questa analisi non le attribuisce uno stato implementato né assegna una nuova versione. La consegna T0–T5 è nel [resoconto originario](v066-migration-report.md); la chiusura della migrazione degli Avvisi e i limiti misurati sono nel [resoconto notifiche](theme-engine-notification-migration-report.md).
