@@ -127,6 +127,7 @@ class ThemeCatalog:
             valid=HEX.fullmatch(value) if kind=='color' and isinstance(value,str) else isinstance(value,str) and len(value)<=120 if kind=='string' else type(value) is bool if kind=='bool' else type(value) is int if kind=='int' else type(value) in (int,float) and math.isfinite(value) if kind=='real' else False
             if not valid: raise ThemeError(path,'tipo/valore non valido')
             if 'minimum' in spec and not spec['minimum']<=value<=spec['maximum']: raise ThemeError(path,'fuori intervallo')
+            if 'enum' in spec and value not in spec['enum']: raise ThemeError(path,'scelta non valida')
 
     def chain(self,identifier,seen=()):
         if not isinstance(identifier,str): raise ThemeError('id','ID richiesto')
@@ -164,6 +165,13 @@ class ThemeCatalog:
         resolved=merge(resolved,overrides)
         for section in ('tokens','presentations','motion','scene','iconOverrides'):
             if not isinstance(resolved.get(section),dict): raise ThemeError(section,'oggetto richiesto')
+        explicit = set(overrides.get('tokens', {}))
+        for pack in chain:
+            explicit.update(pack.get('tokens', {}))
+            explicit.update(pack.get('palettes', {}).get(variant, {}))
+        for path, spec in self.contract.items():
+            if spec.get('inherit') and path not in explicit:
+                resolved['tokens'][path] = deepcopy(resolved['tokens'][spec['inherit']])
         self.validate_tokens(resolved['tokens'])
         for path,spec in self.contract.items():
             if 'effectiveMaximum' in spec and resolved['tokens'][path]*resolved['tokens']['typography.textScale']>spec['effectiveMaximum']: raise ThemeError(path,'dimensione effettiva incompatibile con il layout standard')
@@ -171,17 +179,73 @@ class ThemeCatalog:
             for surface in ('surface','surfaceFocused','backgroundOverlay','background','bannerSurface'):
                 if contrast(resolved['tokens']['colors.'+text],resolved['tokens']['colors.'+surface])<4.5: raise ThemeError('contrast.'+text+'.'+surface,'contrasto inferiore a 4,5:1')
         if contrast(resolved['tokens']['colors.accent'],resolved['tokens']['colors.surfaceFocused'])<3: raise ThemeError('contrast.focus','indicatore insufficiente')
+        for mode in ('small','large','urgent','badge','inbox','detail'):
+            prefix = 'notifications.' + mode + '.'
+            for role in ('titleColor','bodyColor','sourceColor'):
+                if contrast(resolved['tokens'][prefix+role], resolved['tokens'][prefix+'surface']) < 4.5:
+                    raise ThemeError(prefix+role, 'contrasto inferiore a 4,5:1')
+            if contrast(resolved['tokens'][prefix+'accent'], resolved['tokens'][prefix+'surface']) < 3:
+                raise ThemeError(prefix+'accent', 'indicatore insufficiente')
+            if mode == 'inbox':
+                for role, minimum in (('titleColor',4.5),('bodyColor',4.5),('accent',3)):
+                    if contrast(resolved['tokens'][prefix+role],resolved['tokens'][prefix+'focusedSurface']) < minimum:
+                        raise ThemeError(prefix+role,'contrasto insufficiente sulla selezione')
+            width, height = resolved['tokens'][prefix+'width'], resolved['tokens'][prefix+'height']
+            x, offset = resolved['tokens'][prefix+'insetX'], resolved['tokens'][prefix+'insetY']
+            anchor = resolved['tokens'][prefix+'anchor']
+            y = offset if anchor == 'top' else 640-height-offset if anchor == 'bottom' else (640-height)/2+offset
+            if x+width > 960 or y < 0 or y+height > 640:
+                raise ThemeError(prefix+'geometry', 'superficie fuori dal viewport 960×640')
+            if min(width,height) <= 2*resolved['tokens'][prefix+'padding']:
+                raise ThemeError(prefix+'padding', 'nessuna area disponibile per il contenuto')
+        for prefix in ('banner.small','banner.large','alerts.badge','alerts.inbox','alerts.detail'):
+            for suffix in ('enter','exit'):
+                event = prefix+'.'+suffix
+                if event not in resolved['motion']:
+                    fallback = ('banner.' if prefix.startswith('banner.') else 'panel.')+suffix
+                    resolved['motion'][event] = deepcopy(resolved['motion'].get(fallback,self.packs['base']['motion'][fallback]))
         required={content for row in self.presentations.values() if row.get('fallback') for content in row['contentIds']}
+        # Existing standalone schema-1 packs acquire new notification fallbacks.
+        for row in self.presentations.values():
+            if row.get('fallback'):
+                for content in row['contentIds']:
+                    if content.startswith('alerts.'): resolved['presentations'].setdefault(content,row['id'])
         if required-set(resolved['presentations']): raise ThemeError('presentations','contenuti obbligatori mancanti')
         for content,identifier_p in resolved['presentations'].items():
             if not isinstance(identifier_p,str): raise ThemeError('presentations.'+content,'ID richiesto')
             row=self.presentations.get(identifier_p)
             if not row or content not in row['contentIds']: raise ThemeError('presentations.'+content,'presentazione incompatibile')
+            if content.startswith('alerts.') and row.get('contextApi') != 'notification1': raise ThemeError('presentations.'+content,'NotificationContext API 1 richiesto')
             if not contained(self.root,row['file']).is_file(): raise ThemeError('presentations.'+content,'componente mancante')
+            layout = row.get('layoutContract')
+            if content.startswith('alerts.') and layout:
+                mode = content.rsplit('.',1)[-1]
+                prefix = 'notifications.'+mode+'.'
+                values = {key[len(prefix):]:value for key,value in resolved['tokens'].items() if key.startswith(prefix)}
+                scale = resolved['tokens']['typography.textScale']
+                # Conservative line envelope for the shipped templates. Alternate
+                # renderers own their layout contract; engine geometry stays open.
+                line = lambda size: math.ceil(size*scale*1.5)
+                pad,gap=values['padding'],values['gap']
+                title,body,guide,source=(line(values[key+'Size']) for key in ('title','body','guide','source'))
+                minimum = 0
+                if layout == 'large-stack': minimum = 2*pad+2*guide+title+body+(source if values['showSource'] else 0)+gap*(4 if values['showSource'] else 3)
+                elif layout == 'poster': minimum = 2*pad+48+guide+title+body+(source if values['showSource'] else 0)+gap*(3 if values['showSource'] else 2)
+                elif layout == 'large-split': minimum = 2*pad+max(42+title+guide+3*gap,body+guide+(2*source if values['showSource'] else 0)+2*gap)
+                elif layout == 'urgent-stack': minimum = 2*pad+8+2*guide+title+body+(2*source if values['showSource'] else 0)+5*gap
+                elif layout == 'inbox': minimum = pad+92+guide+(source if values['showSource'] else 0)+2*gap+16+title+body+min(10,gap)
+                elif layout == 'detail': minimum = 2*pad+3*gap+line(resolved['tokens']['typography.size37'])+guide+body
+                elif layout not in ('small-line','badge'): raise ThemeError('layoutContract','contratto template sconosciuto')
+                if values['height'] < minimum:
+                    raise ThemeError(prefix+'height','spazio insufficiente per testo e comandi del template; aumentare altezza o ridurre misure/spaziature')
+                if values['width'] < 2*pad+2*max(values['titleSize'],values['guideSize'])*scale:
+                    raise ThemeError(prefix+'width','spazio insufficiente per il template selezionato')
         for event,recipe in resolved['motion'].items():
             if not isinstance(recipe,dict) or not isinstance(recipe.get('recipe'),str) or recipe.get('recipe') not in self.recipes: raise ThemeError('motion.'+event,'ricetta non disponibile')
             allowed=self.recipes[recipe['recipe']].get('events')
-            if allowed is not None and event not in allowed: raise ThemeError('motion.'+event,'ricetta incompatibile con questo evento')
+            legacy_event = ('banner.'+event.rsplit('.',1)[-1] if event.startswith(('banner.small.','banner.large.')) else
+                            'panel.'+event.rsplit('.',1)[-1] if event.startswith(('alerts.badge.','alerts.inbox.','alerts.detail.')) else event)
+            if allowed is not None and event not in allowed and legacy_event not in allowed: raise ThemeError('motion.'+event,'ricetta incompatibile con questo evento')
             if event=='urgent.present' and (recipe['recipe']!='builtin.cut' or recipe.get('durationMs')!=0): raise ThemeError('motion.urgent.present','gli avvisi urgenti richiedono presentazione immediata')
             if type(recipe.get('durationMs')) not in (int,float) or not 0<=recipe['durationMs']<=600: raise ThemeError('motion.'+event,'durata non valida')
             if type(recipe.get('distancePx')) not in (int,float) or not 0<=recipe['distancePx']<=80: raise ThemeError('motion.'+event,'ampiezza non valida')

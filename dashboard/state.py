@@ -373,6 +373,15 @@ class DashboardState(QObject):
         if self._events:
             self._events.setBannerAvailable(available)
 
+    @Slot(bool)
+    def setBannerPresentationAcknowledgement(self, required: bool) -> None:
+        if self._events: self._events.setPresentationAcknowledgement(required)
+
+    @Slot(str, result=bool)
+    @Slot(str, str, int, result=bool)
+    def markBannerPresented(self, event_id: str, revision: str | None = None, rank: int = -1) -> bool:
+        return bool(self._events and self._events.markBannerPresented(event_id, revision, rank))
+
     @Property(bool, notify=settingsChanged)
     def quietHoursEnabled(self) -> bool:
         return self._quiet_enabled

@@ -1,6 +1,4 @@
 import QtQuick
+import "presentations/notifications"
 
-EventBanner {
-    objectName: "eventLargeBanner"
-    large: true
-}
+LargeVisual {}

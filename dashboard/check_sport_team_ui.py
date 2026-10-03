@@ -62,6 +62,15 @@ else:
     league = read_league(root / "sport.json")
     profile = read_cache(root / "sport-team-8636.json", "8636", "inter")
 assert profile and league
+# The recorded response describes the friendly as upcoming on 1 October.
+# Freeze only the fixture presentation clock, not timers or provider I/O.
+# Live captures supplied via --directory retain the real date.
+if not args.directory:
+    import sport_team
+    from datetime import datetime, timezone
+    fixture_now = datetime(2026, 10, 1, 14, tzinfo=timezone.utc).timestamp()
+    fixture_present = sport_team.present
+    sport_team.present = lambda data, now, *a, **kw: fixture_present(data, fixture_now, *a, **kw)
 # Production auto-refresh must schedule another check after a successful worker.
 from types import SimpleNamespace
 from sport_team import FavouriteTeamService

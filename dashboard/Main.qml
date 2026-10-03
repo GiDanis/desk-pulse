@@ -18,6 +18,11 @@ Window {
     readonly property string activeContentId: familyId === "oggi" ? (viewIndex[0] === 0 ? "home.now" : "home.day") : familyId === "meteo" ? (viewIndex[1] === 0 ? "weather.now" : "weather.forecast") : familyId === "account" ? "account.usage" : familyId === "sport" ? (sportView === "LA MIA SQUADRA" ? "sport.team" : "sport.overview") : "racing.overview"
     onActiveContentIdChanged: if (themeService) themeService.setActiveContent(activeContentId)
     readonly property var themeService: dashboardState ? dashboardState.appearance : null
+    readonly property var notificationContents: ["alerts.banner.small","alerts.banner.large","alerts.urgent","alerts.badge","alerts.inbox","alerts.detail"]
+    property bool notificationInitialized: false
+    property var submittedBanner: ({})
+    property string notificationPreviewMode: ""
+    property int notificationAppearanceMode: 0
     Binding { target: Theme; property: "service"; value: app.themeService }
     Binding { target: Theme; property: "fallbackNight"; value: app.night }
     onNightChanged: Qt.callLater(function() { if (app.themeService) app.themeService.setVariant(app.night ? "night" : "day") })
@@ -244,7 +249,11 @@ Window {
     property int categoryIndex: 0
     property int sourceIndex: 0
     property int alertIndex: 0
+    property string alertFocusedId: ""
+    property real alertScroll: 0
     property var selectedAlert: ({})
+    onSelectedAlertChanged: alertScroll = 0
+    onAlertIndexChanged: if (alertItems && alertItems[alertIndex]) alertFocusedId = alertItems[alertIndex].id
     property int accountIndex: 0
     property bool diagnostics: false
     property int frames: 0
@@ -276,7 +285,11 @@ Window {
     readonly property int unreadAlertCount: events.unreadCount || 0
     readonly property var urgentEvent: events.urgent || ({})
     readonly property var bannerEvent: events.visibleBanner || ({})
-    onAlertItemsChanged: alertIndex = Math.min(alertIndex, Math.max(0, alertItems.length - 1))
+    onAlertItemsChanged: {
+        const index = alertItems.findIndex(item => item.id === alertFocusedId)
+        alertIndex = index >= 0 ? index : Math.min(alertIndex, Math.max(0, alertItems.length-1))
+        alertFocusedId = alertItems[alertIndex] ? alertItems[alertIndex].id : ""
+    }
     readonly property int dayStartHour: dashboardState ? dashboardState.dayStartHour : 7
     readonly property int nightStartHour: dashboardState ? dashboardState.nightStartHour : 21
     readonly property bool daytime: dayStartHour < nightStartHour
@@ -372,6 +385,7 @@ Window {
         animateMove(direction, true)
     }
     function home() {
+        notificationPreviewMode = ""
         if (themeService && themeService.editing) themeService.cancel()
         if (dashboardState) { dashboardState.clearSportTeamSelection(); dashboardState.clearFantacalcio() }
         sportTeamDetail = false
@@ -389,7 +403,7 @@ Window {
         stack.push(overlay)
         overlayStack = stack
         overlay = target
-        if (target === "appearance" && themeService) themeService.beginEdit()
+        if ((target === "appearance" || target === "appearanceNotifications") && themeService && !themeService.editing) themeService.beginEdit()
     }
     function popOverlay() {
         if ((overlay === "racingEvent" || overlay === "racingTiming") && dashboardState) dashboardState.clearRacingSelection(familyId)
@@ -397,11 +411,12 @@ Window {
         if (overlay === "sportDetail" && sportTeamDetail && dashboardState) dashboardState.clearSportTeamSelection()
         if (overlay === "sportTable") sportTableIndex = sportIndex
         if (overlay === "commands" && dashboardState) dashboardState.markCommandsSeen()
-        if (overlay === "appearance" && themeService && themeService.editing) themeService.cancel()
         const previous = overlay
         const stack = overlayStack.slice()
         overlay = stack.length ? stack.pop() : ""
         overlayStack = stack
+        if (previous === "appearanceNotifications" && overlay === "appearance") optionIndex = 19
+        if ((previous === "appearance" || previous === "appearanceNotifications") && overlay !== "appearance" && overlay !== "appearanceNotifications" && themeService && themeService.editing) themeService.cancel()
         if (previous === "racingDriver" && !racingDriverLive && dashboardState) dashboardState.selectRacing(familyId, racingEventId, racingSessionId)
         if (previous === "sportDetail") sportTeamDetail = false
         if (previous === "racingEvent" && overlay === "racingList") {
@@ -434,6 +449,39 @@ Window {
         if (dashboardState) dashboardState.markEventSeen(selectedAlert.id)
         pushOverlay("alertDetail")
     }
+    function notificationAction(mode, action, identifier, argument) {
+        if (urgentEvent.id && mode !== "urgent") return false
+        if (mode === "urgent") {
+            if (identifier !== urgentEvent.id) return false
+            const position = ({openDetails:5,dismiss:7,home:1})[action]
+            if (!position) return false
+            activateKey(position); return true
+        }
+        if (mode === "small" || mode === "large" || mode === "badge") {
+            if (overlay !== "" || (mode !== "badge" && identifier !== bannerEvent.id)) return false
+            if (action === "openInbox") { activateKey(3); return true }
+            if (action === "home") { home(); return true }
+            return false
+        }
+        if (mode === "inbox" && overlay === "alerts") {
+            if (action === "selectEvent" || action === "openDetails") {
+                const index = alertItems.findIndex(item => item.id === identifier)
+                if (index < 0) return false
+                alertIndex = index; alertFocusedId = identifier
+                if (action === "openDetails") openSelectedAlert()
+                return true
+            }
+            if (action === "moveSelection") { alertIndex = Math.max(0,Math.min(alertItems.length-1,alertIndex+(argument < 0 ? -1 : 1))); return true }
+        } else if (mode === "detail" && overlay === "alertDetail" && action === "scrollDetails") {
+            const maximum = detailHost.context ? detailHost.context.scrollMaximum : 0
+            const step = Math.max(40,detailHost.height*.65)
+            const value = argument && argument.offset !== undefined ? argument.offset : alertScroll+(argument && argument.direction < 0 ? -step : step)
+            alertScroll = Math.max(0,Math.min(maximum,value)); return true
+        } else if (!(mode === "detail" && overlay === "alertDetail")) return false
+        if (action === "back") { back(); return true }
+        if (action === "home") { home(); return true }
+        return false
+    }
     function toggleModule(index) {
         const moduleId = allFamilies[index].id
         if (moduleId === "oggi" || !dashboardState) return
@@ -453,6 +501,15 @@ Window {
                 selectedAlert = urgentEvent
                 dashboardState.dismissEvent(urgentEvent.id)
                 pushOverlay("alertDetail")
+            }
+            return
+        }
+        if (notificationPreviewMode !== "") {
+            if (position === 7) notificationPreviewMode = ""
+            else if (position === 1) home()
+            else if (position === 4 || position === 6) {
+                const modes = ["small","large","urgent","badge","inbox","detail"]
+                notificationPreviewMode = modes[(modes.indexOf(notificationPreviewMode)+(position === 4 ? -1 : 1)+modes.length)%modes.length]
             }
             return
         }
@@ -481,6 +538,10 @@ Window {
                 else if (position === 8) alertIndex = Math.min(alertItems.length - 1, alertIndex + 1)
                 else if (position === 5) openSelectedAlert()
             }
+            return
+        }
+        if (overlay === "alertDetail" && (position === 2 || position === 8)) {
+            notificationAction("detail","scrollDetails",selectedAlert.id,{direction:position === 2 ? -1 : 1})
             return
         }
         if (overlay === "racingSettings") {
@@ -638,12 +699,37 @@ Window {
         function onKeyPressed(position) { app.activateKey(position) }
     }
     Component.onCompleted: {
-        if (themeService) themeService.setActiveContent(activeContentId)
+        if (themeService) { themeService.setActiveContent(activeContentId); themeService.setPreparedContents(notificationContents) }
+        if (dashboardState) dashboardState.setBannerPresentationAcknowledgement(true)
+        notificationInitialized = true
         if (dashboardState && dashboardState.firstRun) pushOverlay("commands")
-        if (dashboardState) dashboardState.setBannerAvailable(overlay === "")
+        updateBannerAvailability()
+    }
+    function updateBannerAvailability() {
+        if (notificationInitialized && dashboardState) dashboardState.setBannerAvailable(overlay === "" && !!smallBanner.currentItem && !!largeBanner.currentItem)
+    }
+    function acknowledgeBannerFrame() {
+        if (dashboardState && events.bannerPending && submittedBanner.id && overlay === "" && !urgentEvent.id) {
+            const host = bannerEvent.bannerSize === "large" ? largeBanner : smallBanner
+            if (host.show && host.currentItem && host.renderedEvent.id === submittedBanner.id)
+                dashboardState.markBannerPresented(submittedBanner.id,submittedBanner.revision,submittedBanner.notificationRank)
+        }
+    }
+    onBannerEventChanged: if (events.bannerPending && bannerEvent.id) app.update()
+    onAfterAnimating: {
+        if (!events.bannerPending) {
+            if (submittedBanner.id) submittedBanner = ({})
+            return
+        }
+        submittedBanner = ({})
+        if (events.bannerPending && bannerEvent.id && overlay === "" && !urgentEvent.id) {
+            const host = bannerEvent.bannerSize === "large" ? largeBanner : smallBanner
+            if (host.show && host.currentItem && host.currentLoader.opacity > 0.001 && host.currentItem.opacity > 0.001 && host.renderedEvent.id === bannerEvent.id)
+                submittedBanner = {id:bannerEvent.id,revision:bannerEvent.revision || "",notificationRank:bannerEvent.notificationRank}
+        }
     }
     onOverlayChanged: if (dashboardState) {
-        dashboardState.setBannerAvailable(overlay === "")
+        updateBannerAvailability()
         dashboardState.setSystemInfoVisible(overlay === "info")
     }
     function syncClock() {
@@ -654,6 +740,7 @@ Window {
     }
     Timer { objectName: "clockTimer"; interval: 1000; repeat: true; running: true; onTriggered: app.syncClock() }
     onFrameSwapped: {
+        acknowledgeBannerFrame()
         if (!diagnostics) return
         const stamp = Date.now()
         if (firstFrame === 0) firstFrame = stamp
@@ -718,7 +805,8 @@ Window {
     }
     onTeamTabChanged: animateTab()
     onRacingStandingTabChanged: animateTab()
-    SceneHost { style: app.style; familyId: app.familyId; suspended: app.overlay !== "" || !!app.urgentEvent.id || app.night || app.quietActive }
+    readonly property var notificationRegions: [smallBanner,largeBanner,detailHost,inboxHost,badgeHost,urgentHost].filter(host => host.show || host.exiting).reduce((regions,host) => regions.concat(host.context ? host.context.occupiedRegions : [Qt.rect(host.x,host.y,host.width,host.height)]),[])
+    SceneHost { style: app.style; familyId: app.familyId; occupiedRegions: app.notificationRegions; notificationEvent: app.urgentEvent.id ? app.urgentEvent : app.bannerEvent; suspended: app.overlay !== "" || !!app.urgentEvent.id || app.night || app.quietActive }
     onUrgentEventChanged: if (urgentEvent.id) { navigationMotion.settle(); tabMotion.settle() }
 
     Rectangle { x: 44; y: 558; width: 872; height: 2; color: app.style.divider }
@@ -726,12 +814,13 @@ Window {
     AppText { style: app.style; x: 351; y: 578; text: app.familyId === "account" ? (app.accountWindows.length > 2 ? "2/8  SCORRI" : "") : "2/8  VISTA"; color: app.muted; font.pixelSize: app.style.font25 }
     AppText { style: app.style; x: 669; y: 578; text: app.familyId === "account" ? "9  MENU" : app.isRacing ? (app.racingView === "CLASSIFICA" ? "5 CLASSIFICA" : "5 APRI") : app.familyId === "sport" ? (app.sportView === "LA MIA SQUADRA" ? "5  SQUADRA" : app.sportView === "CLASSIFICA" ? "5  CLASSIFICA" : "5  PARTITE") : "5  DETTAGLI"; color: app.accent; font.pixelSize: app.style.font25 }
 
-    UnreadAlertsBadge { style: app.style;
-        dashboard: app
-        visible: app.familyId === "oggi" && app.overlay === "" && app.unreadAlertCount > 0 && !app.bannerEvent.id && !app.urgentEvent.id
+    NotificationHost {
+        id: badgeHost; objectName: "unreadAlertsBadge"; contentId: "alerts.badge"; controller: app
+        show: app.familyId === "oggi" && app.overlay === "" && app.unreadAlertCount > 0 && !app.bannerEvent.id && !app.urgentEvent.id
+        exitAllowed: false
     }
     AnimatedLayer {
-        anchors.fill: parent; active: !settingsPanel.active && app.overlay !== "info" && app.overlay !== "" && app.overlay.indexOf("sport") !== 0 && app.overlay.indexOf("racing") !== 0; preempted: !!app.urgentEvent.id
+        anchors.fill: parent; active: !settingsPanel.active && app.overlay !== "info" && app.overlay !== "alerts" && app.overlay !== "alertDetail" && app.overlay !== "" && app.overlay.indexOf("sport") !== 0 && app.overlay.indexOf("racing") !== 0; preempted: !!app.urgentEvent.id
         eventPrefix: "panel"
         DashboardOverlay { style: parent.style; dashboard: app; visible: true; anchors.fill: parent }
     }
@@ -760,23 +849,29 @@ Window {
         eventPrefix: "panel"
         SportOverlay { id: sportOverlay; style: parent.style; dashboard: app; visible: true; anchors.fill: parent }
     }
-    AnimatedLayer {
-        anchors.fill: parent; active: !!app.bannerEvent.id && app.bannerEvent.bannerSize !== "large" && app.overlay === "" && !app.urgentEvent.id; preempted: !!app.urgentEvent.id
-        eventPrefix: "banner"; exitAllowed: !app.bannerEvent.id && app.overlay === ""
-        EventBanner { style: parent.style;
-            dashboard: app
-            visible: true
-        }
+    Rectangle { anchors.fill: parent; color: app.style.backgroundOverlay; visible: app.overlay === "alerts" || app.overlay === "alertDetail" }
+    NotificationHost {
+        id: inboxHost; objectName: "alertsInbox"; contentId: "alerts.inbox"; controller: app
+        show: app.overlay === "alerts" && !app.urgentEvent.id; preempted: !!app.urgentEvent.id; exitAllowed: false
     }
-    AnimatedLayer {
-        anchors.fill: parent; active: !!app.bannerEvent.id && app.bannerEvent.bannerSize === "large" && app.overlay === "" && !app.urgentEvent.id; preempted: !!app.urgentEvent.id
-        eventPrefix: "banner"; exitAllowed: !app.bannerEvent.id && app.overlay === ""
-        EventLargeBanner { style: parent.style;
-            dashboard: app
-            visible: true
-        }
+    NotificationHost {
+        id: detailHost; objectName: "alertDetail"; contentId: "alerts.detail"; controller: app; eventSource: app.selectedAlert
+        show: app.overlay === "alertDetail" && !app.urgentEvent.id; preempted: !!app.urgentEvent.id; exitAllowed: false
     }
-    EventUrgent { style: app.style; dashboard: app; visible: !!app.urgentEvent.id; anchors.fill: parent }
+    NotificationHost {
+        id: smallBanner; objectName: "eventBanner"; contentId: "alerts.banner.small"; controller: app; eventSource: app.bannerEvent
+        show: !!app.bannerEvent.id && app.bannerEvent.bannerSize !== "large" && app.overlay === "" && !app.urgentEvent.id
+        preempted: !!app.urgentEvent.id; exitAllowed: !app.bannerEvent.id && app.overlay === ""
+        onCurrentItemChanged: app.updateBannerAvailability()
+    }
+    NotificationHost {
+        id: largeBanner; objectName: "eventLargeBanner"; contentId: "alerts.banner.large"; controller: app; eventSource: app.bannerEvent
+        show: !!app.bannerEvent.id && app.bannerEvent.bannerSize === "large" && app.overlay === "" && !app.urgentEvent.id
+        preempted: !!app.urgentEvent.id; exitAllowed: !app.bannerEvent.id && app.overlay === ""
+        onCurrentItemChanged: app.updateBannerAvailability()
+    }
+    NotificationPreview { controller: app; mode: app.notificationPreviewMode; visible: mode !== "" && !app.urgentEvent.id }
+    NotificationHost { id: urgentHost; objectName: "eventUrgent"; contentId: "alerts.urgent"; controller: app; eventSource: app.urgentEvent; show: !!app.urgentEvent.id; exitAllowed: false }
 
     Rectangle {
         visible: app.diagnostics

@@ -122,6 +122,7 @@ class ThemeService(QObject):
         self._variant = 'day'; self._revision = 0; self._snapshot = {}; self._draft = None
         self._error = ''; self._status = 'ready'; self._pending = None
         self._candidate = None; self._candidate_config = None; self._draft_valid = True; self._generation = 0; self._active_content = ''; self._staged_fonts = set()
+        self._prepared_contents = set(); self._awaiting_contents = set()
         self._font_owner = id(self)
         self._save_result = SaveResult(self)
         self._save_result.finished.connect(self._saved)
@@ -186,10 +187,11 @@ class ThemeService(QObject):
                 self._image_sizes[asset['sha256']] = size
             image_bytes += size
         if image_bytes > 24*1024*1024: raise ThemeError('assets.images','budget texture per tema superato')
-        families = [result['tokens'][key] for key in ('typography.uiFamily','typography.numbersFamily','typography.displayFamily')]
+        font_keys = [key for key in result['tokens'] if key.endswith('Family') and self.catalog.contract[key]['type'] == 'string']
+        families = [result['tokens'][key] for key in font_keys]
         families += [v['family'] for v in result['icons'].values() if isinstance(v,dict) and v.get('backend')=='glyph']
         needed, replacements = FontRegistry.acquire(result['assets'],families)
-        for key in ('typography.uiFamily','typography.numbersFamily','typography.displayFamily'):
+        for key in font_keys:
             value = result['tokens'][key]
             if not value:
                 result['tokens'][key] = QGuiApplication.font().family()
@@ -207,6 +209,7 @@ class ThemeService(QObject):
 
     def _publish(self, configuration, prepared=None):
         result, needed = prepared if prepared is not None else self._resolve(configuration)
+        result.pop('generation', None); result.pop('requiredContents', None)
         self._revision += 1
         result['revision'] = self._revision
         result['paletteMode'] = configuration.get('paletteMode','auto')
@@ -221,7 +224,17 @@ class ThemeService(QObject):
 
     @Slot(str)
     def setActiveContent(self, content):
+        if content == self._active_content: return
         self._active_content = content
+        if self._candidate is not None:
+            candidate = deepcopy(self._candidate_config)
+            self._clear_candidate()
+            self._change(candidate)
+
+    @Slot('QStringList')
+    def setPreparedContents(self, contents):
+        """Selected notification renderers participate even while hidden/prewarmed."""
+        self._prepared_contents = set(contents)
         if self._candidate is not None:
             candidate = deepcopy(self._candidate_config)
             self._clear_candidate()
@@ -229,32 +242,49 @@ class ThemeService(QObject):
 
     def _clear_candidate(self, retain_fonts=None):
         self._candidate = None; self._candidate_config = None; self._generation += 1; self._staged_fonts = set()
+        self._awaiting_contents = set()
         FontRegistry.update(self._font_owner,self._active_fonts | (retain_fonts or set()))
         self.candidateChanged.emit()
 
     @Slot(int,bool,str)
     def acceptCandidate(self, generation, ok, message):
+        self.reportCandidate(generation, self._active_content, ok, message)
+
+    @Slot(int,str,bool,str)
+    def reportCandidate(self, generation, content, ok, message):
         if self._candidate is None or generation != self._candidate['generation']: return
+        if content not in self._awaiting_contents: return
+        self._awaiting_contents.remove(content)
+        if ok and self._awaiting_contents: return
         candidate = self._candidate_config
         prepared = (deepcopy(self._candidate),set(self._staged_fonts))
         self._candidate = None; self._candidate_config = None
+        self._awaiting_contents = set()
         self._draft_valid = ok
         if ok:
             self._publish(candidate,prepared)
             self._error = ''
         else:
             self._error = message or 'Presentazione non caricabile; aspetto precedente conservato'
-        self.candidateChanged.emit(); self.editorChanged.emit()
+        self.candidateChanged.emit()
+        if not ok:
+            self._staged_fonts = set()
+            FontRegistry.update(self._font_owner,self._active_fonts)
+        self.editorChanged.emit()
 
     @Slot(str,str,result=bool)
     def recoverVisual(self, content, message):
         base = self.catalog.resolve('base')
         if self._snapshot['presentations'].get(content) == base['presentations'].get(content): return False
+        self._recover_base(message)
+        return True
+
+    def _recover_base(self, message):
         self._clear_candidate()
         self._committed = {'schemaVersion':1,'themeId':'base','overrides':{},'motionMode':'off','paletteMode':self._visible.get('paletteMode','auto')}
         self._draft = None; self._publish(self._committed)
         self._status = 'recovery'; self._error = message
-        self.editorChanged.emit(); return True
+        self.editorChanged.emit()
 
     @Property('QVariantMap',notify=changed)
     def resolvedAppearance(self): return deepcopy(self._snapshot)
@@ -283,7 +313,14 @@ class ThemeService(QObject):
     def setVariant(self, variant):
         if variant == self._variant or variant not in ('day','night'): return
         self._variant = variant
-        self._publish(self._visible)
+        if self._candidate is not None:
+            candidate = deepcopy(self._candidate_config)
+            self._clear_candidate()
+            self._change(candidate)
+        else:
+            try: self._publish(self._visible)
+            except (ThemeError, OSError, ValueError) as error:
+                self._recover_base(str(error))
 
     @Slot()
     def beginEdit(self):
@@ -344,17 +381,28 @@ class ThemeService(QObject):
         else: return False
         return self._change(candidate)
 
+    @Slot(result=bool)
+    def resetNotifications(self):
+        if self._draft is None or self._pending is not None or self._operation_pending: return False
+        candidate = deepcopy(self._draft)
+        for section, prefix in (('tokens','notifications.'), ('presentations','alerts.'), ('motion','banner.small.'), ('motion','banner.large.'), ('motion','alerts.')):
+            values = candidate['overrides'].get(section, {})
+            candidate['overrides'][section] = {key:value for key,value in values.items() if not key.startswith(prefix)}
+        return self._change(candidate)
+
     def _change(self, candidate):
         try:
             self._validate_config(candidate)
             resolved, needed = self._resolve(candidate)
-            content = self._active_content
+            contents = self._prepared_contents | ({self._active_content} if self._active_content else set())
+            changed = {content for content in contents if resolved['presentations'].get(content) != self._snapshot['presentations'].get(content)}
             self._draft = candidate
-            if content and resolved['presentations'].get(content) != self._snapshot['presentations'].get(content):
+            if changed:
                 self._draft_valid = False
                 self._generation += 1
-                resolved.update(revision=self._revision+1, generation=self._generation, paletteMode=candidate.get('paletteMode','auto'))
+                resolved.update(revision=self._revision+1, generation=self._generation, requiredContents=sorted(changed), paletteMode=candidate.get('paletteMode','auto'))
                 self._candidate = resolved; self._candidate_config = deepcopy(candidate)
+                self._awaiting_contents = set(changed)
                 # Fonts needed by both current and staged visuals remain registered until commit/cancel.
                 self._staged_fonts = needed
                 FontRegistry.update(self._font_owner,needed | self._active_fonts)
@@ -377,7 +425,11 @@ class ThemeService(QObject):
     def cancel(self):
         if self._pending is not None: return
         self._clear_candidate()
-        self._draft = None; self._publish(self._committed); self._error = ''; self.editorChanged.emit()
+        self._draft = None
+        try: self._publish(self._committed)
+        except (ThemeError, OSError, ValueError) as error:
+            self._recover_base(str(error)); return
+        self._error = ''; self.editorChanged.emit()
 
     @Slot(result=bool)
     def resetDraft(self):

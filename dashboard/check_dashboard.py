@@ -14,7 +14,7 @@ os.environ["XDG_CONFIG_HOME"] = tempfile.mkdtemp(prefix="smartpc-check-")
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 os.environ.setdefault("QT_QUICK_BACKEND", "software")
 
-from PySide6.QtCore import QObject, QDate, QDateTime, QTime, QTimer, QUrl, Signal  # noqa: E402
+from PySide6.QtCore import QObject, QDate, QDateTime, QTime, QTimer, QUrl, Signal, QEventLoop  # noqa: E402
 from PySide6.QtGui import QGuiApplication  # noqa: E402
 from PySide6.QtQml import QQmlApplicationEngine  # noqa: E402
 from PySide6.QtQuick import QQuickWindow  # noqa: E402
@@ -74,8 +74,9 @@ def main() -> None:
         wait_ready(application,window)
         wait_save(application,state.appearance)
         if transition:
-            QTimer.singleShot(240, application.quit)
-            application.exec()
+            loop = QEventLoop()
+            QTimer.singleShot(240, loop.quit)
+            loop.exec()
             assert content.property("opacity") >= 0.99, "navigation left the content invisible"
             assert abs(content.property("x")) < 0.1, "navigation did not finish"
 
@@ -295,8 +296,9 @@ def main() -> None:
     events.ingest_account(account_snapshot, 80, 95)
     assert events.eventState["visibleBanner"]["title"] == "Uso Codex: 96%"
     assert not unread_badge.isVisible()
-    QTimer.singleShot(8500, application.quit)
-    application.exec()
+    loop = QEventLoop()
+    QTimer.singleShot(8500, loop.quit)
+    loop.exec()
     assert not events.eventState["visibleBanner"], "banner did not finish after eight seconds"
     assert unread_badge.isVisible(), "unread notice disappeared with its banner"
     press(3)

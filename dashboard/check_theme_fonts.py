@@ -13,12 +13,13 @@ source=Path(tempfile.mkdtemp(prefix='smartpc-fonts-source-'))
 font=Path('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf');assert font.is_file(),'DejaVu Sans fixture font missing'
 shutil.copyfile(font,source/'UI.ttf');digest=hashlib.sha256(font.read_bytes()).hexdigest()
 pack={'schemaVersion':1,'id':'font.proof','name':'Font proof','version':'1.0.0','extends':'base',
-      'tokens':{'typography.uiFamily':'asset:ui','typography.numbersFamily':'asset:numbers'},
+      'tokens':{'typography.uiFamily':'asset:ui','typography.numbersFamily':'asset:numbers','notifications.large.titleFamily':'asset:numbers'},
       'assets':[{'id':key,'type':'font','path':'UI.ttf','sha256':digest} for key in ('ui','numbers')]}
 (source/'theme.json').write_text(json.dumps(pack));import_pack(source,Path(os.environ['SMARTPC_THEME_STORE']))
 a=ThemeService();b=ThemeService()
 a.beginEdit();assert a.selectDraft('font.proof'),a.lastError
 assert len(FontRegistry.entries)==1
+assert a.resolvedAppearance['tokens']['notifications.large.titleFamily']=='DejaVu Sans'
 registration=FontRegistry.entries[digest]['id']
 b.beginEdit();assert b.selectDraft('font.proof');assert FontRegistry.entries[digest]['id']==registration
 for i in range(100):
@@ -33,4 +34,14 @@ b.cancel();assert len(FontRegistry.entries)<=FontRegistry.idle_capacity
 a.beginEdit();assert a.selectDraft('font.proof');a.cancel()
 installed=Path(os.environ['SMARTPC_THEME_STORE'])/'font.proof'/'UI.ttf'
 installed.unlink();a.beginEdit();assert not a.selectDraft('font.proof');assert a.activeThemeId=='base'
+# Missing a notification-only asset at the day/night transition must recover even
+# when the active page already uses the same Base presentation ID.
+pack.update(id='font.notice', tokens={'notifications.large.titleFamily':'asset:ui'})
+(source/'theme.json').write_text(json.dumps(pack)); import_pack(source,Path(os.environ['SMARTPC_THEME_STORE']))
+a.reloadCatalog(); a.beginEdit(); assert a.selectDraft('font.notice')
+a.setActiveContent('home.now'); assert a.apply()
+from theme_test_support import wait_save
+wait_save(app,a)
+(Path(os.environ['SMARTPC_THEME_STORE'])/'font.notice'/'UI.ttf').unlink()
+a.setVariant('night'); assert a.activeThemeId=='base' and a.status=='recovery' and a.lastError
 print('TTF: real load, digest deduplication, shared leases, 100 stable registrations, missing glyph/family and bounded retirement PASS')

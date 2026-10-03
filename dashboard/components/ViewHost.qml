@@ -6,9 +6,18 @@ Item {
     required property var controller
     property StyleFacade style: Theme
     property var appearance: Theme.appearance
-    readonly property var service: controller.themeService
+    property var service: controller.themeService
     property bool active: false
+    property bool renderActive: active
+    property bool exiting: false
+    property bool animateSwap: true
     property bool interactive: active
+    property Component contextFactory: Component {
+        PresentationContext {
+            contentId: host.contentId; controller: host.controller
+            viewportWidth: host.width; viewportHeight: host.height
+        }
+    }
     property var currentItem: null
     property string readiness: "idle"
     property string lastError: ""
@@ -19,9 +28,10 @@ Item {
     property var currentLoader: null
     property var context: null
     width: 872; height: 455
-    visible: active
+    visible: renderActive || exiting
+    onRenderActiveChanged: if (context) { context.active = renderActive; context.interactive = interactive }
     onActiveChanged: {
-        if (context) { context.active = active; context.interactive = interactive }
+        if (context) { context.active = renderActive; context.interactive = interactive }
         if (currentLoader) {
             if (!active) currentLoader.stagedAppearance = appearance
             currentLoader.useLiveStyle = active
@@ -32,11 +42,12 @@ Item {
     }
     onInteractiveChanged: if (context) context.interactive = interactive
     onAppearanceChanged: if (active) prepare(appearance,0)
+    onContentIdChanged: if (active) prepare(appearance,0)
     Connections {
         target: host.service
         function onCandidateChanged() {
             const candidate = host.service.candidateAppearance
-            if (candidate.generation && host.active) host.prepare(candidate,candidate.generation)
+            if (candidate.generation && host.active && candidate.requiredContents.indexOf(host.contentId) >= 0) host.prepare(candidate,candidate.generation)
             else if (host.pendingLoader && host.pendingLoader.serviceGeneration) {
                 host.generation += 1; host.pendingLoader.destroy(); host.pendingLoader = null
                 host.readiness = host.currentItem ? "ready" : "idle"
@@ -56,15 +67,25 @@ Item {
     }
     function commit(candidate) {
         const old = currentLoader
-        currentLoader = candidate; currentItem = candidate.item; context = candidate.presentationContext
+        currentLoader = candidate; context = candidate.presentationContext; currentItem = candidate.item
         candidate.useLiveStyle = true
         candidate.stagedAppearance = null
-        context.active = active; context.interactive = interactive
+        context.active = renderActive; context.interactive = interactive
         layoutMotion.settle()
-        if (old) { old.presentationContext.active = false; old.presentationContext.interactive = false; old.destroy() }
+        if (old) {
+            old.presentationContext.active = false; old.presentationContext.interactive = false
+            if (old.item && typeof old.item.settleMotion === "function") old.item.settleMotion()
+            old.destroy()
+        }
         pendingLoader = null; loadedPresentationId = candidate.presentationId
         loadedRevision = appearance.revision; readiness = "ready"
-        if (old) layoutMotion.play(candidate,"layout.swap",1,false)
+        if (old && renderActive && animateSwap) {
+            const revision = loadedRevision
+            Qt.callLater(function() {
+                if (host.currentLoader === candidate && host.renderActive && host.appearance.revision === revision)
+                    layoutMotion.play(candidate,"layout.swap",1,false)
+            })
+        }
     }
     function prepare(snapshot,serviceGeneration) {
         if (!active || !snapshot) return
@@ -74,7 +95,11 @@ Item {
         generation += 1
         if (pendingLoader) { pendingLoader.destroy(); pendingLoader = null }
         const descriptor = snapshot.presentationRegistry[identifier]
-        if (!descriptor) { readiness = "error"; lastError = "Presentazione non registrata: " + identifier; return }
+        if (!descriptor) {
+            readiness = currentItem ? "ready" : "error"; lastError = "Presentazione non registrata: " + identifier
+            if (serviceGeneration && service) service.reportCandidate(serviceGeneration,contentId,false,lastError)
+            return
+        }
         readiness = "loading"; lastError = ""
         const next = slot.createObject(host, {requestGeneration: generation, presentationId: identifier, requestedRevision: snapshot.revision,
             serviceGeneration: serviceGeneration, stagedAppearance: snapshot})
@@ -95,28 +120,39 @@ Item {
             property var stagedAppearance: null
             property bool useLiveStyle: false
             property StyleFacade stagedStyle: StyleFacade { appearance: candidate.stagedAppearance }
-            property PresentationContext presentationContext: PresentationContext {
-                contentId: host.contentId; controller: host.controller
-                style: candidate.useLiveStyle ? host.style : candidate.stagedStyle
-                active: false; interactive: false
-            }
+            property var presentationContext: host.contextFactory.createObject(candidate)
+            Binding { target: candidate.presentationContext; property: "style"; value: candidate.useLiveStyle ? host.style : candidate.stagedStyle }
             active: false; asynchronous: true
             visible: host.currentLoader === candidate
             width: host.width; height: host.height
-            onLoaded: {
+            property bool acknowledged: false
+            function ready() {
+                if (status !== Loader.Ready || acknowledged || item.presentationReady === false) return
                 if (requestGeneration !== host.generation || !host.active) { destroy(); return }
-                if (serviceGeneration) host.service.acceptCandidate(serviceGeneration,true,"")
+                acknowledged = true
+                if (serviceGeneration) host.service.reportCandidate(serviceGeneration,host.contentId,true,"")
                 else host.commit(candidate)
             }
-            onStatusChanged: if (status === Loader.Error && requestGeneration === host.generation) {
-                const message = "Errore caricamento " + presentationId
+            function fail(message) {
+                if (requestGeneration !== host.generation) return
                 host.lastError = message
                 host.readiness = host.currentItem ? "ready" : "error"
                 host.pendingLoader = null
                 const failedGeneration = serviceGeneration
                 destroy()
-                if (failedGeneration) host.service.acceptCandidate(failedGeneration,false,message)
+                if (failedGeneration) host.service.reportCandidate(failedGeneration,host.contentId,false,message)
                 else if (!host.currentItem && host.service) host.service.recoverVisual(host.contentId,message)
+            }
+            onLoaded: ready()
+            onStatusChanged: if (status === Loader.Error) fail("Errore caricamento " + presentationId)
+            Connections {
+                target: candidate.item; ignoreUnknownSignals: true
+                function onPresentationReadyChanged() { candidate.ready() }
+            }
+            Timer {
+                interval: 3000
+                running: candidate.active && candidate.status === Loader.Ready && !candidate.acknowledged
+                onTriggered: candidate.fail("Timeout preparazione " + candidate.presentationId)
             }
         }
     }

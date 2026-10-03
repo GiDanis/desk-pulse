@@ -5,10 +5,12 @@ Item {
     property var appearance: Theme.appearance
     property var currentRecipe: null
     property string lastError: ""
+    property int playingRevision: -1
     visible: false
     function settle() { if (currentRecipe) { currentRecipe.settle(); currentRecipe.destroy(); currentRecipe = null } }
     function play(target, eventId, direction, vertical, context) {
         settle()
+        playingRevision = appearance ? appearance.revision : -1
         if (!appearance || appearance.motionMode === "off") return
         const spec = appearance.motion[eventId]
         if (!spec) return
@@ -23,6 +25,8 @@ Item {
                            distance: appearance.motionMode === "reduced" ? Math.min(spec.distancePx,4) : spec.distancePx,
                            easing: curves[spec.easing], exit: eventId.endsWith(".exit"), opacityFrom: spec.opacityFrom === undefined ? 0.35 : spec.opacityFrom}), direction || 1, vertical || false)
     }
-    onAppearanceChanged: settle()
+    // A commit can start the new revision's tween during signal propagation.
+    // Settle an older tween without cancelling the one just started by that commit.
+    onAppearanceChanged: if (!appearance || playingRevision !== appearance.revision) settle()
     Component.onDestruction: settle()
 }

@@ -4,6 +4,8 @@
 
 [Uso, formato dei temi ed estensioni](theme-engine-implementation-guide.md). [MasterPlan aggiornato](release-masterplan.md).
 
+**Addendum del 3 ottobre 2026:** il [check delle notifiche](theme-engine-notification-spec.md) aveva rilevato composizioni fisse e sovrapposizioni con testi lunghi. Questa lacuna è stata chiusa con sei visuali sostituibili, ruoli locali e testi scorrevoli: [implementazione, installazione e prove dedicate](theme-engine-notification-migration-report.md). Le prove T0–T5 sotto conservano la consegna originaria di 157 file; l’estensione ha un manifest di 177 file e un nuovo backup.
+
 ## Consegna T0–T5
 
 | Fase | Risultato verificato |
@@ -67,4 +69,4 @@ Packaging ricorsivo di **157 file**, SHA256 per file, qmldir/JS/JSON/QML e risor
 
 ## Limiti residui del perimetro
 
-La migrazione del motore è completa. Restano distinti: scelta dei font/palette/animazioni definitivi; osservazione ottica e nuova pressione umana del tastierino; soak prolungato; carichi/rig/shader del compagno reale; collaudi live dei provider già aperti. Le nuove presentazioni devono verificare metriche, aree sicure e budget sul dispositivo. Il motore consente di aggiungere renderer/ricette/asset e ruoli; l'estensione non elimina i limiti fisici della scheda.
+La consegna T0–T5 e l’estensione delle notifiche sono implementate e installate. La sostituibilità dei sei visuali è ora coperta dalle prove dedicate dell’addendum; il loro stress misura anche un piccolo superamento del budget iniziale di cambio profilo, dichiarato nel nuovo resoconto. Restano distinti: scelta dei font/palette/animazioni definitivi; osservazione ottica e nuova pressione umana del tastierino; soak prolungato; carichi/rig/shader del compagno reale; collaudi live dei provider già aperti. Le nuove presentazioni devono verificare metriche, aree sicure e budget sul dispositivo. Il motore consente di aggiungere renderer/ricette/asset e ruoli; l'estensione non elimina i limiti fisici della scheda.

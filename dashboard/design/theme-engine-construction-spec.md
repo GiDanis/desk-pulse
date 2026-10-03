@@ -1,6 +1,8 @@
 # v0.6.6 — Theme Engine: architettura e personalizzazione
 
 **Aggiornamento attuazione v0.6.6:** il piano è implementato nei sorgenti. Contratti effettivi, uso e limiti sono nella [guida del motore](theme-engine-implementation-guide.md); stato dei gate e prove sulla scheda nel [resoconto di migrazione](v066-migration-report.md). Gli snippet di analisi illustrano alternative; per il formato eseguibile usare schema, registry ed esempi distribuiti.
+
+**Estensione del 3 ottobre 2026:** la personalizzazione profonda dei sei visuali Avvisi è implementata: contesto dedicato, facade locale, composizioni sostituibili e preparazione coerente. [Contratto](theme-engine-notification-spec.md) e [resoconto dei gate](theme-engine-notification-migration-report.md). Questa specifica conserva l’analisi originaria; la guida descrive il runtime effettivo.
 **Revisione 2.2 · 2 ottobre 2026 · Europe/Rome**
 **Stato: analisi e proposta tecnica, da approvare e prototipare. Nessuna implementazione runtime in questa revisione.**
 
@@ -464,7 +466,7 @@ Budget **candidati da fissare dopo T0/T1**:
 | Grandezza | Proposta iniziale | Limite dell'affermazione |
 | --- | --- | --- |
 | Budget frame animato | Ideale 16,67 ms; gate ordinario p95 ≤ 20 ms, nessun intervallo >33,34 ms nei campioni di navigazione | Verificato sulla matrice; il primo uso di font diversi ha eccezioni dichiarate |
-| Cambio completo di profilo | Obiettivo iniziale 100 ms; budget di rilascio p95 ≤ 150 ms | Misura EGLFS di circa 118 ms; staging conserva il visuale precedente. Font/glifi cold possono superare il budget al singolo cambio: vedere resoconto |
+| Cambio completo di profilo | Obiettivo iniziale 100 ms; budget di rilascio p95 ≤ 150 ms | La consegna originaria misurava circa 118 ms; l’estensione Avvisi misura p95 143,6–155,9 ms e dichiara il piccolo superamento nel primo profilo. Staging conserva il visuale precedente; primi usi più costosi sono nei resoconti |
 | Latenza input→feedback | p95 ≤ 100 ms | Con carico normale e burst controllato |
 | Memory delta motore + due temi | PSS ≤ +20 MiB sullo stesso carico | Candidato a regime; misurare anche picco di staging e risorse grafiche osservabili |
 | Cicli cambio tema | 100, con ritorno periodico a Base | Non equivale a durata 24 h |

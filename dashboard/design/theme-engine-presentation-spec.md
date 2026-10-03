@@ -1,5 +1,7 @@
 # v0.6.6 — Visualizzazioni, scene e futuro compagno
 
+**Estensione notifiche del 3 ottobre 2026:** sei slot indipendenti sono collegati al registry con NotificationContext API 1, host persistenti e commit coordinato. [Contratto e audit precedente](theme-engine-notification-spec.md); [esecuzione e prove](theme-engine-notification-migration-report.md). Le sezioni di analisi sotto conservano le proposte di progetto; la guida documenta le API effettive.
+
 **Aggiornamento attuazione v0.6.6:** il piano è implementato nei sorgenti. Contratti effettivi, uso e limiti sono nella [guida del motore](theme-engine-implementation-guide.md); stato dei gate e prove sulla scheda nel [resoconto di migrazione](v066-migration-report.md). Gli snippet di analisi illustrano alternative; per il formato eseguibile usare schema, registry ed esempi distribuiti.
 **Revisione 1.1 · 2 ottobre 2026 · proposta da prototipare.**
 

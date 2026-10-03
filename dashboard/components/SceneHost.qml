@@ -6,18 +6,24 @@ Item {
     property var appearance: Theme.appearance
     property string familyId: "oggi"
     property bool suspended: false
+    property var occupiedRegions: []
+    property var notificationEvent: ({})
     readonly property var descriptor: appearance ? appearance.sceneRegistry[appearance.scene.renderer] : ({})
     readonly property bool canvasScene: descriptor && descriptor.sceneMode === "canvas"
     readonly property int actorWidth: descriptor && descriptor.footprint ? descriptor.footprint.width : 30
     readonly property int actorHeight: descriptor && descriptor.footprint ? descriptor.footprint.height : 30
-    readonly property point desiredAnchor: Qt.point(familyId === "oggi" ? width - actorWidth - 10 : 12, height - 115)
+    readonly property point nominalAnchor: Qt.point(familyId === "oggi" ? width - actorWidth - 10 : 12, height - 115)
+    function intersects(point) { return occupiedRegions.some(region => point.x < region.x+region.width && point.x+actorWidth > region.x && point.y < region.y+region.height && point.y+actorHeight > region.y) }
+    readonly property point alternateAnchor: Qt.point(familyId === "oggi" ? 12 : width-actorWidth-10,height-115)
+    readonly property point desiredAnchor: !intersects(nominalAnchor) ? nominalAnchor : !intersects(alternateAnchor) ? alternateAnchor : nominalAnchor
+    readonly property bool regionBlocked: !canvasScene && intersects(desiredAnchor) || canvasScene && occupiedRegions.length > 0 && !descriptor.respectsOccupiedRegions
     readonly property QtObject actorState: ActorState {
-        paused: root.suspended || !root.sceneEnabled || root.appearance.motionMode !== "normal"
+        paused: root.suspended || root.regionBlocked || !root.sceneEnabled || root.appearance.motionMode !== "normal"
         anchor: root.desiredAnchor
         motionMode: root.appearance ? root.appearance.motionMode : "off"
     }
     readonly property bool sceneEnabled: appearance && appearance.scene.enabled
-    visible: sceneEnabled && !suspended
+    visible: sceneEnabled && !suspended && !regionBlocked
     objectName: "sceneHost"
     anchors.fill: parent
     // The default actor travels in the clear strip below the content; a registered
@@ -35,7 +41,11 @@ Item {
             poseCompletion.restart()
         } else if (actorState.locomotion === "moving") actorState.locomotion = "idle"
     }
-    onFamilyIdChanged: relocate()
+    onDesiredAnchorChanged: relocate()
+    onRegionBlockedChanged: if (regionBlocked) {
+        movement.settle(); poseCompletion.stop()
+        if (actorState.locomotion === "moving") actorState.locomotion = "idle"
+    }
     onSuspendedChanged: if (suspended) { movement.settle(); poseCompletion.stop(); if (actorState.locomotion === "moving") actorState.locomotion = "idle" }
     onAppearanceChanged: {
         movement.settle()
@@ -53,7 +63,13 @@ Item {
             anchors.fill: parent
             active: root.sceneEnabled; asynchronous: true
             source: root.sceneEnabled ? Qt.resolvedUrl("../"+root.descriptor.file) : ""
-            onLoaded: { item.active = Qt.binding(function() { return root.visible && !root.suspended }); item.style = Qt.binding(function() { return root.style }); item.actorState = root.actorState; item.configuration = Qt.binding(function() { return root.appearance.scene }) }
+            onLoaded: {
+                item.active = Qt.binding(function() { return root.visible && !root.suspended })
+                item.style = Qt.binding(function() { return root.style }); item.actorState = root.actorState
+                item.configuration = Qt.binding(function() { return root.appearance.scene })
+                if (item.occupiedRegions !== undefined) item.occupiedRegions = Qt.binding(function() { return root.occupiedRegions })
+                if (item.notificationEvent !== undefined) item.notificationEvent = Qt.binding(function() { return root.notificationEvent })
+            }
         }
     }
 }

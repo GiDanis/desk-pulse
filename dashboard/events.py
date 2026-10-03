@@ -74,6 +74,8 @@ class EventService(QObject):
         self._worker: _AlertWorker | None = None
         self._banner: dict[str, Any] = {}
         self._banner_until = 0.0
+        self._banner_pending = False
+        self._presentation_acknowledgement = False
         self._banner_available = False
         self._snapshot: dict[str, Any] = {}
 
@@ -147,20 +149,28 @@ class EventService(QObject):
         snapshot = self._engine.snapshot(now=now, quiet=self._is_quiet(now),
                                          silenced_categories=self._silenced_categories)
         active_ids = {item["id"] for item in snapshot["inbox"]}
-        if self._banner and (time.monotonic() >= self._banner_until
+        if self._banner and self._banner_pending:
+            latest = next((item for item in snapshot['inbox'] if item['id'] == self._banner['id']), {})
+            self._banner = latest if latest.get('priority') == 2 and not latest.get('upcoming') else {}
+            if not self._banner: self._banner_pending = False
+        if self._banner and ((not self._banner_pending and time.monotonic() >= self._banner_until)
+                             or (self._banner_pending and not self._banner_available)
                              or self._banner["expiresAt"] <= now or snapshot["urgent"]
                              or self._banner["id"] not in active_ids or self._is_quiet(now)
                              or self._banner["category"] in self._silenced_categories):
             self._banner = {}
+            self._banner_pending = False
             self._banner_timer.stop()
         if not self._banner and self._banner_available and not snapshot["urgent"] and snapshot["banner"]:
             self._banner = snapshot["banner"]
-            self._banner_until = time.monotonic() + 8.0
-            self._banner_timer.start(8000)
-            self._engine.mark_notified(self._banner["id"])
+            self._banner_pending = self._presentation_acknowledgement
+            self._banner_until = 0.0
+            if not self._banner_pending:
+                self._start_banner()
             snapshot = self._engine.snapshot(now=now, quiet=self._is_quiet(now),
                                              silenced_categories=self._silenced_categories)
         snapshot["visibleBanner"] = self._banner
+        snapshot["bannerPending"] = self._banner_pending
         snapshot["sourceStatus"] = self._source_status
         snapshot["sourceCheckedAt"] = self._source_checked_at
         snapshot["sourceFetchedAt"] = self._source_fetched_at
@@ -192,11 +202,35 @@ class EventService(QObject):
         self._banner_available = available
         self._tick()
 
+    @Slot(bool)
+    def setPresentationAcknowledgement(self, required: bool) -> None:
+        self._presentation_acknowledgement = required
+
+    def _start_banner(self) -> None:
+        self._banner_pending = False
+        self._banner_until = time.monotonic() + 8.0
+        self._banner_timer.start(8000)
+        self._engine.mark_notified(self._banner["id"])
+
+    @Slot(str, result=bool)
+    @Slot(str, str, int, result=bool)
+    def markBannerPresented(self, event_id: str, revision: str | None = None, rank: int = -1) -> bool:
+        """Only the live pending event may acknowledge its first displayed frame."""
+        self._tick()
+        if not self._banner_pending or self._banner.get('id') != event_id or not self._banner_available:
+            return False
+        if revision is not None and (self._banner.get('revision', '') != revision or self._banner.get('notificationRank') != rank):
+            return False
+        self._start_banner()
+        self._tick()
+        return True
+
     @Slot(str)
     def dismiss(self, event_id: str) -> None:
         self._engine.dismiss(event_id)
         if self._banner.get("id") == event_id:
             self._banner = {}
+            self._banner_pending = False
         self._tick()
 
     @Slot(str)

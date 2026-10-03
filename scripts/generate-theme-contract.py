@@ -20,6 +20,7 @@ for path,spec in catalog.contract.items():
     if spec['type']=='string':row['maxLength']=120
     for field in ('minimum','maximum'):
         if field in spec:row[field]=spec[field]
+    if 'enum' in spec:row['enum']=spec['enum']
     tokens[path]=row
 props['tokens']={'type':'object','properties':tokens,'additionalProperties':False}
 props['palettes']={'type':'object','properties':{v:{'$ref':'#/properties/tokens'} for v in ('day','night')},'additionalProperties':False}

@@ -18,7 +18,7 @@ class ThemeContractTests(unittest.TestCase):
             for variant in ('day','night'):
                 for mode in ('normal','reduced','off'):
                     result=self.catalog.resolve(identifier,variant=variant,motion_mode=mode)
-                    self.assertEqual(set(result['tokens']),set(self.catalog.contract));self.assertEqual(len(result['presentations']),8)
+                    self.assertEqual(set(result['tokens']),set(self.catalog.contract));self.assertEqual(len(result['presentations']),14)
         self.assertNotEqual(self.catalog.resolve('base')['presentations'],self.catalog.resolve('functional')['presentations'])
     def test_zero_and_typo(self):
         self.assertEqual(self.catalog.resolve('base',{'tokens':{'shape.radiusCard':0}})['tokens']['shape.radiusCard'],0)
@@ -70,9 +70,43 @@ class ThemeContractTests(unittest.TestCase):
         invalid=self.store/'bad';invalid.mkdir(parents=True);(invalid/'theme.json').write_text('{')
         catalog=ThemeCatalog(self.store);self.assertTrue(catalog.errors);self.assertIn('base',catalog.packs)
     def test_facade_contract(self):
-        text=(ROOT/'themes/StyleFacade.qml').read_text()
+        facades={name:(ROOT/('themes/'+name+'.qml')).read_text() for name in ('StyleFacade','NotificationStyle')}
         # Application extensions declare their additional typed facade in their own module.
         for spec in json.loads((ROOT/'themes/token-contract.json').read_text())['tokens'].values():
-            self.assertIn('readonly property '+spec['type']+' '+spec['alias']+':',text)
+            self.assertIn('readonly property '+spec['type']+' '+spec['alias']+':',facades[spec.get('facade','StyleFacade')])
+
+    def test_notification_inheritance_and_overrides(self):
+        result=self.catalog.resolve('functional',variant='night')
+        self.assertEqual(result['tokens']['notifications.small.surface'],result['tokens']['colors.bannerSurface'])
+        self.assertEqual(result['tokens']['notifications.detail.titleSize'],result['tokens']['typography.size45'])
+        result=self.catalog.resolve('base',{'tokens':{'notifications.large.titleSize':60}})
+        self.assertEqual(result['tokens']['notifications.large.titleSize'],60)
+        self.assertEqual(result['tokens']['typography.size44'],44)
+        for values in ({'notifications.small.anchor':'somewhere'}, {'notifications.small.insetX':100}, {'notifications.small.titleColor':'#29423f'}):
+            with self.subTest(values=values),self.assertRaises(ThemeError):self.catalog.resolve('base',{'tokens':values})
+
+    def test_standalone_old_pack_gets_notification_fallbacks(self):
+        old=deepcopy(self.catalog.packs['base']);old['id']='standalone';old['presentations']={key:value for key,value in old['presentations'].items() if not key.startswith('alerts.')}
+        self.catalog.packs['standalone']=old;self.catalog.directories['standalone']=self.catalog.directories['base']
+        result=self.catalog.resolve('standalone')
+        self.assertEqual(len(result['presentations']),14)
+
+    def test_notification_template_envelope(self):
+        self.catalog.resolve('base',{'tokens':{'notifications.large.titleSize':72,'notifications.large.bodySize':44,'typography.textScale':1.1}})
+        with self.assertRaises(ThemeError):
+            self.catalog.resolve('base',{'tokens':{'notifications.large.titleSize':72,'notifications.large.padding':64,'notifications.large.gap':40,'typography.textScale':1.1}})
+        with self.assertRaises(ThemeError):
+            self.catalog.resolve('base',{'tokens':{'notifications.detail.height':32}})
+        with self.assertRaises(ThemeError):
+            self.catalog.resolve('base',{'tokens':{'notifications.inbox.focusedSurface':'#ffffff'}})
+
+    def test_legacy_notification_recipe_aliases(self):
+        legacy=deepcopy(self.catalog.recipes['builtin.fade']);legacy['id']='legacy.banner';legacy['events']=['banner.enter','banner.exit']
+        self.catalog.recipes[legacy['id']]=legacy
+        override={'motion':{'banner.enter':{'recipe':legacy['id'],'durationMs':120,'distancePx':20,'easing':'outCubic'}}}
+        result=self.catalog.resolve('base',override)
+        self.assertEqual(result['motion']['banner.small.enter']['recipe'],legacy['id'])
+        # Exported resolved motion contains explicit aliases: it remains valid.
+        self.catalog.resolve('base',{'motion':result['motion']})
 
 if __name__=='__main__':unittest.main(verbosity=2)
