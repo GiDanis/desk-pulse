@@ -1,6 +1,6 @@
 # Theme Engine — consegna B0: authoring AI schema 1
 
-**3–4 ottobre 2026 · estensione della linea v0.6.6.** Codice implementato e verificato su PC e Orange Pi. La distribuzione definitiva viene registrata nella sezione dedicata sotto. [Piano completo](theme-engine-ai-execution-plan.md), [specifica](theme-engine-ai-authoring-spec.md), [guida](theme-engine-implementation-guide.md).
+**3–4 ottobre 2026 · estensione della linea v0.6.6.** Implementato, collaudato in EGLFS e installato sulla Orange Pi, con pilota importato e preferenze correnti conservate. [Piano completo](theme-engine-ai-execution-plan.md), [specifica](theme-engine-ai-authoring-spec.md), [guida](theme-engine-implementation-guide.md).
 
 ## Risultato
 
@@ -45,7 +45,11 @@ Smoke EGLFS di 20 secondi, Base e stessa sequenza dello strumento precedente: fr
 
 ## Distribuzione e dati reali
 
-Backup fresco privato prima delle prove: `/var/backups/smartpc-authoring-b0-20261003/pre-implementation`, con runtime, stato utente e prova dei flag evento. [Metadati del backup](evidence/theme-authoring-b0-2026-10-03/board/backup-report.json). La dashboard viene ripristinata dal trap dopo i test EGLFS. La distribuzione definitiva con manifest pulito, import del pilota senza applicazione e controllo delle preferenze viene registrata dopo la sostituzione verificata del runtime; questo paragrafo non attesta un deploy prima della relativa evidenza.
+Backup fresco privato prima delle prove: `/var/backups/smartpc-authoring-b0-20261003/pre-implementation`, con runtime, stato utente e prova dei flag evento. [Metadati del backup](evidence/theme-authoring-b0-2026-10-03/board/backup-report.json). La dashboard è stata riavviata dal trap dopo i test EGLFS.
+
+Distribuzione finale verificata: **183 file**, manifest `dirty=false`, commit `a7fd705ca0078e02c38f1b18c94b3a42ee342955`; implementazione nel commit `83e473e`. Runtime precedente conservato in `/var/backups/smartpc-authoring-b0-20261003/previous-runtime`, con ripristino automatico del software previsto nel deploy in caso di errore. Il rollback software non è stato nuovamente eseguito in questa consegna. Il pilota è importato nel catalogo e selezionabile in **Impostazioni → Aspetto → Tema**, senza applicarlo. Preferenze con SHA invariato, stato dei nove eventi preesistenti non azzerato, servizio `active`, PID 30559, `NRestarts=0` e zero warning QML nel controllo successivo al riavvio. [Report di installazione](evidence/theme-authoring-b0-2026-10-03/deployment-report.json). [Trasferimento identico ripetuto](evidence/theme-authoring-b0-2026-10-03/idempotent-transfer.json). Nessun nuovo tag o cambio del tag v0.6.6, nessun push. Riavvio del servizio verificato; reboot fisico e soak non ripetuti.
+
+[Manifest finale](evidence/theme-authoring-b0-2026-10-03/final-manifest.json) e [verifica conclusiva](evidence/theme-authoring-b0-2026-10-03/final-verification.json): SHA di tutti i file installati identici al workspace e al pacchetto; 20 test del bridge ripetuti sul runtime definitivo. Le revisioni documentali successive non richiedono una nuova distribuzione.
 
 ## Confine della consegna
 
