@@ -70,6 +70,18 @@ def execute_child(profile,timeout,selected=None):
     return report
 
 
+def coverage_summary(lanes,cases):
+    """Supplementary scenarios must never inflate the canonical requirement count."""
+    rows=[row for lane in lanes for row in lane.get('coverage',[]) if row['status']=='passed']
+    passed={row['id'] for row in rows}
+    covered={identifier for row in rows for identifier in row['covers']}
+    required={identifier for case in cases for identifier in case['covers']}
+    return {'uniqueScenariosPassed':len(passed),
+            'uniqueCanonicalRequirementsPassed':len(covered & required),
+            'missingScenarios':sorted({case['id'] for case in cases}-passed),
+            'missingRequirements':sorted(required-covered)}
+
+
 REGRESSIONS={
     'check_theme_ui.py':['real Qt focus','rapid swap/navigation','save failure','scene continuity','two engines'],
     'check_theme_motion.py':['animation interruption','settle','reduced/off','no per-frame Python publication'],
@@ -138,8 +150,7 @@ def main():
         profiles=catalog['profiles'] if not args.profiles else [dict(zip(('theme','variant','motion'),value.split(':'))) for value in args.profiles.split(',')]
         for profile in profiles:assert set(profile)=={'theme','variant','motion'} and profile['variant'] in ('day','night') and profile['motion'] in ('normal','reduced','off')
         lanes=[execute_child(profile,args.timeout,args.select) for profile in profiles]
-        passed={row['id'] for lane in lanes for row in lane.get('coverage',[]) if row['status']=='passed'}
-        report['tracks']['legacyUi']={'status':'passed' if all(lane['status']=='passed' for lane in lanes) else 'failed','profiles':lanes,'uniqueRequirementsPassed':len(passed),'missingRequirements':sorted({case['id'] for case in cases}-passed)}
+        report['tracks']['legacyUi']={'status':'passed' if all(lane['status']=='passed' for lane in lanes) else 'failed','profiles':lanes,**coverage_summary(lanes,cases)}
     if args.regressions or args.track=='regressions':
         report['tracks']['regressions']=regression_lane(args.timeout)
     report['status']='passed' if all(track['status']=='passed' for track in report['tracks'].values()) else 'failed'

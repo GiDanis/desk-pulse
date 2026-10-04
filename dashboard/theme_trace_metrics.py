@@ -41,7 +41,8 @@ def build_trace_metrics(raw, operation='selectDraft'):
     costs = [raw['recordingCostNsByRequest'][identity]/1e6 for identity in requests]
     expected = {identity for identity, row in requests.items() if row['outcome'] == 'coherentSubmission'}
     invalid = list(raw.get('incompleteReasons', []))
-    if expected != first_ids: invalid.append('missingOrDuplicateFirstCoherentSummary')
+    if expected != first_ids or len(coherent)!=len(expected): invalid.append('missingOrDuplicateFirstCoherentSummary')
+    if expected != settled_ids or len(settled)!=len(expected): invalid.append('missingOrDuplicateMotionSettledSummary')
     unexpected = {key: count for key, count in outcomes.items() if key not in ('coherentSubmission','noVisualChange')}
     if unexpected: invalid.append('unexpectedRequestOutcomes')
     if any(not math.isfinite(v) or v < 0 for v in coherent + settled): invalid.append('invalidLatency')
