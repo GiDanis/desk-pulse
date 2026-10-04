@@ -303,7 +303,7 @@ La soglia richiesta resta frame ordinario animato p95 ≤20 ms, input→frame p9
 
 ## 9. Preparazione conclusa e confini aperti
 
-Questa analisi consente di iniziare **A0.1 → A0.2**, quindi tracing/fixture e primo incremento API. Le scelte di base, priorità e compatibilità sono definite; non occorre scegliere nuovi font, tutte le palette o le animazioni definitive. La prima prova conserva la grafica attuale e aggiunge renderer fixture alternativi per dimostrare layout e dati pubblici.
+**A0.1 → A0.2** sono consegnati; la sequenza prosegue con tracing/fixture A0.3/A0.4 e primo incremento API A1. Le scelte di base, priorità e compatibilità sono definite; non occorre scegliere nuovi font, tutte le palette o le animazioni definitive. La prima prova conserva la grafica attuale e aggiunge renderer fixture alternativi per dimostrare layout e dati pubblici.
 
 [Controlli della preparazione](evidence/theme-a0-a1-analysis-2026-10-04/analysis-review.json): JSON validi, ID/route/contesti e mappa G01–G21 coerenti, file e link relativi presenti, hash del runtime invariati. Sono controlli dell'analisi, distinti dalle prove API/EGLFS/T21 ancora da eseguire.
 

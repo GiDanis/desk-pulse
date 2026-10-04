@@ -4,7 +4,7 @@
 
 **Stato: B0 implementato e collaudato; percorso completo A0–A6 ancora aperto.** [Consegna del bridge e prove](theme-engine-authoring-b0-report.md). Questo piano traduce la [specifica di authoring](theme-engine-ai-authoring-spec.md) in consegne verificabili. Mantiene il [MasterPlan](release-masterplan.md), i cinque riferimenti dello [studio UX](themes-and-ux-analysis.md) e il [contratto notifiche](theme-engine-notification-spec.md). Le decisioni estetiche definitive restano nel prototipo.
 
-**A0.1/A0.2 implementati:** [piano operativo](theme-engine-a0-a1-implementation-analysis.md), inventario di 44 superfici / 30 route, contratti pubblici proposti, normalizzazione dei dati, tracing e migrazione per incrementi. I [contratti canonici e il tooling](theme-engine-a0-contracts-report.md) sono consegnati. Tracing e fixture runtime A0.3/A0.4, modulo QML e host A1 restano aperti.
+**A0.1/A0.2 implementati:** [piano operativo](theme-engine-a0-a1-implementation-analysis.md), inventario di 44 superfici / 30 route, contratti pubblici canonici e tooling; normalizzazione dei dati, tracing e migrazione degli host mantengono la sequenza approvata. I [contratti canonici e il tooling](theme-engine-a0-contracts-report.md) sono consegnati. Tracing e fixture runtime A0.3/A0.4, modulo QML e host A1 restano aperti.
 
 ## 1. Baseline e valutazione delle aggiunte
 

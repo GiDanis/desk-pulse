@@ -30,7 +30,11 @@ Il profilo B0 resta `profileVersion: 1` / `profileKind: schema1`. Aggiunge `apiF
 
 ## Distribuzione
 
-Il pacchetto candidato è verificato in staging sulla board. Distribuzione definitiva e verifica del servizio saranno registrate nelle evidenze di installazione prima di chiudere la consegna.
+Distribuito `/opt/smartpc/dashboard` dal commit **`0b41e0c35c7ba14d59c205b14e77c0338be70c04`**, manifest pulito **197 file**, versione **0.6.6** invariata. [Manifest installato](evidence/theme-a0-contracts-2026-10-04/installed-manifest.json), [prova di installazione](evidence/theme-a0-contracts-2026-10-04/installed-board-proof.json). Tutti gli hash e l'insieme dei file distribuiti coincidono; servizio `active/running`, `NRestarts=0`, backend `eglfs` / `eglfs_kms`, nessun warning QML rilevato nel journal dall'installazione. È un controllo dell'avvio del runtime esistente: nessuna nuova prova prestazionale, reboot o rendering API 2.
+
+Il [profilo acquisito dal servizio installato](evidence/theme-a0-contracts-2026-10-04/installed-board-profile.json) restituisce fingerprint API e stato `contractOnly`, mantenendo schema 1 e `boardRuntime: notVerified` per il probe offscreen. Non eleva l'avvio EGLFS a certificazione di nuovi renderer.
+
+Preferenze: SHA prima/dopo identico. Backup software e stato utente in `/var/backups/smartpc-theme-a0-20261004-0b41e0c`; runtime precedente conservato anche in `/opt/smartpc/dashboard-a0-previous-0b41e0c`. Lo stato utente è copiato a servizio fermo, prima dello scambio. Nessun DB è stato resettato o sostituito; i test UI usano SQLite e preferenze isolate. Il rollback non è stato eseguito in questo incremento.
 
 ## Confini e prossimo incremento
 
