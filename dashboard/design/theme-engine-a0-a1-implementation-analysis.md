@@ -1,8 +1,8 @@
 # Theme Engine — analisi operativa A0 / A1
 
-**Revisione 1.0 · 4 ottobre 2026 · Europe/Rome**
+**Revisione 1.1 · 4 ottobre 2026 · Europe/Rome**
 
-**Stato: analisi pronta per avviare lo sviluppo; A0 e A1 non implementati.** Questo documento rende eseguibili i due blocchi del [piano AI](theme-engine-ai-execution-plan.md), dopo [B0](theme-engine-authoring-b0-report.md). La consegna di A1 sarà una base pubblica completa sulla quale l'AI potrà costruire renderer; l'importazione del loro codice in un pacchetto autonomo resta A2. Nessun cambiamento al runtime, alle preferenze o al DB eventi è stato fatto per questa analisi.
+**Stato: A0.1/A0.2 implementati; A0.3/A0.4 e A1 aperti.** La prima consegna è nel [resoconto dei contratti](theme-engine-a0-contracts-report.md). I [contratti canonici](../theme-api/README.md) sostituiscono le proposte archiviate come riferimento per superfici, contesti, azioni e ruoli. Il modulo QML pubblico, il broker e gli host nuovi rimangono A1; il bundle autonomo rimane A2. Le sezioni seguenti conservano baseline e sequenza dell'analisi approvata; le prove successive sono nel resoconto.
 
 ## 1. Baseline e problemi effettivi
 
@@ -58,7 +58,7 @@ Questo è il flusso funzionale proposto, non una barriera di sicurezza QML: i re
 
 ### A0.1 Inventario pubblico e matrice di migrazione
 
-La [proposta leggibile dalle macchine](evidence/theme-a0-a1-analysis-2026-10-04/surface-contract-proposal.json) associa ogni superficie a route, contesto, file attuale e varianti. **È un progetto, non un registry caricabile dal runtime.** I nomi nuovi vengono congelati nel primo incremento A0 con fixture e controllo di copertura. La bozza API contiene anche la mappa di responsabilità di tutti i gap G01–G21: il lavoro A0/A1 non chiude automaticamente quelli assegnati a bundle, lifecycle e kit completo.
+La [proposta leggibile dalle macchine](evidence/theme-a0-a1-analysis-2026-10-04/surface-contract-proposal.json) associa ogni superficie a route, contesto, file attuale e varianti. **È un progetto, non un registry caricabile dal runtime.** I nomi nuovi sono ora censiti nel contratto canonico A0, con controllo di copertura e requisiti di fixture; la loro esecuzione runtime rimane A0.4. La bozza API contiene anche la mappa di responsabilità di tutti i gap G01–G21: il lavoro A0/A1 non chiude automaticamente quelli assegnati a bundle, lifecycle e kit completo.
 
 | Gruppo | Content ID / nuove superfici proposte | Varianti da coprire |
 | --- | --- | --- |
@@ -79,7 +79,7 @@ Le varianti di una superficie condividono il contratto, non necessariamente la s
 
 ### A0.2 Contratto unico, versione e capacità
 
-Proporre `dashboard/theme-api/` per i contratti canonici `surfaces.json`, `contexts.json`, `actions.json`, `semantic-roles.json`; sono input comuni per runtime, documentazione, lint e kit AI. Non copiare quattro schemi diversi da mantenere manualmente. La [bozza API](evidence/theme-a0-a1-analysis-2026-10-04/api-contract-proposal.json) descrive struttura e responsabilità; la definizione completa dei DTO e delle fixture è un deliverable dello sviluppo A0.
+Sono implementati in `dashboard/theme-api/` i contratti canonici `surfaces.json`, `contexts.json`, `actions.json`, `semantic-roles.json`; sono input comuni per runtime, documentazione, lint e kit AI. Non copiare quattro schemi diversi da mantenere manualmente. La [bozza API](evidence/theme-a0-a1-analysis-2026-10-04/api-contract-proposal.json) descrive struttura e responsabilità; i DTO sono ora canonici; i requisiti delle fixture sono generati, la prova runtime rimane A0.4.
 
 - Il major **2** del modulo non è `schemaVersion: 2` del pacchetto. Versione manifest, versione contesto, versione modulo e versione del software sono campi separati.
 - `PageContext2` indica il contratto pagina; il tipo importato si chiama `PageContext`. Analogamente il modulo 2 può esportare un tipo `NotificationContext` che conserva il contratto visuale 1.

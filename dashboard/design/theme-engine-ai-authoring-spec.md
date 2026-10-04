@@ -1,10 +1,12 @@
 # Theme Engine — creazione tramite AI e temi completi importabili
 
-**Revisione 1.3 · 4 ottobre 2026 · Europe/Rome**
+**Revisione 1.4 · 4 ottobre 2026 · Europe/Rome**
 
 **Stato: specifica del percorso completo; B0 schema 1 implementato, bundle/API/lifecycle nuovi ancora da realizzare.** [Consegna B0](theme-engine-authoring-b0-report.md). L'inventario iniziale si riferisce al commit `c66d9c8`, dopo la migrazione delle sei superfici Avvisi. Questo documento amplia il criterio di completamento del Theme Engine sulla base dell'obiettivo chiarito dall'utente: creare il tema con l'AI, importarlo completo e applicarlo dalle impostazioni, conservando la stessa applicazione e limitando gli adattamenti sul dispositivo.
 
 Riferimenti: [MasterPlan](release-masterplan.md), [guida del runtime attuale](theme-engine-implementation-guide.md), [contratto notifiche](theme-engine-notification-spec.md), [collaudo notifiche](theme-engine-notification-migration-report.md), [architettura](theme-engine-construction-spec.md), [presentation e compagno](theme-engine-presentation-spec.md), [motion](theme-engine-motion-spec.md), [icone](theme-engine-icon-spec.md), [studio UX](themes-and-ux-analysis.md), [navigazione](ux-navigation-v2.md). [Inventario di questa analisi](evidence/theme-ai-authoring-analysis-2026-10-03/source-audit.json).
+
+**Consegna A0.1/A0.2:** [contratti, tooling e verifiche](theme-engine-a0-contracts-report.md); il modulo QML pubblico rimane A1.
 
 **Revisione delle integrazioni dell'utente:** tooling ponte, prompt LLM e cinque concept sono inclusi nelle sezioni 11.2–11.4 come attività da implementare. La preparazione concreta, le decisioni di partenza e i confini del primo blocco sono nel [piano esecutivo](theme-engine-ai-execution-plan.md). Il ponte schema 1 anticipa authoring e diagnosi, ma non chiude il requisito del bundle con visuali nuovi.
 
@@ -161,7 +163,7 @@ Il registro deve pubblicare la lista delle superfici supportate dalla dashboard,
 | Avvisi | Sei content ID attuali, §8 | Copertura completa e semantica degli eventi conservata |
 | Scene/compagno | Contratto scena/attore e ingombri, §10 | Stessa identità durante navigazione; contenuti e comandi non coperti |
 
-I nomi dei nuovi content ID saranno congelati con le fixture in A1; questa tabella descrive il perimetro, non inventa ID già registrati. Per la prima migrazione si possono usare contesti di lista/tab/dettaglio riutilizzabili, con modelli di dominio distinti, invece di un'API diversa per ogni pannello. Resta necessario verificare ciascuna superficie reale, comprese quelle raggiungibili solo da un dettaglio.
+I nomi dei nuovi content ID sono censiti nei [contratti canonici A0](../theme-api/README.md); il loro hosting runtime e le fixture sono ancora da completare. Questa tabella descrive il perimetro, non nuovi ID già registrati negli host. Per la prima migrazione si possono usare contesti di lista/tab/dettaglio riutilizzabili, con modelli di dominio distinti, invece di un'API diversa per ogni pannello. Resta necessario verificare ciascuna superficie reale, comprese quelle raggiungibili solo da un dettaglio.
 
 Un tema può essere **completo**, **parziale con fallback dichiarati**, oppure **incompatibile**. Un futuro modulo Casa/Rete non rende magicamente completo un vecchio tema: mostra il fallback previsto e la copertura parziale fino a una nuova versione. Nessuna pagina vuota per capacità non disponibili. Il catalogo e la preview comunicano la copertura; non si confonde l'eredità dei colori con una nuova composizione.
 

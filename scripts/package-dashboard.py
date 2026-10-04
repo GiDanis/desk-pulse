@@ -8,7 +8,7 @@ import shutil
 import subprocess
 import sys
 
-ALLOWED={'.py','.qml','.js','.json','.sh','.html','.base64','.ttf','.otf','.png','.svg','.webp','.jpg','.jpeg','.txt','.md'}
+ALLOWED={'.py','.qml','.qmltypes','.js','.json','.sh','.html','.base64','.ttf','.otf','.png','.svg','.webp','.jpg','.jpeg','.txt','.md'}
 
 def files(root):
     # A declared data resource can use an engine-specific extension (rig, atlas,

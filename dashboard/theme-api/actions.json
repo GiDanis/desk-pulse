@@ -1,0 +1,1169 @@
+{
+  "contractVersion": 1,
+  "module": {
+    "uri": "SmartPC.ThemeApi",
+    "major": 2,
+    "minor": 0
+  },
+  "apiState": "contractOnly",
+  "actions": {
+    "navigation.home": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "navigation.back": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "navigation.menu": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "navigation.inbox": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "navigation.family.step": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {
+        "direction": {
+          "type": "int",
+          "enum": [
+            -1,
+            1
+          ]
+        }
+      },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "navigation.view.step": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {
+        "direction": {
+          "type": "int",
+          "enum": [
+            -1,
+            1
+          ]
+        }
+      },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "selection.move": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {
+        "direction": {
+          "type": "int",
+          "enum": [
+            -1,
+            1
+          ]
+        }
+      },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "selection.select": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "tabs.select": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "details.open": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "details.scroll": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {
+        "delta": {
+          "type": "real"
+        }
+      },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "details.refresh": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "settings.activate": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false,
+      "targetKind": "settingRowId"
+    },
+    "settings.adjust": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {
+        "direction": {
+          "type": "int",
+          "enum": [
+            -1,
+            1
+          ]
+        }
+      },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false,
+      "targetKind": "settingRowId"
+    },
+    "sources.refresh": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "appearance.preview": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "appearance.apply": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "appearance.cancel": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "appearance.reset": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "appearance.reload": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "appearance.import": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "appearance.export": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "appearance.notificationPreview": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "small",
+            "large",
+            "urgent",
+            "badge",
+            "inbox",
+            "detail"
+          ]
+        }
+      },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "openInbox": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "selectEvent": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "moveSelection": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {
+        "direction": {
+          "type": "int",
+          "enum": [
+            -1,
+            1
+          ]
+        }
+      },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "openDetails": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "scrollDetails": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {
+        "delta": {
+          "type": "real"
+        }
+      },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "dismiss": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "back": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "home": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "menu.activate": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false,
+      "targetKind": "menuRowId"
+    }
+  },
+  "validationScope": "Shape and per-surface allowlist only; A1 broker also checks active/interactive/preview/generation/urgent and backend state.",
+  "legacyNotificationReturn": "bool",
+  "privateEffects": [
+    "markEventSeen",
+    "markBannerPresented",
+    "deduplication",
+    "deliveryTimer",
+    "providerPolling"
+  ],
+  "settingRows": {
+    "contractVersion": 1,
+    "status": "targetContractNotRuntimeAdapter",
+    "sections": {
+      "settings.index": [
+        {
+          "id": "appearance",
+          "legacyPosition": 0,
+          "conditional": false
+        },
+        {
+          "id": "display",
+          "legacyPosition": 1,
+          "conditional": false
+        },
+        {
+          "id": "modules",
+          "legacyPosition": 2,
+          "conditional": false
+        },
+        {
+          "id": "notifications",
+          "legacyPosition": 3,
+          "conditional": false
+        },
+        {
+          "id": "account",
+          "legacyPosition": 4,
+          "conditional": false
+        },
+        {
+          "id": "integrations",
+          "legacyPosition": 5,
+          "conditional": true
+        },
+        {
+          "id": "sources",
+          "legacyPosition": 6,
+          "conditional": false
+        }
+      ],
+      "settings.display": [
+        {
+          "id": "display.mode",
+          "legacyPosition": 0,
+          "conditional": false
+        },
+        {
+          "id": "display.manualBrightness",
+          "legacyPosition": 1,
+          "conditional": false
+        },
+        {
+          "id": "display.dayBrightness",
+          "legacyPosition": 2,
+          "conditional": false
+        },
+        {
+          "id": "display.nightBrightness",
+          "legacyPosition": 3,
+          "conditional": false
+        },
+        {
+          "id": "display.dayStart",
+          "legacyPosition": 4,
+          "conditional": false
+        },
+        {
+          "id": "display.nightStart",
+          "legacyPosition": 5,
+          "conditional": false
+        }
+      ],
+      "settings.appearance": [
+        {
+          "id": "appearance.palette",
+          "legacyPosition": 0,
+          "conditional": false
+        },
+        {
+          "id": "appearance.motion",
+          "legacyPosition": 1,
+          "conditional": false
+        },
+        {
+          "id": "appearance.theme",
+          "legacyPosition": 2,
+          "conditional": false
+        },
+        {
+          "id": "appearance.homeComposition",
+          "legacyPosition": 3,
+          "conditional": false
+        },
+        {
+          "id": "appearance.textScale",
+          "legacyPosition": 4,
+          "conditional": false
+        },
+        {
+          "id": "appearance.density",
+          "legacyPosition": 5,
+          "conditional": false
+        },
+        {
+          "id": "appearance.cardRadius",
+          "legacyPosition": 6,
+          "conditional": false
+        },
+        {
+          "id": "appearance.accent",
+          "legacyPosition": 7,
+          "conditional": false
+        },
+        {
+          "id": "appearance.uiFont",
+          "legacyPosition": 8,
+          "conditional": false
+        },
+        {
+          "id": "appearance.numbersFont",
+          "legacyPosition": 9,
+          "conditional": false
+        },
+        {
+          "id": "appearance.transitions",
+          "legacyPosition": 10,
+          "conditional": false
+        },
+        {
+          "id": "appearance.scene",
+          "legacyPosition": 11,
+          "conditional": false
+        },
+        {
+          "id": "appearance.apply",
+          "legacyPosition": 12,
+          "conditional": false
+        },
+        {
+          "id": "appearance.cancel",
+          "legacyPosition": 13,
+          "conditional": false
+        },
+        {
+          "id": "appearance.reset",
+          "legacyPosition": 14,
+          "conditional": false
+        },
+        {
+          "id": "appearance.reload",
+          "legacyPosition": 15,
+          "conditional": false
+        },
+        {
+          "id": "appearance.clockFont",
+          "legacyPosition": 16,
+          "conditional": false
+        },
+        {
+          "id": "appearance.import",
+          "legacyPosition": 17,
+          "conditional": false
+        },
+        {
+          "id": "appearance.export",
+          "legacyPosition": 18,
+          "conditional": false
+        },
+        {
+          "id": "appearance.notifications",
+          "legacyPosition": 19,
+          "conditional": false
+        }
+      ],
+      "settings.appearance.notifications": [
+        {
+          "id": "notifications.visual.mode",
+          "legacyPosition": 0,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.composition.small",
+          "legacyPosition": 1,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.composition.large",
+          "legacyPosition": 2,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.composition.urgent",
+          "legacyPosition": 3,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.composition.badge",
+          "legacyPosition": 4,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.composition.inbox",
+          "legacyPosition": 5,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.composition.detail",
+          "legacyPosition": 6,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.preview",
+          "legacyPosition": 7,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.padding",
+          "legacyPosition": 8,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.titleSize",
+          "legacyPosition": 9,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.bodySize",
+          "legacyPosition": 10,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.sourceSize",
+          "legacyPosition": 11,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.radius",
+          "legacyPosition": 12,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.anchor",
+          "legacyPosition": 13,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.inboxRows",
+          "legacyPosition": 14,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.titleFont",
+          "legacyPosition": 15,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.bodyFont",
+          "legacyPosition": 16,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.sourceFont",
+          "legacyPosition": 17,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.icon",
+          "legacyPosition": 18,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.source",
+          "legacyPosition": 19,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.enter",
+          "legacyPosition": 20,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.exit",
+          "legacyPosition": 21,
+          "conditional": false
+        },
+        {
+          "id": "appearance.apply",
+          "legacyPosition": 22,
+          "conditional": false
+        },
+        {
+          "id": "notifications.visual.reset",
+          "legacyPosition": 23,
+          "conditional": false
+        },
+        {
+          "id": "appearance.back",
+          "legacyPosition": 24,
+          "conditional": false
+        }
+      ],
+      "settings.modules": [
+        {
+          "id": "module.oggi",
+          "legacyPosition": 0,
+          "conditional": false
+        },
+        {
+          "id": "module.meteo",
+          "legacyPosition": 1,
+          "conditional": false
+        },
+        {
+          "id": "module.account",
+          "legacyPosition": 2,
+          "conditional": false
+        },
+        {
+          "id": "module.sport",
+          "legacyPosition": 3,
+          "conditional": true
+        },
+        {
+          "id": "module.f1",
+          "legacyPosition": 4,
+          "conditional": true
+        },
+        {
+          "id": "module.motogp",
+          "legacyPosition": 5,
+          "conditional": true
+        }
+      ],
+      "settings.notifications": [
+        {
+          "id": "notifications.quiet",
+          "legacyPosition": 0,
+          "conditional": false
+        },
+        {
+          "id": "notifications.categories",
+          "legacyPosition": 1,
+          "conditional": false
+        }
+      ],
+      "settings.notifications.quiet": [
+        {
+          "id": "notifications.quiet.enabled",
+          "legacyPosition": 0,
+          "conditional": false
+        },
+        {
+          "id": "notifications.quiet.start",
+          "legacyPosition": 1,
+          "conditional": false
+        },
+        {
+          "id": "notifications.quiet.end",
+          "legacyPosition": 2,
+          "conditional": false
+        }
+      ],
+      "settings.notifications.categories": [
+        {
+          "id": "notifications.weatherInterruptions",
+          "legacyPosition": 0,
+          "conditional": false
+        },
+        {
+          "id": "notifications.accountInterruptions",
+          "legacyPosition": 1,
+          "conditional": false
+        },
+        {
+          "id": "notifications.sportGoals",
+          "legacyPosition": 2,
+          "conditional": true
+        }
+      ],
+      "settings.account": [
+        {
+          "id": "account.warningThreshold",
+          "legacyPosition": 0,
+          "conditional": false
+        },
+        {
+          "id": "account.criticalThreshold",
+          "legacyPosition": 1,
+          "conditional": false
+        }
+      ],
+      "settings.integrations": [
+        {
+          "id": "integration.sport",
+          "legacyPosition": 0,
+          "conditional": true
+        },
+        {
+          "id": "integration.f1",
+          "legacyPosition": 1,
+          "conditional": true
+        },
+        {
+          "id": "integration.motogp",
+          "legacyPosition": 2,
+          "conditional": true
+        }
+      ],
+      "settings.sources": [
+        {
+          "id": "source.weather",
+          "legacyPosition": 0,
+          "conditional": false
+        },
+        {
+          "id": "source.alerts",
+          "legacyPosition": 1,
+          "conditional": false
+        },
+        {
+          "id": "source.account",
+          "legacyPosition": 2,
+          "conditional": false
+        },
+        {
+          "id": "source.sport",
+          "legacyPosition": 3,
+          "conditional": true
+        },
+        {
+          "id": "source.f1",
+          "legacyPosition": 4,
+          "conditional": true
+        },
+        {
+          "id": "source.motogp",
+          "legacyPosition": 5,
+          "conditional": true
+        }
+      ],
+      "settings.sport": [
+        {
+          "id": "sport.favouriteTeam",
+          "legacyPosition": 0,
+          "conditional": false
+        },
+        {
+          "id": "sport.showOnHome",
+          "legacyPosition": 1,
+          "conditional": false
+        },
+        {
+          "id": "sport.notifications",
+          "legacyPosition": 2,
+          "conditional": false
+        },
+        {
+          "id": "sport.season",
+          "legacyPosition": 3,
+          "conditional": false
+        },
+        {
+          "id": "sport.source",
+          "legacyPosition": 4,
+          "conditional": false
+        }
+      ],
+      "settings.racing": [
+        {
+          "id": "racing.season",
+          "legacyPosition": 0,
+          "conditional": false,
+          "kindQualifiedId": "racing.{kind}.season"
+        },
+        {
+          "id": "racing.showOnHome",
+          "legacyPosition": 1,
+          "conditional": false,
+          "kindQualifiedId": "racing.{kind}.showOnHome"
+        },
+        {
+          "id": "racing.source",
+          "legacyPosition": 2,
+          "conditional": false,
+          "kindQualifiedId": "racing.{kind}.source"
+        }
+      ]
+    },
+    "conditionalPositionPolicy": "legacyPosition is the full-list template; filters must resolve ID to actual current index",
+    "racingIdentityPolicy": "Resolve kindQualifiedId as racing.f1.* or racing.motogp.* in the adapter; IDs remain independent from filtered positions.",
+    "ranges": {
+      "display.brightness": {
+        "minimum": 20,
+        "maximum": 100,
+        "step": 5
+      },
+      "notifications.quiet.minute": {
+        "minimum": 0,
+        "maximum": 1439,
+        "step": 15
+      },
+      "appearance.textScale": {
+        "minimum": 0.85,
+        "maximum": 1.1,
+        "step": 0.05
+      }
+    },
+    "authorization": "Read-only row model from app defines enabled, range and options; renderer cannot override them"
+  }
+}

@@ -1,10 +1,10 @@
 # Theme Engine — piano per avviare authoring AI e bundle completi
 
-**Revisione 1.2 · 4 ottobre 2026 · Europe/Rome**
+**Revisione 1.3 · 4 ottobre 2026 · Europe/Rome**
 
 **Stato: B0 implementato e collaudato; percorso completo A0–A6 ancora aperto.** [Consegna del bridge e prove](theme-engine-authoring-b0-report.md). Questo piano traduce la [specifica di authoring](theme-engine-ai-authoring-spec.md) in consegne verificabili. Mantiene il [MasterPlan](release-masterplan.md), i cinque riferimenti dello [studio UX](themes-and-ux-analysis.md) e il [contratto notifiche](theme-engine-notification-spec.md). Le decisioni estetiche definitive restano nel prototipo.
 
-**A0/A1 preparati in analisi:** [piano operativo](theme-engine-a0-a1-implementation-analysis.md), inventario di 44 superfici / 30 route, contratti pubblici proposti, normalizzazione dei dati, tracing e migrazione per incrementi. Gli schemi canonici e gli host nuovi sono deliverable dello sviluppo, non capacità già implementate.
+**A0.1/A0.2 implementati:** [piano operativo](theme-engine-a0-a1-implementation-analysis.md), inventario di 44 superfici / 30 route, contratti pubblici proposti, normalizzazione dei dati, tracing e migrazione per incrementi. I [contratti canonici e il tooling](theme-engine-a0-contracts-report.md) sono consegnati. Tracing e fixture runtime A0.3/A0.4, modulo QML e host A1 restano aperti.
 
 ## 1. Baseline e valutazione delle aggiunte
 
@@ -102,7 +102,7 @@ Copia in staging sullo stesso filesystem, verifica file/hash e rename soltanto a
 
 ## 4. Percorso completo dopo il ponte
 
-Il dettaglio eseguibile dei primi due blocchi è nell'[analisi A0/A1](theme-engine-a0-a1-implementation-analysis.md): 44 superfici logiche, 30 route overlay, 16 famiglie di contesti proposte, azioni versionate e adattatori privati. Il profilo board del 4 ottobre riconferma Qt 6.8.2 mediante probe offscreen; non è una nuova verifica EGLFS. Il codice del workspace corrisponde ai 183 SHA del manifest B0 salvato. A0.1/A0.2 sono il primo incremento da implementare.
+Il dettaglio eseguibile dei primi due blocchi è nell'[analisi A0/A1](theme-engine-a0-a1-implementation-analysis.md): 44 superfici logiche, 30 route overlay, 16 famiglie di contesti proposte, azioni versionate e adattatori privati. Il profilo board del 4 ottobre riconferma Qt 6.8.2 mediante probe offscreen; non è una nuova verifica EGLFS. Il confronto dei 183 SHA descrive la baseline precedente allo sviluppo. A0.1/A0.2 sono ora consegnati nel [resoconto](theme-engine-a0-contracts-report.md); il prossimo incremento è tracing A0.3 e fixture runtime A0.4, prima del modulo A1.
 
 La preparazione A0 può iniziare mentre si completa B0. Prima di allargare `theme_pack.py`, separare parsing/diagnostica, trasporto e storage per non concentrare ogni responsabilità nella CLI. La [mappa completa dei file](theme-engine-ai-authoring-spec.md#15-mappa-degli-interventi-sul-codice) resta il riferimento.
 

@@ -65,6 +65,10 @@ def profile(root,store,service=None):
     fingerprint=hashlib.sha256(json.dumps(registries,sort_keys=True,separators=(',',':')).encode()).hexdigest()
     from datetime import datetime,timezone
     import platform
+    api = {'availability': 'unavailable', 'apiFingerprint': None, 'runtimeModuleVerified': False}
+    if (Path(root) / 'theme-api').exists():
+        from theme_api_contract import api_metadata
+        api = api_metadata(root)
     return {'profileVersion':1,'profileKind':'schema1','capturedAt':datetime.now(timezone.utc).isoformat(),
             'architecture':platform.machine(),'root':str(root),'store':str(store),
             'inbox':str(store.parent/'theme-imports'),'service':service,
@@ -73,6 +77,7 @@ def profile(root,store,service=None):
             'appDataLocation':QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation),
             'defaultFont':app.font().family(),'fontFamilies':sorted(QFontDatabase.families()),
             'registryFingerprint':fingerprint,'registries':registries,
+            'apiFingerprint':api['apiFingerprint'],'themeApiContract':api,
             'installedThemes':[{'id':p['id'],'version':p['version']} for p in catalog.packs.values()],
             'limitations':['QML layouts/input/frames and EGLFS performance not verified by this probe',
                             'G21: adaptive semantic colors for light palettes pending'],

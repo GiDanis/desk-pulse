@@ -2,7 +2,7 @@
 
 Il motore usa Python/PySide6 per catalogo, validazione, preparazione e salvataggio; Qt Quick/QML per composizione, rendering e animazioni. I pacchetti personali sono JSON. Il compagno definitivo rimane nella v0.9: la v0.6.6 contiene già host persistente, stato dell'attore e registrazione di renderer, con una scena geometrica di prova.
 
-Il ponte B0 è [consegnato](theme-engine-authoring-b0-report.md). Lo sviluppo successivo è preparato nell'[analisi A0/A1](theme-engine-a0-a1-implementation-analysis.md): modulo pubblico, copertura di shell/overlay, contesti senza controller, dati strutturati e ruoli semantici. Quelle API sono proposte da implementare e non vanno usate come comandi/proprietà già disponibili. L'importazione di nuovi QML in un bundle rimane A2.
+Il ponte B0 è [consegnato](theme-engine-authoring-b0-report.md). Lo sviluppo successivo è preparato nell'[analisi A0/A1](theme-engine-a0-a1-implementation-analysis.md): modulo pubblico, copertura di shell/overlay, contesti senza controller, dati strutturati e ruoli semantici. I [contratti A0.1/A0.2](theme-engine-a0-contracts-report.md) sono implementati; le API runtime QML non vanno ancora usate come comandi/proprietà disponibili. L'importazione di nuovi QML in un bundle rimane A2.
 
 ## Uso sulla dashboard
 
@@ -149,3 +149,7 @@ Un solo controller possiede la trasformazione del Loader Avvisi: le sue ricette 
 Un renderer con decorazioni fuori dal proprio pannello dichiara `readonly property var occupiedRegions: [Qt.rect(...)]` in coordinate locali: l'host le traduce nel viewport e SceneHost evita quegli ingombri. Il controller mantiene z-order, focus e priorità; nessuna reazione del futuro compagno può segnare un evento letto o ritardare un urgente.
 
 Gli otto secondi del banner iniziano dopo l'acknowledgment del frame Qt, validato per **ID, revisione e notificationRank** catturati prima della sincronizzazione. Un evento cancellato, futuro, superato o preempted durante l'attesa non viene consegnato. Un frame con Loader o visuale completamente trasparente non conferma la consegna. Cambiare tema non riavvia il timer e non marca letto/chiuso l'evento. FrameSwapped indica presentazione sottomessa da Qt; non è una misura ottica del pannello. [QQuickWindow 6.8](https://doc.qt.io/qt-6.8/qquickwindow.html).
+
+## Verifica dei contratti A0
+
+I quattro [input canonici](../theme-api/README.md) generano riferimento, schema snapshot, blueprint `.qmltypes`, requisiti fixture e fingerprint API. Dal checkout: `python3 scripts/generate-theme-api-contract.py --check`; dalla distribuzione: `python3 theme_api_tools.py --check`. Il profilo B0 schema 1 aggiunge `apiFingerprint` e `themeApiContract.availability = contractOnly`, con `runtimeModuleVerified = false`. Questi metadati non abilitano pacchetti schema 2 o nuovi renderer. Il fingerprint dei registri B0 resta distinto.

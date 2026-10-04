@@ -1,0 +1,5998 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SmartPC Theme API 2 contract snapshots (not runtime availability)",
+  "$defs": {
+    "Point": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number",
+          "readOnly": true
+        },
+        "y": {
+          "type": "number",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "additionalProperties": false
+    },
+    "Rect": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number",
+          "readOnly": true
+        },
+        "y": {
+          "type": "number",
+          "readOnly": true
+        },
+        "width": {
+          "type": "number",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "height": {
+          "type": "number",
+          "minimum": 0,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "additionalProperties": false
+    },
+    "SourceState": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "active",
+            "updating",
+            "stale",
+            "offline",
+            "error",
+            "unavailable",
+            "pending"
+          ],
+          "readOnly": true
+        },
+        "sourceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "sourceLabel": {
+          "type": "string",
+          "readOnly": true
+        },
+        "updatedAt": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true,
+              "description": "Unit: epochSeconds"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "checkedAt": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true,
+              "description": "Unit: epochSeconds"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "hasData": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "isStale": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "errorCode": {
+          "type": "string",
+          "readOnly": true
+        },
+        "error": {
+          "type": "string",
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "status",
+        "sourceId",
+        "sourceLabel",
+        "updatedAt",
+        "checkedAt",
+        "hasData",
+        "isStale",
+        "errorCode",
+        "error",
+        "dataRevision"
+      ],
+      "additionalProperties": false
+    },
+    "NumericValue": {
+      "type": "object",
+      "properties": {
+        "available": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "type": "string",
+          "readOnly": true
+        },
+        "displayText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "sourceRevision": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "available",
+        "value",
+        "unit",
+        "displayText",
+        "sourceRevision"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "available": {
+                "const": true
+              }
+            },
+            "required": [
+              "available"
+            ]
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "not": {
+                  "type": "null"
+                }
+              }
+            },
+            "required": [
+              "value"
+            ]
+          }
+        }
+      ]
+    },
+    "ScalarValue": {
+      "type": "object",
+      "properties": {
+        "available": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": [
+                "string",
+                "boolean",
+                "integer",
+                "number"
+              ],
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "type": "string",
+          "readOnly": true
+        },
+        "displayText": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "available",
+        "value",
+        "unit",
+        "displayText"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "available": {
+                "const": true
+              }
+            },
+            "required": [
+              "available"
+            ]
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "not": {
+                  "type": "null"
+                }
+              }
+            },
+            "required": [
+              "value"
+            ]
+          }
+        }
+      ]
+    },
+    "SurfaceLifecycle": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": [
+            "preparing",
+            "active",
+            "suspended",
+            "exiting",
+            "disposed"
+          ],
+          "readOnly": true
+        },
+        "active": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "interactive": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "preview": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "state",
+        "active",
+        "interactive",
+        "preview",
+        "generation"
+      ],
+      "additionalProperties": false
+    },
+    "ClockState": {
+      "type": "object",
+      "properties": {
+        "epoch": {
+          "type": "number",
+          "readOnly": true,
+          "description": "Unit: epochSeconds"
+        },
+        "timeText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "dateText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "timezone": {
+          "type": "string",
+          "readOnly": true
+        },
+        "locale": {
+          "type": "string",
+          "readOnly": true
+        },
+        "night": {
+          "type": "boolean",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "epoch",
+        "timeText",
+        "dateText",
+        "timezone",
+        "locale",
+        "night"
+      ],
+      "additionalProperties": false
+    },
+    "SelectionState": {
+      "type": "object",
+      "properties": {
+        "selectedId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "tabId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "anchorId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "offset": {
+          "type": "number",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "index": {
+          "type": "integer",
+          "minimum": -1,
+          "readOnly": true
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "selectedId",
+        "tabId",
+        "anchorId",
+        "offset",
+        "index",
+        "count"
+      ],
+      "additionalProperties": false
+    },
+    "OperationState": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "idle",
+            "accepted",
+            "pending",
+            "completed",
+            "failed",
+            "rejected"
+          ],
+          "readOnly": true
+        },
+        "errorCode": {
+          "type": "string",
+          "readOnly": true
+        },
+        "message": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "requestId",
+        "status",
+        "errorCode",
+        "message"
+      ],
+      "additionalProperties": false
+    },
+    "ActionResult": {
+      "type": "object",
+      "properties": {
+        "accepted": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "requestId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "accepted",
+            "pending",
+            "completed",
+            "failed",
+            "rejected"
+          ],
+          "readOnly": true
+        },
+        "errorCode": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "accepted",
+        "requestId",
+        "status",
+        "errorCode"
+      ],
+      "additionalProperties": false
+    },
+    "Command": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "key": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9,
+          "readOnly": true
+        },
+        "actionId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "targetId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "label": {
+          "type": "string",
+          "readOnly": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "key",
+        "actionId",
+        "targetId",
+        "label",
+        "enabled"
+      ],
+      "additionalProperties": false
+    },
+    "AvailableAction": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "reason": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "enabled",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "Tab": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "label": {
+          "type": "string",
+          "readOnly": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "enabled"
+      ],
+      "additionalProperties": false
+    },
+    "Family": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "label": {
+          "type": "string",
+          "readOnly": true
+        },
+        "available": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "visible": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "views": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Tab"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "available",
+        "visible",
+        "views"
+      ],
+      "additionalProperties": false
+    },
+    "NavigationSnapshot": {
+      "type": "object",
+      "properties": {
+        "familyId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "viewId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "overlayId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "familyPosition": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "familyCount": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "viewPosition": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "viewCount": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "familyId",
+        "viewId",
+        "overlayId",
+        "familyPosition",
+        "familyCount",
+        "viewPosition",
+        "viewCount"
+      ],
+      "additionalProperties": false
+    },
+    "ShellLayout": {
+      "type": "object",
+      "properties": {
+        "header": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "content": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "guide": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "sceneSafeRegions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Rect"
+          },
+          "maxItems": 64,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "header",
+        "content",
+        "guide",
+        "sceneSafeRegions"
+      ],
+      "additionalProperties": false
+    },
+    "UiStatus": {
+      "type": "object",
+      "properties": {
+        "urgent": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "recovery": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "quiet": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "night": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "diagnostics": {
+          "type": "boolean",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "urgent",
+        "recovery",
+        "quiet",
+        "night",
+        "diagnostics"
+      ],
+      "additionalProperties": false
+    },
+    "AppearanceDraftSummary": {
+      "type": "object",
+      "properties": {
+        "editing": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "themeId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "paletteMode": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "day",
+            "night"
+          ],
+          "readOnly": true
+        },
+        "motionMode": {
+          "type": "string",
+          "enum": [
+            "normal",
+            "reduced",
+            "off"
+          ],
+          "readOnly": true
+        },
+        "textScale": {
+          "type": "number",
+          "minimum": 0.85,
+          "maximum": 1.1,
+          "readOnly": true
+        },
+        "readyToApply": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "status": {
+          "type": "string",
+          "readOnly": true
+        },
+        "error": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "editing",
+        "themeId",
+        "paletteMode",
+        "motionMode",
+        "textScale",
+        "readyToApply",
+        "status",
+        "error"
+      ],
+      "additionalProperties": false
+    },
+    "MenuRow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "detail": {
+          "type": "string",
+          "readOnly": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "actionId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "targetId": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "detail",
+        "enabled",
+        "actionId",
+        "targetId"
+      ],
+      "additionalProperties": false
+    },
+    "SettingOption": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "label": {
+          "type": "string",
+          "readOnly": true
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": [
+                "string",
+                "boolean",
+                "integer",
+                "number"
+              ],
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "SettingRow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "detail": {
+          "type": "string",
+          "readOnly": true
+        },
+        "control": {
+          "type": "string",
+          "enum": [
+            "action",
+            "toggle",
+            "choice",
+            "number",
+            "theme",
+            "transfer"
+          ],
+          "readOnly": true
+        },
+        "value": {
+          "$ref": "#/$defs/ScalarValue",
+          "readOnly": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "reason": {
+          "type": "string",
+          "readOnly": true
+        },
+        "actionId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "targetId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "minimum": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "maximum": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "step": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SettingOption"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "detail",
+        "control",
+        "value",
+        "enabled",
+        "reason",
+        "actionId",
+        "targetId",
+        "minimum",
+        "maximum",
+        "step",
+        "options"
+      ],
+      "additionalProperties": false
+    },
+    "InfoRow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "value": {
+          "$ref": "#/$defs/ScalarValue",
+          "readOnly": true
+        },
+        "detail": {
+          "type": "string",
+          "readOnly": true
+        },
+        "sourceId": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "value",
+        "detail",
+        "sourceId"
+      ],
+      "additionalProperties": false
+    },
+    "WeatherForecast": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "readOnly": true
+        },
+        "dayText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "code": {
+          "type": "integer",
+          "minimum": -1,
+          "readOnly": true
+        },
+        "description": {
+          "type": "string",
+          "readOnly": true
+        },
+        "high": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "low": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "rainProbability": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "date",
+        "dayText",
+        "code",
+        "description",
+        "high",
+        "low",
+        "rainProbability"
+      ],
+      "additionalProperties": false
+    },
+    "WeatherData": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/SourceState",
+          "readOnly": true
+        },
+        "location": {
+          "type": "string",
+          "readOnly": true
+        },
+        "code": {
+          "type": "integer",
+          "minimum": -1,
+          "readOnly": true
+        },
+        "description": {
+          "type": "string",
+          "readOnly": true
+        },
+        "temperature": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "feelsLike": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "humidity": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "precipitation": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "rainProbability": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "windSpeed": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "windDirection": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "windDirectionText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "gusts": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "observationAt": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true,
+              "description": "Unit: epochSeconds"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "forecast": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/WeatherForecast"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "source",
+        "location",
+        "code",
+        "description",
+        "temperature",
+        "feelsLike",
+        "humidity",
+        "precipitation",
+        "rainProbability",
+        "windSpeed",
+        "windDirection",
+        "windDirectionText",
+        "gusts",
+        "observationAt",
+        "forecast"
+      ],
+      "additionalProperties": false
+    },
+    "NextEventData": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "category": {
+          "type": "string",
+          "readOnly": true
+        },
+        "startsAt": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true,
+              "description": "Unit: epochSeconds"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "whenText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "source": {
+          "$ref": "#/$defs/SourceState",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "category",
+        "startsAt",
+        "whenText",
+        "source"
+      ],
+      "additionalProperties": false
+    },
+    "AccountWindow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "label": {
+          "type": "string",
+          "readOnly": true
+        },
+        "usedPercent": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "windowDurationMinutes": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "resetsAt": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true,
+              "description": "Unit: epochSeconds"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "normal",
+            "warning",
+            "critical",
+            "unavailable"
+          ],
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "usedPercent",
+        "windowDurationMinutes",
+        "resetsAt",
+        "severity"
+      ],
+      "additionalProperties": false
+    },
+    "AccountData": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/SourceState",
+          "readOnly": true
+        },
+        "plan": {
+          "type": "string",
+          "readOnly": true
+        },
+        "windows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AccountWindow"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "resetCredits": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "warningThreshold": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "readOnly": true
+        },
+        "criticalThreshold": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "source",
+        "plan",
+        "windows",
+        "resetCredits",
+        "warningThreshold",
+        "criticalThreshold"
+      ],
+      "additionalProperties": false
+    },
+    "TeamIdentity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "shortName": {
+          "type": "string",
+          "readOnly": true
+        },
+        "crestId": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "shortName",
+        "crestId"
+      ],
+      "additionalProperties": false
+    },
+    "MatchEvent": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "kind": {
+          "type": "string",
+          "readOnly": true
+        },
+        "minute": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "teamId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "playerId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "playerName": {
+          "type": "string",
+          "readOnly": true
+        },
+        "text": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "minute",
+        "teamId",
+        "playerId",
+        "playerName",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "MatchStatistic": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "label": {
+          "type": "string",
+          "readOnly": true
+        },
+        "home": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "away": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "home",
+        "away"
+      ],
+      "additionalProperties": false
+    },
+    "LineupPlayer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "shirtNumber": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "role": {
+          "type": "string",
+          "readOnly": true
+        },
+        "group": {
+          "type": "string",
+          "readOnly": true
+        },
+        "inMinute": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "outMinute": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "shirtNumber",
+        "role",
+        "group",
+        "inMinute",
+        "outMinute"
+      ],
+      "additionalProperties": false
+    },
+    "Lineup": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "teamId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "formation": {
+          "type": "string",
+          "readOnly": true
+        },
+        "coach": {
+          "type": "string",
+          "readOnly": true
+        },
+        "players": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LineupPlayer"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "teamId",
+        "formation",
+        "coach",
+        "players"
+      ],
+      "additionalProperties": false
+    },
+    "MatchData": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "competitionId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "competitionName": {
+          "type": "string",
+          "readOnly": true
+        },
+        "season": {
+          "type": "string",
+          "readOnly": true
+        },
+        "roundId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "source": {
+          "$ref": "#/$defs/SourceState",
+          "readOnly": true
+        },
+        "providerMatchId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "scheduled",
+            "live",
+            "finished",
+            "postponed",
+            "cancelled",
+            "suspended",
+            "unavailable"
+          ],
+          "readOnly": true
+        },
+        "rawStatus": {
+          "type": "string",
+          "readOnly": true
+        },
+        "home": {
+          "$ref": "#/$defs/TeamIdentity",
+          "readOnly": true
+        },
+        "away": {
+          "$ref": "#/$defs/TeamIdentity",
+          "readOnly": true
+        },
+        "homeScore": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "awayScore": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "kickoffAt": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true,
+              "description": "Unit: epochSeconds"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "whenText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "minute": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "pendingVAR": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "venue": {
+          "type": "string",
+          "readOnly": true
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MatchEvent"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "statistics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MatchStatistic"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "lineups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Lineup"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "detailLoading": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "detailError": {
+          "type": "string",
+          "readOnly": true
+        },
+        "detailFetchedAt": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true,
+              "description": "Unit: epochSeconds"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "competitionId",
+        "competitionName",
+        "season",
+        "roundId",
+        "source",
+        "providerMatchId",
+        "status",
+        "rawStatus",
+        "home",
+        "away",
+        "homeScore",
+        "awayScore",
+        "kickoffAt",
+        "whenText",
+        "minute",
+        "pendingVAR",
+        "venue",
+        "events",
+        "statistics",
+        "lineups",
+        "detailLoading",
+        "detailError",
+        "detailFetchedAt"
+      ],
+      "additionalProperties": false
+    },
+    "Standing": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "entityId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "position": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "played": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "points": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "wins": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "draws": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "losses": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "goalsFor": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "goalsAgainst": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "goalDifference": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "entityId",
+        "name",
+        "position",
+        "played",
+        "points",
+        "wins",
+        "draws",
+        "losses",
+        "goalsFor",
+        "goalsAgainst",
+        "goalDifference"
+      ],
+      "additionalProperties": false
+    },
+    "Round": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "label": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "label"
+      ],
+      "additionalProperties": false
+    },
+    "SportData": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/SourceState",
+          "readOnly": true
+        },
+        "competitionId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "competitionName": {
+          "type": "string",
+          "readOnly": true
+        },
+        "season": {
+          "type": "string",
+          "readOnly": true
+        },
+        "calendarScope": {
+          "type": "string",
+          "readOnly": true
+        },
+        "matches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MatchData"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "standings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Standing"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "teams": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TeamIdentity"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "rounds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Round"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "activeMatchIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "readOnly": true
+        },
+        "favouriteTeamId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "hasLiveView": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "liveVerified": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "goalsEnabled": {
+          "type": "boolean",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "source",
+        "competitionId",
+        "competitionName",
+        "season",
+        "calendarScope",
+        "matches",
+        "standings",
+        "teams",
+        "rounds",
+        "activeMatchIds",
+        "favouriteTeamId",
+        "hasLiveView",
+        "liveVerified",
+        "goalsEnabled"
+      ],
+      "additionalProperties": false
+    },
+    "TeamData": {
+      "type": "object",
+      "properties": {
+        "identity": {
+          "$ref": "#/$defs/TeamIdentity",
+          "readOnly": true
+        },
+        "source": {
+          "$ref": "#/$defs/SourceState",
+          "readOnly": true
+        },
+        "calendarScope": {
+          "type": "string",
+          "readOnly": true
+        },
+        "fixtures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MatchData"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "squad": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LineupPlayer"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "info": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InfoRow"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "standing": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Standing",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recordText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "cacheError": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "identity",
+        "source",
+        "calendarScope",
+        "fixtures",
+        "squad",
+        "info",
+        "standing",
+        "recordText",
+        "cacheError"
+      ],
+      "additionalProperties": false
+    },
+    "FantasyBonus": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "label": {
+          "type": "string",
+          "readOnly": true
+        },
+        "count": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "points": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "count",
+        "points"
+      ],
+      "additionalProperties": false
+    },
+    "FantasyPlayer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "role": {
+          "type": "string",
+          "readOnly": true
+        },
+        "shirtNumber": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "group": {
+          "type": "string",
+          "readOnly": true
+        },
+        "inMinute": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "outMinute": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "vote": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "fantavote": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "voteText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "fantavoteText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "withoutVote": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "bonuses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FantasyBonus"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "role",
+        "shirtNumber",
+        "group",
+        "inMinute",
+        "outMinute",
+        "vote",
+        "fantavote",
+        "voteText",
+        "fantavoteText",
+        "withoutVote",
+        "bonuses"
+      ],
+      "additionalProperties": false
+    },
+    "FantasyTeam": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "players": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FantasyPlayer"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "total": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "players",
+        "total"
+      ],
+      "additionalProperties": false
+    },
+    "FantasyData": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/SourceState",
+          "readOnly": true
+        },
+        "matchId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "provisional": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "liveVerified": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "loading": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "teams": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FantasyTeam"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "message": {
+          "type": "string",
+          "readOnly": true
+        },
+        "warning": {
+          "type": "string",
+          "readOnly": true
+        },
+        "liveNotice": {
+          "type": "string",
+          "readOnly": true
+        },
+        "cacheError": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "source",
+        "matchId",
+        "provisional",
+        "liveVerified",
+        "loading",
+        "teams",
+        "message",
+        "warning",
+        "liveNotice",
+        "cacheError"
+      ],
+      "additionalProperties": false
+    },
+    "RacingTiming": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "driverId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "driverName": {
+          "type": "string",
+          "readOnly": true
+        },
+        "position": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "lap": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "time": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "gap": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "interval": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "speed": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "tyre": {
+          "type": "string",
+          "readOnly": true
+        },
+        "compound": {
+          "type": "string",
+          "readOnly": true
+        },
+        "status": {
+          "type": "string",
+          "readOnly": true
+        },
+        "team": {
+          "type": "string",
+          "readOnly": true
+        },
+        "points": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "driverId",
+        "driverName",
+        "position",
+        "lap",
+        "time",
+        "gap",
+        "interval",
+        "speed",
+        "tyre",
+        "compound",
+        "status",
+        "team",
+        "points"
+      ],
+      "additionalProperties": false
+    },
+    "PitStop": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "lap": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "duration": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "stopNumber": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "timeText": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "lap",
+        "duration",
+        "stopNumber",
+        "timeText"
+      ],
+      "additionalProperties": false
+    },
+    "LapTime": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "lap": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "time": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "position": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "lap",
+        "time",
+        "position"
+      ],
+      "additionalProperties": false
+    },
+    "Stint": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "compound": {
+          "type": "string",
+          "readOnly": true
+        },
+        "startLap": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "endLap": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "tyreAge": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "compound",
+        "startLap",
+        "endLap",
+        "tyreAge"
+      ],
+      "additionalProperties": false
+    },
+    "DriverData": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "team": {
+          "type": "string",
+          "readOnly": true
+        },
+        "nationality": {
+          "type": "string",
+          "readOnly": true
+        },
+        "number": {
+          "$ref": "#/$defs/NumericValue",
+          "readOnly": true
+        },
+        "timing": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RacingTiming",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "detailRows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InfoRow"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "pitStops": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PitStop"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "laps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LapTime"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "stints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Stint"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "team",
+        "nationality",
+        "number",
+        "timing",
+        "detailRows",
+        "pitStops",
+        "laps",
+        "stints"
+      ],
+      "additionalProperties": false
+    },
+    "RacingSessionData": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "kind": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "startsAt": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true,
+              "description": "Unit: epochSeconds"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "endsAt": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true,
+              "description": "Unit: epochSeconds"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "type": "string",
+          "readOnly": true
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RacingTiming"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "info": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InfoRow"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "source": {
+          "$ref": "#/$defs/SourceState",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "name",
+        "startsAt",
+        "endsAt",
+        "status",
+        "results",
+        "info",
+        "source"
+      ],
+      "additionalProperties": false
+    },
+    "RacingEventData": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "roundId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "startsAt": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true,
+              "description": "Unit: epochSeconds"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "endsAt": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true,
+              "description": "Unit: epochSeconds"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "circuit": {
+          "type": "string",
+          "readOnly": true
+        },
+        "sessions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RacingSessionData"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "info": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InfoRow"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "summary": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InfoRow"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "source": {
+          "$ref": "#/$defs/SourceState",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "roundId",
+        "startsAt",
+        "endsAt",
+        "circuit",
+        "sessions",
+        "info",
+        "summary",
+        "source"
+      ],
+      "additionalProperties": false
+    },
+    "RaceMessage": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "text": {
+          "type": "string",
+          "readOnly": true
+        },
+        "issuedAt": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true,
+              "description": "Unit: epochSeconds"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "issuedAt",
+        "severity"
+      ],
+      "additionalProperties": false
+    },
+    "RacingLiveData": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/SourceState",
+          "readOnly": true
+        },
+        "active": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RacingTiming"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RaceMessage"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "info": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InfoRow"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "source",
+        "active",
+        "rows",
+        "messages",
+        "info"
+      ],
+      "additionalProperties": false
+    },
+    "RacingData": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/SourceState",
+          "readOnly": true
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "f1",
+            "motogp"
+          ],
+          "readOnly": true
+        },
+        "year": {
+          "type": "integer",
+          "minimum": 1900,
+          "maximum": 9999,
+          "readOnly": true
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RacingEventData"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "standings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Standing"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "constructors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Standing"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "live": {
+          "$ref": "#/$defs/RacingLiveData",
+          "readOnly": true
+        },
+        "detailLoading": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "detailError": {
+          "type": "string",
+          "readOnly": true
+        },
+        "partialError": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "source",
+        "kind",
+        "year",
+        "events",
+        "standings",
+        "constructors",
+        "live",
+        "detailLoading",
+        "detailError",
+        "partialError"
+      ],
+      "additionalProperties": false
+    },
+    "NotificationEvent": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "revision": {
+          "type": "string",
+          "readOnly": true
+        },
+        "rank": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "category": {
+          "type": "string",
+          "readOnly": true
+        },
+        "severity": {
+          "type": "string",
+          "readOnly": true
+        },
+        "weatherSeverity": {
+          "type": "string",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "body": {
+          "type": "string",
+          "readOnly": true
+        },
+        "sourceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "sourceLabel": {
+          "type": "string",
+          "readOnly": true
+        },
+        "issuedAt": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true,
+              "description": "Unit: epochSeconds"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expiresAt": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true,
+              "description": "Unit: epochSeconds"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "seen": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "bannerSize": {
+          "type": "string",
+          "enum": [
+            "small",
+            "large"
+          ],
+          "readOnly": true
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceState",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "rank",
+        "category",
+        "severity",
+        "weatherSeverity",
+        "title",
+        "body",
+        "sourceId",
+        "sourceLabel",
+        "issuedAt",
+        "expiresAt",
+        "seen",
+        "bannerSize",
+        "source"
+      ],
+      "additionalProperties": false
+    },
+    "MotionPolicy": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "normal",
+            "reduced",
+            "off"
+          ],
+          "readOnly": true
+        },
+        "suspended": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "urgent": {
+          "type": "boolean",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "mode",
+        "suspended",
+        "urgent"
+      ],
+      "additionalProperties": false
+    },
+    "ActorSnapshot": {
+      "type": "object",
+      "properties": {
+        "actorId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "pose": {
+          "type": "string",
+          "readOnly": true
+        },
+        "locomotion": {
+          "type": "string",
+          "readOnly": true
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "paused": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "anchor": {
+          "$ref": "#/$defs/Point",
+          "readOnly": true
+        },
+        "motionMode": {
+          "type": "string",
+          "enum": [
+            "normal",
+            "reduced",
+            "off"
+          ],
+          "readOnly": true
+        }
+      },
+      "required": [
+        "actorId",
+        "pose",
+        "locomotion",
+        "sequence",
+        "paused",
+        "anchor",
+        "motionMode"
+      ],
+      "additionalProperties": false
+    },
+    "SceneConfiguration": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "rendererId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "actor",
+            "canvas"
+          ],
+          "readOnly": true
+        }
+      },
+      "required": [
+        "enabled",
+        "rendererId",
+        "mode"
+      ],
+      "additionalProperties": false
+    },
+    "ThemeStyle": {
+      "type": "object",
+      "properties": {
+        "background": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "backgroundOverlay": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "surface": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "surfaceFocused": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "border": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "divider": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "textPrimary": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "textSecondary": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "accent": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "bannerSurface": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "debugSurface": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "demoSurface": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "radiusCard": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "radiusRow": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "radiusPill": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "radiusButton": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "spacing": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "listRows": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "borderWidth": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "focusWidth": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "textScale": {
+          "type": "number",
+          "readOnly": true
+        },
+        "uiFamily": {
+          "type": "string",
+          "readOnly": true
+        },
+        "numbersFamily": {
+          "type": "string",
+          "readOnly": true
+        },
+        "displayFamily": {
+          "type": "string",
+          "readOnly": true
+        },
+        "bodyWeight": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "headingWeight": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font18": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font19": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font20": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font21": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font22": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font23": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font24": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font25": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font26": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font27": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font28": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font29": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font30": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font31": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font32": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font33": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font34": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font35": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font36": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font37": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font39": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font40": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font45": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font46": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font47": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font52": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font56": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font65": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font69": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font139": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font152": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "variant": {
+          "type": "string",
+          "readOnly": true
+        },
+        "font44": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "compactRows": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "overviewRows": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "fantasyRows": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "clockWeight": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "radiusPanel": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "radiusBadge": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "radiusDense": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "radiusMarker": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "hairlineWidth": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "semantic": {
+          "$ref": "#/$defs/SemanticPalette",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "background",
+        "backgroundOverlay",
+        "surface",
+        "surfaceFocused",
+        "border",
+        "divider",
+        "textPrimary",
+        "textSecondary",
+        "accent",
+        "bannerSurface",
+        "debugSurface",
+        "demoSurface",
+        "radiusCard",
+        "radiusRow",
+        "radiusPill",
+        "radiusButton",
+        "spacing",
+        "listRows",
+        "borderWidth",
+        "focusWidth",
+        "textScale",
+        "uiFamily",
+        "numbersFamily",
+        "displayFamily",
+        "bodyWeight",
+        "headingWeight",
+        "font18",
+        "font19",
+        "font20",
+        "font21",
+        "font22",
+        "font23",
+        "font24",
+        "font25",
+        "font26",
+        "font27",
+        "font28",
+        "font29",
+        "font30",
+        "font31",
+        "font32",
+        "font33",
+        "font34",
+        "font35",
+        "font36",
+        "font37",
+        "font39",
+        "font40",
+        "font45",
+        "font46",
+        "font47",
+        "font52",
+        "font56",
+        "font65",
+        "font69",
+        "font139",
+        "font152",
+        "variant",
+        "font44",
+        "compactRows",
+        "overviewRows",
+        "fantasyRows",
+        "clockWeight",
+        "radiusPanel",
+        "radiusBadge",
+        "radiusDense",
+        "radiusMarker",
+        "hairlineWidth",
+        "semantic"
+      ],
+      "additionalProperties": false
+    },
+    "NotificationStyle": {
+      "type": "object",
+      "properties": {
+        "background": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "backgroundOverlay": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "surface": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "surfaceFocused": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "border": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "divider": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "textPrimary": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "textSecondary": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "accent": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "bannerSurface": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "debugSurface": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "demoSurface": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "radiusCard": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "radiusRow": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "radiusPill": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "radiusButton": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "spacing": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "listRows": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "borderWidth": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "focusWidth": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "textScale": {
+          "type": "number",
+          "readOnly": true
+        },
+        "uiFamily": {
+          "type": "string",
+          "readOnly": true
+        },
+        "numbersFamily": {
+          "type": "string",
+          "readOnly": true
+        },
+        "displayFamily": {
+          "type": "string",
+          "readOnly": true
+        },
+        "bodyWeight": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "headingWeight": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font18": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font19": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font20": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font21": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font22": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font23": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font24": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font25": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font26": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font27": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font28": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font29": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font30": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font31": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font32": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font33": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font34": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font35": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font36": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font37": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font39": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font40": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font45": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font46": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font47": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font52": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font56": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font65": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font69": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font139": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "font152": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "variant": {
+          "type": "string",
+          "readOnly": true
+        },
+        "font44": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "compactRows": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "overviewRows": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "fantasyRows": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "clockWeight": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "radiusPanel": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "radiusBadge": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "radiusDense": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "radiusMarker": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "hairlineWidth": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "semantic": {
+          "$ref": "#/$defs/SemanticPalette",
+          "readOnly": true
+        },
+        "prefix": {
+          "type": "string",
+          "readOnly": true
+        },
+        "surfaceColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "noticeFocusedSurface": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "titleColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "bodyColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "sourceColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "noticeAccent": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "noticeBorder": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "noticeRadius": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "noticeBorderWidth": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "padding": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "gap": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "panelWidth": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "panelHeight": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "insetX": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "insetY": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "anchor": {
+          "type": "string",
+          "readOnly": true
+        },
+        "titleSize": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "bodySize": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "sourceSize": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "guideSize": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "titleFamily": {
+          "type": "string",
+          "readOnly": true
+        },
+        "bodyFamily": {
+          "type": "string",
+          "readOnly": true
+        },
+        "sourceFamily": {
+          "type": "string",
+          "readOnly": true
+        },
+        "guideFamily": {
+          "type": "string",
+          "readOnly": true
+        },
+        "titleWeight": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "noticeBodyWeight": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "titleLines": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "bodyLines": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "showIcon": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "showSource": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "noticeRows": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "layoutY": {
+          "type": "number",
+          "readOnly": true
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "small",
+            "large",
+            "urgent",
+            "badge",
+            "inbox",
+            "detail"
+          ],
+          "readOnly": true
+        },
+        "guideColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "badgeTextColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "focusedTitleColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "focusedBodyColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "focusedSourceColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "background",
+        "backgroundOverlay",
+        "surface",
+        "surfaceFocused",
+        "border",
+        "divider",
+        "textPrimary",
+        "textSecondary",
+        "accent",
+        "bannerSurface",
+        "debugSurface",
+        "demoSurface",
+        "radiusCard",
+        "radiusRow",
+        "radiusPill",
+        "radiusButton",
+        "spacing",
+        "listRows",
+        "borderWidth",
+        "focusWidth",
+        "textScale",
+        "uiFamily",
+        "numbersFamily",
+        "displayFamily",
+        "bodyWeight",
+        "headingWeight",
+        "font18",
+        "font19",
+        "font20",
+        "font21",
+        "font22",
+        "font23",
+        "font24",
+        "font25",
+        "font26",
+        "font27",
+        "font28",
+        "font29",
+        "font30",
+        "font31",
+        "font32",
+        "font33",
+        "font34",
+        "font35",
+        "font36",
+        "font37",
+        "font39",
+        "font40",
+        "font45",
+        "font46",
+        "font47",
+        "font52",
+        "font56",
+        "font65",
+        "font69",
+        "font139",
+        "font152",
+        "variant",
+        "font44",
+        "compactRows",
+        "overviewRows",
+        "fantasyRows",
+        "clockWeight",
+        "radiusPanel",
+        "radiusBadge",
+        "radiusDense",
+        "radiusMarker",
+        "hairlineWidth",
+        "semantic",
+        "prefix",
+        "surfaceColor",
+        "noticeFocusedSurface",
+        "titleColor",
+        "bodyColor",
+        "sourceColor",
+        "noticeAccent",
+        "noticeBorder",
+        "noticeRadius",
+        "noticeBorderWidth",
+        "padding",
+        "gap",
+        "panelWidth",
+        "panelHeight",
+        "insetX",
+        "insetY",
+        "anchor",
+        "titleSize",
+        "bodySize",
+        "sourceSize",
+        "guideSize",
+        "titleFamily",
+        "bodyFamily",
+        "sourceFamily",
+        "guideFamily",
+        "titleWeight",
+        "noticeBodyWeight",
+        "titleLines",
+        "bodyLines",
+        "showIcon",
+        "showSource",
+        "noticeRows",
+        "layoutY",
+        "mode",
+        "guideColor",
+        "badgeTextColor",
+        "focusedTitleColor",
+        "focusedBodyColor",
+        "focusedSourceColor"
+      ],
+      "additionalProperties": false
+    },
+    "SemanticPalette": {
+      "type": "object",
+      "properties": {
+        "accentTextOnCanvas": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "accentTextOnOverlay": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "accentTextOnCard": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "accentTextOnFocused": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "warningOnCanvas": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "warningOnOverlay": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "warningOnCard": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "warningOnFocused": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "criticalOnCanvas": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "criticalOnOverlay": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "criticalOnCard": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "criticalOnFocused": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "accountCriticalOnCanvas": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "accountCriticalOnOverlay": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "accountCriticalOnCard": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "accountCriticalOnFocused": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "accentTextOnCanvas",
+        "accentTextOnOverlay",
+        "accentTextOnCard",
+        "accentTextOnFocused",
+        "warningOnCanvas",
+        "warningOnOverlay",
+        "warningOnCard",
+        "warningOnFocused",
+        "criticalOnCanvas",
+        "criticalOnOverlay",
+        "criticalOnCard",
+        "criticalOnFocused",
+        "accountCriticalOnCanvas",
+        "accountCriticalOnOverlay",
+        "accountCriticalOnCard",
+        "accountCriticalOnFocused"
+      ],
+      "additionalProperties": false
+    },
+    "SurfaceContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions"
+      ],
+      "additionalProperties": false
+    },
+    "PageContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 2,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "clock": {
+          "$ref": "#/$defs/ClockState",
+          "readOnly": true
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionState",
+          "readOnly": true
+        },
+        "weather": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WeatherData",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "account": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AccountData",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "nextEvent": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NextEventData",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sport": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SportData",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "team": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TeamData",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fantasy": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FantasyData",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "racing": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RacingData",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "clock",
+        "selection",
+        "weather",
+        "account",
+        "nextEvent",
+        "sport",
+        "team",
+        "fantasy",
+        "racing"
+      ],
+      "additionalProperties": false
+    },
+    "ShellContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "families": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Family"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "currentFamilyId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "currentViewId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "navigation": {
+          "$ref": "#/$defs/NavigationSnapshot",
+          "readOnly": true
+        },
+        "layout": {
+          "$ref": "#/$defs/ShellLayout",
+          "readOnly": true
+        },
+        "uiStatus": {
+          "$ref": "#/$defs/UiStatus",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "families",
+        "currentFamilyId",
+        "currentViewId",
+        "navigation",
+        "layout",
+        "uiStatus"
+      ],
+      "additionalProperties": false
+    },
+    "MenuContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MenuRow"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionState",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "rows",
+        "selection"
+      ],
+      "additionalProperties": false
+    },
+    "CommandsContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "keyMap": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "firstRun": {
+          "type": "boolean",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "keyMap",
+        "firstRun"
+      ],
+      "additionalProperties": false
+    },
+    "SummaryContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "familyId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "clock": {
+          "$ref": "#/$defs/ClockState",
+          "readOnly": true
+        },
+        "weather": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WeatherData",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "nextEvent": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NextEventData",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "familyId",
+        "clock",
+        "weather",
+        "nextEvent"
+      ],
+      "additionalProperties": false
+    },
+    "SettingsContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "sectionId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SettingRow"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionState",
+          "readOnly": true
+        },
+        "draft": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AppearanceDraftSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "operation": {
+          "$ref": "#/$defs/OperationState",
+          "readOnly": true
+        },
+        "description": {
+          "type": "string",
+          "readOnly": true
+        },
+        "feedback": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "sectionId",
+        "rows",
+        "selection",
+        "draft",
+        "operation",
+        "description",
+        "feedback"
+      ],
+      "additionalProperties": false
+    },
+    "InfoContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "tabs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Tab"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InfoRow"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionState",
+          "readOnly": true
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceState"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "updatedAt": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true,
+              "description": "Unit: epochSeconds"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "tabs",
+        "rows",
+        "selection",
+        "sources",
+        "updatedAt"
+      ],
+      "additionalProperties": false
+    },
+    "SportListContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "source": {
+          "$ref": "#/$defs/SourceState",
+          "readOnly": true
+        },
+        "matches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MatchData"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "standings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Standing"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "rounds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Round"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionState",
+          "readOnly": true
+        },
+        "selectedRoundId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "favouriteTeamId": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "source",
+        "matches",
+        "standings",
+        "rounds",
+        "selection",
+        "selectedRoundId",
+        "favouriteTeamId"
+      ],
+      "additionalProperties": false
+    },
+    "MatchContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "match": {
+          "$ref": "#/$defs/MatchData",
+          "readOnly": true
+        },
+        "source": {
+          "$ref": "#/$defs/SourceState",
+          "readOnly": true
+        },
+        "tabs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Tab"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionState",
+          "readOnly": true
+        },
+        "fantasy": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FantasyData",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "detailOperation": {
+          "$ref": "#/$defs/OperationState",
+          "readOnly": true
+        },
+        "origin": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "match",
+        "source",
+        "tabs",
+        "selection",
+        "fantasy",
+        "detailOperation",
+        "origin"
+      ],
+      "additionalProperties": false
+    },
+    "TeamContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "team": {
+          "$ref": "#/$defs/TeamData",
+          "readOnly": true
+        },
+        "tabs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Tab"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionState",
+          "readOnly": true
+        },
+        "calendarScope": {
+          "type": "string",
+          "readOnly": true
+        },
+        "serieAOnly": {
+          "type": "boolean",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "team",
+        "tabs",
+        "selection",
+        "calendarScope",
+        "serieAOnly"
+      ],
+      "additionalProperties": false
+    },
+    "TeamPickerContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "teams": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TeamIdentity"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionState",
+          "readOnly": true
+        },
+        "savedTeamId": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "teams",
+        "selection",
+        "savedTeamId"
+      ],
+      "additionalProperties": false
+    },
+    "RacingContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "f1",
+            "motogp"
+          ],
+          "readOnly": true
+        },
+        "source": {
+          "$ref": "#/$defs/SourceState",
+          "readOnly": true
+        },
+        "racing": {
+          "$ref": "#/$defs/RacingData",
+          "readOnly": true
+        },
+        "event": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RacingEventData",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "session": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RacingSessionData",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tabs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Tab"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionState",
+          "readOnly": true
+        },
+        "detailOperation": {
+          "$ref": "#/$defs/OperationState",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "kind",
+        "source",
+        "racing",
+        "event",
+        "session",
+        "tabs",
+        "selection",
+        "detailOperation"
+      ],
+      "additionalProperties": false
+    },
+    "DriverContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "f1",
+            "motogp"
+          ],
+          "readOnly": true
+        },
+        "driver": {
+          "$ref": "#/$defs/DriverData",
+          "readOnly": true
+        },
+        "source": {
+          "$ref": "#/$defs/SourceState",
+          "readOnly": true
+        },
+        "live": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "tabs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Tab"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionState",
+          "readOnly": true
+        },
+        "detailOperation": {
+          "$ref": "#/$defs/OperationState",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "kind",
+        "driver",
+        "source",
+        "live",
+        "tabs",
+        "selection",
+        "detailOperation"
+      ],
+      "additionalProperties": false
+    },
+    "SceneContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actor": {
+          "$ref": "#/$defs/ActorSnapshot",
+          "readOnly": true
+        },
+        "configuration": {
+          "$ref": "#/$defs/SceneConfiguration",
+          "readOnly": true
+        },
+        "occupiedRegions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Rect"
+          },
+          "maxItems": 64,
+          "readOnly": true
+        },
+        "notification": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NotificationEvent",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "clock": {
+          "$ref": "#/$defs/ClockState",
+          "readOnly": true
+        },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
+        "suspended": {
+          "type": "boolean",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "actor",
+        "configuration",
+        "occupiedRegions",
+        "notification",
+        "clock",
+        "motionPolicy",
+        "suspended"
+      ],
+      "additionalProperties": false
+    },
+    "NotificationContext": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "mode": {
+          "type": "string",
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "visualStyle": {
+          "$ref": "#/$defs/NotificationStyle",
+          "readOnly": true
+        },
+        "active": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "interactive": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "exiting": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "preview": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "ready": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "error": {
+          "type": "string",
+          "readOnly": true
+        },
+        "viewportWidth": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "viewportHeight": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "event": {
+          "type": "object",
+          "readOnly": true
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "readOnly": true
+        },
+        "selectedEventId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "unreadCount": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "sourceStatus": {
+          "type": "string",
+          "readOnly": true
+        },
+        "scrollOffset": {
+          "type": "number",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "scrollMaximum": {
+          "type": "number",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "occupiedRegions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Rect"
+          },
+          "maxItems": 64,
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "readOnly": true
+        },
+        "commandHints": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "readOnly": true
+        },
+        "guideText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "sourceText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "validityText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "iconId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "eventData": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NotificationEvent",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "itemModel": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NotificationEvent"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "sourceMetadata": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceState",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "apiVersion",
+        "contentId",
+        "mode",
+        "style",
+        "visualStyle",
+        "active",
+        "interactive",
+        "exiting",
+        "preview",
+        "ready",
+        "error",
+        "viewportWidth",
+        "viewportHeight",
+        "event",
+        "items",
+        "selectedEventId",
+        "unreadCount",
+        "sourceStatus",
+        "scrollOffset",
+        "scrollMaximum",
+        "occupiedRegions",
+        "appearanceRevision",
+        "safeArea",
+        "actions",
+        "commandHints",
+        "guideText",
+        "sourceText",
+        "validityText",
+        "iconId"
+      ],
+      "additionalProperties": false
+    },
+    "CommandModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Command"
+      },
+      "maxItems": 10000
+    },
+    "ActionModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/AvailableAction"
+      },
+      "maxItems": 10000
+    },
+    "TabModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Tab"
+      },
+      "maxItems": 10000
+    },
+    "FamilyModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Family"
+      },
+      "maxItems": 10000
+    },
+    "MenuRowModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/MenuRow"
+      },
+      "maxItems": 10000
+    },
+    "SettingRowModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/SettingRow"
+      },
+      "maxItems": 10000
+    },
+    "SettingOptionModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/SettingOption"
+      },
+      "maxItems": 10000
+    },
+    "InfoRowModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/InfoRow"
+      },
+      "maxItems": 10000
+    },
+    "WeatherForecastModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/WeatherForecast"
+      },
+      "maxItems": 10000
+    },
+    "AccountWindowModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/AccountWindow"
+      },
+      "maxItems": 10000
+    },
+    "TeamIdentityModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/TeamIdentity"
+      },
+      "maxItems": 10000
+    },
+    "MatchEventModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/MatchEvent"
+      },
+      "maxItems": 10000
+    },
+    "MatchStatisticModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/MatchStatistic"
+      },
+      "maxItems": 10000
+    },
+    "LineupPlayerModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/LineupPlayer"
+      },
+      "maxItems": 10000
+    },
+    "LineupModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Lineup"
+      },
+      "maxItems": 10000
+    },
+    "MatchModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/MatchData"
+      },
+      "maxItems": 10000
+    },
+    "StandingModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Standing"
+      },
+      "maxItems": 10000
+    },
+    "RoundModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Round"
+      },
+      "maxItems": 10000
+    },
+    "FantasyBonusModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/FantasyBonus"
+      },
+      "maxItems": 10000
+    },
+    "FantasyPlayerModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/FantasyPlayer"
+      },
+      "maxItems": 10000
+    },
+    "FantasyTeamModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/FantasyTeam"
+      },
+      "maxItems": 10000
+    },
+    "RacingTimingModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/RacingTiming"
+      },
+      "maxItems": 10000
+    },
+    "PitStopModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/PitStop"
+      },
+      "maxItems": 10000
+    },
+    "LapTimeModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/LapTime"
+      },
+      "maxItems": 10000
+    },
+    "StintModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Stint"
+      },
+      "maxItems": 10000
+    },
+    "RacingSessionModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/RacingSessionData"
+      },
+      "maxItems": 10000
+    },
+    "RacingEventModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/RacingEventData"
+      },
+      "maxItems": 10000
+    },
+    "RaceMessageModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/RaceMessage"
+      },
+      "maxItems": 10000
+    },
+    "NotificationEventModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NotificationEvent"
+      },
+      "maxItems": 10000
+    },
+    "SourceModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/SourceState"
+      },
+      "maxItems": 10000
+    }
+  },
+  "description": "Choose an explicit $defs type. Python validator also checks model identity uniqueness and request allowlists."
+}
