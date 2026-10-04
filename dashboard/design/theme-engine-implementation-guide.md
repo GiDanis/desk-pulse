@@ -2,6 +2,8 @@
 
 Il motore usa Python/PySide6 per catalogo, validazione, preparazione e salvataggio; Qt Quick/QML per composizione, rendering e animazioni. I pacchetti personali sono JSON. Il compagno definitivo rimane nella v0.9: la v0.6.6 contiene già host persistente, stato dell'attore e registrazione di renderer, con una scena geometrica di prova.
 
+Il ponte B0 è [consegnato](theme-engine-authoring-b0-report.md). Lo sviluppo successivo è preparato nell'[analisi A0/A1](theme-engine-a0-a1-implementation-analysis.md): modulo pubblico, copertura di shell/overlay, contesti senza controller, dati strutturati e ruoli semantici. Quelle API sono proposte da implementare e non vanno usate come comandi/proprietà già disponibili. L'importazione di nuovi QML in un bundle rimane A2.
+
 ## Uso sulla dashboard
 
 `9 Menu → Impostazioni → Aspetto`. `2/8` selezionano; `4/6` regolano; `5` attiva l'azione; `7` annulla/torna; `1` torna Home. La mappa del decoder è conservata: 1 Home, 7 Back. Le prove automatiche coprono tasti Qt e scancode HID; una pressione umana sul tastierino resta un controllo ergonomico distinto.

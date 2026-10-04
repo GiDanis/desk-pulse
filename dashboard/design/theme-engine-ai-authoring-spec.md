@@ -1,6 +1,6 @@
 # Theme Engine — creazione tramite AI e temi completi importabili
 
-**Revisione 1.2 · 4 ottobre 2026 · Europe/Rome**
+**Revisione 1.3 · 4 ottobre 2026 · Europe/Rome**
 
 **Stato: specifica del percorso completo; B0 schema 1 implementato, bundle/API/lifecycle nuovi ancora da realizzare.** [Consegna B0](theme-engine-authoring-b0-report.md). L'inventario iniziale si riferisce al commit `c66d9c8`, dopo la migrazione delle sei superfici Avvisi. Questo documento amplia il criterio di completamento del Theme Engine sulla base dell'obiettivo chiarito dall'utente: creare il tema con l'AI, importarlo completo e applicarlo dalle impostazioni, conservando la stessa applicazione e limitando gli adattamenti sul dispositivo.
 
@@ -526,6 +526,8 @@ La pubblicazione deve evitare conversioni ripetute delle stesse snapshot per ogn
 Gli eventi non vengono riscritti e non richiedono una nuova tabella SQLite per l'estetica. L'eventuale estensione dei metadati fonte è un adapter documentato, senza reset di lettura/consegna. Il ripristino di una revisione del tema non ripristina una copia vecchia del DB degli eventi.
 
 ## 16. Piano esecutivo con gate
+
+Per lo sviluppo iniziale usare l'[analisi operativa A0/A1](theme-engine-a0-a1-implementation-analysis.md): inventario verificato di 44 superfici / 30 route, contesti/azioni proposti, DTO di dominio e normalizzazione numerica meteo compatibile, shell/overlay host, adapter Notification1, ruoli semantici e trace della revisione mostrata. È una preparazione documentale; i contratti canonici e il modulo pubblico restano da implementare.
 
 | Fase | Risultato concreto | Verifica per uscire |
 | --- | --- | --- |

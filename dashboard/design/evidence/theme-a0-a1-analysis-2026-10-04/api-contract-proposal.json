@@ -1,0 +1,423 @@
+{
+  "status": "designProposalNotImplemented",
+  "revision": "0.1",
+  "completeness": "Architecture and common fields; complete DTO fields, per-surface allowlists, ranges and role graphs must be generated and frozen with A0 fixtures before A1 API release. This file is not a JSON Schema.",
+  "module": {
+    "uri": "SmartPC.ThemeApi",
+    "major": 2,
+    "minor": 0,
+    "path": "dashboard/qml/SmartPC/ThemeApi",
+    "canonicalContractDirectory": "dashboard/theme-api"
+  },
+  "objects": "App-owned public DTOs/contexts expose read-only properties; private input setters and service handles omitted. ThemeStyle fields typed QML; long collections Qt list models with declared roles.",
+  "contexts": {
+    "SurfaceContext": {
+      "version": 1,
+      "fields": {
+        "contentId": "string",
+        "contextVersion": "int",
+        "surfaceInstanceId": "string",
+        "appearanceRevision": "int",
+        "dataRevision": "int",
+        "style": "ThemeStyle",
+        "lifecycle": "SurfaceLifecycle",
+        "viewport": "rect",
+        "safeArea": "rect",
+        "commands": "CommandModel",
+        "actions": "ActionModel"
+      }
+    },
+    "PageContext": {
+      "version": 2,
+      "base": "SurfaceContext",
+      "fields": {
+        "clock": "ClockState",
+        "selection": "SelectionState",
+        "weather": "WeatherData?",
+        "account": "AccountData?",
+        "nextEvent": "NextEventData?",
+        "sport": "SportData?",
+        "team": "TeamData?",
+        "fantasy": "FantasyData?",
+        "racing": "RacingData?"
+      },
+      "note": "Only relevant domains supplied; optional domain availability explicit; no universal service map."
+    },
+    "ShellContext": {
+      "version": 1,
+      "base": "SurfaceContext",
+      "fields": {
+        "families": "FamilyModel",
+        "currentFamilyId": "string",
+        "currentViewId": "string",
+        "navigation": "NavigationSnapshot",
+        "layout": "ShellLayout",
+        "uiStatus": "UiStatus"
+      }
+    },
+    "MenuContext": {
+      "version": 1,
+      "base": "SurfaceContext",
+      "fields": {
+        "rows": "MenuRowModel",
+        "selection": "SelectionState"
+      }
+    },
+    "CommandsContext": {
+      "version": 1,
+      "base": "SurfaceContext",
+      "fields": {
+        "keyMap": "CommandModel",
+        "firstRun": "bool"
+      }
+    },
+    "SummaryContext": {
+      "version": 1,
+      "base": "SurfaceContext",
+      "fields": {
+        "familyId": "string",
+        "clock": "ClockState",
+        "weather": "WeatherData?",
+        "nextEvent": "NextEventData?"
+      }
+    },
+    "SettingsContext": {
+      "version": 1,
+      "base": "SurfaceContext",
+      "fields": {
+        "sectionId": "string",
+        "rows": "SettingRowModel",
+        "selection": "SelectionState",
+        "draft": "AppearanceDraftSummary",
+        "operation": "OperationState",
+        "description": "string",
+        "feedback": "string"
+      }
+    },
+    "InfoContext": {
+      "version": 1,
+      "base": "SurfaceContext",
+      "fields": {
+        "tabs": "TabModel",
+        "rows": "InfoRowModel",
+        "selection": "SelectionState",
+        "sources": "SourceModel",
+        "updatedAt": "epochSeconds?"
+      }
+    },
+    "SportListContext": {
+      "version": 1,
+      "base": "SurfaceContext",
+      "fields": {
+        "source": "SourceState",
+        "matches": "MatchModel",
+        "standings": "StandingModel",
+        "rounds": "RoundModel",
+        "selection": "SelectionState",
+        "selectedRoundId": "string",
+        "favouriteTeamId": "string"
+      }
+    },
+    "MatchContext": {
+      "version": 1,
+      "base": "SurfaceContext",
+      "fields": {
+        "match": "MatchData",
+        "source": "SourceState",
+        "tabs": "TabModel",
+        "selection": "SelectionState",
+        "fantasy": "FantasyData?",
+        "detailOperation": "OperationState",
+        "origin": "string"
+      }
+    },
+    "TeamContext": {
+      "version": 1,
+      "base": "SurfaceContext",
+      "fields": {
+        "team": "TeamData",
+        "tabs": "TabModel",
+        "selection": "SelectionState",
+        "calendarScope": "string",
+        "serieAOnly": "bool"
+      }
+    },
+    "TeamPickerContext": {
+      "version": 1,
+      "base": "SurfaceContext",
+      "fields": {
+        "teams": "TeamIdentityModel",
+        "selection": "SelectionState",
+        "savedTeamId": "string"
+      }
+    },
+    "RacingContext": {
+      "version": 1,
+      "base": "SurfaceContext",
+      "fields": {
+        "kind": "f1|motogp",
+        "source": "SourceState",
+        "racing": "RacingData",
+        "event": "RacingEventData?",
+        "session": "RacingSessionData?",
+        "tabs": "TabModel",
+        "selection": "SelectionState",
+        "detailOperation": "OperationState"
+      }
+    },
+    "DriverContext": {
+      "version": 1,
+      "base": "SurfaceContext",
+      "fields": {
+        "kind": "f1|motogp",
+        "driver": "DriverData",
+        "source": "SourceState",
+        "live": "bool",
+        "tabs": "TabModel",
+        "selection": "SelectionState",
+        "detailOperation": "OperationState"
+      }
+    },
+    "NotificationContext": {
+      "version": 1,
+      "fields": {
+        "contentId": "string",
+        "mode": "string",
+        "style": "ThemeStyle",
+        "visualStyle": "NotificationStyle",
+        "active": "bool",
+        "interactive": "bool",
+        "exiting": "bool",
+        "preview": "bool",
+        "event": "QVariantMap snapshot (legacy)",
+        "items": "QVariantList snapshot (legacy)",
+        "selectedEventId": "string",
+        "unreadCount": "int",
+        "sourceStatus": "string",
+        "sourceMetadata": "SourceState?",
+        "scrollOffset": "real",
+        "scrollMaximum": "real",
+        "commandHints": "QVariantList snapshot (legacy)",
+        "guideText": "string",
+        "sourceText": "string",
+        "validityText": "string",
+        "iconId": "string",
+        "viewportWidth": "int",
+        "viewportHeight": "int",
+        "appearanceRevision": "int",
+        "safeArea": "rect",
+        "actions": "QVariantList snapshot (legacy)",
+        "ready": "bool",
+        "error": "string",
+        "occupiedRegions": "rectList",
+        "eventData": "NotificationEvent?",
+        "itemModel": "NotificationEventModel?",
+        "commands": "CommandModel?"
+      },
+      "compatibility": "Preserve all legacy property types and meanings and requestAction bool return. Add typed eventData/itemModel/commands and a structured request method as optional capabilities. Host sourceEvent/sourceItems/actionHandler inputs remain private."
+    },
+    "SceneContext": {
+      "version": 1,
+      "base": "SurfaceContext",
+      "fields": {
+        "actor": "ActorSnapshot",
+        "configuration": "SceneConfiguration",
+        "occupiedRegions": "rectList",
+        "notification": "NotificationEvent?",
+        "clock": "ClockState",
+        "motionPolicy": "MotionPolicy",
+        "suspended": "bool"
+      }
+    }
+  },
+  "domainValue": {
+    "available": "bool",
+    "value": "real; meaningful only when available",
+    "unit": "declared enum/string",
+    "displayText": "string",
+    "sourceRevision": "string"
+  },
+  "requestProtocol": {
+    "signature": "requestAction(actionId, targetId, arguments) for new contexts; NotificationContext1 keeps requestAction(...):bool and adds request(...) with structured result",
+    "metadata": "Optional requestId in arguments; generated when absent, bound to surfaceInstanceId/generation by broker, duplicates idempotent within that instance. Notification1 adapter preserves existing call shape.",
+    "response": {
+      "accepted": "bool",
+      "requestId": "string",
+      "status": "rejected|accepted|pending|completed|failed",
+      "errorCode": "string"
+    },
+    "completion": "App-owned operation/result state; accepted is not saved/refreshed",
+    "controls": [
+      "active surface",
+      "interactive",
+      "not preview",
+      "instance/generation current",
+      "allowlisted action",
+      "known target ID",
+      "typed bounded arguments",
+      "urgent priority",
+      "backend cooldown and functional settings"
+    ]
+  },
+  "proposedActions": {
+    "navigation.home": {},
+    "navigation.back": {},
+    "navigation.menu": {},
+    "navigation.inbox": {},
+    "navigation.family.step": {
+      "direction": "-1|1"
+    },
+    "navigation.view.step": {
+      "direction": "-1|1"
+    },
+    "selection.move": {
+      "direction": "-1|1"
+    },
+    "selection.select": {},
+    "tabs.select": {},
+    "details.open": {},
+    "details.scroll": {
+      "delta": "finite real"
+    },
+    "details.refresh": {},
+    "settings.activate": {},
+    "settings.adjust": {
+      "direction": "-1|1"
+    },
+    "sources.refresh": {},
+    "appearance.preview": {},
+    "appearance.apply": {},
+    "appearance.cancel": {},
+    "appearance.reset": {},
+    "appearance.reload": {},
+    "appearance.import": {},
+    "appearance.export": {},
+    "appearance.notificationPreview": {
+      "mode": "small|large|urgent|badge|inbox|detail"
+    },
+    "openInbox": {},
+    "selectEvent": {},
+    "moveSelection": {
+      "direction": "-1|1"
+    },
+    "openDetails": {},
+    "scrollDetails": {
+      "delta": "finite real"
+    },
+    "dismiss": {},
+    "back": {},
+    "home": {}
+  },
+  "legacyNotificationMethods": [
+    "requestAction",
+    "settleMotion",
+    "formatStamp"
+  ],
+  "privateOnly": [
+    "controller",
+    "dashboardState",
+    "themeService",
+    "providers",
+    "actionHandler",
+    "markBannerPresented",
+    "markEventSeen",
+    "ActorState setters"
+  ],
+  "gapMap": {
+    "G01": {
+      "stage": "A2",
+      "a0a1": "Coverage and public contracts are prerequisites, bundle not delivered"
+    },
+    "G02": {
+      "stage": "A1",
+      "a0a1": "Public PageContext2, structured domain data including raw weather values, private legacy adapter"
+    },
+    "G03": {
+      "stage": "A1",
+      "a0a1": "44 logical surfaces, shell and non-notification overlay hosts"
+    },
+    "G04": {
+      "stage": "A2",
+      "a0a1": "RendererRef/identity interface prepared for four host families; bundle resolver not delivered"
+    },
+    "G05": {
+      "stage": "A2/A3",
+      "a0a1": "Trusted code assumption explicit; API is not a sandbox"
+    },
+    "G06": {
+      "stage": "A3",
+      "a0a1": "Existing in-process timeout preserved; external supervisor not delivered"
+    },
+    "G07": {
+      "stage": "A4",
+      "a0a1": "Generated API/typeinfo/fixtures prepare complete kit; B0 kit remains schema1"
+    },
+    "G08": {
+      "stage": "A1/A2",
+      "a0a1": "Staged visible shell/page/overlay and enabled scene; complete resource/dependency preflight finishes A2"
+    },
+    "G09": {
+      "stage": "A3/A5",
+      "a0a1": "Preserve legacy overrides, report derived semantic roles; no persistent override redesign yet"
+    },
+    "G10": {
+      "stage": "A3",
+      "a0a1": "Identity contract only; no update/GC"
+    },
+    "G11": {
+      "stage": "A2/A6",
+      "a0a1": "Public imports established, code export portability not delivered"
+    },
+    "G12": {
+      "stage": "A0/A1/A2",
+      "a0a1": "Version/capability matrix and apiFingerprint distinct from B0 registryFingerprint"
+    },
+    "G13": {
+      "stage": "B0/A2/A5",
+      "a0a1": "B0 transfer remains available; full bundle transfer and UI states later"
+    },
+    "G14": {
+      "stage": "A5",
+      "a0a1": "Settings rows gain stable IDs, advanced editor retained through adapter"
+    },
+    "G15": {
+      "stage": "A0/A1",
+      "a0a1": "Stable hosts, readiness and contract tests distinct from Base children"
+    },
+    "G16": {
+      "stage": "A0/A6",
+      "a0a1": "Fresh target profile, per-host revision trace, residual 155.921ms remains until measured"
+    },
+    "G17": {
+      "stage": "A1",
+      "a0a1": "Per-event source metadata with backward-compatible NotificationContext1"
+    },
+    "G18": {
+      "stage": "A2/A4",
+      "a0a1": "Resource contract interface prepared; licenses/dependency bundle later"
+    },
+    "G19": {
+      "stage": "B0/A1/A3/A5",
+      "a0a1": "Structured action acceptance/completion and host-specific errors, no false save confirmation"
+    },
+    "G20": {
+      "stage": "A1/future companion",
+      "a0a1": "Read-only persistent ActorSnapshot; no final rig or asset restrictions chosen"
+    },
+    "G21": {
+      "stage": "A1",
+      "a0a1": "Shared semantic usage graph, adaptive foregrounds, focused pairs and T21 before light capability"
+    }
+  },
+  "rendererDescriptor": {
+    "layoutCapabilities": "fixedViewport or adaptive with minWidth/minHeight and supported viewport constraints; validated with candidate ShellLayout before commit",
+    "identity": [
+      "origin",
+      "id",
+      "contextApi",
+      "fileOrResourceRef",
+      "revisionFingerprint"
+    ],
+    "resourceScope": "Application assets in A1; bundle immutable resource resolution in A2"
+  }
+}
