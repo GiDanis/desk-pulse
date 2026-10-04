@@ -1,8 +1,8 @@
 # Theme Engine — analisi operativa A0 / A1
 
-**Revisione 1.1 · 4 ottobre 2026 · Europe/Rome**
+**Revisione 1.2 · 4 ottobre 2026 · Europe/Rome**
 
-**Stato: A0.1/A0.2 implementati; A0.3/A0.4 e A1 aperti.** La prima consegna è nel [resoconto dei contratti](theme-engine-a0-contracts-report.md). I [contratti canonici](../theme-api/README.md) sostituiscono le proposte archiviate come riferimento per superfici, contesti, azioni e ruoli. Il modulo QML pubblico, il broker e gli host nuovi rimangono A1; il bundle autonomo rimane A2. Le sezioni seguenti conservano baseline e sequenza dell'analisi approvata; le prove successive sono nel resoconto.
+**Stato: A0.1/A0.2 implementati; A0.3/A0.4 e A1 aperti.** La prima consegna è nel [resoconto dei contratti](theme-engine-a0-contracts-report.md). A0.3/A0.4 hanno ora una [preparazione operativa dedicata](theme-engine-a03-a04-implementation-analysis.md): trace/revisione/frame, corpus, isolamento e criteri di chiusura; restano da implementare. I [contratti canonici](../theme-api/README.md) sostituiscono le proposte archiviate come riferimento per superfici, contesti, azioni e ruoli. Il modulo QML pubblico, il broker e gli host nuovi rimangono A1; il bundle autonomo rimane A2. Le sezioni seguenti conservano baseline e sequenza dell'analisi approvata; le prove successive sono nel resoconto.
 
 ## 1. Baseline e problemi effettivi
 
@@ -89,6 +89,8 @@ Sono implementati in `dashboard/theme-api/` i contratti canonici `surfaces.json`
 - Conservare i vecchi profili/kit B0. Il profilo API 2 avrà versione propria e lettura esplicita dei campi; nessun riuso silenzioso di un profilo 1 come certificazione del nuovo ABI.
 
 ### A0.3 Profilo e tracing del cambio tema
+
+Il dettaglio di implementazione è nella [nuova analisi A0.3/A0.4](theme-engine-a03-a04-implementation-analysis.md). Precisa le due definizioni warm della baseline e il protocollo di frame, senza cambiare i raw report storici.
 
 Il residuo pregresso senza nuovi font è **155,921 ms p95 richiesta→frame**, contro l'obiettivo 150 ms; non è stato chiuso dal collaudo B0. [Misura originale](theme-engine-notification-migration-report.md). In `verify_notifications_board.py`, il frame viene associato al tema atteso e all'assenza del candidato; non contiene ancora un acknowledgement esplicito della revisione disegnata da ogni host. Prima di ottimizzare, precisare la misura senza cancellare quella precedente.
 

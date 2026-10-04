@@ -1,0 +1,70 @@
+{
+  "analysisOnly": true,
+  "profiles": [
+    {
+      "profile": "stress-presets",
+      "report": "design/evidence/notification-engine-migration/eglfs/stress-presets/report.json",
+      "sha256": "b31acd02c826b17b934ab709488f168760121c12a034ff66e272c4c4d29a6b3f",
+      "historicalSamples": 100,
+      "requestToThemeFrameMs": {
+        "count": 100,
+        "p95": 155.921,
+        "max": 174.3469739885768,
+        "warmP95": 151.777
+      },
+      "prepareMs": {
+        "p95": 116.023,
+        "max": 144.59282699681353
+      },
+      "memoryMiB": {
+        "peakPss": 120.013671875,
+        "warmMedianPss": 119.580078125,
+        "lateMedianPss": 119.916015625,
+        "lateGrowthMiB": 0.3359375
+      },
+      "recomputedP95": 155.921,
+      "legacyWarmAfterSixSamples": 94,
+      "legacyWarmRule": "swap > 6; not first-use-per-mode/renderer exclusion",
+      "warmIntervalRule": "firstUseOfModeAndTheme == false",
+      "legacyStatistic": "floor((n-1)*q), q=0.95; no interpolation",
+      "historicalGateResidualMs": 5.921,
+      "revisionOfEachHostVerified": false,
+      "newPerformanceMeasurement": false
+    },
+    {
+      "profile": "stress-fonts",
+      "report": "design/evidence/notification-engine-migration/eglfs/stress-fonts/report.json",
+      "sha256": "b4b0a93c23593f063b56f2d69a34f2ea67b27442b49edcdc00f67e1a4471f204",
+      "historicalSamples": 100,
+      "requestToThemeFrameMs": {
+        "count": 100,
+        "p95": 143.556,
+        "max": 232.13521199068055,
+        "warmP95": 140.086
+      },
+      "prepareMs": {
+        "p95": 104.607,
+        "max": 133.00862899632193
+      },
+      "memoryMiB": {
+        "peakPss": 122.53515625,
+        "warmMedianPss": 122.13671875,
+        "lateMedianPss": 122.44140625,
+        "lateGrowthMiB": 0.3046875
+      },
+      "recomputedP95": 143.556,
+      "legacyWarmAfterSixSamples": 94,
+      "legacyWarmRule": "swap > 6; not first-use-per-mode/renderer exclusion",
+      "warmIntervalRule": "firstUseOfModeAndTheme == false",
+      "legacyStatistic": "floor((n-1)*q), q=0.95; no interpolation",
+      "historicalGateResidualMs": -6.444,
+      "revisionOfEachHostVerified": false,
+      "newPerformanceMeasurement": false
+    }
+  ],
+  "notes": [
+    "prepareMs measures synchronous selectDraft duration, including validation/resolve and synchronous signal propagation; not full host preparation",
+    "SceneHost is outside ThemeService requiredContents; no scene per-revision acknowledgement",
+    "Render-thread/GUI-thread association must be prototyped, not inferred from callback arrival"
+  ]
+}

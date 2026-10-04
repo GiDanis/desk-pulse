@@ -1,0 +1,98 @@
+{
+  "planVersion": 1,
+  "analysisOnly": true,
+  "status": "proposedNotImplemented",
+  "clock": "process-local time.perf_counter_ns offset from session start; no Date.now duration",
+  "recordVersion": 1,
+  "correlationKeys": [
+    "sessionId",
+    "traceRequestId",
+    "operation",
+    "attemptId",
+    "serviceGeneration",
+    "appearanceRevision",
+    "hostInstanceId",
+    "localGeneration",
+    "frameSerial",
+    "surfaceId",
+    "rendererIdentity",
+    "eventId/eventRevision/rank"
+  ],
+  "transactionOutcomes": [
+    "coherentSubmission",
+    "noVisualChange",
+    "rejected",
+    "superseded",
+    "cancelled",
+    "failed",
+    "timeout",
+    "recoveryFallback",
+    "unobservedFrame"
+  ],
+  "phases": [
+    "request",
+    "configValidation",
+    "resolvedData(cache hit/miss)",
+    "catalogValidation/contrast/assets",
+    "fontAcquire/cacheRetire",
+    "imageHeaderCheck",
+    "candidateAnnounced",
+    "hostPrepare",
+    "loaderReady",
+    "presentationReady",
+    "candidateReport",
+    "snapshotPublish",
+    "hostCommitOrReuse",
+    "guiFrameSnapshot",
+    "sceneSynchronized",
+    "frameQueued",
+    "motionStoppedOrSettled",
+    "saveBegin/saveEnd",
+    "export"
+  ],
+  "frameProtocol": [
+    "GUI afterAnimating captures immutable visible/mandatory participant signature, including inline shell/overlay observers",
+    "afterSynchronizing direct callback only latches already-copied primitive snapshot/frame serial; never touches QML/GUI/provider",
+    "frameSwapped direct callback stores local monotonic timestamp and matching sync serial; queued delivery carries frozen record",
+    "GUI consumer classifies snapshot/revision/visibility and expected frozen exits; old/new callbacks cannot be relabelled from current mutable state",
+    "prototype required on Qt 6.8.2 / PySide6 6.8.2.1 EGLFS and Qt 6.11; ambiguous/unmatched records remain unobserved; no fallback PASS"
+  ],
+  "timestampQuality": "Python direct-callback entry includes any GIL acquisition delay; quantify in prototype, use calibrated native emitter timestamp if required; never assert zero observation delay",
+  "proofScope": "sampled Qt state correlated with scene synchronization/presentation submission; not general pixel verification, GPU time or optical response",
+  "boundedBuffer": {
+    "maxEvents": 16384,
+    "payloadBytesLimit": 8388608,
+    "maxOpenRequests": 16,
+    "overflow": "recordsDropped count + invalid measurement; no success from missing records",
+    "disabled": "no allocations of records, serialization or frame subscriptions"
+  },
+  "legacyMetricsPreserved": [
+    "requestToThemeFrameMs",
+    "warmP95 rule swap > 6",
+    "frame interval first requested (mode,theme) warm rule",
+    "prepareMs legacy synchronous call duration"
+  ],
+  "newMetrics": [
+    "inputToCoherentSubmissionMs (explicit causal input parent; historical setter metric separate)",
+    "requestToCoherentSubmissionMs",
+    "mandatoryParticipantsCommittedMs",
+    "requestToMotionSettledFrameMs",
+    "requestToPersistedMs",
+    "notificationIdRevisionRankToSubmissionMs",
+    "GUI event recording cost",
+    "render callback recording cost"
+  ],
+  "performanceTarget": {
+    "coherentSubmissionP95Ms": 150,
+    "ordinaryFrameWindowP95Ms": 20,
+    "thresholdsAreUnchanged": true,
+    "A03MayCloseWithExplicitResidual": true,
+    "timeoutsAndMissingFramesMustBeReported": true
+  },
+  "initialDiagnosticOverheadTargets": {
+    "recordingCostPerRequestP95Ms": 1,
+    "extraDiagnosticPssMiB": 8,
+    "acceptance": "proposals to verify with paired trace off/on runs; inconclusive jitter reported, no automatic threshold expansion"
+  },
+  "runtimeImplemented": false
+}

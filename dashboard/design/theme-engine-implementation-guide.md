@@ -153,3 +153,5 @@ Gli otto secondi del banner iniziano dopo l'acknowledgment del frame Qt, validat
 ## Verifica dei contratti A0
 
 I quattro [input canonici](../theme-api/README.md) generano riferimento, schema snapshot, blueprint `.qmltypes`, requisiti fixture e fingerprint API. Dal checkout: `python3 scripts/generate-theme-api-contract.py --check`; dalla distribuzione: `python3 theme_api_tools.py --check`. Il profilo B0 schema 1 aggiunge `apiFingerprint` e `themeApiContract.availability = contractOnly`, con `runtimeModuleVerified = false`. Questi metadati non abilitano pacchetti schema 2 o nuovi renderer. Il fingerprint dei registri B0 resta distinto.
+
+La [preparazione A0.3/A0.4](theme-engine-a03-a04-implementation-analysis.md) definisce recorder e fixture isolati. I nomi nuovi di harness/CLI contenuti nel piano sono proposti: non sono comandi disponibili nel runtime attuale. Le prove del modulo pubblico restano A1.
