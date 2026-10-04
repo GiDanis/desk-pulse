@@ -172,4 +172,17 @@ Gli otto secondi del banner iniziano dopo l'acknowledgment del frame Qt, validat
 
 I quattro [input canonici](../theme-api/README.md) generano riferimento, schema snapshot, blueprint `.qmltypes`, requisiti fixture e fingerprint API. Dal checkout: `python3 scripts/generate-theme-api-contract.py --check`; dalla distribuzione: `python3 theme_api_tools.py --check`. Il profilo B0 schema 1 aggiunge `apiFingerprint` e `themeApiContract.availability = contractOnly`, con `runtimeModuleVerified = false`. Questi metadati non abilitano pacchetti schema 2 o nuovi renderer. Il fingerprint dei registri B0 resta distinto.
 
-La [preparazione A0.3/A0.4](theme-engine-a03-a04-implementation-analysis.md) definisce recorder e fixture isolati. I nomi nuovi di harness/CLI contenuti nel piano sono proposti: non sono comandi disponibili nel runtime attuale. Le prove del modulo pubblico restano A1.
+Recorder e corpus A0.3/A0.4 sono [implementati, verificati e installati](theme-engine-a03-a04-implementation-report.md), con gate prestazionali e copertura semantica completa ancora aperti. I comandi seguenti sono disponibili dal checkout con Python/PySide6:
+
+```bash
+python3 dashboard/check_theme_trace.py
+python3 dashboard/check_theme_frame_trace.py
+python3 dashboard/check_theme_trace_bridge.py
+python3 dashboard/check_theme_runtime_fixtures.py --track contractData --output /tmp/theme-contract-data.json
+QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software python3 dashboard/check_theme_runtime_fixtures.py --track all --regressions --output /tmp/theme-runtime.json
+python3 scripts/package-dashboard.py build --diagnostics --output /tmp/theme-diagnostic/dashboard
+```
+
+La lane `legacyUi` richiede il checkout o il package `--diagnostics`, perché il runtime ordinario omette il Canvas di test; `contractData` resta utilizzabile nella distribuzione. `publicApiBinding` è deferred A1: il runner non finge il modulo pubblico già registrato. `verify_theme_trace_board.py` conserva la workload Avvisi e accetta `--trace`; `verify_theme_frame_protocol.py` verifica le correlazioni e `verify_theme_trace_idle.py` controlla che l'observer non produca frame. Le prove EGLFS richiedono accesso esclusivo al display e ripristino del kiosk.
+
+Per una sessione esplicita il launcher supporta `--theme-trace-output /percorso/session.json`; il servizio ordinario rimane senza tracer. I raw contengono solo metadati consentiti e bounded; il tracing non modifica provider, timer di consegna o flags degli eventi. Le prove del modulo pubblico restano A1.

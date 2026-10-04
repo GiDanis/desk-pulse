@@ -2,7 +2,7 @@
 
 **Revisione 1.0 · 4 ottobre 2026 · Europe/Rome**
 
-**Stato: tracing privato e corpus implementati; evidenze finali board e decisione sui gate in aggiornamento.** L'incremento sviluppa l'[analisi approvata A0.3/A0.4](theme-engine-a03-a04-implementation-analysis.md), dopo i [contratti A0.1/A0.2](theme-engine-a0-contracts-report.md). Non registra il modulo pubblico `SmartPC.ThemeApi 2.0`, non importa nuovi renderer da un bundle e non conclude la migrazione A1–A6. I risultati finali devono riferirsi agli SHA del candidato effettivamente provato: le celle **PENDING_FINAL_EVIDENCE** sotto non attestano PASS.
+**Stato: implementazione consegnata e installata sulla board; accettazione completa A0 ancora aperta per prestazioni, un assestamento non misurabile e lacune semantiche dichiarate.** L'incremento sviluppa l'[analisi approvata A0.3/A0.4](theme-engine-a03-a04-implementation-analysis.md), dopo i [contratti A0.1/A0.2](theme-engine-a0-contracts-report.md). Non registra il modulo pubblico `SmartPC.ThemeApi 2.0`, non importa nuovi renderer da un bundle e non conclude la migrazione A1–A6. Il runtime provato e installato è `d643cfbbe8ec592fa3d3d0d61d5dce06d55084b7`. Manifest ed evidenze distinguono prove funzionali, misure diagnostiche e gate non raggiunti.
 
 ## 1. Risultato implementato e confini
 
@@ -13,10 +13,10 @@ A0.3 aggiunge osservabilità del cambio tema: richiesta, validazione, resolver/c
 | A0.3.0 | Prototipo Qt con ticket immutabili, thread e race | Timestamp Python, ritardo GIL non quantificato indipendentemente |
 | A0.3.1 | Recorder bounded, hook Python, ownership opt-in | Budget diagnostici 1 ms / 8 MiB non chiusi |
 | A0.3.2 | Observer di host, notifiche, shell/overlay legacy, scena e motion | Stato Qt campionato; nessuna certificazione universale dei pixel |
-| A0.3.3 | Compatibility lane storica, trace off/on, metriche con denominatori | Run finali board ancora da consolidare; target 150/20 ms invariati |
+| A0.3.3 | Compatibility lane storica, trace off/on, metriche con denominatori | 1.200 cambi completati; gate di costo e latenza non raggiunti, un frame finale non misurabile; target 150/20 ms invariati |
 | A0.4 | Corpus hashato, tre track, runner isolato, regressioni/fault | Esecuzione per backend/profilo distinta dal numero di file; API pubblica deferred A1 |
 
-Le sorgenti implementative sono nei commit `f018b51`, `b3fe588` e `5b85c27`; le correzioni successive devono comparire nel manifest del candidato finale. Questi riferimenti descrivono lo sviluppo, non attestano quale commit sia installato sul servizio.
+Le sorgenti finali sono identificate dal commit `d643cfb`: 351 file nel runtime e 352 nel pacchetto diagnostico, entrambi costruiti da checkout pulito. Tutti i 351 SHA installati coincidono. API fingerprint `30013160355ad8ccb3f7c3e39569061e6f4cd9aa64893ea2444fa8a48901cec0` e registry fingerprint `ec7c2c887519b354a748c8fad07e5c02db2a447a425e3eaec2d0f536c3e1d3d6` conservati. La documentazione finale può avere un commit successivo senza cambiare questi sorgenti.
 
 ## 2. Recorder e integrazione
 
@@ -94,26 +94,51 @@ Sono separati: richiesta→coherent submission, richiesta→settled frame, commi
 
 `recordingCost` misura il bookkeeping del recorder per richiesta, escludendo il lavoro applicativo dentro gli span. Non rappresenta tutto il costo di screenshot, costruzione del ticket, copie GUI o attesa del GIL. Le callback di cattura/sync/submission e i costi non attribuiti sono riportati separatamente.
 
-**I budget diagnostici iniziali ≤1 ms p95 per richiesta e ≤8 MiB di incremento PSS sono già risultati oltre soglia nelle misure di sviluppo; non sono PASS.** I valori consolidati del candidato finale e il confronto off/on restano da inserire qui. Non si alzano le soglie per chiudere il gate. La PSS include il carico del processo; non coincide con i byte stimati del buffer, e tracemalloc non equivale alla PSS del kiosk. Il tracer rimane opt-in.
+**I budget diagnostici iniziali ≤1 ms p95 per richiesta e ≤8 MiB di incremento PSS sono già risultati oltre soglia nelle misure di sviluppo; non sono PASS.** Il candidato finale misura 5,508–5,828 ms p95 di bookkeeping e +16,812–17,672 MiB di picco PSS campionato nelle sei coppie. Entrambi i budget sono oltre soglia. Non si alzano le soglie per chiudere il gate. La PSS include il carico del processo; non coincide con i byte stimati del buffer, e tracemalloc non equivale alla PSS del kiosk. Il tracer rimane opt-in.
 
 Gli obiettivi di prodotto restano **p95 cambio completo ≤150 ms** e **p95 intervalli ordinari ≤20 ms**. La misura storica no-font è **155,921 ms**, con residuo +5,921 ms. Il risultato finale va indicato per profilo/run; una metrica di coerenza diversa o un sottoinsieme di successi non cancella quel confronto. GIL non quantificato, budget diagnostici oltre soglia o prove incomplete rimangono lavori aperti.
 
-## 6. Evidenze da consolidare prima della chiusura
+## 6. Collaudo, risultati e installazione
 
-Questa tabella è una checklist di pubblicazione del resoconto, non un elenco di verifiche passate. Root deve sostituire i placeholder con artefatti hashati ed esiti realmente acquisiti.
-
-| Evidenza finale | Stato in questa revisione |
+| Evidenza | Esito e fonte |
 | --- | --- |
-| Commit candidato e manifest runtime/diagnostic, API e registry fingerprint | **PENDING_FINAL_EVIDENCE** |
-| Test PC/Qt e regressioni dopo le correzioni | [106 test, un optional skip](evidence/theme-a03-a04-implementation-2026-10-04/local/unit-checks.json); [136×8 scenari, 13 regressioni e contractData PASS](evidence/theme-a03-a04-implementation-2026-10-04/local/full-matrix-regressions.json) |
-| Matrice board offscreen: profili eseguiti, 108 requisiti, 136 scenari, warning e oracoli | **PENDING_FINAL_EVIDENCE** |
-| Prototipo protocollo EGLFS: Qt/PySide/threading, race, ordine dei segnali, warning | **PENDING_FINAL_EVIDENCE** |
-| Tre coppie alternate trace off/on per no-font e tre-font; tutti i run e denominatori | **PENDING_FINAL_EVIDENCE** |
-| Idle off/on e assenza frame prodotti dall'observer | **PENDING_FINAL_EVIDENCE** |
-| PSS/CPU, costo recorder, picchi font, budget e residui 150/20 ms | **PENDING_FINAL_EVIDENCE** |
-| Installazione software, backup/rollback, hash, servizio active/NRestarts, preferenze | **PENDING_FINAL_EVIDENCE** |
+| Sorgenti e distribuzione | [351 SHA runtime / 352 diagnostic, checkout pulito](<evidence/theme-a03-a04-implementation-2026-10-04/distribution/source-audit.json>); [manifest runtime](<evidence/theme-a03-a04-implementation-2026-10-04/distribution/runtime-manifest.json>) |
+| PC, Qt 6.11.2 | [113 test: 112 passati, un optional skip](<evidence/theme-a03-a04-implementation-2026-10-04/local/unit-checks.json>); [136 scenari × 8 profili, contractData e 13 regressioni PASS](<evidence/theme-a03-a04-implementation-2026-10-04/local/full-matrix-regressions.json>); [100 cambi GL con tracing](<evidence/theme-a03-a04-implementation-2026-10-04/local/gl-front-trace-100.json>) |
+| Board A0.4, Qt 6.8.2 / PySide 6.8.2.1 | [20 scenari calcio × 8 profili](<evidence/theme-a03-a04-implementation-2026-10-04/board/fixtures-football-offscreen-1fcb.json>), [scena × 8](<evidence/theme-a03-a04-implementation-2026-10-04/board/fixtures-scene-offscreen-1fcb.json>), [13 regressioni](<evidence/theme-a03-a04-implementation-2026-10-04/board/regressions-offscreen-1fcb.json>) e [136 × 2 profili EGLFS Base/Functional](<evidence/theme-a03-a04-implementation-2026-10-04/board/fixtures-eglfs-1fcb.json>) PASS, senza warning |
+| Riuso delle prove A0.4 | Corpus/harness/provider/router invariati fra `1fcb` e `d643`; cambi limitati agli observer privati. [Revisione sorgenti](<evidence/theme-a03-a04-implementation-2026-10-04/distribution/trace-only-source-review.json>). Quattro suite UI/Avvisi/motion/recovery e tutti i test unitari rieseguiti sulla board con `d643`, log nell'archivio finale |
+| Protocollo EGLFS `d643` | [Default](<evidence/theme-a03-a04-implementation-2026-10-04/board/final/protocol-unset/report.json>), [basic](<evidence/theme-a03-a04-implementation-2026-10-04/board/final/protocol-basic/report.json>), [threaded](<evidence/theme-a03-a04-implementation-2026-10-04/board/final/protocol-threaded/report.json>) verificati; default realmente threaded. Callback native/GIL non certificati |
+| Controllo idle | [Off](<evidence/theme-a03-a04-implementation-2026-10-04/board/final/idle-off.json>) / [on](<evidence/theme-a03-a04-implementation-2026-10-04/board/final/idle-on.json>): zero frame in circa 10 secondi con clock Main fermato, zero warning |
+| Stress e raw | [12 run / 1.200 cambi](<evidence/theme-a03-a04-implementation-2026-10-04/board/final/summary.json>); [archivio integrale: report, trace, screenshot e log](<evidence/theme-a03-a04-implementation-2026-10-04/board/final-run-raw.tar.gz>) |
+| Installazione | [Distribuzione reversibile](<evidence/theme-a03-a04-implementation-2026-10-04/board/deployment.json>) e [verifica successiva](<evidence/theme-a03-a04-implementation-2026-10-04/board/post-install.json>): `active/running`, PID 158986 stabile, `NRestarts=0`, EGLFS/KMS/OpenGL, nessun warning QML, tracer disattivato |
 
-Nessun risultato offscreen certifica prestazioni EGLFS; nessun benchmark sintetico prova provider live o ergonomia del tastierino. I run falliti e parziali restano nel materiale diagnostico, con causa e correzione: non vengono incorporati nel denominatore finale come successi.
+La prima matrice board completa 136×8 rimane [evidenza storica](<evidence/theme-a03-a04-implementation-2026-10-04/board/historical-full-matrix-f018.json>): non certifica gli oracoli calcio anteriori alla correzione. I replay corretti sopra e la matrice PC la completano per i casi modificati. `contractData` resta 16 vettori strutturali e cinque vettori indipendenti, non 108 semantiche di dominio indipendenti. Tutti i `publicApiBinding` rimangono deferred A1.
+
+La workload funzionale è passata in tutti i 12 run: 100 cambi/run, dieci avvisi/run, geometria 960×640/DPR 1, nessuna rete, warning o errore; tasti/dati sono sintetici. Nei sei run con tracing: **600 richieste, 597 coherentSubmission e tre noVisualChange; 597 prime submission coerenti e 596 assestamenti su 597 richieste eleggibili**. Cinque run diagnostici sono completi; `three-pair2-on` è incompleto e il gate complessivo non passa.
+
+| Profilo / coppia | Trace | p95 storico ms | p95 coerente ms | p95 intervalli warm ms | Picco PSS campionato MiB | p95 recorder ms | Diagnosi completa |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
+| none / 1 | off | 137.417 | — | 17.790 | 121.614 | — | — |
+| none / 1 | on | 132.591 | 152.739 | 27.972 | 139.286 | 5.671 | sì |
+| none / 2 | off | 150.480 | — | 17.718 | 121.669 | — | — |
+| none / 2 | on | 132.588 | 155.387 | 27.887 | 138.962 | 5.608 | sì |
+| none / 3 | off | 146.819 | — | 17.935 | 122.216 | — | — |
+| none / 3 | on | 132.471 | 156.398 | 27.984 | 139.028 | 5.508 | sì |
+| three / 1 | off | 148.469 | — | 17.835 | 124.024 | — | — |
+| three / 1 | on | 136.777 | 158.328 | 28.153 | 141.134 | 5.828 | sì |
+| three / 2 | off | 157.106 | — | 17.801 | 124.153 | — | — |
+| three / 2 | on | 138.457 | 160.628 | 27.597 | 141.337 | 5.704 | **no, 99/100 assestamenti** |
+| three / 3 | off | 140.365 | — | 17.965 | 124.083 | — | — |
+| three / 3 | on | 136.758 | 157.259 | 27.816 | 141.024 | 5.753 | sì |
+
+**Residuo di assestamento:** nel run incompleto la richiesta successiva parte mentre le animazioni precedenti sono attive. L'ultima submission osservata della revisione precedente precede lo stop del banner; la nuova revisione viene pubblicata subito dopo. Non esiste una submission stabile qualificabile fra i due passaggi. [Timeline immutabile](<evidence/theme-a03-a04-implementation-2026-10-04/board/final/settlement-residual.json>): `settlementSupersededBeforeObservedSubmission`. Non equivale a un'animazione cancellata e non viene inventata una latenza zero. Il percentile degli assestamenti di quel run descrive 99 campioni; non attesta tutte le 100 richieste. Nessuna ripetizione favorevole sostituisce il run.
+
+Gli intervalli senza tracer sono 17,718–17,965 ms p95, sotto 20 ms; con tracer sono 27,597–28,153 ms, oltre soglia. La metrica storica senza tracer supera 150 ms in due run (150,480 e 157,106 ms); la nuova coerenza strumentata è 152,739–160,628 ms. Il fatto che la metrica storica con tracer sia inferiore non prova un'accelerazione: l'observer modifica costo e ordine delle callback. Nessuna sottrazione di overhead trasforma queste misure in un PASS. Le soglie restano 150/20 ms.
+
+Il tempo CPU nelle finestre campionate è 16,97–18,60 s off e 22,79–24,42 s on: sono secondi CPU del processo, non utilizzo percentuale o tempo GPU. I tre asset font restano al massimo tre registrazioni; questa misura non rappresenta memoria delle texture di glifi. I picchi PSS del benchmark sintetico non sono confrontabili direttamente con il kiosk live; il controllo post-installazione rileva RSS 213,242 MiB / PSS 200,482 MiB con dati/provider reali, senza attestarne una regressione rispetto a una vecchia workload differente.
+
+Backup privato software/stato: `/var/backups/smartpc-theme-a03-a04-20261004-d643cfb`; runtime precedente: `/opt/smartpc/dashboard-a03-previous-d643cfb`. Preferenze identiche e SQLite invariato durante lo scambio; i flags degli eventi preesistenti non sono stati azzerati. I dati utente rimangono sulla board, fuori dal repository. Il package runtime omette il Canvas diagnostico e il servizio non abilita `--theme-trace-output`.
+
+Nessuna prova offscreen certifica prestazioni EGLFS, provider live, tastierino fisico o risposta ottica. I tentativi [5b85](<evidence/theme-a03-a04-implementation-2026-10-04/board/rejected-intermediate.json>) e [1fcb](<evidence/theme-a03-a04-implementation-2026-10-04/board/rejected-intermediate-1fcb.json>) restano separati con raw e cause. L'archivio finale contiene anche il run incompleto: **implementazione consegnata, accettazione prestazionale e completa copertura A0 ancora aperte**.
 
 ## 7. Uso del tooling e passaggio ad A1
 
@@ -133,7 +158,7 @@ python3 scripts/package-dashboard.py build --diagnostics --output /tmp/theme-dia
 
 Il launcher supporta `--theme-trace-output /percorso/session.json` per una sessione diagnostica esplicita; il servizio ordinario rimane senza questo argomento. [`verify_theme_trace_board.py`](../verify_theme_trace_board.py), [`verify_theme_frame_protocol.py`](../verify_theme_frame_protocol.py) e [`verify_theme_trace_idle.py`](../verify_theme_trace_idle.py) richiedono il backend dichiarato e, per EGLFS, accesso esclusivo al display con stop/ripristino controllato del kiosk secondo il piano operativo. Non sostituire un run EGLFS con offscreen lasciando invariata l'etichetta del report.
 
-Il prossimo blocco funzionale rimane **A1**: DTO/QObject pubblici in sola lettura, broker di azioni, adattatori, modulo QML reale e migrazione dei nuovi host, seguiti da G21 e dagli altri gate del [piano esecutivo](theme-engine-ai-execution-plan.md). La chiusura A0.3/A0.4 deve prima consolidare le prove e assegnare esplicitamente budget e lacune Home/scena rimaste aperte. `publicApiBinding=deferredA1` diventa un requisito obbligatorio nella vera API; non basta la presenza del corpus per avanzarlo a PASS.
+Il prossimo blocco funzionale rimane **A1**: DTO/QObject pubblici in sola lettura, broker di azioni, adattatori, modulo QML reale e migrazione dei nuovi host, seguiti da G21 e dagli altri gate del [piano esecutivo](theme-engine-ai-execution-plan.md). L'implementazione A0.3/A0.4 e la distribuzione sono consolidate; budget, assestamento non misurabile e lacune Home/scena rimangono gate aperti prima dell'accettazione completa A0. `publicApiBinding=deferredA1` diventa un requisito obbligatorio nella vera API; non basta la presenza del corpus per avanzarlo a PASS.
 
 ## 8. Residui assegnati prima del gate completo
 

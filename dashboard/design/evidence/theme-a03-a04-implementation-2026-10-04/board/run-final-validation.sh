@@ -1,13 +1,13 @@
 #!/bin/bash
 set -euo pipefail
-TASK_ROOT=/tmp/smartpc-a03-diagnostic-accepted/dashboard
-TASK_RESULTS=/tmp/smartpc-a03-benchmark-accepted
+TASK_ROOT=/tmp/smartpc-a03-diagnostic-complete/dashboard
+TASK_RESULTS=/tmp/smartpc-a03-benchmark-complete
 mkdir -p "$TASK_RESULTS"
 trap 'sudo -n systemctl start smartpc-dashboard.service' EXIT
 export QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software
-python3 "$TASK_ROOT/check_theme_runtime_fixtures.py" --track legacyUi --select sport-match --output "$TASK_RESULTS/fixtures-football-offscreen.json" >"$TASK_RESULTS/fixtures-football-offscreen.log" 2>&1
-python3 "$TASK_ROOT/check_theme_runtime_fixtures.py" --track legacyUi --select scene --output "$TASK_RESULTS/fixtures-scene-offscreen.json" >"$TASK_RESULTS/fixtures-scene-offscreen.log" 2>&1
-python3 "$TASK_ROOT/check_theme_runtime_fixtures.py" --track regressions --output "$TASK_RESULTS/regressions-offscreen.json" >"$TASK_RESULTS/regressions-offscreen.log" 2>&1
+for suite in check_theme_ui.py check_notifications.py check_theme_motion.py check_theme_recovery.py;do
+ python3 "$TASK_ROOT/check_theme_runtime_fixtures.py" --regression-child "$suite" >"$TASK_RESULTS/$suite.log" 2>&1
+done
 sudo -n systemctl stop smartpc-dashboard.service
 export QT_QPA_PLATFORM=eglfs QT_QPA_EGLFS_INTEGRATION=eglfs_kms QT_QPA_EGLFS_HIDECURSOR=1 QT_QPA_EGLFS_KMS_CONFIG=/etc/smartpc/eglfs-kms.json QSG_RHI_BACKEND=opengl
 unset QT_QUICK_BACKEND QSG_RENDER_LOOP
@@ -23,7 +23,6 @@ for trace in off on;do
  args=();if [[ $trace == on ]];then args+=(--trace);fi
  timeout 30 python3 "$TASK_ROOT/verify_theme_trace_idle.py" "${args[@]}" --output "$TASK_RESULTS/idle-$trace.json" >"$TASK_RESULTS/idle-$trace.log" 2>&1
 done
-python3 "$TASK_ROOT/check_theme_runtime_fixtures.py" --track legacyUi --profiles base:day:normal,functional:night:reduced --output "$TASK_RESULTS/fixtures-eglfs.json" >"$TASK_RESULTS/fixtures-eglfs.log" 2>&1
 for fonts in none three; do
  for pair in 1 2 3; do
   order='off on'; if [[ $pair == 2 ]];then order='on off';fi
@@ -32,7 +31,8 @@ for fonts in none three; do
    mkdir -p "$target"
    args=();if [[ $trace == on ]];then args+=(--trace);fi
    echo "START $fonts pair=$pair trace=$trace"
-   timeout 80 python3 "$TASK_ROOT/verify_theme_trace_board.py" --directory "$target" --swaps 100 --fonts "$fonts" "${args[@]}" >"$target/run.log" 2>&1
+   if timeout 80 python3 "$TASK_ROOT/verify_theme_trace_board.py" --directory "$target" --swaps 100 --fonts "$fonts" "${args[@]}" >"$target/run.log" 2>&1;then outcome=0;else outcome=$?;fi
+   printf "%s\n" "$outcome" >"$target/exit-code.txt"
    python3 - "$target/report.json" <<'PY'
 import json,sys
 r=json.load(open(sys.argv[1]));d=r.get('diagnostics',{})

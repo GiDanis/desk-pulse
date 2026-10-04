@@ -2,7 +2,7 @@
 
 **Revisione 1.1 · 4 ottobre 2026 · Europe/Rome**
 
-**Stato: analisi approvata, tracing e corpus ora implementati; collaudo finale e gate in consolidamento.** Prosegue la [consegna A0.1/A0.2](theme-engine-a0-contracts-report.md) e il [piano A0/A1](theme-engine-a0-a1-implementation-analysis.md). Il [resoconto di implementazione](theme-engine-a03-a04-implementation-report.md) distingue funzionalità presenti, limiti Home/scena, budget diagnostici oltre soglia e publicApiBinding deferredA1. Le sezioni seguenti conservano baseline e requisiti dell'analisi del 4 ottobre: nomi proposti e attività future in quella baseline non sostituiscono lo stato aggiornato del resoconto. Questa revisione allinea i riferimenti documentali; non è una nuova misura o attestazione di distribuzione.
+**Stato: analisi approvata, tracing e corpus ora implementati; collaudo e installazione consolidati; gate prestazionali e copertura semantica completa aperti.** Prosegue la [consegna A0.1/A0.2](theme-engine-a0-contracts-report.md) e il [piano A0/A1](theme-engine-a0-a1-implementation-analysis.md). Il [resoconto di implementazione](theme-engine-a03-a04-implementation-report.md) distingue funzionalità presenti, limiti Home/scena, budget diagnostici oltre soglia e publicApiBinding deferredA1. Le sezioni seguenti conservano baseline e requisiti dell'analisi del 4 ottobre: nomi proposti e attività future in quella baseline non sostituiscono lo stato aggiornato del resoconto. Questa revisione allinea i riferimenti documentali; non è una nuova misura o attestazione di distribuzione.
 
 ## 1. Risultato atteso e baseline effettiva
 
