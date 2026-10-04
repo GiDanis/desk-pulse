@@ -8,9 +8,9 @@ Item {
     readonly property bool running: !!currentRecipe && currentRecipe.running === true
     readonly property bool runningKnown: !currentRecipe || currentRecipe.running !== undefined
     function traceMotion(name) { if (traceRecorder) { traceRecorder.invalidate(name); traceRecorder.traceEvent(name,{instanceId:traceOwner,motionEvent:traceEventId,revision:playingRevision,running:running}) } }
-    Connections { target: root.traceRecorder ? root.currentRecipe : null; ignoreUnknownSignals: true
-        function onRunningChanged() { if (root.traceRecorder) root.traceMotion(root.running ? "motion.started" : "motion.stopped") }
-    }
+    // Observe the resolved controller property: a child's signal can precede
+    // evaluation of this binding and expose the previous running value.
+    onRunningChanged: if (traceRecorder) traceMotion(running ? "motion.started" : "motion.stopped")
     property var appearance: Theme.appearance
     property var currentRecipe: null
     property string lastError: ""

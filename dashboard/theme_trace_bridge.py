@@ -97,6 +97,8 @@ class ThemeTraceBridge(QObject):
         request = (self.recorder.request_for_generation(generation) if generation else None)
         request = request or self.recorder.current_request or self.recorder.request_for_revision(revision)
         self.recorder.record(name, request_id=request, **fields)
+        if name == 'motion.stopped' and fields.get('running') is False and self._tracker:
+            self._tracker.refresh_gui_ticket()
         if name in ('notification.urgent', 'notification.banner') and fields.get('eventId'):
             key = (fields['eventId'], fields.get('eventRevision', ''), fields.get('rank', 0))
             if key not in self._notification_inputs and len(self._notification_inputs) < 512:
@@ -160,6 +162,13 @@ class ThemeTraceBridge(QObject):
         request = self.recorder.current_request
         if request:
             self.recorder.bind_revision(revision, request)
+            if request in self._pending:
+                self._pending[request]['revision'] = revision
+        for previous, state in list(self._pending.items()):
+            if previous!=request and state.get('revision') is not None and state['operation']!='apply':
+                state['supersededByRevision'] = revision
+                if self._tracker and not self._tracker.has_pending_submission(previous):
+                    self.finished(previous,'superseded',byRevision=revision)
         self.invalidate('appearance.published')
         snapshot = self._service._snapshot if self._service else {}
         self.recorder.record('appearance.published', revision=revision,
@@ -223,6 +232,12 @@ class ThemeTraceBridge(QObject):
     def _captured(self, result):
         self._capture_notifications(result)
         request = result.get('requestId')
+        # Retire transactions after immutable classification, preserving an old
+        # coherent frame already latched/queued before the next publish.
+        if result.get('outcome')!='coherentSubmission':
+            for previous,state in list(self._pending.items()):
+                if state.get('supersededByRevision') and self._tracker and not self._tracker.has_pending_submission(previous):
+                    self.finished(previous,'superseded',byRevision=state['supersededByRevision'])
         if not request or result['outcome'] != 'coherentSubmission':
             return
         first = request in self._pending

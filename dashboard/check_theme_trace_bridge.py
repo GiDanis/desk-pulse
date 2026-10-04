@@ -104,6 +104,22 @@ class BridgeTests(unittest.TestCase):
         rows=self.trace.report()['notificationFrames']
         self.assertEqual(len(rows),1);self.assertEqual(rows[0]['responseKind'],'fallback')
 
+    def test_publish_supersedes_only_requests_without_latched_or_queued_frame(self):
+        latched=set()
+        self.trace._tracker=SimpleNamespace(invalidate=lambda reason:None,detach=lambda:None,
+            has_pending_submission=lambda request:request in latched)
+        first=self.change()
+        latched.add(first)
+        with self.trace.operation('setToken') as second:
+            self.service._revision+=1;self.service._snapshot['tokens']['surface']='#222222'
+            self.trace.published(self.service._revision)
+        self.assertIn(first,self.trace._pending)
+        latched.clear()
+        self.trace._captured({'outcome':'unobservedFrame','reason':'noGuiTicket'})
+        rows={r['requestId']:r for r in self.trace.report()['requests']}
+        self.assertEqual(rows[first]['outcome'],'superseded')
+        self.assertIsNone(rows[second]['outcome'])
+
 
 if __name__ == '__main__':
     unittest.main()

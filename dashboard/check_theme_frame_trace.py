@@ -110,6 +110,24 @@ class ClassifierTests(unittest.TestCase):
         tracker.invalidate_scene('hidden')
         self.assertIsNone(tracker._latch)
 
+    def test_refreeze_is_gui_only_before_sync_and_never_relabels_latch(self):
+        tracker=ThemeFrameTracker()
+        class Window:
+            def isExposed(self):return True
+        state=snapshot()
+        state['motionRunning']=True
+        tracker._window=Window();tracker._provider=lambda:state
+        tracker._capture()
+        state['motionRunning']=False
+        tracker.invalidate('motion.stopped')
+        self.assertTrue(tracker.refresh_gui_ticket())
+        tracker._synchronize();latched=tracker._latch
+        self.assertFalse(_thaw(latched[1].snapshot)['motionRunning'])
+        state['revision']=2
+        self.assertFalse(tracker.refresh_gui_ticket())
+        self.assertEqual(tracker._latch,latched)
+        tracker._window=None
+
     def test_snapshot_total_budget_and_bool_revision(self):
         with self.assertRaises(ValueError):
             _freeze([[i for i in range(256)] for j in range(256)])

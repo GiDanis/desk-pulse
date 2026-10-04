@@ -155,6 +155,8 @@ class ThemeFrameTracker(QObject):
         self._gui_thread = threading.get_ident()
         self._delivery_open = False
         self._attachment_id = 0
+        self._capture_open = False
+        self._queued_requests = {}
         self._delivered.connect(self._consume, Qt.ConnectionType.QueuedConnection)
 
     def attach(self, window, snapshot_provider, recorder=None):
@@ -187,6 +189,8 @@ class ThemeFrameTracker(QObject):
             self._epoch += 1
             self._ticket = None
             self._latch = None
+            self._capture_open = False
+            self._queued_requests.clear()
         self._window = self._provider = self._recorder = None
 
     @Slot(str)
@@ -201,6 +205,36 @@ class ThemeFrameTracker(QObject):
             self._epoch += 1
             self._ticket = None
             self._latch = None
+            self._capture_open = False
+
+    def refresh_gui_ticket(self):
+        """Refreeze a changed non-render animation state before scene sync only.
+
+        Qt can stop `running` after afterAnimating on its last drawable frame.
+        No update/timer/frame is requested, and synchronized history is immutable.
+        Subsequent geometry/style mutations still invalidate this fresh ticket.
+        """
+        if threading.get_ident() != self._gui_thread:
+            return False
+        with self._lock:
+            opened = self._capture_open
+        if not opened or self._window is None:
+            return False
+        self._capture()
+        return True
+
+    @staticmethod
+    def _ticket_request(ticket):
+        if ticket is None:
+            return None
+        value = next((value for key,value in ticket.snapshot[1] if key=='requestId'), None)
+        return value if isinstance(value,str) and value else None
+
+    def has_pending_submission(self, request):
+        """Copied identities only; a latched/queued old frame can still win."""
+        with self._lock:
+            return (self._queued_requests.get(request,0)>0 or
+                    bool(self._latch and self._ticket_request(self._latch[1])==request))
 
     @Slot()
     def _scene_invalidated(self):
@@ -216,6 +250,7 @@ class ThemeFrameTracker(QObject):
         now = time.perf_counter_ns()
         producer = threading.get_ident()
         with self._lock:
+            self._capture_open = True
             epoch = self._epoch
             self._capture_serial += 1
             serial = self._capture_serial
@@ -242,6 +277,7 @@ class ThemeFrameTracker(QObject):
     def _synchronize(self):
         now = time.perf_counter_ns()
         with self._lock:
+            self._capture_open = False
             self._frame_serial += 1
             ticket, self._ticket = self._ticket, None
             if ticket is not None and ticket.epoch != self._epoch:
@@ -263,12 +299,22 @@ class ThemeFrameTracker(QObject):
             serial, ticket, synced_ns, synced_thread, sync_cost = latch
             value = FrameSubmission(serial, ticket, synced_ns, synced_thread, now, producer,
                                     '' if ticket is not None else 'noGuiTicket', sync_cost, time.perf_counter_ns() - now, attachment_id)
+        request = self._ticket_request(value.ticket)
+        if request:
+            with self._lock:
+                self._queued_requests[request] = self._queued_requests.get(request,0)+1
         self._delivered.emit(value)
 
     @Slot(object)
     def _consume(self, submission):
         if not self._delivery_open or submission.attachment_id != self._attachment_id:
             return
+        request = self._ticket_request(submission.ticket)
+        if request:
+            with self._lock:
+                remaining = self._queued_requests.get(request,0)-1
+                if remaining>0:self._queued_requests[request]=remaining
+                else:self._queued_requests.pop(request,None)
         now = time.perf_counter_ns()
         classification = classify_submission(submission)
         result = dict(classification, frameSerial=submission.frame_serial,
