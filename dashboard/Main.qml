@@ -49,6 +49,7 @@ Window {
         const revision = themeService ? themeService.revision : style.appearance.revision
         if (!traceShellInstance) traceShellInstance = traceRecorder.allocateInstance("shell.main","legacyInline")
         const participants = [{instanceId:traceShellInstance,surfaceId:"shell.main",revision:style.appearance.revision,
+            frontCommitted:true,frontCommittedRevision:style.appearance.revision,frontReady:true,frontRendererIdentity:"legacyInline",frontExpectedRendererIdentity:"legacyInline",
             observedRevision:style.appearance.revision,exposed:true,mandatory:true,committed:true,ready:true,
             geometryValid:width > 0 && height > 0,opacity:1,visualGeometry:[{width:width,height:height,visible:visible}],rendererIdentity:"legacyInline",
             motionRunning:false,retainedExit:false,actionsEnabled:true}]

@@ -239,9 +239,13 @@ class ThemeTraceBridge(QObject):
             for previous,state in list(self._pending.items()):
                 if state.get('supersededByRevision') and self._tracker and not self._tracker.has_pending_submission(previous):
                     self.finished(previous,'superseded',byRevision=state['supersededByRevision'])
-        if not request or result['outcome'] != 'coherentSubmission':
+        displayed = result['outcome'] == 'displayedRevisionCoherent'
+        if not request or result['outcome'] not in ('coherentSubmission','displayedRevisionCoherent'):
             return
-        first = request in self._pending
+        # A stable old front buffer during staging cannot acknowledge a candidate.
+        if displayed and self._completed.get(request) != 'coherentSubmission':
+            return
+        first = not displayed and request in self._pending
         if not first and self._completed.get(request) != 'coherentSubmission':
             return
         settled = (result.get('motionSettled') and result.get('strictCoherence')

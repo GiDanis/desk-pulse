@@ -32,6 +32,7 @@ Item {
         const presence = app.themeTracePresence(root,body)
         return {instanceId:traceIdentity(),surfaceId:active ? traceSurfaceId : traceRetainedSurface,revision:layerStyle.appearance.revision,
             observedRevision:body.style.appearance.revision,exposed:presence.exposed,mandatory:active,
+            frontCommitted:true,frontCommittedRevision:body.style.appearance.revision,frontReady:true,frontRendererIdentity:"legacyInline",frontExpectedRendererIdentity:"legacyInline",
             committed:true,ready:true,geometryValid:presence.geometryValid,opacity:presence.opacity,visualGeometry:presence.visualGeometry,
             rendererIdentity:"legacyInline",motionRunning:controller.traceRunningNow(),retainedExit:exiting,actionsEnabled:enabled}
     }

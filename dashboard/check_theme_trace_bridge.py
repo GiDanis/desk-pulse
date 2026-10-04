@@ -93,6 +93,32 @@ class BridgeTests(unittest.TestCase):
             'frameSerial':1,'revision':1,'snapshot':{'participants':[]}})
         self.assertEqual(self.trace.report()['frameSummaries'],[])
 
+    def test_displayed_old_revision_can_settle_only_its_completed_request(self):
+        first=self.change()
+        value={'requestId':first,'outcome':'coherentSubmission','revision':2,
+               'frameSerial':7,'submittedNs':time.perf_counter_ns(),'motionSettled':False,
+               'strictCoherence':True,'snapshot':{'participants':[]}}
+        self.trace._captured(value)
+        with self.trace.operation('setToken') as second:
+            self.service._snapshot['tokens']['surface']='#123456'
+            self.service._revision+=1;self.trace.published(self.service._revision)
+        value.update(outcome='displayedRevisionCoherent',frameSerial=8,
+                     submittedNs=time.perf_counter_ns(),motionSettled=True)
+        self.trace._captured(value)
+        frames=self.trace.report()['frameSummaries']
+        self.assertTrue(frames[-1]['firstSettled'])
+        self.assertFalse(frames[-1]['firstCoherent'])
+        self.assertEqual(frames[-1]['requestId'],first)
+        self.assertIn(second,self.trace._pending)
+
+    def test_displayed_candidate_cannot_ack_pending_request(self):
+        request=self.change()
+        self.trace._captured({'requestId':request,'outcome':'displayedRevisionCoherent',
+            'revision':2,'frameSerial':7,'submittedNs':time.perf_counter_ns(),
+            'motionSettled':True,'strictCoherence':True,'snapshot':{'participants':[]}})
+        self.assertIn(request,self.trace._pending)
+        self.assertEqual(self.trace.report()['frameSummaries'],[])
+
     def test_event_response_uses_ticket_identity_even_during_candidate(self):
         self.trace.traceEvent('notification.urgent', {'eventId':'e','eventRevision':'r','rank':3})
         result={'outcome':'unobservedFrame','reason':'candidatePending','frameSerial':1,

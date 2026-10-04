@@ -22,6 +22,9 @@ Item {
         const presence = controller.themeTracePresence(host,currentLoader)
         return {instanceId:traceIdentity(),surfaceId:contentId,revision:exiting ? style.appearance.revision : loadedRevision,
             observedRevision:style.appearance ? style.appearance.revision : -1,committedRevision:loadedRevision,exposed:presence.exposed,
+            frontCommitted:!!currentItem && loadedPresentationId === style.appearance.presentations[contentId],
+            frontCommittedRevision:style.appearance.revision,frontReady:!!currentItem && currentItem.presentationReady !== false,
+            frontRendererIdentity:loadedPresentationId,frontExpectedRendererIdentity:style.appearance.presentations[contentId],
             mandatory:mandatory,committed:!!currentItem && readiness === "ready",ready:!!currentItem && currentItem.presentationReady !== false,
             geometryValid:presence.geometryValid,opacity:presence.opacity,visualGeometry:presence.visualGeometry,rendererIdentity:loadedPresentationId,
             localGeneration:generation,motionRunning:layoutMotion.traceRunningNow(),retainedExit:exiting,actionsEnabled:interactive}

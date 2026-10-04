@@ -116,8 +116,8 @@ def classify_submission(submission):
     participants = snapshot.get('participants')
     common = {'revision': revision, 'requestId': snapshot.get('requestId'), 'snapshot': snapshot,
               'motionSettled': snapshot.get('motionRunning') is False}
-    if snapshot.get('candidatePending') is True:
-        return dict(common, outcome='unobservedFrame', reason='candidatePending')
+    candidate_pending = snapshot.get('candidatePending') is True
+    common['candidatePending'] = candidate_pending
     if snapshot.get('sceneGraphValid') is False:
         return dict(common, outcome='unobservedFrame', reason='sceneGraphInvalid')
     if type(revision) is not int or revision < 0 or not isinstance(participants, list) or not participants:
@@ -131,15 +131,24 @@ def classify_submission(submission):
         identities.add(identity)
         if type(participant.get('revision')) is not int or type(participant.get('observedRevision', participant.get('revision'))) is not int:
             return dict(common, outcome='unobservedFrame', reason='participantRevisionType')
-        if participant.get('mandatory') and not (participant.get('committed') is True and participant.get('ready') is True):
+        front_required = candidate_pending and (participant.get('mandatory') is True or participant.get('exposed') is True)
+        if front_required:
+            if not (participant.get('frontCommitted') is True and participant.get('frontReady') is True):
+                return dict(common, outcome='unobservedFrame', reason='mandatoryNotCommitted')
+            renderer = participant.get('frontRendererIdentity')
+            expected_renderer = participant.get('frontExpectedRendererIdentity')
+            if not isinstance(renderer, str) or not renderer or renderer != expected_renderer:
+                return dict(common, outcome='unobservedFrame', reason='frontRendererMismatch')
+        elif participant.get('mandatory') and not (participant.get('committed') is True and participant.get('ready') is True):
             return dict(common, outcome='unobservedFrame', reason='mandatoryNotCommitted')
         retained = ((participant.get('participation') == 'retainedExit' or participant.get('retainedExit') is True)
                     and participant.get('actionsEnabled') is False)
         if participant.get('mandatory'):
-            committed_revision = participant.get('committedRevision', participant.get('revision'))
+            committed_revision = participant.get('frontCommittedRevision') if candidate_pending else participant.get('committedRevision', participant.get('revision'))
             if type(committed_revision) is not int or committed_revision != revision:
                 return dict(common, outcome='unobservedFrame', reason='mandatoryRevisionMismatch')
-            if not retained and (participant.get('revision') != revision or participant.get('observedRevision', participant.get('revision')) != revision):
+            displayed_revision = participant.get('frontCommittedRevision') if candidate_pending else participant.get('revision')
+            if not retained and (displayed_revision != revision or participant.get('observedRevision', participant.get('revision')) != revision):
                 return dict(common, outcome='unobservedFrame', reason='mandatoryRevisionMismatch')
         if participant.get('exposed') is not True:
             continue
@@ -147,10 +156,11 @@ def classify_submission(submission):
         opacity = participant.get('opacity')
         if participant.get('geometryValid') is not True or type(opacity) not in (int, float) or not math.isfinite(opacity) or opacity <= 0:
             return dict(common, outcome='unobservedFrame', reason='participantNotPresent')
-        if participant.get('ready') is not True:
+        if (participant.get('frontReady') if candidate_pending else participant.get('ready')) is not True:
             return dict(common, outcome='unobservedFrame', reason='participantNotReady')
         observed = participant.get('observedRevision', participant.get('revision'))
-        if observed != revision or participant.get('revision') != revision:
+        displayed_revision = participant.get('frontCommittedRevision') if candidate_pending else participant.get('revision')
+        if type(displayed_revision) is not int or observed != revision or displayed_revision != revision:
             # An explicit retained exit is presentation history, not current live style.
             if not retained:
                 return dict(common, outcome='unobservedFrame', reason='revisionMismatch')
@@ -164,8 +174,8 @@ def classify_submission(submission):
         common['motionSettled'] = True
         common['motionSettlementEvidence'] = 'guiStopBeforeSubmissionWithUnchangedVisualState'
         common['motionStopObservedNs'] = proof.observed_ns
-    return dict(common, outcome='coherentSubmission', reason='', strictCoherence=all(
-        p.get('revision') == revision and p.get('observedRevision', p.get('revision')) == revision
+    return dict(common, outcome='displayedRevisionCoherent' if candidate_pending else 'coherentSubmission', reason='', strictCoherence=all(
+        (p.get('frontCommittedRevision') if candidate_pending else p.get('revision')) == revision and p.get('observedRevision', p.get('revision')) == revision
         for p in participants if p.get('exposed') is True))
 
 

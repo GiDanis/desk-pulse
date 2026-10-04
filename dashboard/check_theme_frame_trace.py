@@ -95,7 +95,7 @@ class ClassifierTests(unittest.TestCase):
         self.assertEqual(classify_submission(submission(current))['reason'], 'participantIdentity')
 
     def test_pending_and_invalid_graph_and_no_exposure(self):
-        for key, value, reason in [('candidatePending', True, 'candidatePending'),
+        for key, value, reason in [('candidatePending', True, 'mandatoryNotCommitted'),
                                    ('sceneGraphValid', False, 'sceneGraphInvalid')]:
             current = snapshot(); current[key] = value
             self.assertEqual(classify_submission(submission(current))['reason'], reason)
@@ -324,6 +324,62 @@ Item {
         self.assertEqual(probe.rows[0][2],False)
         QMetaObject.invokeMethod(root,'cleanupRecipe',Qt.ConnectionType.DirectConnection)
         root.deleteLater()
+
+    def pending_front_snapshot(self):
+        state = snapshot(); state['candidatePending'] = True
+        # Readiness/revision can describe preparation of a next renderer.
+        # The front is independent and still proves the old displayed revision.
+        state['participants'][0].update(revision=2, committedRevision=2,
+            committed=False, ready=False, frontCommitted=True, frontReady=True,
+            frontCommittedRevision=1, frontRendererIdentity='old.renderer',
+            frontExpectedRendererIdentity='old.renderer')
+        return state
+
+    def test_pending_candidate_retains_valid_front_but_never_first_success(self):
+        result = classify_submission(submission(self.pending_front_snapshot()))
+        self.assertEqual(result['outcome'], 'displayedRevisionCoherent')
+        self.assertTrue(result['motionSettled'])
+        self.assertTrue(result['strictCoherence'])
+        self.assertTrue(result['candidatePending'])
+        self.assertEqual((result['revision'], result['requestId']), (1, 'one'))
+
+    def test_pending_front_checks_do_not_trust_target_ready_or_renderer(self):
+        for fields, reason in [({'frontReady': False}, 'mandatoryNotCommitted'),
+                               ({'frontCommitted': False}, 'mandatoryNotCommitted'),
+                               ({'frontCommittedRevision': 2}, 'mandatoryRevisionMismatch'),
+                               ({'frontCommittedRevision': True}, 'mandatoryRevisionMismatch'),
+                               ({'observedRevision': 2}, 'mandatoryRevisionMismatch'),
+                               ({'frontRendererIdentity': 'new.renderer'}, 'frontRendererMismatch'),
+                               ({'frontExpectedRendererIdentity': ''}, 'frontRendererMismatch')]:
+            state = self.pending_front_snapshot();state['participants'][0].update(fields)
+            self.assertEqual(classify_submission(submission(state))['reason'], reason)
+        state = self.pending_front_snapshot();state['participants'][0].pop('frontCommittedRevision')
+        self.assertEqual(classify_submission(submission(state))['reason'], 'mandatoryRevisionMismatch')
+
+    def test_pending_candidate_requires_all_hidden_front_dependencies(self):
+        state = self.pending_front_snapshot()
+        hidden = dict(state['participants'][0], instanceId='notice.hidden',exposed=False,frontReady=False)
+        state['participants'].append(hidden)
+        self.assertEqual(classify_submission(submission(state))['reason'], 'mandatoryNotCommitted')
+        hidden['frontReady'] = True
+        self.assertEqual(classify_submission(submission(state))['outcome'], 'displayedRevisionCoherent')
+
+    def test_pending_candidate_exposed_optional_front_is_validated(self):
+        state = self.pending_front_snapshot()
+        optional = dict(state['participants'][0], instanceId='preview',mandatory=False,
+            frontCommittedRevision=2, observedRevision=2)
+        state['participants'].append(optional)
+        self.assertEqual(classify_submission(submission(state))['reason'], 'revisionMismatch')
+        optional.update(frontCommittedRevision=1,observedRevision=1,frontRendererIdentity='wrong')
+        self.assertEqual(classify_submission(submission(state))['reason'], 'frontRendererMismatch')
+
+    def test_pending_candidate_does_not_hide_graph_or_fallback_failure(self):
+        state = self.pending_front_snapshot(); state['sceneGraphValid'] = False
+        self.assertEqual(classify_submission(submission(state))['reason'], 'sceneGraphInvalid')
+        state = self.pending_front_snapshot()
+        state['participants'].append(dict(state['participants'][0],instanceId='urgent.fallback',mandatory=False,
+            observedRevision=-1,frontCommittedRevision=-1,frontRendererIdentity='fallback',frontExpectedRendererIdentity='fallback'))
+        self.assertEqual(classify_submission(submission(state))['reason'], 'revisionMismatch')
 
 
 if __name__ == '__main__':
