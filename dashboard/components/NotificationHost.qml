@@ -13,6 +13,7 @@ ViewHost {
     property bool preview: false
     traceRole: preview ? "preview" : "live"
     readonly property bool notificationMotionRunning: motion.running
+    function notificationMotionRunningNow() { return motion.traceRunningNow() }
     readonly property bool urgentFallbackActive: urgentFallback.active
     property var eventSource: ({})
     property var previewItems: []

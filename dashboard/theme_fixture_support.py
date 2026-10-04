@@ -55,6 +55,12 @@ def read_corpus():
         assert hashlib.sha256((ROOT/'fixtures'/name).read_bytes()).hexdigest()==digest,'seed digest mismatch: '+name
     for name,digest in catalog['domainInputs'].items():
         assert hashlib.sha256((CORPUS/name).read_bytes()).hexdigest()==digest,'domain digest mismatch: '+name
+    for name,digest in catalog.get('rendererInputs',{}).items():
+        file=(CORPUS/name).resolve();assert file.is_relative_to(CORPUS.resolve()),'renderer path escapes corpus'
+        # Production deliberately omits these files. The legacy track separately
+        # requires the diagnostic renderer, while contractData remains usable there.
+        if file.exists():
+            assert file.is_file() and hashlib.sha256(file.read_bytes()).hexdigest()==digest,'renderer digest mismatch: '+name
     return catalog,cases,contract
 
 
@@ -211,9 +217,16 @@ class LegacyHarness:
                 if variant=='favourite':self.sport._favourite='inter'
             elif family=='match':
                 target=deepcopy(next(m for m in self.seed['fixtures'] if m.get('status')!='scheduled'))
-                target.update(homeScore=0,awayScore=0)
-                if variant in ('scheduled','live','finished'):target['status']=variant
-                self.sport._snapshot['fixtures'].append(target)
+                status=variant if variant in ('scheduled','live','finished') else 'finished'
+                target.update(status=status,homeScore=None if status=='scheduled' else 0,
+                              awayScore=None if status=='scheduled' else 0,
+                              kickoffUtc=self.now+3600 if status=='scheduled' else self.now-1800 if status=='live' else self.now-10800,
+                              fetchedAt=self.now)
+                # Main selects by ID with find(). A duplicate would let it consume
+                # the untouched seed and falsely pass the intended status×tab case.
+                identity=target['canonicalMatchId'];fixtures=self.sport._snapshot['fixtures']
+                assert sum(m['canonicalMatchId']==identity for m in fixtures)==1,'fixture identity is not unique'
+                self.sport._snapshot['fixtures']=[target if m['canonicalMatchId']==identity else m for m in fixtures]
                 self.root.setProperty('sportMatchId',target['canonicalMatchId']);self.root.setProperty('sportTeamDetail',variant=='teamRoute')
                 if variant=='teamRoute':
                     self.sport._favourite='inter';self.sport._team.provider_id='8636';self.sport._team.team_id='inter';self.sport._team.snapshot=deepcopy(self.team)
@@ -267,9 +280,20 @@ class LegacyHarness:
     def event_flags(self):
         rows=self.events._engine.db.execute('SELECT id, rank, payload, seen, dismissed_level, notified_level, cancelled FROM events ORDER BY id').fetchall()
         return [tuple(row) for row in rows]
+    def assert_match_domain(self,case):
+        expected=case.get('expectedDomain')
+        if expected is None:return
+        data=self.sport.moduleState['data']
+        if self.value('sportTeamDetail'):data=data['favouriteTeam']['data']
+        rows=[match for match in data['fixtures'] if match['canonicalMatchId']==self.value('sportMatchId')]
+        assert len(rows)==1,(case['id'],'selected backend identity is not unique')
+        for field,value in expected.items():
+            actual=rows[0][field]
+            assert actual==value and type(actual) is type(value),(case['id'],'domain',field,actual,value)
     def run_case(self,case):
         self.setup(case)
         for expected in case['expectedExpressions']:assert self.expression(expected),(case['id'],expected)
+        self.assert_match_domain(case)
         self.assert_surface(case)
         host,actor=self.actor();actor.setProperty('pose','playing')
         before={key:self.value(key) for key in self.KEPT};flags=self.event_flags();deadline=self.events._banner_until
@@ -282,6 +306,7 @@ class LegacyHarness:
         draft.setdefault('overrides',{}).setdefault('tokens',{})['shape.radiusRow']=6
         assert self.service.draft==draft,'unrelated appearance draft fields changed'
         for expected in case['expectedExpressions']:assert self.expression(expected),(case['id'],'after',expected)
+        self.assert_match_domain(case)
         after={key:self.value(key) for key in self.KEPT};assert before==after,(case['id'],{k:(before[k],after[k]) for k in before if before[k]!=after[k]})
         assert self.actor()==(host,actor) and actor.property('pose')=='playing','actor identity/pose reset'
         assert self.event_flags()==flags,'theme change changed event delivery flags'
@@ -291,7 +316,7 @@ class LegacyHarness:
         assert self.window.activeFocusItem() and self.window.activeFocusItem().objectName()=='inputOwner','input focus lost'
         self.assert_surface(case)
         assert not self.messages,(case['id'],self.messages)
-        return {'id':case['id'],'covers':case['covers'],'family':case['family'],'surfaceId':case['surfaceId'],'variant':case['variant'],'status':'passed','assertions':len(case['expectedExpressions'])*2+10,'styleRevisionBefore':oldrevision,'styleRevisionAfter':self.service.revision,'effects':dict(self.effects),'eventFlagsPreserved':True,'deadlinePreserved':True,'actorIdentityPreserved':True,'inputFocus':'inputOwner','publicApiBinding':'deferredA1'}
+        return {'id':case['id'],'covers':case['covers'],'family':case['family'],'surfaceId':case['surfaceId'],'variant':case['variant'],'status':'passed','assertions':(len(case['expectedExpressions'])+len(case.get('expectedDomain',{})))*2+10,'styleRevisionBefore':oldrevision,'styleRevisionAfter':self.service.revision,'effects':dict(self.effects),'eventFlagsPreserved':True,'deadlinePreserved':True,'actorIdentityPreserved':True,'inputFocus':'inputOwner','publicApiBinding':'deferredA1'}
     def assert_surface(self,case):
         from PySide6.QtCore import QObject
         from theme_test_support import as_value
@@ -303,7 +328,18 @@ class LegacyHarness:
             assert obj.property('width')>0 and obj.property('height')>0,(sid,'zero geometry')
         elif sid=='scene.main':
             host,actor=self.actor();assert host.property('sceneEnabled') and actor is not None
-            if case['variant']=='canvas':assert host.property('canvasScene'),'canvas variant not actually selected'
+            renderer=self.service.resolvedAppearance['scene']['renderer']
+            assert host.property('traceLoadedRenderer')==renderer,'scene renderer identity not loaded'
+            loaders=[obj for obj in host.findChildren(QObject) if obj.metaObject().className()=='QQuickLoader']
+            from PySide6.QtQml import QQmlEngine,QQmlExpression
+            assert len(loaders)==1,'scene Loader identity is ambiguous'
+            ready=QQmlExpression(QQmlEngine.contextForObject(loaders[0]),loaders[0],'status === 1').evaluate()
+            assert ready[0] is True and not ready[1],'scene Loader is not Ready'
+            item=as_value(loaders[0].property('item'));assert item is not None and as_value(item.property('actorState'))==actor,'scene renderer does not receive persistent actor'
+            mode=self.service.resolvedAppearance['motionMode'];assert actor.property('motionMode')==mode
+            assert actor.property('paused')==bool(host.property('suspended') or host.property('regionBlocked') or mode!='normal'),'scene motion policy mismatch'
+            if case['variant'] in ('normal','reduced','off'):assert mode==case['variant']
+            if case['variant']=='canvas':assert host.property('canvasScene') and renderer=='fixture.canvas','canvas variant not actually instantiated'
             if case['variant']=='paused':assert host.property('suspended') and actor.property('paused')
         elif sid.startswith('settings.') and sid not in ('settings.sport','settings.racing'):
             assert self.expression('settingsPanel.active && settingsPanel.rows.length > 0'),sid

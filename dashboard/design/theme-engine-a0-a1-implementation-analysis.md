@@ -1,8 +1,8 @@
 # Theme Engine — analisi operativa A0 / A1
 
-**Revisione 1.2 · 4 ottobre 2026 · Europe/Rome**
+**Revisione 1.3 · 4 ottobre 2026 · Europe/Rome**
 
-**Stato: A0.1/A0.2 implementati; A0.3/A0.4 e A1 aperti.** La prima consegna è nel [resoconto dei contratti](theme-engine-a0-contracts-report.md). A0.3/A0.4 hanno ora una [preparazione operativa dedicata](theme-engine-a03-a04-implementation-analysis.md): trace/revisione/frame, corpus, isolamento e criteri di chiusura; restano da implementare. I [contratti canonici](../theme-api/README.md) sostituiscono le proposte archiviate come riferimento per superfici, contesti, azioni e ruoli. Il modulo QML pubblico, il broker e gli host nuovi rimangono A1; il bundle autonomo rimane A2. Le sezioni seguenti conservano baseline e sequenza dell'analisi approvata; le prove successive sono nel resoconto.
+**Stato: A0.1/A0.2 consegnati; tracing e corpus A0.3/A0.4 implementati, gate finali ancora da consolidare; A1 aperto.** La prima consegna è nel [resoconto dei contratti](theme-engine-a0-contracts-report.md). L'implementazione della [preparazione operativa A0.3/A0.4](theme-engine-a03-a04-implementation-analysis.md) è descritta nel [resoconto dedicato](theme-engine-a03-a04-implementation-report.md), con limiti Home/scena, budget diagnostici e publicApiBinding deferredA1. I [contratti canonici](../theme-api/README.md) sostituiscono le proposte archiviate come riferimento per superfici, contesti, azioni e ruoli. Il modulo QML pubblico, il broker e gli host nuovi rimangono A1; il bundle autonomo rimane A2. Le sezioni seguenti conservano baseline e sequenza dell'analisi approvata; le prove successive sono nel resoconto.
 
 ## 1. Baseline e problemi effettivi
 
@@ -92,7 +92,7 @@ Sono implementati in `dashboard/theme-api/` i contratti canonici `surfaces.json`
 
 Il dettaglio di implementazione è nella [nuova analisi A0.3/A0.4](theme-engine-a03-a04-implementation-analysis.md). Precisa le due definizioni warm della baseline e il protocollo di frame, senza cambiare i raw report storici.
 
-Il residuo pregresso senza nuovi font è **155,921 ms p95 richiesta→frame**, contro l'obiettivo 150 ms; non è stato chiuso dal collaudo B0. [Misura originale](theme-engine-notification-migration-report.md). In `verify_notifications_board.py`, il frame viene associato al tema atteso e all'assenza del candidato; non contiene ancora un acknowledgement esplicito della revisione disegnata da ogni host. Prima di ottimizzare, precisare la misura senza cancellare quella precedente.
+Il residuo pregresso senza nuovi font è **155,921 ms p95 richiesta→frame**, contro l'obiettivo 150 ms; non è stato chiuso dal collaudo B0. [Misura originale](theme-engine-notification-migration-report.md). Nella baseline antecedente A0.3, `verify_notifications_board.py` associava il frame al tema atteso e all'assenza del candidato, senza acknowledgement della revisione di ogni host. A0.3 conserva tale compatibility lane e aggiunge ticket immutabili correlati al sync/submission: [implementazione e stato delle prove](theme-engine-a03-a04-implementation-report.md). La nuova metrica non cancella quella precedente.
 
 Registrare una transazione di cambio con `requestId`, generation, revisione, renderer identity e timestamp monotoni, in un buffer limitato:
 
@@ -116,7 +116,7 @@ Il profilo A0 annoterà hardware, backend EGLFS effettivo, build/Qt, scaling e g
 
 ### A0.4 Fixture e invarianti
 
-Costruire fixture JSON di dominio, separate da QSettings/DB/provider reali, per tutte le varianti censite. Ogni scenario definisce stato iniziale, azioni, stato finale e ciò che lo swap deve conservare: ID selezionato, tab, scroll/anchor, stack, draft, evento/revisione, deadline, righe SQLite e ActorState.
+Il corpus A0.4 implementato contiene 108 requisiti canonici e 136 scenari su otto profili, con storage isolato e provider reali alimentati da seed sintetici; [copertura effettiva e limiti](theme-engine-a03-a04-implementation-report.md#4-corpus-a04-e-qualità-degli-oracoli). Il requisito completo rimane costruire fixture di dominio per tutte le varianti censite, senza attribuire prove semantiche indipendenti ai soli vettori strutturali. Ogni scenario definisce stato iniziale, azioni, stato finale e ciò che lo swap deve conservare: ID selezionato, tab, scroll/anchor, stack, draft, evento/revisione, deadline, righe SQLite e ActorState.
 
 Valori obbligatori: `0`, `false`, `null`, lista vuota, dato mancante, `active/updating/stale/offline/error/unavailable`, fonte assente, refresh parziale o scaduto, ID rimosso. Usare contatori/spie per select/refetch/mark-read/dismiss, non solo screenshot. Gli esempi UX e i cinque concept aiutano lo stress visuale; non diventano un elenco chiuso di layout autorizzati.
 
@@ -305,7 +305,7 @@ La soglia richiesta resta frame ordinario animato p95 ≤20 ms, input→frame p9
 
 ## 9. Preparazione conclusa e confini aperti
 
-**A0.1 → A0.2** sono consegnati; la sequenza prosegue con tracing/fixture A0.3/A0.4 e primo incremento API A1. Le scelte di base, priorità e compatibilità sono definite; non occorre scegliere nuovi font, tutte le palette o le animazioni definitive. La prima prova conserva la grafica attuale e aggiunge renderer fixture alternativi per dimostrare layout e dati pubblici.
+**A0.1 → A0.2** sono consegnati; tracing/fixture A0.3/A0.4 sono implementati. Consolidare evidenze, budget diagnostici e lacune del [resoconto](theme-engine-a03-a04-implementation-report.md), poi proseguire con il primo incremento API A1. Le scelte di base, priorità e compatibilità sono definite; non occorre scegliere nuovi font, tutte le palette o le animazioni definitive. La prima prova conserva la grafica attuale e aggiunge renderer fixture alternativi per dimostrare layout e dati pubblici.
 
 [Controlli della preparazione](evidence/theme-a0-a1-analysis-2026-10-04/analysis-review.json): JSON validi, ID/route/contesti e mappa G01–G21 coerenti, file e link relativi presenti, hash del runtime invariati. Sono controlli dell'analisi, distinti dalle prove API/EGLFS/T21 ancora da eseguire.
 

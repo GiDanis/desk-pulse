@@ -18,7 +18,13 @@
   "expectedExpressions": [
     "sportOverlay.detail",
     "sportDetailPage === 0",
-    "sportMatch.canonicalMatchId.length > 0"
+    "sportMatch.canonicalMatchId.length > 0",
+    "sportTeamDetail",
+    "sportMatch.canonicalMatchId.indexOf(\"team:foto:\") === 0",
+    "sportMatch.status === \"finished\"",
+    "sportMatch.homeScore === 1",
+    "sportMatch.awayScore === 2",
+    "sportMatch.scoreText === \"1 – 2\""
   ],
   "invariants": [
     "navigationAndTab",
@@ -40,5 +46,11 @@
       "value": 6
     }
   ],
-  "publicApiBinding": "deferredA1"
+  "publicApiBinding": "deferredA1",
+  "expectedDomain": {
+    "status": "finished",
+    "homeScore": 1,
+    "awayScore": 2,
+    "scoreText": "1 – 2"
+  }
 }

@@ -26,7 +26,23 @@ Window {
             if (renderItem.item) effective *= renderItem.item.opacity
         }
         const valid = item.width > 0 && item.height > 0 && point.x < width && point.y < height && point.x+item.width > 0 && point.y+item.height > 0
-        return {geometryValid:valid,opacity:effective,exposed:item.visible && valid && effective > 0}
+        // Actual transforms supplement revision identity for terminal-motion proof.
+        // Snapshot only on GUI; all values are copied before render callbacks.
+        function geometry(node) {
+            const a = node.mapToItem(null,0,0)
+            const b = node.mapToItem(null,node.width,0)
+            const c = node.mapToItem(null,0,node.height)
+            const d = node.mapToItem(null,node.width,node.height)
+            return {x:node.x,y:node.y,width:node.width,height:node.height,
+                scale:node.scale,rotation:node.rotation,opacity:node.opacity,
+                visible:node.visible,clip:node.clip,corners:[a.x,a.y,b.x,b.y,c.x,c.y,d.x,d.y]}
+        }
+        const observed = [geometry(item)]
+        if (renderItem && renderItem !== item) {
+            observed.push(geometry(renderItem))
+            if (renderItem.item) observed.push(geometry(renderItem.item))
+        }
+        return {geometryValid:valid,opacity:effective,exposed:item.visible && valid && effective > 0,visualGeometry:observed}
     }
     function themeTraceSnapshot() {
         if (!traceRecorder) return ({})
@@ -34,9 +50,9 @@ Window {
         if (!traceShellInstance) traceShellInstance = traceRecorder.allocateInstance("shell.main","legacyInline")
         const participants = [{instanceId:traceShellInstance,surfaceId:"shell.main",revision:style.appearance.revision,
             observedRevision:style.appearance.revision,exposed:true,mandatory:true,committed:true,ready:true,
-            geometryValid:width > 0 && height > 0,opacity:1,rendererIdentity:"legacyInline",
+            geometryValid:width > 0 && height > 0,opacity:1,visualGeometry:[{width:width,height:height,visible:visible}],rendererIdentity:"legacyInline",
             motionRunning:false,retainedExit:false,actionsEnabled:true}]
-        let moving = navigationMotion.running || tabMotion.running
+        let moving = navigationMotion.traceRunningNow() || tabMotion.traceRunningNow()
         for (let index=0; index<contentLayer.children.length; index++) {
             const host = contentLayer.children[index]
             if (host.traceParticipant && (host.active || host.exiting)) {
@@ -48,7 +64,7 @@ Window {
         for (let index=0; index<notices.length; index++) {
             const host = notices[index]
             const participant = host.traceParticipant(true)
-            participant.motionRunning = participant.motionRunning || host.notificationMotionRunning
+            participant.motionRunning = participant.motionRunning || host.notificationMotionRunningNow()
             if (host.renderedEvent) { participant.eventId=String(host.renderedEvent.id || ""); participant.eventRevision=String(host.renderedEvent.revision || ""); participant.rank=host.renderedEvent.notificationRank || 0 }
             participants.push(participant); moving = moving || participant.motionRunning
             if (host.urgentFallbackActive) participants.push({instanceId:participant.instanceId+":fallback",surfaceId:host.contentId,
@@ -66,7 +82,7 @@ Window {
         }
         if (notificationPreview.visible && notificationPreview.traceHost) {
             const participant = notificationPreview.traceHost.traceParticipant(false)
-            participant.motionRunning = participant.motionRunning || notificationPreview.traceHost.notificationMotionRunning
+            participant.motionRunning = participant.motionRunning || notificationPreview.traceHost.notificationMotionRunningNow()
             participants.push(participant); moving = moving || participant.motionRunning
         }
         const scene = sceneHost.traceParticipant(app)

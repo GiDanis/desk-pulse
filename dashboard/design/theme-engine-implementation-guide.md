@@ -4,6 +4,24 @@ Il motore usa Python/PySide6 per catalogo, validazione, preparazione e salvatagg
 
 Il ponte B0 è [consegnato](theme-engine-authoring-b0-report.md). Lo sviluppo successivo è preparato nell'[analisi A0/A1](theme-engine-a0-a1-implementation-analysis.md): modulo pubblico, copertura di shell/overlay, contesti senza controller, dati strutturati e ruoli semantici. I [contratti A0.1/A0.2](theme-engine-a0-contracts-report.md) sono implementati; le API runtime QML non vanno ancora usate come comandi/proprietà disponibili. L'importazione di nuovi QML in un bundle rimane A2.
 
+## Diagnostica privata A0.3 e corpus A0.4
+
+Tracing e runner sono implementati; [architettura, risultati da consolidare e limiti](theme-engine-a03-a04-implementation-report.md). Non sono API del tema e non abilitano il modulo pubblico 2. Il servizio normale rimane senza tracer. Per una sessione diagnostica esplicita il launcher accetta `--theme-trace-output /percorso/session.json`; il report contiene identità/tempi primitivi, senza titoli, corpi o preferenze sensibili.
+
+Con Python/PySide6 disponibile:
+
+```bash
+python3 dashboard/check_theme_trace.py
+python3 dashboard/check_theme_frame_trace.py
+python3 dashboard/check_theme_trace_bridge.py
+python3 dashboard/check_theme_trace_metrics.py
+python3 dashboard/check_theme_runtime_fixtures.py --track contractData --output /tmp/theme-contract-data.json
+QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software python3 dashboard/check_theme_runtime_fixtures.py --track all --regressions --output /tmp/theme-runtime.json
+python3 scripts/package-dashboard.py build --diagnostics --output /tmp/theme-diagnostic/dashboard
+```
+
+Il corpus ha 108 requisiti canonici, 136 scenari e otto profili; `--profiles` / `--select` dichiarano un sottoinsieme. `contractData` copre 16 vettori strutturali e cinque semantici indipendenti; `legacyUi` usa Main reale e storage/transport isolati; `publicApiBinding` rimane deferredA1. Il package normale esclude i renderer diagnostici; il package `--diagnostics` ha un manifest distinto. Per i collaudi EGLFS di protocollo, cambio tema e idle seguire il piano di accesso esclusivo al display e ripristino del kiosk; offscreen non certifica le prestazioni della board. Timestamp Python/GIL, budget diagnostici e copertura Home/scena hanno limiti espliciti nel resoconto.
+
 ## Uso sulla dashboard
 
 `9 Menu → Impostazioni → Aspetto`. `2/8` selezionano; `4/6` regolano; `5` attiva l'azione; `7` annulla/torna; `1` torna Home. La mappa del decoder è conservata: 1 Home, 7 Back. Le prove automatiche coprono tasti Qt e scancode HID; una pressione umana sul tastierino resta un controllo ergonomico distinto.

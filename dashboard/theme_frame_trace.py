@@ -59,6 +59,37 @@ class FrameTicket:
 
 
 @dataclass(frozen=True)
+class MotionStopProof:
+    """GUI stop observed before submission with identical copied visual state."""
+    attachment_id: int
+    capture_serial: int
+    ticket_epoch: int
+    observed_ns: int
+    snapshot: tuple
+
+
+def _motion_independent(value):
+    """Remove only motion liveness; every visual/identity field stays comparable."""
+    if isinstance(value, dict):
+        return {key: _motion_independent(item) for key,item in value.items() if key != 'motionRunning'}
+    if isinstance(value, list):
+        return [_motion_independent(item) for item in value]
+    return value
+
+
+def _matching_terminal_state(ticket, proof_snapshot):
+    original = _thaw(ticket.snapshot)
+    terminal = _thaw(proof_snapshot)
+    if terminal.get('motionRunning') is not False:
+        return False
+    # Boolean geometryValid is insufficient: require the actual render signature.
+    participants = original.get('participants', [])
+    if not participants or any(not isinstance(p, dict) or not p.get('visualGeometry') for p in participants):
+        return False
+    return _motion_independent(original) == _motion_independent(terminal)
+
+
+@dataclass(frozen=True)
 class FrameSubmission:
     frame_serial: int
     ticket: FrameTicket | None
@@ -70,6 +101,7 @@ class FrameSubmission:
     sync_pre_latch_cost_ns: int = 0
     submission_pre_queue_cost_ns: int = 0
     attachment_id: int = 0
+    terminal_proof: MotionStopProof | None = None
 
 
 def classify_submission(submission):
@@ -124,6 +156,14 @@ def classify_submission(submission):
                 return dict(common, outcome='unobservedFrame', reason='revisionMismatch')
     if not exposed_count:
         return dict(common, outcome='unobservedFrame', reason='noExposedParticipants')
+    proof = submission.terminal_proof
+    if (proof is not None and proof.attachment_id == submission.attachment_id
+            and proof.capture_serial == ticket.capture_serial and proof.ticket_epoch == ticket.epoch
+            and submission.synchronized_ns <= proof.observed_ns <= submission.submitted_ns
+            and _matching_terminal_state(ticket, proof.snapshot)):
+        common['motionSettled'] = True
+        common['motionSettlementEvidence'] = 'guiStopBeforeSubmissionWithUnchangedVisualState'
+        common['motionStopObservedNs'] = proof.observed_ns
     return dict(common, outcome='coherentSubmission', reason='', strictCoherence=all(
         p.get('revision') == revision and p.get('observedRevision', p.get('revision')) == revision
         for p in participants if p.get('exposed') is True))
@@ -223,6 +263,38 @@ class ThemeFrameTracker(QObject):
         self._capture()
         return True
 
+    def prove_motion_stopped_gui(self):
+        """Add a separate proof to an unsubmitted latch; never rewrite its ticket.
+
+        A final animation can stop after sync without changing another pixel.
+        The terminal GUI snapshot must match every identity/visual field, and
+        must be observed before frameSwapped. A post-submit proof is rejected.
+        """
+        if threading.get_ident() != self._gui_thread or self._window is None:
+            return False
+        with self._lock:
+            latch = self._latch
+            attachment = self._attachment_id
+        if latch is None or latch[1] is None or latch[1].reason:
+            return False
+        ticket = latch[1]
+        try:
+            value = self._provider()
+            if not isinstance(value, dict):
+                return False
+            terminal = _freeze(value)
+        except Exception:
+            return False
+        observed = time.perf_counter_ns()
+        if not _matching_terminal_state(ticket, terminal):
+            return False
+        proof = MotionStopProof(attachment, ticket.capture_serial, ticket.epoch, observed, terminal)
+        with self._lock:
+            if self._attachment_id != attachment or self._latch is not latch:
+                return False
+            self._latch = (*latch[:5], proof)
+        return True
+
     @staticmethod
     def _ticket_request(ticket):
         if ticket is None:
@@ -282,27 +354,30 @@ class ThemeFrameTracker(QObject):
             ticket, self._ticket = self._ticket, None
             if ticket is not None and ticket.epoch != self._epoch:
                 ticket = None
-            self._latch = (self._frame_serial, ticket, now, threading.get_ident(), time.perf_counter_ns() - now)
+            self._latch = (self._frame_serial, ticket, now, threading.get_ident(), time.perf_counter_ns() - now, None)
 
     @Slot()
     def _submit(self):
         now = time.perf_counter_ns()
         producer = threading.get_ident()
         with self._lock:
-            latch, self._latch = self._latch, None
+            latch = self._latch
             serial = self._frame_serial
             attachment_id = self._attachment_id
+            # Keep ownership observable continuously across scene -> GUI queue.
+            # A GUI publish/detach can run while the frozen object is constructed.
+            # It must see either this latch or its queued identity, never neither.
+            request = self._ticket_request(latch[1]) if latch else None
+            if request:
+                self._queued_requests[request] = self._queued_requests.get(request,0)+1
+            self._latch = None
         if latch is None:
             value = FrameSubmission(serial, None, 0, 0, now, producer, 'noSynchronizedTicket',
                                     submission_pre_queue_cost_ns=time.perf_counter_ns() - now, attachment_id=attachment_id)
         else:
-            serial, ticket, synced_ns, synced_thread, sync_cost = latch
+            serial, ticket, synced_ns, synced_thread, sync_cost, proof = latch
             value = FrameSubmission(serial, ticket, synced_ns, synced_thread, now, producer,
-                                    '' if ticket is not None else 'noGuiTicket', sync_cost, time.perf_counter_ns() - now, attachment_id)
-        request = self._ticket_request(value.ticket)
-        if request:
-            with self._lock:
-                self._queued_requests[request] = self._queued_requests.get(request,0)+1
+                                    '' if ticket is not None else 'noGuiTicket', sync_cost, time.perf_counter_ns() - now, attachment_id, proof)
         self._delivered.emit(value)
 
     @Slot(object)
@@ -341,5 +416,8 @@ class ThemeFrameTracker(QObject):
                 timestampQuality=result['timestampQuality'],
                 captureCallbackCostNs=result['captureCallbackCostNs'],
                 syncPreLatchCostNs=submission.sync_pre_latch_cost_ns,
-                submissionPreQueueCostNs=submission.submission_pre_queue_cost_ns)
+                submissionPreQueueCostNs=submission.submission_pre_queue_cost_ns,
+                motionSettled=result.get('motionSettled', False),
+                motionSettlementEvidence=result.get('motionSettlementEvidence', 'capturedGuiState'),
+                motionStopObservedNs=result.get('motionStopObservedNs'))
         self.captured.emit(result)

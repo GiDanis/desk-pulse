@@ -16,7 +16,12 @@
   "expectedExpressions": [
     "sportOverlay.detail",
     "sportDetailPage === 1",
-    "sportMatch.canonicalMatchId.length > 0"
+    "sportMatch.canonicalMatchId.length > 0",
+    "sportMatch.status === \"scheduled\"",
+    "sportMatch.homeScore == null",
+    "sportMatch.awayScore == null",
+    "sportMatch.scoreText === \"—\"",
+    "sportFixtures.filter(match => match.canonicalMatchId === sportMatchId).length === 1"
   ],
   "invariants": [
     "navigationAndTab",
@@ -38,5 +43,12 @@
       "value": 6
     }
   ],
-  "publicApiBinding": "deferredA1"
+  "publicApiBinding": "deferredA1",
+  "expectedDomain": {
+    "status": "scheduled",
+    "homeScore": null,
+    "awayScore": null,
+    "scoreText": "—"
+  },
+  "legacyNullSemantics": "Backend scores must be Python null/None exactly. Legacy QVariantMap maps None to JavaScript undefined on Qt 6.11, so QML absence uses == null and never accepts zero; typed public binding remains deferredA1."
 }

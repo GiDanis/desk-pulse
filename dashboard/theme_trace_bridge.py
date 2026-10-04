@@ -98,7 +98,8 @@ class ThemeTraceBridge(QObject):
         request = request or self.recorder.current_request or self.recorder.request_for_revision(revision)
         self.recorder.record(name, request_id=request, **fields)
         if name == 'motion.stopped' and fields.get('running') is False and self._tracker:
-            self._tracker.refresh_gui_ticket()
+            if not self._tracker.refresh_gui_ticket():
+                self._tracker.prove_motion_stopped_gui()
         if name in ('notification.urgent', 'notification.banner') and fields.get('eventId'):
             key = (fields['eventId'], fields.get('eventRevision', ''), fields.get('rank', 0))
             if key not in self._notification_inputs and len(self._notification_inputs) < 512:

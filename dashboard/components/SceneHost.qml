@@ -32,8 +32,8 @@ Item {
         return {instanceId:traceIdentity(),surfaceId:"scene.main",revision:appearance.revision,
             observedRevision:loaded && sceneLoader.item.style ? sceneLoader.item.style.appearance.revision : -1,
             exposed:presence.exposed,mandatory:sceneEnabled && visible,committed:loaded && traceLoadedRenderer === appearance.scene.renderer,committedRevision:appearance.revision,ready:loaded,
-            geometryValid:presence.geometryValid,opacity:presence.opacity,rendererIdentity:traceLoadedRenderer,
-            actorId:actorState.actorId,actorSequence:actorState.sequence,motionRunning:traceMotionRunning,
+            geometryValid:presence.geometryValid,opacity:presence.opacity,visualGeometry:presence.visualGeometry,rendererIdentity:traceLoadedRenderer,
+            actorId:actorState.actorId,actorSequence:actorState.sequence,motionRunning:movement.traceRunningNow(),
             retainedExit:false,actionsEnabled:false}
     }
     property StyleFacade style: Theme

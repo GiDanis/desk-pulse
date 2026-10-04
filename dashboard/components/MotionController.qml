@@ -7,6 +7,9 @@ Item {
     property string traceEventId: ""
     readonly property bool running: !!currentRecipe && currentRecipe.running === true
     readonly property bool runningKnown: !currentRecipe || currentRecipe.running !== undefined
+    // Query the recipe directly while signal handlers are still propagating.
+    // Host derived bindings may retain the previous value during runningChanged.
+    function traceRunningNow() { return !!currentRecipe && currentRecipe.running !== false }
     function traceMotion(name) { if (traceRecorder) { traceRecorder.invalidate(name); traceRecorder.traceEvent(name,{instanceId:traceOwner,motionEvent:traceEventId,revision:playingRevision,running:running}) } }
     // Observe the resolved controller property: a child's signal can precede
     // evaluation of this binding and expose the previous running value.

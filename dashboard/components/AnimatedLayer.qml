@@ -32,8 +32,8 @@ Item {
         const presence = app.themeTracePresence(root,body)
         return {instanceId:traceIdentity(),surfaceId:active ? traceSurfaceId : traceRetainedSurface,revision:layerStyle.appearance.revision,
             observedRevision:body.style.appearance.revision,exposed:presence.exposed,mandatory:active,
-            committed:true,ready:true,geometryValid:presence.geometryValid,opacity:presence.opacity,
-            rendererIdentity:"legacyInline",motionRunning:traceMotionRunning,retainedExit:exiting,actionsEnabled:enabled}
+            committed:true,ready:true,geometryValid:presence.geometryValid,opacity:presence.opacity,visualGeometry:presence.visualGeometry,
+            rendererIdentity:"legacyInline",motionRunning:controller.traceRunningNow(),retainedExit:exiting,actionsEnabled:enabled}
     }
     property bool active: false
     property bool preempted: false

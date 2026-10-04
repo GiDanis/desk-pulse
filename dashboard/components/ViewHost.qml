@@ -23,8 +23,8 @@ Item {
         return {instanceId:traceIdentity(),surfaceId:contentId,revision:exiting ? style.appearance.revision : loadedRevision,
             observedRevision:style.appearance ? style.appearance.revision : -1,committedRevision:loadedRevision,exposed:presence.exposed,
             mandatory:mandatory,committed:!!currentItem && readiness === "ready",ready:!!currentItem && currentItem.presentationReady !== false,
-            geometryValid:presence.geometryValid,opacity:presence.opacity,rendererIdentity:loadedPresentationId,
-            localGeneration:generation,motionRunning:traceMotionRunning,retainedExit:exiting,actionsEnabled:interactive}
+            geometryValid:presence.geometryValid,opacity:presence.opacity,visualGeometry:presence.visualGeometry,rendererIdentity:loadedPresentationId,
+            localGeneration:generation,motionRunning:layoutMotion.traceRunningNow(),retainedExit:exiting,actionsEnabled:interactive}
     }
     Connections {
         target: host.traceRecorder ? host : null

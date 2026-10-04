@@ -1,8 +1,8 @@
 # Theme Engine — analisi operativa A0.3 / A0.4
 
-**Revisione 1.0 · 4 ottobre 2026 · Europe/Rome**
+**Revisione 1.1 · 4 ottobre 2026 · Europe/Rome**
 
-**Stato: analisi pronta per lo sviluppo; tracing e nuove fixture runtime non implementati.** Prosegue la [consegna A0.1/A0.2](theme-engine-a0-contracts-report.md) e rende eseguibile il prossimo incremento del [piano A0/A1](theme-engine-a0-a1-implementation-analysis.md). Questa revisione modifica soltanto documentazione ed evidenze di analisi. Non cambia contratti canonici, fingerprint, runtime, provider, preferenze o DB; non distribuisce software né riavvia il servizio.
+**Stato: analisi approvata, tracing e corpus ora implementati; collaudo finale e gate in consolidamento.** Prosegue la [consegna A0.1/A0.2](theme-engine-a0-contracts-report.md) e il [piano A0/A1](theme-engine-a0-a1-implementation-analysis.md). Il [resoconto di implementazione](theme-engine-a03-a04-implementation-report.md) distingue funzionalità presenti, limiti Home/scena, budget diagnostici oltre soglia e publicApiBinding deferredA1. Le sezioni seguenti conservano baseline e requisiti dell'analisi del 4 ottobre: nomi proposti e attività future in quella baseline non sostituiscono lo stato aggiornato del resoconto. Questa revisione allinea i riferimenti documentali; non è una nuova misura o attestazione di distribuzione.
 
 ## 1. Risultato atteso e baseline effettiva
 
