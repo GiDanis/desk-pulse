@@ -74,7 +74,7 @@ class DashboardState(QObject):
     eventChanged = Signal()
 
     def __init__(self, weather: QObject, system: QObject, account: QObject,
-                 events: EventService | None = None, demo: bool = False, sport: QObject | None = None, racing=None) -> None:
+                 events: EventService | None = None, demo: bool = False, sport: QObject | None = None, racing=None, trace=None) -> None:
         super().__init__()
         self._weather = weather
         self._system = system
@@ -97,7 +97,7 @@ class DashboardState(QObject):
             _saved_int(self._settings, "account/criticalPercent", self._account_critical_percent, 2, 100))
         self._theme_recovery_error = ""
         try:
-            self._appearance = ThemeService(self)
+            self._appearance = ThemeService(self, trace=trace)
             self._appearance.changed.connect(self.settingsChanged)
         except (ThemeError, OSError) as error:
             self._appearance = None

@@ -1,0 +1,44 @@
+{
+  "id": "sport.match.detail:live",
+  "covers": [
+    "sport.match.detail:live"
+  ],
+  "family": "sport-match",
+  "surfaceId": "sport.match.detail",
+  "variant": "live",
+  "clockEpoch": 1790848800,
+  "initialProperties": {
+    "familyId": "sport",
+    "overlay": "sportDetail",
+    "sportDetailPage": 0
+  },
+  "domainSetup": [
+    "match:live"
+  ],
+  "expectedExpressions": [
+    "sportOverlay.detail",
+    "sportDetailPage === 0",
+    "sportMatch.canonicalMatchId.length > 0"
+  ],
+  "invariants": [
+    "navigationAndTab",
+    "overlayStack",
+    "inputFocus",
+    "providerEffects",
+    "actorIdentity",
+    "eventFlagsAndDeadline"
+  ],
+  "actions": [
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 4
+    },
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 6
+    }
+  ],
+  "publicApiBinding": "deferredA1"
+}

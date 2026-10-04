@@ -1,6 +1,7 @@
 import QtQuick
 QtObject {
     id: recipe
+    readonly property bool running: animation.running
     property var target: null
     property int duration: 100
     property int curve: Easing.OutCubic

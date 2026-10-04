@@ -3,6 +3,7 @@ set -euo pipefail
 
 dashboard_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 mode="${1:---desktop}"
+if [[ $# -gt 0 ]]; then shift; fi
 demo=0
 if [[ "$mode" == --demo ]]; then
     mode=--desktop
@@ -35,9 +36,9 @@ if [[ "$mode" == --desktop ]] && ! "$python_bin" -c 'import PySide6.QtQuick' >/d
 fi
 if [[ "${SMARTPC_QML_ONLY:-0}" != 1 ]] && "$python_bin" -c 'import PySide6.QtQuick' >/dev/null 2>&1; then
     if [[ "$demo" == 1 ]]; then
-        exec "$python_bin" "$dashboard_dir/app.py" --demo
+        exec "$python_bin" "$dashboard_dir/app.py" --demo "$@"
     fi
-    exec "$python_bin" "$dashboard_dir/app.py"
+    exec "$python_bin" "$dashboard_dir/app.py" "$@"
 fi
 
 if [[ "$demo" == 1 ]]; then

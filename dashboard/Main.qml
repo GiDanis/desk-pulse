@@ -13,10 +13,85 @@ Window {
     title: "SmartPC"
     color: app.style.background
 
+    // Private application diagnostics; never supplied by a theme package.
+    property var traceRecorder: null
+    property string traceShellInstance: ""
+    function themeTracePresence(item, renderItem) {
+        const point = item.mapToItem(null,0,0)
+        let effective = item.opacity
+        let ancestor = item.parent
+        while (ancestor) { effective *= ancestor.opacity; ancestor = ancestor.parent }
+        if (renderItem && renderItem !== item) {
+            effective *= renderItem.opacity
+            if (renderItem.item) effective *= renderItem.item.opacity
+        }
+        const valid = item.width > 0 && item.height > 0 && point.x < width && point.y < height && point.x+item.width > 0 && point.y+item.height > 0
+        return {geometryValid:valid,opacity:effective,exposed:item.visible && valid && effective > 0}
+    }
+    function themeTraceSnapshot() {
+        if (!traceRecorder) return ({})
+        const revision = themeService ? themeService.revision : style.appearance.revision
+        if (!traceShellInstance) traceShellInstance = traceRecorder.allocateInstance("shell.main","legacyInline")
+        const participants = [{instanceId:traceShellInstance,surfaceId:"shell.main",revision:style.appearance.revision,
+            observedRevision:style.appearance.revision,exposed:true,mandatory:true,committed:true,ready:true,
+            geometryValid:width > 0 && height > 0,opacity:1,rendererIdentity:"legacyInline",
+            motionRunning:false,retainedExit:false,actionsEnabled:true}]
+        let moving = navigationMotion.running || tabMotion.running
+        for (let index=0; index<contentLayer.children.length; index++) {
+            const host = contentLayer.children[index]
+            if (host.traceParticipant && (host.active || host.exiting)) {
+                const participant = host.traceParticipant(true)
+                participants.push(participant); moving = moving || participant.motionRunning
+            }
+        }
+        const notices = [smallBanner,largeBanner,urgentHost,badgeHost,inboxHost,detailHost]
+        for (let index=0; index<notices.length; index++) {
+            const host = notices[index]
+            const participant = host.traceParticipant(true)
+            participant.motionRunning = participant.motionRunning || host.notificationMotionRunning
+            if (host.renderedEvent) { participant.eventId=String(host.renderedEvent.id || ""); participant.eventRevision=String(host.renderedEvent.revision || ""); participant.rank=host.renderedEvent.notificationRank || 0 }
+            participants.push(participant); moving = moving || participant.motionRunning
+            if (host.urgentFallbackActive) participants.push({instanceId:participant.instanceId+":fallback",surfaceId:host.contentId,
+                revision:-1,observedRevision:-1,exposed:true,mandatory:false,committed:true,ready:true,
+                geometryValid:true,opacity:1,rendererIdentity:"app.urgentFallback",role:"fallback",actionsEnabled:true,
+                eventId:String(urgentEvent.id || ""),eventRevision:String(urgentEvent.revision || ""),rank:urgentEvent.notificationRank || 0})
+        }
+        const layers = [genericLayer,settingsLayer,infoLayer,racingLayer,teamLayer,sportLayer]
+        for (let index=0; index<layers.length; index++) {
+            const layer = layers[index]
+            if (layer.active || layer.exiting) {
+                const participant = layer.traceParticipant(app)
+                participants.push(participant); moving = moving || participant.motionRunning
+            }
+        }
+        if (notificationPreview.visible && notificationPreview.traceHost) {
+            const participant = notificationPreview.traceHost.traceParticipant(false)
+            participant.motionRunning = participant.motionRunning || notificationPreview.traceHost.notificationMotionRunning
+            participants.push(participant); moving = moving || participant.motionRunning
+        }
+        const scene = sceneHost.traceParticipant(app)
+        participants.push(scene); moving = moving || scene.motionRunning
+        return {revision:revision,requestId:traceRecorder.requestForRevision(revision),
+            candidatePending:!!(themeService && themeService.candidateAppearance.generation),sceneGraphValid:true,
+            motionRunning:moving,participants:participants,route:overlay,inputFocus:activeFocusItem ? activeFocusItem.objectName : ""}
+    }
+    Connections { target: app.traceRecorder ? app.style : null
+        function onAppearanceChanged() { if (app.traceRecorder) app.traceRecorder.invalidate("style.changed") }
+    }
+    Connections {
+        target: app.traceRecorder ? contentLayer : null
+        function onXChanged() { app.traceRecorder.invalidate("content.geometry") }
+        function onYChanged() { app.traceRecorder.invalidate("content.geometry") }
+        function onWidthChanged() { app.traceRecorder.invalidate("content.geometry") }
+        function onHeightChanged() { app.traceRecorder.invalidate("content.geometry") }
+        function onVisibleChanged() { app.traceRecorder.invalidate("content.visibility") }
+        function onOpacityChanged() { app.traceRecorder.invalidate("content.opacity") }
+    }
+    onActiveFocusItemChanged: if (traceRecorder) { traceRecorder.invalidate("focus.changed"); traceRecorder.traceEvent("input.focus",{objectName:activeFocusItem ? activeFocusItem.objectName : ""}) }
     property var keypad: null
     property var dashboardState: null
     readonly property string activeContentId: familyId === "oggi" ? (viewIndex[0] === 0 ? "home.now" : "home.day") : familyId === "meteo" ? (viewIndex[1] === 0 ? "weather.now" : "weather.forecast") : familyId === "account" ? "account.usage" : familyId === "sport" ? (sportView === "LA MIA SQUADRA" ? "sport.team" : "sport.overview") : "racing.overview"
-    onActiveContentIdChanged: if (themeService) themeService.setActiveContent(activeContentId)
+    onActiveContentIdChanged: { if (traceRecorder) traceRecorder.traceEvent("navigation.content",{surfaceId:activeContentId}); if (themeService) themeService.setActiveContent(activeContentId) }
     readonly property var themeService: dashboardState ? dashboardState.appearance : null
     readonly property var notificationContents: ["alerts.banner.small","alerts.banner.large","alerts.urgent","alerts.badge","alerts.inbox","alerts.detail"]
     property bool notificationInitialized: false
@@ -494,6 +569,12 @@ Window {
         measuredFps = 0; p95Ms = 0
     }
     function activateKey(position) {
+        if (!traceRecorder) return activateKeyImpl(position)
+        const inputId = traceRecorder.beginInput("keypad")
+        try { return activateKeyImpl(position) }
+        finally { traceRecorder.endInput(inputId) }
+    }
+    function activateKeyImpl(position) {
         if (urgentEvent.id) {
             if (position === 7) { dashboardState.dismissEvent(urgentEvent.id); return }
             if (position === 1) { dashboardState.dismissEvent(urgentEvent.id); home(); return }
@@ -715,7 +796,10 @@ Window {
                 dashboardState.markBannerPresented(submittedBanner.id,submittedBanner.revision,submittedBanner.notificationRank)
         }
     }
-    onBannerEventChanged: if (events.bannerPending && bannerEvent.id) app.update()
+    onBannerEventChanged: {
+        if (traceRecorder) traceRecorder.traceEvent("notification.banner",{eventId:String(bannerEvent.id || ""),eventRevision:String(bannerEvent.revision || ""),rank:bannerEvent.notificationRank || 0})
+        if (events.bannerPending && bannerEvent.id) app.update()
+    }
     onAfterAnimating: {
         if (!events.bannerPending) {
             if (submittedBanner.id) submittedBanner = ({})
@@ -728,9 +812,9 @@ Window {
                 submittedBanner = {id:bannerEvent.id,revision:bannerEvent.revision || "",notificationRank:bannerEvent.notificationRank}
         }
     }
-    onOverlayChanged: if (dashboardState) {
-        updateBannerAvailability()
-        dashboardState.setSystemInfoVisible(overlay === "info")
+    onOverlayChanged: {
+        if (traceRecorder) traceRecorder.traceEvent("navigation.overlay",{route:overlay,surfaceId:traceRecorder.surfaceForRoute(overlay)})
+        if (dashboardState) { updateBannerAvailability(); dashboardState.setSystemInfoVisible(overlay === "info") }
     }
     function syncClock() {
         const d = new Date()
@@ -798,16 +882,16 @@ Window {
     }
 
     AppText { style: app.style; x: 44; y: 614; width: 872; font.pixelSize: app.style.font18; color: SemanticStyle.warning; visible: (app.dashboardState && !!app.dashboardState.themeRecoveryError || app.themeService && app.themeService.status === "recovery") && !app.urgentEvent.id; text: app.dashboardState && app.dashboardState.themeRecoveryError ? "ASPETTO DI RECUPERO · ripristinare il pacchetto software" : "ASPETTO DI RECUPERO · controllare Impostazioni → Aspetto" }
-    MotionController { id: navigationMotion }
-    MotionController { id: tabMotion }
+    MotionController { id: navigationMotion; traceRecorder: app.traceRecorder; traceOwner: "navigation" }
+    MotionController { id: tabMotion; traceRecorder: app.traceRecorder; traceOwner: "tabs" }
     function animateTab() {
         if (!urgentEvent.id && overlay !== "") tabMotion.play(overlay === "sportTeam" ? teamOverlay : overlay.indexOf("racing") === 0 ? racingOverlay : sportOverlay,"tab.change",1,false)
     }
     onTeamTabChanged: animateTab()
     onRacingStandingTabChanged: animateTab()
     readonly property var notificationRegions: [smallBanner,largeBanner,detailHost,inboxHost,badgeHost,urgentHost].filter(host => host.show || host.exiting).reduce((regions,host) => regions.concat(host.context ? host.context.occupiedRegions : [Qt.rect(host.x,host.y,host.width,host.height)]),[])
-    SceneHost { style: app.style; familyId: app.familyId; occupiedRegions: app.notificationRegions; notificationEvent: app.urgentEvent.id ? app.urgentEvent : app.bannerEvent; suspended: app.overlay !== "" || !!app.urgentEvent.id || app.night || app.quietActive }
-    onUrgentEventChanged: if (urgentEvent.id) { navigationMotion.settle(); tabMotion.settle() }
+    SceneHost { id: sceneHost; traceRecorder: app.traceRecorder; style: app.style; familyId: app.familyId; occupiedRegions: app.notificationRegions; notificationEvent: app.urgentEvent.id ? app.urgentEvent : app.bannerEvent; suspended: app.overlay !== "" || !!app.urgentEvent.id || app.night || app.quietActive }
+    onUrgentEventChanged: { if (traceRecorder) traceRecorder.traceEvent("notification.urgent",{eventId:String(urgentEvent.id || ""),eventRevision:String(urgentEvent.revision || ""),rank:urgentEvent.notificationRank || 0}); if (urgentEvent.id) { navigationMotion.settle(); tabMotion.settle() } }
 
     Rectangle { x: 44; y: 558; width: 872; height: 2; color: app.style.divider }
     AppText { style: app.style; x: 46; y: 578; text: "4/6  ARGOMENTO"; color: app.muted; font.pixelSize: app.style.font25 }
@@ -819,32 +903,38 @@ Window {
         show: app.familyId === "oggi" && app.overlay === "" && app.unreadAlertCount > 0 && !app.bannerEvent.id && !app.urgentEvent.id
         exitAllowed: false
     }
-    AnimatedLayer {
+    AnimatedLayer { // private observer
+        id: genericLayer; traceRecorder: app.traceRecorder; traceSurfaceId: app.traceRecorder ? app.traceRecorder.surfaceForRoute(app.overlay) : ""
         anchors.fill: parent; active: !settingsPanel.active && app.overlay !== "info" && app.overlay !== "alerts" && app.overlay !== "alertDetail" && app.overlay !== "" && app.overlay.indexOf("sport") !== 0 && app.overlay.indexOf("racing") !== 0; preempted: !!app.urgentEvent.id
         eventPrefix: "panel"
         DashboardOverlay { style: parent.style; dashboard: app; visible: true; anchors.fill: parent }
     }
-    AnimatedLayer {
+    AnimatedLayer { // private observer
+        id: settingsLayer; traceRecorder: app.traceRecorder; traceSurfaceId: app.traceRecorder ? app.traceRecorder.surfaceForRoute(app.overlay) : ""
         anchors.fill: parent; active: settingsPanel.active; preempted: !!app.urgentEvent.id
         eventPrefix: "panel"
         SettingsPanel { style: parent.style; id: settingsPanel; dashboard: app; visible: true; anchors.fill: parent }
     }
-    AnimatedLayer {
+    AnimatedLayer { // private observer
+        id: infoLayer; traceRecorder: app.traceRecorder; traceSurfaceId: app.traceRecorder ? app.traceRecorder.surfaceForRoute(app.overlay) : ""
         anchors.fill: parent; active: app.overlay === "info"; preempted: !!app.urgentEvent.id
         eventPrefix: "panel"
         DeviceInfo { style: parent.style; id: deviceInfo; dashboard: app; visible: true; anchors.fill: parent }
     }
-    AnimatedLayer {
+    AnimatedLayer { // private observer
+        id: racingLayer; traceRecorder: app.traceRecorder; traceSurfaceId: app.traceRecorder ? app.traceRecorder.surfaceForRoute(app.overlay) : ""
         anchors.fill: parent; active: app.overlay.indexOf("racing") === 0; preempted: !!app.urgentEvent.id
         eventPrefix: "panel"
         MotorsportOverlay { id: racingOverlay; style: parent.style; dashboard: app; visible: true; anchors.fill: parent }
     }
-    AnimatedLayer {
+    AnimatedLayer { // private observer
+        id: teamLayer; traceRecorder: app.traceRecorder; traceSurfaceId: app.traceRecorder ? app.traceRecorder.surfaceForRoute(app.overlay) : ""
         anchors.fill: parent; active: app.overlay.indexOf("sportTeam") === 0; preempted: !!app.urgentEvent.id
         eventPrefix: "panel"
         SportTeamOverlay { id: teamOverlay; style: parent.style; dashboard: app; visible: true; anchors.fill: parent }
     }
-    AnimatedLayer {
+    AnimatedLayer { // private observer
+        id: sportLayer; traceRecorder: app.traceRecorder; traceSurfaceId: app.traceRecorder ? app.traceRecorder.surfaceForRoute(app.overlay) : ""
         anchors.fill: parent; active: app.overlay.indexOf("sport") === 0 && app.overlay.indexOf("sportTeam") !== 0; preempted: !!app.urgentEvent.id
         eventPrefix: "panel"
         SportOverlay { id: sportOverlay; style: parent.style; dashboard: app; visible: true; anchors.fill: parent }
@@ -870,7 +960,7 @@ Window {
         preempted: !!app.urgentEvent.id; exitAllowed: !app.bannerEvent.id && app.overlay === ""
         onCurrentItemChanged: app.updateBannerAvailability()
     }
-    NotificationPreview { controller: app; mode: app.notificationPreviewMode; visible: mode !== "" && !app.urgentEvent.id }
+    NotificationPreview { id: notificationPreview; controller: app; mode: app.notificationPreviewMode; visible: mode !== "" && !app.urgentEvent.id }
     NotificationHost { id: urgentHost; objectName: "eventUrgent"; contentId: "alerts.urgent"; controller: app; eventSource: app.urgentEvent; show: !!app.urgentEvent.id; exitAllowed: false }
 
     Rectangle {

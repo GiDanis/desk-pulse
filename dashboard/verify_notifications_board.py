@@ -4,7 +4,11 @@ Isolated preferences/SQLite/fixtures; no provider network and no diagnostic twee
 Only frame intervals inside explicit theme-change windows are counted. Cold first
 uses and complete request-to-frame latency are retained and reported separately.
 """
+from contextlib import nullcontext
 import argparse
+import hashlib
+import platform
+import socket
 import json
 import os
 from pathlib import Path
@@ -16,6 +20,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--directory', type=Path, required=True)
 parser.add_argument('--swaps', type=int, default=100)
 parser.add_argument('--fonts', choices=('none','three'), default='none')
+parser.add_argument('--trace', action='store_true')
 args = parser.parse_args()
 assert args.swaps >= 80
 args.directory.mkdir(parents=True,exist_ok=True)
@@ -23,6 +28,18 @@ work = Path(tempfile.mkdtemp(prefix='smartpc-notice-board-'))
 for name in ('CONFIG','CACHE','DATA'):
     os.environ['XDG_'+name+'_HOME'] = str(work/name.lower())
 os.environ['SMARTPC_THEME_STORE'] = str(work/'themes')
+
+transport_attempts=[]
+def deny_network(*arguments,**keywords):
+    transport_attempts.append('denied')
+    raise RuntimeError('Isolated benchmark network denied')
+socket.socket.connect=deny_network
+socket.getaddrinfo=deny_network
+try:
+    with socket.socket() as probe:probe.connect(('127.0.0.1',1))
+except RuntimeError:pass
+assert transport_attempts==['denied']
+transport_attempts.clear()
 
 from PySide6.QtCore import QObject,QTimer,QUrl,qVersion
 from PySide6.QtGui import QGuiApplication
@@ -54,15 +71,20 @@ if args.fonts == 'three':
         import_pack(source,work/'themes'); themes.append(identifier)
 
 events=EventService(path=':memory:',auto_refresh=False)
-state=DashboardState(WeatherService(auto_refresh=False),SystemInfo(),AccountService(path=work/'missing'),events,demo=True)
+trace=None
+if args.trace:
+    from theme_trace_bridge import ThemeTraceBridge
+    trace=ThemeTraceBridge()
+state=DashboardState(WeatherService(auto_refresh=False),SystemInfo(),AccountService(path=work/'missing'),events,demo=True,trace=trace)
 state.markCommandsSeen(); events.set_quiet(False,0,1)
 state._brightness_mode='manual'; state._manual_brightness=100
 service=state.appearance; service.beginEdit(); service.setSection('paletteMode','day')
 engine=QQmlApplicationEngine(); warnings=[]
 engine.warnings.connect(lambda values:warnings.extend(str(value) for value in values))
-engine.setInitialProperties({'dashboardState':state}); engine.load(QUrl.fromLocalFile(str(Path(__file__).with_name('Main.qml'))))
+engine.setInitialProperties({'dashboardState':state,'traceRecorder':trace}); engine.load(QUrl.fromLocalFile(str(Path(__file__).with_name('Main.qml'))))
 assert engine.rootObjects(),warnings
 root=engine.rootObjects()[0]; window=shiboken6.wrapInstance(shiboken6.getCppPointer(root)[0],QQuickWindow)
+if trace: trace.attach(window)
 wait_ready(app,root)
 names=('eventBanner','eventLargeBanner','eventUrgent','unreadAlertsBadge','alertsInbox','alertDetail')
 hosts=[root.findChild(QObject,name) for name in names]
@@ -78,7 +100,7 @@ def rows():
 
 def memory():
     global peak_fonts
-    row={'swap':steps,'registeredFonts':len(FontRegistry.entries)}
+    row={'swap':steps,'registeredFonts':len(FontRegistry.entries),'cpuTimeNs':time.process_time_ns()}
     peak_fonts=max(peak_fonts,row['registeredFonts'])
     for line in Path('/proc/self/smaps_rollup').read_text().splitlines():
         if line.startswith(('Rss:','Pss:')): key,value,*_=line.split(); row[key[:-1]]=int(value)
@@ -105,12 +127,15 @@ def frame():
 window.frameSwapped.connect(frame)
 
 def capture(name):
-    image=window.grabWindow()
+    with trace.suspend_observation("screenshotOutsideLatencyWindow") if trace else nullcontext():
+        image=window.grabWindow()
     assert not image.isNull() and (image.width(),image.height())==(960,640)
     assert image.save(str(args.directory/(name+'.png')))
     captures.append(name)
 
-def step():
+fatal=[]
+
+def step_impl():
     global steps,request_at,last_frame,action_end,expected_theme,expected_id,notification_at,baseline_rows,baseline_deadline
     global cold_action,event_mode
     if request_at is not None:
@@ -141,6 +166,12 @@ def step():
     preparation.append((time.perf_counter()-before)*1000)
     steps+=1; memory()
 
+def step():
+    try:step_impl()
+    except Exception as error:
+        fatal.append({"type":type(error).__name__,"message":str(error)})
+        timer.stop();app.quit()
+
 timer=QTimer(); timer.setInterval(350); timer.timeout.connect(step)
 memtimer=QTimer(); memtimer.setInterval(100); memtimer.timeout.connect(memory)
 QTimer.singleShot(500,lambda:(memory(),timer.start(),memtimer.start()))
@@ -162,9 +193,31 @@ result={'qt':qVersion(),'backend':os.environ.get('QT_QPA_PLATFORM'),'swaps':step
     'warmIntervalMs':{'count':len(warm_intervals),'p95':p(warm_intervals,.95),'max':max(warm_intervals) if warm_intervals else None,'over33ms':sum(value>33.34 for value in warm_intervals)},
     'prepareMs':{'p95':p(preparation,.95),'max':max(preparation)},'samples':samples,'themeFrames':latencies,'deliveryFrames':delivery,
     'intervalSamples':interval_samples,'captures':captures,'warnings':warnings,'scope':'FrameSwapped is Qt presentation submission, not optical timing or GPU memory telemetry. Actual theme/notification transitions only; no diagnostic animation. Warm intervals exclude only the first requested (mode, theme) pair; all intervals are retained separately.'}
+if trace:
+    trace.finish()
+    raw=trace.report()
+    (args.directory/'trace.json').write_text(json.dumps(raw,ensure_ascii=False,indent=2)+'\n')
+    from theme_trace_metrics import build_trace_metrics
+    result['diagnostics']=build_trace_metrics(raw)
+result['fatalErrors']=fatal
+result['reportVersion']=2
+result['traceEnabled']=args.trace
+result['statisticsMethod']='sorted[floor((n-1)*q)], no interpolation'
+result['legacyWarmDefinition']='swap > 6; frame intervals separately exclude first (mode,theme) pair'
+result['architecture']=platform.machine()
+result['pyside']=__import__('PySide6').__version__
+result['display']={'width':window.width(),'height':window.height(),'dpr':window.devicePixelRatio()}
+result['sourceHarnessSha256']=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+result['fixtureActionFingerprint']=hashlib.sha256(json.dumps({'themes':themes,'swaps':args.swaps,'fonts':args.fonts,'tickMs':350,'actionWindowMs':300,'noticeEvery':10,'modes':['small','large','urgent'],'captureSteps':[9,19,29]},sort_keys=True).encode()).hexdigest()
+result['manifest']=json.loads(Path(__file__).with_name('release-manifest.json').read_text()) if Path(__file__).with_name('release-manifest.json').exists() else None
+result['transportAttempts']=len(transport_attempts)
+result['isolation']={'networkGuardPositiveControl':True,'privateXdgAndStore':True,'privateSQLite':True,'providerNetworkDisabled':True,'productionStateUsed':False}
+result['productTargets']={'completeSwapP95Ms':150,'ordinaryFrameIntervalP95Ms':20,'legacySwapWithinTarget':p(times,.95)<=150,'ordinaryIntervalsWithinTarget':p(warm_intervals,.95)<=20}
+if args.trace:result['productTargets']['coherentSwapWithinTarget']=result['diagnostics']['requestToCoherentSubmissionMs']['p95'] is not None and result['diagnostics']['requestToCoherentSubmissionMs']['p95']<=150
 (args.directory/'report.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
-print(json.dumps({key:value for key,value in result.items() if key not in ('samples','themeFrames','deliveryFrames','intervalSamples')},ensure_ascii=False))
-assert steps==args.swaps and len(times)==steps and not warnings,warnings
-assert result['memoryMiB']['lateGrowthMiB'] < 5
+print(json.dumps({key:value for key,value in result.items() if key not in ('samples','themeFrames','deliveryFrames','intervalSamples','manifest','diagnostics')},ensure_ascii=False))
+assert steps==args.swaps and len(times)==steps and not warnings and not fatal and not transport_attempts,(warnings,fatal,transport_attempts)
+if args.trace:assert result['diagnostics']['complete'],result['diagnostics']
+if not args.trace:assert result['memoryMiB']['lateGrowthMiB'] < 5
 assert peak_fonts <= FontRegistry.idle_capacity+4
 events.close()

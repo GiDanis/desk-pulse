@@ -11,6 +11,9 @@ ViewHost {
     property bool preempted: false
     property bool exitAllowed: true
     property bool preview: false
+    traceRole: preview ? "preview" : "live"
+    readonly property bool notificationMotionRunning: motion.running
+    readonly property bool urgentFallbackActive: urgentFallback.active
     property var eventSource: ({})
     property var previewItems: []
     property int previewUnreadCount: 1
@@ -49,11 +52,13 @@ ViewHost {
         renderedEvent = eventSource
     }
     function settleMotion() {
+        if (traceRecorder) traceEvent("notification.settle",{mode:mode,eventId:renderedEvent.id || "",eventRevision:String(renderedEvent.revision || ""),rank:renderedEvent.notificationRank || 0})
         exitTimer.stop(); exiting = false; motion.settle()
         if (currentLoader) currentLoader.opacity = 1
         if (currentItem && typeof currentItem.settleMotion === "function") currentItem.settleMotion()
     }
     function enter() {
+        if (traceRecorder && show) traceEvent("notification.enter",{mode:mode,eventId:renderedEvent.id || "",eventRevision:String(renderedEvent.revision || ""),rank:renderedEvent.notificationRank || 0})
         if (show && currentLoader && mode !== "urgent") {
             enteredRevision = appearance.revision
             const expected = currentLoader, revision = enteredRevision
@@ -75,6 +80,7 @@ ViewHost {
         if (show) { exiting = false; enter() }
         else {
             frozenAppearance = appearance
+            if (traceRecorder) traceEvent("notification.freeze",{mode:mode,frozenRevision:appearance.revision,eventId:renderedEvent.id || ""})
             if (currentLoader && exitAllowed && !preempted && mode !== "urgent" && appearance.motionMode !== "off") {
                 exiting = true
                 motion.play(currentLoader,motionPrefix+".exit",1,false)
@@ -95,11 +101,13 @@ ViewHost {
         function onSettleMotionRequested() { host.settleMotion() }
     }
     Component.onCompleted: captureEvent()
-    MotionController { id: motion; appearance: host.appearance }
+    MotionController { id: motion; appearance: host.appearance; traceRecorder: host.traceRecorder; traceOwner: host.traceInstanceId }
     Timer { id: exitTimer; onTriggered: host.settleMotion() }
     // Emergency urgent is compiled with the application and never waits for a theme Loader.
     Loader {
+        id: urgentFallback
         objectName: "urgentFallback"
+        onActiveChanged: if (host.traceRecorder) host.traceEvent("notification.fallback",{fallbackActive:active,mode:host.mode,eventId:host.eventSource.id || ""})
         active: host.mode === "urgent" && host.show && !host.currentItem
         x: -host.x; y: -host.y; width: 960; height: 640; asynchronous: false
         sourceComponent: Component {

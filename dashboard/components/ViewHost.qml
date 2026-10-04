@@ -4,6 +4,53 @@ Item {
     id: host
     required property string contentId
     required property var controller
+    readonly property var traceRecorder: controller && controller.traceRecorder !== undefined ? controller.traceRecorder : null
+    property string traceInstanceId: ""
+    property string traceRole: "live"
+    readonly property bool traceMotionRunning: (layoutMotion.running || !layoutMotion.runningKnown)
+    function traceIdentity() {
+        if (traceRecorder && !traceInstanceId) traceInstanceId = traceRecorder.allocateInstance(contentId,traceRole)
+        return traceInstanceId
+    }
+    function traceEvent(name, values) {
+        if (!traceRecorder) return
+        traceRecorder.invalidate(name)
+        traceRecorder.traceEvent(name,Object.assign({instanceId:traceIdentity(),surfaceId:contentId,
+            localGeneration:generation,revision:loadedRevision,rendererIdentity:loadedPresentationId,role:traceRole},values || {}))
+    }
+    function traceParticipant(mandatory) {
+        const presence = controller.themeTracePresence(host,currentLoader)
+        return {instanceId:traceIdentity(),surfaceId:contentId,revision:exiting ? style.appearance.revision : loadedRevision,
+            observedRevision:style.appearance ? style.appearance.revision : -1,committedRevision:loadedRevision,exposed:presence.exposed,
+            mandatory:mandatory,committed:!!currentItem && readiness === "ready",ready:!!currentItem && currentItem.presentationReady !== false,
+            geometryValid:presence.geometryValid,opacity:presence.opacity,rendererIdentity:loadedPresentationId,
+            localGeneration:generation,motionRunning:traceMotionRunning,retainedExit:exiting,actionsEnabled:interactive}
+    }
+    Connections {
+        target: host.traceRecorder ? host : null
+        function onXChanged() { host.traceRecorder.invalidate("host.geometry") }
+        function onYChanged() { host.traceRecorder.invalidate("host.geometry") }
+        function onWidthChanged() { host.traceRecorder.invalidate("host.geometry") }
+        function onHeightChanged() { host.traceRecorder.invalidate("host.geometry") }
+        function onVisibleChanged() { host.traceRecorder.invalidate("host.visibility") }
+        function onOpacityChanged() { host.traceRecorder.invalidate("host.opacity") }
+    }
+    Connections {
+        target: host.traceRecorder ? host.currentLoader : null
+        function onXChanged() { host.traceRecorder.invalidate("loader.geometry") }
+        function onYChanged() { host.traceRecorder.invalidate("loader.geometry") }
+        function onWidthChanged() { host.traceRecorder.invalidate("loader.geometry") }
+        function onHeightChanged() { host.traceRecorder.invalidate("loader.geometry") }
+        function onVisibleChanged() { host.traceRecorder.invalidate("loader.visibility") }
+        function onOpacityChanged() { host.traceRecorder.invalidate("loader.opacity") }
+    }
+    Connections {
+        target: host.traceRecorder ? host.currentItem : null
+        function onWidthChanged() { host.traceRecorder.invalidate("renderer.geometry") }
+        function onHeightChanged() { host.traceRecorder.invalidate("renderer.geometry") }
+        function onVisibleChanged() { host.traceRecorder.invalidate("renderer.visibility") }
+        function onOpacityChanged() { host.traceRecorder.invalidate("renderer.opacity") }
+    }
     property StyleFacade style: Theme
     property var appearance: Theme.appearance
     property var service: controller.themeService
@@ -66,6 +113,7 @@ Item {
         function onRacingChanged() { host.dataUpdated("racing") }
     }
     function commit(candidate) {
+        if (traceRecorder) traceEvent("host.commit.begin",{candidateGeneration:candidate.requestGeneration,serviceGeneration:candidate.serviceGeneration,targetRevision:candidate.requestedRevision})
         const old = currentLoader
         currentLoader = candidate; context = candidate.presentationContext; currentItem = candidate.item
         candidate.useLiveStyle = true
@@ -79,6 +127,7 @@ Item {
         }
         pendingLoader = null; loadedPresentationId = candidate.presentationId
         loadedRevision = appearance.revision; readiness = "ready"
+        if (traceRecorder) traceEvent("host.commit.end",{serviceGeneration:candidate.serviceGeneration})
         if (old && renderActive && animateSwap) {
             const revision = loadedRevision
             Qt.callLater(function() {
@@ -89,9 +138,10 @@ Item {
     }
     function prepare(snapshot,serviceGeneration) {
         if (!active || !snapshot) return
+        if (traceRecorder) traceEvent("host.prepare",{targetRevision:snapshot.revision,serviceGeneration:serviceGeneration})
         const identifier = snapshot.presentations[contentId]
         if (!serviceGeneration && pendingLoader && pendingLoader.presentationId === identifier && pendingLoader.status === Loader.Ready) { commit(pendingLoader); return }
-        if (currentItem && loadedPresentationId === identifier) { loadedRevision = snapshot.revision; readiness = "ready"; return }
+        if (currentItem && loadedPresentationId === identifier) { loadedRevision = snapshot.revision; readiness = "ready"; if (traceRecorder) traceEvent("host.reuse",{targetRevision:snapshot.revision,serviceGeneration:serviceGeneration}); return }
         generation += 1
         if (pendingLoader) { pendingLoader.destroy(); pendingLoader = null }
         const descriptor = snapshot.presentationRegistry[identifier]
@@ -104,10 +154,11 @@ Item {
         const next = slot.createObject(host, {requestGeneration: generation, presentationId: identifier, requestedRevision: snapshot.revision,
             serviceGeneration: serviceGeneration, stagedAppearance: snapshot})
         pendingLoader = next
+        if (traceRecorder) traceEvent("host.loader.begin",{presentationId:identifier,targetRevision:snapshot.revision,serviceGeneration:serviceGeneration})
         next.setSource(Qt.resolvedUrl("../"+descriptor.file), {context: next.presentationContext})
         next.active = true
     }
-    MotionController { id: layoutMotion; appearance: host.appearance }
+    MotionController { id: layoutMotion; appearance: host.appearance; traceRecorder: host.traceRecorder; traceOwner: host.traceInstanceId }
     Component.onCompleted: prepare(appearance,0)
     Component {
         id: slot
@@ -130,11 +181,13 @@ Item {
                 if (status !== Loader.Ready || acknowledged || item.presentationReady === false) return
                 if (requestGeneration !== host.generation || !host.active) { destroy(); return }
                 acknowledged = true
+                if (host.traceRecorder) host.traceEvent("host.presentation.ready",{candidateGeneration:requestGeneration,serviceGeneration:serviceGeneration,targetRevision:requestedRevision,presentationId:presentationId})
                 if (serviceGeneration) host.service.reportCandidate(serviceGeneration,host.contentId,true,"")
                 else host.commit(candidate)
             }
             function fail(message) {
                 if (requestGeneration !== host.generation) return
+                if (host.traceRecorder) host.traceEvent("host.loader.fail",{candidateGeneration:requestGeneration,serviceGeneration:serviceGeneration,errorKind:status === Loader.Error ? "loadError" : status === Loader.Loading ? "loadingTimeout" : "presentationTimeout"})
                 host.lastError = message
                 host.readiness = host.currentItem ? "ready" : "error"
                 host.pendingLoader = null
@@ -143,11 +196,17 @@ Item {
                 if (failedGeneration) host.service.reportCandidate(failedGeneration,host.contentId,false,message)
                 else if (!host.currentItem && host.service) host.service.recoverVisual(host.contentId,message)
             }
-            onLoaded: ready()
+            onLoaded: { if (host.traceRecorder) host.traceEvent("host.loader.ready",{candidateGeneration:requestGeneration,serviceGeneration:serviceGeneration,targetRevision:requestedRevision}); ready() }
             onStatusChanged: if (status === Loader.Error) fail("Errore caricamento " + presentationId)
             Connections {
                 target: candidate.item; ignoreUnknownSignals: true
                 function onPresentationReadyChanged() { candidate.ready() }
+            }
+            // Loading and presentation readiness have independent watchdogs.
+            Timer {
+                interval: 3000
+                running: candidate.active && candidate.status === Loader.Loading
+                onTriggered: candidate.fail("Timeout caricamento " + candidate.presentationId)
             }
             Timer {
                 interval: 3000

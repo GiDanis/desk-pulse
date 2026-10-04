@@ -2,6 +2,40 @@ import QtQuick
 import "../themes"
 Item {
     id: root
+    Connections {
+        target: root.traceRecorder ? root : null
+        function onXChanged() { root.traceRecorder.invalidate("host.x") }
+        function onYChanged() { root.traceRecorder.invalidate("host.y") }
+        function onWidthChanged() { root.traceRecorder.invalidate("host.width") }
+        function onHeightChanged() { root.traceRecorder.invalidate("host.height") }
+        function onVisibleChanged() { root.traceRecorder.invalidate("host.visible") }
+        function onOpacityChanged() { root.traceRecorder.invalidate("host.opacity") }
+    }
+    Connections {
+        target: root.traceRecorder ? actor : null
+        function onXChanged() { root.traceRecorder.invalidate("render.x") }
+        function onYChanged() { root.traceRecorder.invalidate("render.y") }
+        function onWidthChanged() { root.traceRecorder.invalidate("render.width") }
+        function onHeightChanged() { root.traceRecorder.invalidate("render.height") }
+        function onVisibleChanged() { root.traceRecorder.invalidate("render.visible") }
+        function onOpacityChanged() { root.traceRecorder.invalidate("render.opacity") }
+    }
+    property var traceRecorder: null
+    property string traceInstanceId: ""
+    property string traceLoadedRenderer: ""
+    readonly property bool traceMotionRunning: (movement.running || !movement.runningKnown)
+    function traceIdentity() { if (traceRecorder && !traceInstanceId) traceInstanceId = traceRecorder.allocateInstance("scene.main","live"); return traceInstanceId }
+    function traceEvent(name) { if (traceRecorder) { traceRecorder.invalidate(name); traceRecorder.traceEvent(name,{instanceId:traceIdentity(),surfaceId:"scene.main",revision:appearance.revision,rendererIdentity:traceLoadedRenderer,actorId:actorState.actorId,actorSequence:actorState.sequence,loadingStatus:sceneLoader.status}) } }
+    function traceParticipant(app) {
+        const presence = app.themeTracePresence(root,actor)
+        const loaded = sceneLoader.status === Loader.Ready && !!sceneLoader.item
+        return {instanceId:traceIdentity(),surfaceId:"scene.main",revision:appearance.revision,
+            observedRevision:loaded && sceneLoader.item.style ? sceneLoader.item.style.appearance.revision : -1,
+            exposed:presence.exposed,mandatory:sceneEnabled && visible,committed:loaded && traceLoadedRenderer === appearance.scene.renderer,committedRevision:appearance.revision,ready:loaded,
+            geometryValid:presence.geometryValid,opacity:presence.opacity,rendererIdentity:traceLoadedRenderer,
+            actorId:actorState.actorId,actorSequence:actorState.sequence,motionRunning:traceMotionRunning,
+            retainedExit:false,actionsEnabled:false}
+    }
     property StyleFacade style: Theme
     property var appearance: Theme.appearance
     property string familyId: "oggi"
@@ -54,16 +88,20 @@ Item {
     onCanvasSceneChanged: relocate()
     Component.onCompleted: { actor.x = canvasScene ? 0 : desiredAnchor.x; actor.y = canvasScene ? 0 : desiredAnchor.y }
     Timer { id: poseCompletion; onTriggered: if (root.actorState.locomotion === "moving") root.actorState.locomotion = "idle" }
-    MotionController { id: movement; appearance: root.appearance }
+    MotionController { id: movement; appearance: root.appearance; traceRecorder: root.traceRecorder; traceOwner: root.traceInstanceId }
     Item {
         id: actor
         width: root.canvasScene ? root.width : root.actorWidth
         height: root.canvasScene ? root.height : root.actorHeight
         Loader {
+            id: sceneLoader
+            onStatusChanged: if (root.traceRecorder) root.traceEvent(status === Loader.Error ? "scene.loader.error" : "scene.loader.status")
             anchors.fill: parent
             active: root.sceneEnabled; asynchronous: true
             source: root.sceneEnabled ? Qt.resolvedUrl("../"+root.descriptor.file) : ""
             onLoaded: {
+                root.traceLoadedRenderer = root.appearance.scene.renderer
+                if (root.traceRecorder) root.traceEvent("scene.loader.ready")
                 item.active = Qt.binding(function() { return root.visible && !root.suspended })
                 item.style = Qt.binding(function() { return root.style }); item.actorState = root.actorState
                 item.configuration = Qt.binding(function() { return root.appearance.scene })

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import signal
 import sys
 from pathlib import Path
@@ -21,6 +22,9 @@ from weather import WeatherService
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--theme-trace-output", type=Path)
+    options, _ = parser.parse_known_args()
     application = QGuiApplication(sys.argv)
     application.setOrganizationName("SmartPC")
     application.setApplicationName("SmartPC")
@@ -45,7 +49,11 @@ def main() -> int:
     events = EventService(path=":memory:" if demo else None, auto_refresh=not demo)
     sport = SportService(auto_refresh=not demo) if not demo else None
     racing = {kind: MotorsportService(kind) for kind in ('f1','motogp')} if not demo else {}
-    state = DashboardState(weather, system_info, account, events, demo=demo, sport=sport, racing=racing)
+    trace = None
+    if options.theme_trace_output:
+        from theme_trace_bridge import ThemeTraceBridge
+        trace = ThemeTraceBridge()
+    state = DashboardState(weather, system_info, account, events, demo=demo, sport=sport, racing=racing, trace=trace)
     if sport: application.aboutToQuit.connect(sport.close)
     for service in racing.values(): application.aboutToQuit.connect(service.close)
     if not demo:
@@ -56,11 +64,16 @@ def main() -> int:
         state.accountThresholdsChanged.connect(update_account_events)
         update_account_events()
     application.aboutToQuit.connect(events.close)
-    engine.setInitialProperties({"keypad": keypad, "dashboardState": state})
+    engine.setInitialProperties({"keypad": keypad, "dashboardState": state, "traceRecorder": trace})
     engine.load(QUrl.fromLocalFile(str(Path(__file__).with_name("Main.qml"))))
     if not engine.rootObjects():
         return 1
-    return application.exec()
+    if trace:
+        trace.attach(engine.rootObjects()[0])
+    result = application.exec()
+    if trace:
+        trace.write_report(options.theme_trace_output)
+    return result
 
 
 if __name__ == "__main__":

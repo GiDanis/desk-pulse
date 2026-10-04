@@ -6,6 +6,7 @@ import json
 import math
 from pathlib import Path
 import re
+from theme_trace_hooks import recorder_for, trace_span
 
 ROOT=Path(__file__).parent
 ID=re.compile(r'^[a-z][a-z0-9_.-]{0,63}$')
@@ -66,7 +67,15 @@ def contrast_rules():
                 yield prefix+role,prefix+'focusedSurface',minimum,prefix+role
 
 
-def contrast_issues(tokens):
+def contrast_issues(tokens, trace=None):
+    recorder = recorder_for(trace)
+    if recorder is not None:
+        with recorder.span("catalog.contrast", tokenCount=len(tokens)):
+            return _contrast_issues(tokens)
+    return _contrast_issues(tokens)
+
+
+def _contrast_issues(tokens):
     issues=[]
     for foreground,background,minimum,path in contrast_rules():
         ratio=contrast(tokens[foreground],tokens[background])
@@ -80,12 +89,14 @@ def contrast_issues(tokens):
     return issues
 
 class ThemeCatalog:
-    def __init__(self,user_directory=None,root=ROOT):
+    def __init__(self,user_directory=None,root=ROOT,*,trace=None):
+        self._trace=trace
         self.root=Path(root); self.user_directory=Path(user_directory) if user_directory else None
         self.contract=read_json(self.root/'themes/token-contract.json')['tokens']
         self.presentations={}; self.recipes={}; self.icon_sets={}; self.packs={}; self.directories={}; self.errors=[]
         self.reload()
 
+    @trace_span("catalog.reload")
     def reload(self):
         self.errors=[]; self.packs={}; self.directories={}; self.asset_cache={}
         self.contract=read_json(self.root/'themes/token-contract.json')['tokens']
@@ -128,6 +139,7 @@ class ThemeCatalog:
             contained(self.root,row['file'])
         registry[identifier]=deepcopy(row)
 
+    @trace_span("catalog.validatePack")
     def validate_pack(self,pack):
         if not isinstance(pack,dict) or type(pack.get('schemaVersion')) is not int or pack.get('schemaVersion')!=1: raise ThemeError('schemaVersion','formato non supportato')
         unknown=set(pack)-FIELDS
@@ -148,6 +160,7 @@ class ThemeCatalog:
         if len(pack.get('assets',[]))>64: raise ThemeError('assets','troppe risorse')
         if set(pack.get('requirements',[]))-{'presentation1','motion1','icons1','scene1'}: raise ThemeError('requirements','capacità non supportata')
 
+    @trace_span("catalog.validateTokens")
     def validate_tokens(self,values):
         if not isinstance(values,dict): raise ThemeError('tokens','oggetto richiesto')
         for path,value in values.items():
@@ -167,6 +180,7 @@ class ThemeCatalog:
         if not pack: raise ThemeError('id','tema o genitore non disponibile: '+identifier)
         return (self.chain(pack['extends'],seen+(identifier,)) if pack.get('extends') else [])+[pack]
 
+    @trace_span("catalog.resolve")
     def resolve(self,identifier,overrides=None,variant='day',motion_mode='normal',check_assets=True):
         if variant not in ('day','night') or motion_mode not in ('normal','reduced','off'): raise ThemeError('environment','policy non valida')
         resolved={'tokens':{path:deepcopy(spec['default']) for path,spec in self.contract.items()},'palettes':{'day':{},'night':{}},'presentations':{},'motion':{},'scene':{'enabled':False,'renderer':'builtin.actor','skin':'plain'},'iconSetId':'builtin.plain','iconOverrides':{},'assets':[]}
@@ -182,8 +196,15 @@ class ThemeCatalog:
                 if check_assets:
                     stamp=(str(path),path.stat().st_size,path.stat().st_mtime_ns)
                     digest=self.asset_cache.get(stamp)
+                    recorder=recorder_for(self._trace)
+                    if recorder is not None:
+                        recorder.record('catalog.assetHashCache', hit=digest is not None, assetId=asset['id'])
                     if digest is None:
-                        with path.open('rb') as stream: digest=hashlib.file_digest(stream,'sha256').hexdigest()
+                        if recorder is not None:
+                            with recorder.span('catalog.assetHash',assetId=asset['id'],fileBytes=stamp[1]):
+                                with path.open('rb') as stream: digest=hashlib.file_digest(stream,'sha256').hexdigest()
+                        else:
+                            with path.open('rb') as stream: digest=hashlib.file_digest(stream,'sha256').hexdigest()
                         self.asset_cache[stamp]=digest
                     if asset.get('sha256') and digest!=asset['sha256']: raise ThemeError(asset['id'],'hash non corrispondente')
                 assets[asset['id']]={**asset,'file':str(path),'sha256':digest}
@@ -205,7 +226,7 @@ class ThemeCatalog:
         self.validate_tokens(resolved['tokens'])
         for path,spec in self.contract.items():
             if 'effectiveMaximum' in spec and resolved['tokens'][path]*resolved['tokens']['typography.textScale']>spec['effectiveMaximum']: raise ThemeError(path,'dimensione effettiva incompatibile con il layout standard')
-        failures=contrast_issues(resolved['tokens'])
+        failures=contrast_issues(resolved['tokens'],trace=self._trace)
         if failures:
             first=failures[0]
             raise ThemeError(first['path'],first['message'],issues=failures)

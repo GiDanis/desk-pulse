@@ -1,0 +1,42 @@
+{
+  "id": "cross.sport.scheduled:fantacalcio",
+  "covers": [],
+  "family": "sport-match",
+  "surfaceId": "sport.match.detail",
+  "variant": "scheduled×fantacalcio",
+  "clockEpoch": 1790848800,
+  "initialProperties": {
+    "familyId": "sport",
+    "overlay": "sportDetail",
+    "sportDetailPage": 3
+  },
+  "domainSetup": [
+    "match:scheduled"
+  ],
+  "expectedExpressions": [
+    "sportOverlay.detail",
+    "sportDetailPage === 3",
+    "sportMatch.canonicalMatchId.length > 0"
+  ],
+  "invariants": [
+    "navigationAndTab",
+    "overlayStack",
+    "inputFocus",
+    "providerEffects",
+    "actorIdentity",
+    "eventFlagsAndDeadline"
+  ],
+  "actions": [
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 4
+    },
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 6
+    }
+  ],
+  "publicApiBinding": "deferredA1"
+}

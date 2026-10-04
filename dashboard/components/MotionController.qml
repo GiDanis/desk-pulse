@@ -2,24 +2,35 @@ import QtQuick
 import "../themes"
 Item {
     id: root
+    property var traceRecorder: null
+    property string traceOwner: ""
+    property string traceEventId: ""
+    readonly property bool running: !!currentRecipe && currentRecipe.running === true
+    readonly property bool runningKnown: !currentRecipe || currentRecipe.running !== undefined
+    function traceMotion(name) { if (traceRecorder) { traceRecorder.invalidate(name); traceRecorder.traceEvent(name,{instanceId:traceOwner,motionEvent:traceEventId,revision:playingRevision,running:running}) } }
+    Connections { target: root.traceRecorder ? root.currentRecipe : null; ignoreUnknownSignals: true
+        function onRunningChanged() { if (root.traceRecorder) root.traceMotion(root.running ? "motion.started" : "motion.stopped") }
+    }
     property var appearance: Theme.appearance
     property var currentRecipe: null
     property string lastError: ""
     property int playingRevision: -1
     visible: false
-    function settle() { if (currentRecipe) { currentRecipe.settle(); currentRecipe.destroy(); currentRecipe = null } }
+    function settle() { if (traceRecorder && currentRecipe) traceMotion("motion.settle"); if (currentRecipe) { currentRecipe.settle(); currentRecipe.destroy(); currentRecipe = null } }
     function play(target, eventId, direction, vertical, context) {
         settle()
+        traceEventId = eventId
         playingRevision = appearance ? appearance.revision : -1
-        if (!appearance || appearance.motionMode === "off") return
+        if (traceRecorder) traceMotion("motion.play")
+        if (!appearance || appearance.motionMode === "off") { if (traceRecorder) traceMotion("motion.off"); return }
         const spec = appearance.motion[eventId]
-        if (!spec) return
+        if (!spec) { if (traceRecorder) traceMotion("motion.missingSpec"); return }
         const registry = appearance.motionRegistry[spec.recipe]
-        if (!registry) return
+        if (!registry) { if (traceRecorder) traceMotion("motion.missingRecipe"); return }
         const component = Qt.createComponent(Qt.resolvedUrl("../" + registry.file))
-        if (component.status !== Component.Ready) { lastError = component.errorString(); return }
+        if (component.status !== Component.Ready) { lastError = component.errorString(); if (traceRecorder) traceMotion("motion.recipeError"); return }
         currentRecipe = component.createObject(root)
-        if (!currentRecipe) { lastError = component.errorString(); return }
+        if (!currentRecipe) { lastError = component.errorString(); if (traceRecorder) traceMotion("motion.recipeError"); return }
         const curves = {linear: Easing.Linear, outCubic: Easing.OutCubic, outQuad: Easing.OutQuad, inOutQuad: Easing.InOutQuad}
         currentRecipe.play(target, Object.assign({},spec,context || {},{motionMode: appearance.motionMode, duration: appearance.motionMode === "reduced" ? Math.min(spec.durationMs,80) : spec.durationMs,
                            distance: appearance.motionMode === "reduced" ? Math.min(spec.distancePx,4) : spec.distancePx,

@@ -1,6 +1,7 @@
 import QtQuick
 QtObject {
     id: recipe
+    readonly property bool running: animation.running
     property var target: null
     property point destination: Qt.point(0,0)
     property int duration: 160

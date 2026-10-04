@@ -8,6 +8,7 @@ from pathlib import Path
 from PySide6.QtCore import QObject, Property, QRunnable, QSettings, QStandardPaths, QThreadPool, Signal, Slot
 from PySide6.QtGui import QFontDatabase, QGuiApplication, QImageReader
 from theme_core import ThemeCatalog, ThemeError
+from theme_trace_hooks import recorder_for, trace_span, trace_operation, trace_generation
 
 
 class SaveResult(QObject):
@@ -15,12 +16,21 @@ class SaveResult(QObject):
 
 
 class SaveJob(QRunnable):
-    def __init__(self, configuration, result):
+    def __init__(self, configuration, result, *, trace=None, request_id=None):
         super().__init__()
+        self._trace=trace; self._trace_request=request_id
         self.configuration = deepcopy(configuration)
         self.result = result
 
     def run(self):
+        recorder=recorder_for(self._trace)
+        if recorder is not None:
+            with recorder.scope(self._trace_request), recorder.span('save.worker'):
+                self._run()
+        else:
+            self._run()
+
+    def _run(self):
         settings = QSettings('SmartPC', 'Dashboard')
         values={'appearance/config':json.dumps(self.configuration,ensure_ascii=False,sort_keys=True),
                 'animationsEnabled':self.configuration['motionMode']!='off',
@@ -35,6 +45,8 @@ class SaveJob(QRunnable):
                 if value is None: settings.remove(key)
                 else: settings.setValue(key,value)
             settings.sync()
+        recorder=recorder_for(self._trace)
+        if recorder is not None: recorder.record('save.worker.finished',ok=ok)
         self.result.finished.emit(ok, '' if ok else 'Impossibile salvare le preferenze. La bozza resta disponibile.')
 
 
@@ -74,7 +86,8 @@ class FontRegistry:
     idle_capacity = 4
 
     @classmethod
-    def acquire(cls, assets, families):
+    def acquire(cls, assets, families, trace=None):
+        recorder=recorder_for(trace)
         needed = set()
         result = {}
         for value in families:
@@ -83,9 +96,15 @@ class FontRegistry:
             asset = next((a for a in assets if a['id'] == identifier and a['type'] == 'font'), None)
             if not asset: raise ThemeError('font.'+identifier, 'risorsa font non disponibile')
             key = asset['sha256']; needed.add(key)
+            if recorder is not None: recorder.record('font.acquire',assetId=identifier,digest=key,reused=key in cls.entries)
             if key not in cls.entries:
-                number = QFontDatabase.addApplicationFont(asset['file'])
-                names = QFontDatabase.applicationFontFamilies(number) if number >= 0 else []
+                if recorder is not None:
+                    with recorder.span('font.register',assetId=identifier,digest=key):
+                        number = QFontDatabase.addApplicationFont(asset['file'])
+                        names = QFontDatabase.applicationFontFamilies(number) if number >= 0 else []
+                else:
+                    number = QFontDatabase.addApplicationFont(asset['file'])
+                    names = QFontDatabase.applicationFontFamilies(number) if number >= 0 else []
                 if not names: raise ThemeError('font.'+identifier, 'font non caricabile')
                 cls.entries[key] = {'id':number, 'family':names[0], 'owners':set(), 'touched':0}
             cls.clock += 1; cls.entries[key]['touched'] = cls.clock
@@ -93,12 +112,15 @@ class FontRegistry:
         return needed, result
 
     @classmethod
-    def update(cls, owner, needed):
+    def update(cls, owner, needed, trace=None):
+        recorder=recorder_for(trace)
+        if recorder is not None: recorder.record("font.owners",needed=len(needed),registered=len(cls.entries))
         for key, entry in list(cls.entries.items()):
             if key in needed: entry['owners'].add(owner)
             else: entry['owners'].discard(owner)
         inactive=sorted((key for key,entry in cls.entries.items() if not entry['owners']), key=lambda key:cls.entries[key]['touched'])
         for key in inactive[:-cls.idle_capacity]:
+            if recorder is not None: recorder.record('font.remove',digest=key)
             QFontDatabase.removeApplicationFont(cls.entries[key]['id']); del cls.entries[key]
 
 
@@ -108,11 +130,12 @@ class ThemeService(QObject):
     saveFinished = Signal(bool)
     candidateChanged = Signal()
 
-    def __init__(self, parent=None, *, store=None, root=None):
+    def __init__(self, parent=None, *, store=None, root=None, trace=None):
         super().__init__(parent)
+        self._trace=trace; self._save_trace_request=None
         location = store or os.environ.get('SMARTPC_THEME_STORE') or str(Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation))/'themes')
         self.store = Path(location)
-        self.catalog = ThemeCatalog(self.store, **({'root':root} if root else {}))
+        self.catalog = ThemeCatalog(self.store, trace=trace, **({'root':root} if root else {}))
         settings = QSettings('SmartPC', 'Dashboard')
         legacy = str(settings.value('animationsEnabled','true')).lower() not in ('false','0')
         legacy_palette = settings.value('nightMode','auto')
@@ -128,6 +151,8 @@ class ThemeService(QObject):
         self._save_result.finished.connect(self._saved)
         self._pack_result = SaveResult(self)
         self._pack_result.finished.connect(self._pack_finished)
+        if recorder_for(self._trace) is not None:
+            self._trace.bind_service(self)
         saved = settings.value('appearance/config')
         if saved:
             try:
@@ -144,11 +169,14 @@ class ThemeService(QObject):
             self._error = 'Risorse recuperate con Base: '+str(error); self._status = 'recovery'
             self._committed = {'schemaVersion':1,'themeId':'base','overrides':{},'motionMode':'normal','paletteMode':'auto'}
             self._publish(self._committed)
-        self.destroyed.connect(lambda: FontRegistry.update(self._font_owner, set()))
+        self.destroyed.connect(lambda: FontRegistry.update(self._font_owner, set(),trace=self._trace))
 
+    @trace_span("service.data")
     def _data(self, configuration, variant):
         key=(json.dumps(configuration,sort_keys=True,separators=(',',':')),variant)
         cached=self._resolved_cache.get(key)
+        recorder=recorder_for(self._trace)
+        if recorder is not None: recorder.record('service.cache.lookup',hit=cached is not None,variant=variant,entries=len(self._resolved_cache))
         if cached is not None:
             result,stamps=cached
             try:
@@ -156,14 +184,22 @@ class ThemeService(QObject):
             except OSError: unchanged=False
             if unchanged:
                 self._resolved_cache.move_to_end(key)
+                if recorder is not None:
+                    with recorder.span('service.cache.copy',variant=variant): return deepcopy(result)
                 return deepcopy(result)
+            if recorder is not None: recorder.record('service.cache.invalidate',variant=variant)
             self._resolved_cache.pop(key,None)
         result=self.catalog.resolve(configuration['themeId'],configuration['overrides'],variant,configuration['motionMode'])
         stamps={a['file']:(Path(a['file']).stat().st_size,Path(a['file']).stat().st_mtime_ns) for a in result['assets']}
-        self._resolved_cache[key]=(deepcopy(result),stamps)
+        if recorder is not None:
+            with recorder.span('service.cache.store',variant=variant):
+                self._resolved_cache[key]=(deepcopy(result),stamps)
+        else:
+            self._resolved_cache[key]=(deepcopy(result),stamps)
         while len(self._resolved_cache)>32:self._resolved_cache.popitem(last=False)
         return result
 
+    @trace_span("service.validateConfig")
     def _validate_config(self, configuration):
         if not isinstance(configuration,dict) or type(configuration.get('schemaVersion')) is not int or configuration.get('schemaVersion') != 1 or set(configuration)-{'schemaVersion','themeId','overrides','motionMode','paletteMode'}:
             raise ThemeError('configuration','formato non supportato')
@@ -173,24 +209,32 @@ class ThemeService(QObject):
         for variant in ('day','night'):
             self._data(configuration,variant)
 
+    @trace_span("service.resolve")
     def _resolve(self, configuration):
         result = self._data(configuration,self._variant)
         image_bytes = 0
+        recorder=recorder_for(self._trace)
         for asset in result['assets']:
             if asset['type'] != 'image': continue
             size = self._image_sizes.get(asset['sha256'])
+            if recorder is not None: recorder.record('image.headerCache',assetId=asset['id'],hit=size is not None)
             if size is None:
-                reader = QImageReader(asset['file'])
-                dimensions = reader.size()
-                if not reader.canRead() or not dimensions.isValid(): raise ThemeError(asset['id'],'immagine non decodificabile')
-                size = dimensions.width()*dimensions.height()*4
+                if recorder is not None:
+                    with recorder.span('image.header',assetId=asset['id']):
+                        reader = QImageReader(asset['file']); dimensions = reader.size()
+                        if not reader.canRead() or not dimensions.isValid(): raise ThemeError(asset['id'],'immagine non decodificabile')
+                        size = dimensions.width()*dimensions.height()*4
+                else:
+                    reader = QImageReader(asset['file']); dimensions = reader.size()
+                    if not reader.canRead() or not dimensions.isValid(): raise ThemeError(asset['id'],'immagine non decodificabile')
+                    size = dimensions.width()*dimensions.height()*4
                 self._image_sizes[asset['sha256']] = size
             image_bytes += size
         if image_bytes > 24*1024*1024: raise ThemeError('assets.images','budget texture per tema superato')
         font_keys = [key for key in result['tokens'] if key.endswith('Family') and self.catalog.contract[key]['type'] == 'string']
         families = [result['tokens'][key] for key in font_keys]
         families += [v['family'] for v in result['icons'].values() if isinstance(v,dict) and v.get('backend')=='glyph']
-        needed, replacements = FontRegistry.acquire(result['assets'],families)
+        needed, replacements = FontRegistry.acquire(result['assets'],families,trace=self._trace)
         for key in font_keys:
             value = result['tokens'][key]
             if not value:
@@ -207,6 +251,7 @@ class ThemeService(QObject):
                 if not raw.supportsCharacter(ord(icon['glyph'])): raise ThemeError('icon.glyph','glifo mancante nel font')
         return result, needed
 
+    @trace_span("service.publish")
     def _publish(self, configuration, prepared=None):
         result, needed = prepared if prepared is not None else self._resolve(configuration)
         result.pop('generation', None); result.pop('requiredContents', None)
@@ -216,7 +261,8 @@ class ThemeService(QObject):
         self._visible = deepcopy(configuration)
         self._snapshot = result
         self._active_fonts = needed; self._staged_fonts = set()
-        FontRegistry.update(self._font_owner, needed)
+        FontRegistry.update(self._font_owner, needed,trace=self._trace)
+        if recorder_for(self._trace) is not None: self._trace.published(self._revision)
         self.changed.emit()
 
     @Property('QVariantMap',notify=candidateChanged)
@@ -228,8 +274,7 @@ class ThemeService(QObject):
         self._active_content = content
         if self._candidate is not None:
             candidate = deepcopy(self._candidate_config)
-            self._clear_candidate()
-            self._change(candidate)
+            self._restart_candidate(candidate)
 
     @Slot('QStringList')
     def setPreparedContents(self, contents):
@@ -237,13 +282,23 @@ class ThemeService(QObject):
         self._prepared_contents = set(contents)
         if self._candidate is not None:
             candidate = deepcopy(self._candidate_config)
+            self._restart_candidate(candidate)
+
+    def _restart_candidate(self, candidate):
+        if recorder_for(self._trace) is not None:
+            with self._trace.correlate_generation(self._candidate['generation']):
+                self._clear_candidate()
+                self._change(candidate)
+        else:
             self._clear_candidate()
             self._change(candidate)
 
-    def _clear_candidate(self, retain_fonts=None):
+    def _clear_candidate(self, retain_fonts=None, *, trace_outcome='superseded'):
+        if self._candidate is not None and recorder_for(self._trace) is not None:
+            self._trace.cleared(self._candidate['generation'],outcome=trace_outcome)
         self._candidate = None; self._candidate_config = None; self._generation += 1; self._staged_fonts = set()
         self._awaiting_contents = set()
-        FontRegistry.update(self._font_owner,self._active_fonts | (retain_fonts or set()))
+        FontRegistry.update(self._font_owner,self._active_fonts | (retain_fonts or set()),trace=self._trace)
         self.candidateChanged.emit()
 
     @Slot(int,bool,str)
@@ -251,9 +306,12 @@ class ThemeService(QObject):
         self.reportCandidate(generation, self._active_content, ok, message)
 
     @Slot(int,str,bool,str)
+    @trace_generation
     def reportCandidate(self, generation, content, ok, message):
-        if self._candidate is None or generation != self._candidate['generation']: return
-        if content not in self._awaiting_contents: return
+        recorder=recorder_for(self._trace)
+        reason=('noCandidate' if self._candidate is None else 'staleGeneration' if generation != self._candidate['generation'] else 'unexpectedContent' if content not in self._awaiting_contents else 'accepted')
+        if recorder is not None: recorder.record('candidate.ack',generation=generation,contentId=content,ok=ok,reason=reason)
+        if reason != 'accepted': return
         self._awaiting_contents.remove(content)
         if ok and self._awaiting_contents: return
         candidate = self._candidate_config
@@ -265,14 +323,18 @@ class ThemeService(QObject):
             self._publish(candidate,prepared)
             self._error = ''
         else:
+            if recorder is not None:
+                self._trace.finished(recorder.current_request,'failed',reason='candidateRejected')
+                self._trace.cleared(generation,outcome='failed')
             self._error = message or 'Presentazione non caricabile; aspetto precedente conservato'
         self.candidateChanged.emit()
         if not ok:
             self._staged_fonts = set()
-            FontRegistry.update(self._font_owner,self._active_fonts)
+            FontRegistry.update(self._font_owner,self._active_fonts,trace=self._trace)
         self.editorChanged.emit()
 
     @Slot(str,str,result=bool)
+    @trace_operation("recoverVisual")
     def recoverVisual(self, content, message):
         base = self.catalog.resolve('base')
         if self._snapshot['presentations'].get(content) == base['presentations'].get(content): return False
@@ -280,6 +342,7 @@ class ThemeService(QObject):
         return True
 
     def _recover_base(self, message):
+        if recorder_for(self._trace) is not None: self._trace.recovery()
         self._clear_candidate()
         self._committed = {'schemaVersion':1,'themeId':'base','overrides':{},'motionMode':'off','paletteMode':self._visible.get('paletteMode','auto')}
         self._draft = None; self._publish(self._committed)
@@ -310,6 +373,7 @@ class ThemeService(QObject):
     def catalogErrors(self): return self.catalog.errors
 
     @Slot(str)
+    @trace_operation("setVariant")
     def setVariant(self, variant):
         if variant == self._variant or variant not in ('day','night'): return
         self._variant = variant
@@ -323,23 +387,27 @@ class ThemeService(QObject):
                 self._recover_base(str(error))
 
     @Slot()
+    @trace_span("service.beginEdit")
     def beginEdit(self):
         if self._pending is not None or self._operation_pending: return
         self._draft = deepcopy(self._committed); self._draft_valid = True; self._status = 'ready'; self._error = ''; self.editorChanged.emit()
 
     @Slot(str,result=bool)
+    @trace_operation("selectDraft")
     def selectDraft(self, identifier):
         if self._draft is None or self._pending is not None or self._operation_pending: return False
         candidate = deepcopy(self._draft); candidate['themeId'] = identifier
         return self._change(candidate)
 
     @Slot(str,'QVariant',result=bool)
+    @trace_operation("setToken")
     def setToken(self, path, value):
         if self._draft is None or self._pending is not None or self._operation_pending: return False
         candidate = deepcopy(self._draft); candidate['overrides'].setdefault('tokens',{})[path] = value
         return self._change(candidate)
 
     @Slot('QVariantMap',result=bool)
+    @trace_operation("setTokens")
     def setTokens(self, values):
         if self._draft is None or self._pending is not None or self._operation_pending: return False
         candidate = deepcopy(self._draft)
@@ -347,10 +415,11 @@ class ThemeService(QObject):
         return self._change(candidate)
 
     @Slot(str,result=bool)
+    @trace_span("service.transferPack")
     def transferPack(self, operation):
         if operation not in ('import','export') or self._operation_pending or self._pending is not None or self._candidate is not None: return False
         configuration = deepcopy(self._draft if self._draft is not None else self._committed)
-        catalog = ThemeCatalog(self.store,root=self.catalog.root)
+        catalog = ThemeCatalog(self.store,root=self.catalog.root,trace=self._trace)
         self._operation_pending = True; self._status = 'working'; self._error = ''; self.editorChanged.emit()
         QThreadPool.globalInstance().start(PackJob(operation,self.store,catalog,configuration,self._pack_result))
         return True
@@ -362,9 +431,10 @@ class ThemeService(QObject):
         self._error = message; self.editorChanged.emit()
 
     @Slot(result=bool)
+    @trace_span("service.reloadCatalog")
     def reloadCatalog(self):
         try:
-            candidate = ThemeCatalog(self.store,root=self.catalog.root)
+            candidate = ThemeCatalog(self.store,root=self.catalog.root,trace=self._trace)
             current = self._draft if self._draft is not None else self._committed
             candidate.resolve(current['themeId'],current['overrides'],self._variant,current['motionMode'])
             self.catalog = candidate; self._resolved_cache.clear(); self._error = '; '.join(candidate.errors)
@@ -373,6 +443,7 @@ class ThemeService(QObject):
             self._error = str(error); self.editorChanged.emit(); return False
 
     @Slot(str,'QVariant',result=bool)
+    @trace_operation("setSection")
     def setSection(self, section, value):
         if self._draft is None or self._pending is not None or self._operation_pending: return False
         candidate = deepcopy(self._draft)
@@ -382,6 +453,7 @@ class ThemeService(QObject):
         return self._change(candidate)
 
     @Slot(result=bool)
+    @trace_operation("resetNotifications")
     def resetNotifications(self):
         if self._draft is None or self._pending is not None or self._operation_pending: return False
         candidate = deepcopy(self._draft)
@@ -390,6 +462,7 @@ class ThemeService(QObject):
             candidate['overrides'][section] = {key:value for key,value in values.items() if not key.startswith(prefix)}
         return self._change(candidate)
 
+    @trace_span("service.change")
     def _change(self, candidate):
         try:
             self._validate_config(candidate)
@@ -401,11 +474,14 @@ class ThemeService(QObject):
                 self._draft_valid = False
                 self._generation += 1
                 resolved.update(revision=self._revision+1, generation=self._generation, requiredContents=sorted(changed), paletteMode=candidate.get('paletteMode','auto'))
+                if self._candidate is not None and recorder_for(self._trace) is not None:
+                    self._trace.cleared(self._candidate['generation'],outcome='superseded')
                 self._candidate = resolved; self._candidate_config = deepcopy(candidate)
                 self._awaiting_contents = set(changed)
                 # Fonts needed by both current and staged visuals remain registered until commit/cancel.
                 self._staged_fonts = needed
-                FontRegistry.update(self._font_owner,needed | self._active_fonts)
+                FontRegistry.update(self._font_owner,needed | self._active_fonts,trace=self._trace)
+                if recorder_for(self._trace) is not None: self._trace.candidate(self._generation)
                 self._error = ''; self.candidateChanged.emit(); self.editorChanged.emit()
             else:
                 self._draft_valid = True
@@ -413,18 +489,20 @@ class ThemeService(QObject):
                 self._error = ''; self.editorChanged.emit()
             return True
         except (ThemeError,OSError,ValueError,TypeError) as error:
-            FontRegistry.update(self._font_owner,self._active_fonts | self._staged_fonts)
+            FontRegistry.update(self._font_owner,self._active_fonts | self._staged_fonts,trace=self._trace)
             self._error = str(error); self.editorChanged.emit(); return False
 
     @Slot(result=bool)
+    @trace_operation("preview")
     def preview(self):
         if self._draft is None: return False
         return self._change(deepcopy(self._draft))
 
     @Slot()
+    @trace_operation("cancel")
     def cancel(self):
         if self._pending is not None: return
-        self._clear_candidate()
+        self._clear_candidate(trace_outcome='cancelled')
         self._draft = None
         try: self._publish(self._committed)
         except (ThemeError, OSError, ValueError) as error:
@@ -432,11 +510,13 @@ class ThemeService(QObject):
         self._error = ''; self.editorChanged.emit()
 
     @Slot(result=bool)
+    @trace_operation("resetDraft")
     def resetDraft(self):
         if self._draft is None: self.beginEdit()
         return self._change({'schemaVersion':1,'themeId':'base','overrides':{},'motionMode':'normal','paletteMode':'auto'})
 
     @Slot(result=bool)
+    @trace_operation("apply")
     def apply(self):
         if self._draft is None or self._pending is not None or self._candidate is not None or not self._draft_valid or self._operation_pending: return False
         try:
@@ -446,11 +526,25 @@ class ThemeService(QObject):
         if self._visible != self._draft:
             if not self._change(deepcopy(self._draft)) or self._candidate is not None: return False
         self._pending = deepcopy(self._draft); self._status = 'saving'; self._error = ''; self.editorChanged.emit()
-        QThreadPool.globalInstance().start(SaveJob(self._pending,self._save_result))
+        recorder=recorder_for(self._trace)
+        self._save_trace_request=recorder.current_request if recorder is not None else None
+        if recorder is not None: recorder.record('save.queued')
+        QThreadPool.globalInstance().start(SaveJob(self._pending,self._save_result,trace=recorder,request_id=self._save_trace_request))
         return True
 
     @Slot(bool,str)
     def _saved(self, ok, message):
+        recorder=recorder_for(self._trace)
+        request=self._save_trace_request
+        if recorder is not None:
+            with recorder.scope(request), recorder.span('save.callback'):
+                self._saved_state(ok,message)
+                self._trace.finished(request,'noVisualChange' if ok else 'failed',persisted=ok)
+        else:
+            self._saved_state(ok,message)
+        self._save_trace_request=None
+
+    def _saved_state(self, ok, message):
         if ok:
             self._committed = self._pending; self._draft = None
         else:
