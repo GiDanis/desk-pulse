@@ -11,6 +11,8 @@ Item {
     property var publicContext: null
     property bool valid: false
     property bool publicEnabled: true
+    readonly property var modelDomains: factory && typeof factory.modelDomains === "function"
+        ? factory.modelDomains(surfaceId) : ["weather","account","nextEvent","sport","team","fantasy","racing"]
     readonly property var payload: {
         if (!publicEnabled) return ({})
         const c = legacy
@@ -19,10 +21,17 @@ Item {
             viewportWidth:c.viewportWidth,viewportHeight:c.viewportHeight,
             appearanceRevision:c.style && c.style.appearance ? c.style.appearance.revision : 0,
             motionMode:c.style && c.style.appearance ? c.style.appearance.motionMode : "off"}
-        const keys = ["visualStyle","mode","actions","safeArea","iconId","model","selection","clockText","dateText","event","items","selectedEventId","unreadCount",
+        const keys = ["visualStyle","mode","actions","safeArea","iconId","selection","clockText","dateText","event","items","selectedEventId","unreadCount",
             "sourceStatus","scrollOffset","scrollMaximum","occupiedRegions","preview","exiting","ready","error",
             "commandHints","guideText","sourceText","validityText","actorState","notificationEvent","configuration","suspended"]
         for (const key of keys) if (c[key] !== undefined) result[key] = c[key]
+        // Marshal only provider domains defined by this context. Shell, menu,
+        // settings and notifications must never copy a complete Sport tree.
+        if (modelDomains.length && c.model) {
+            const model = {}
+            for (const domain of modelDomains) if (c.model[domain] !== undefined) model[domain] = c.model[domain]
+            result.model = model
+        }
         if (c.controller) {
             const app = c.controller
             result.epoch = app.now.getTime()/1000
@@ -39,7 +48,9 @@ Item {
         }
         return result
     }
-    function refresh() { if (factory && publicContext) valid=factory.updateLegacy(publicContext,payload) }
+    function refresh() { if (factory && publicContext && !disposed) valid=factory.updateLegacy(publicContext,payload) }
+    // A completed public action must expose its resulting state synchronously.
+    function flushRefresh() { refreshScheduled = false; refresh() }
     // One provider/navigation transaction can invalidate several dependent
     // bindings. Publish its final snapshot once before the next GUI frame.
     // Initial creation remains synchronous for the renderer's required context.
@@ -49,6 +60,7 @@ Item {
         if (refreshScheduled || disposed || !publicContext) return
         refreshScheduled = true
         Qt.callLater(function() {
+            if (!refreshScheduled) return
             refreshScheduled = false
             if (!disposed) refresh()
         })

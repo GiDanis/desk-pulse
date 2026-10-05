@@ -204,7 +204,7 @@ Window {
             revisions:themeService && surfaceId === "settings.appearance" ? themeService.revisions : [],
             status:themeService ? themeService.status : "ready",draft:themeService ? themeService.draft : {},notificationMode:settingsPanel.notificationMode})
         rows=publicRows(rows)
-        const draft=themeService ? themeService.draft : {},status=themeService ? themeService.status : "ready"
+        const draft=themeService ? themeService.draft || {} : {},status=themeService ? themeService.status : "ready"
         const draftTokens=(draft.overrides || {}).tokens || {}
         const operationStatus=status === "saving" || status === "working" ? "pending" : status === "error" || status === "recovery" ? "failed" : "idle"
         const selectedId=rows[selected] ? rows[selected].id : surfaceId.indexOf("home.") === 0 || surfaceId.indexOf("weather.") === 0 || surfaceId === "account.usage" ? surfaceId : ""

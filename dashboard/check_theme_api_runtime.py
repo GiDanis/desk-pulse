@@ -260,6 +260,18 @@ class PublicApiTests(unittest.TestCase):
             with self.assertRaises(AttributeError):
                 model.count = 3
 
+    def test_bridge_domain_projection_matches_context_dependencies(self):
+        self.assertEqual(self.factory.modelDomains('shell.main'), [])
+        self.assertEqual(self.factory.modelDomains('overlay.menu'), [])
+        self.assertEqual(self.factory.modelDomains('settings.appearance'), [])
+        self.assertEqual(self.factory.modelDomains('scene.main'), [])
+        self.assertEqual(self.factory.modelDomains('alerts.banner.small'), [])
+        self.assertEqual(self.factory.modelDomains('sport.match.detail'), ['fantasy', 'sport'])
+        self.assertEqual(self.factory.modelDomains('sport.team.picker'), ['sport'])
+        self.assertEqual(self.factory.modelDomains('racing.driver.detail'), ['racing'])
+        self.assertEqual(self.factory.modelDomains('home.now'),
+                         ['weather', 'account', 'nextEvent', 'sport', 'team', 'fantasy', 'racing'])
+
     def test_nested_equality_preserves_types_and_mapping_order(self):
         from theme_contexts import snapshot_equal
         self.assertTrue(snapshot_equal({'a': [0, False, {'n': None}], 'b': 1.0},

@@ -11,7 +11,7 @@ from datetime import datetime
 from pathlib import Path
 import uuid
 
-from PySide6.QtCore import QObject, Property, Signal, Slot, QPointF, QRectF
+from PySide6.QtCore import QObject, Property, Signal, Slot, QPointF, QRectF, QMetaObject, Qt
 from PySide6.QtGui import QColor
 from PySide6.QtQml import QQmlEngine, QJSValue
 
@@ -443,6 +443,22 @@ class PublicContextFactory(QObject):
     def apiFingerprint(self):
         return CONTRACT.fingerprint
 
+    @Slot(str, result='QStringList')
+    def modelDomains(self, surface_id):
+        """Private bridge projection; never narrows a renderer's public API."""
+        surface = CONTRACT.surfaces.get(surface_id)
+        if surface is None:
+            return []
+        kind = surface['context']
+        fields = CONTRACT.fields(kind)
+        names = [name for name in ('weather', 'account', 'nextEvent', 'sport', 'team', 'fantasy', 'racing')
+                 if name in fields]
+        dependency = {'SportListContext': 'sport', 'MatchContext': 'sport',
+                      'TeamPickerContext': 'sport', 'DriverContext': 'racing'}.get(kind)
+        if dependency and dependency not in names:
+            names.append(dependency)
+        return names
+
     @Slot(QObject)
     def installForEngine(self, owner):
         context = QQmlEngine.contextForObject(owner)
@@ -642,11 +658,17 @@ class PublicContextFactory(QObject):
             QQmlEngine.setObjectOwnership(obj, QQmlEngine.CppOwnership)
             self._pending_results[obj.requestId] = obj
 
+    def _flush_adapter(self, context):
+        adapter = context.parent()
+        if adapter is not None and adapter.metaObject().indexOfMethod('flushRefresh()') >= 0:
+            QMetaObject.invokeMethod(adapter, 'flushRefresh', Qt.ConnectionType.DirectConnection)
+
     @Slot(QObject, str, bool, str, result=bool)
     def completeAction(self, context, request_id, success, error=''):
         entry = self._pending.get(request_id)
         if entry is None or entry[:2] != (id(context), context._instance_generation) or id(context) not in self._contexts:
             return False
+        self._flush_adapter(context)
         result = self._result(bool(success), request_id, 'completed' if success else 'failed', error if not success else '')
         if request_id in self._dispatching:
             self._pending[request_id] = (*entry[:2], result)

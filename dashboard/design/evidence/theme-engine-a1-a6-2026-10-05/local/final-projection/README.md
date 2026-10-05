@@ -1,0 +1,5 @@
+# Proiezione del bridge e completamento azioni
+
+Il contratto determina quali domini dei provider attraversano il bridge: PageContext conserva tutti i sette domini; Shell/Menu/Settings/Scene/Notification non ricevono alberi Sport inutilizzati. Sport/Team/Racing e riepilogo conservano le dipendenze richieste dalla normalizzazione. Nessuna proprietà pubblica viene rimossa. Le azioni completate pubblicano immediatamente lo stato aggiornato; le normali invalidazioni vengono accorpate prima del prossimo frame.
+
+La matrice 1.088 scenari/otto profili e le 14 regressioni sono del sorgente dc85680 precedente alla proiezione. I due ID inventati del primo runner sono conservati come errori del harness (`invalid-profile-*`); il riepilogo combinato usa solo gli otto profili canonici. La proiezione riguarda esclusivamente i renderer API2 ed è provata nei test Main di azioni, impostazioni, overlay e sei notifiche, oltre a 31 test API nativi. La prova PC di movimento conserva tutti i picchi e non dichiara una qualifica dispositivo.
