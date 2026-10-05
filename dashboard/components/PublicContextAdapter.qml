@@ -40,7 +40,20 @@ Item {
         return result
     }
     function refresh() { if (factory && publicContext) valid=factory.updateLegacy(publicContext,payload) }
-    onPayloadChanged: refresh()
+    // One provider/navigation transaction can invalidate several dependent
+    // bindings. Publish its final snapshot once before the next GUI frame.
+    // Initial creation remains synchronous for the renderer's required context.
+    property bool refreshScheduled: false
+    property bool disposed: false
+    function scheduleRefresh() {
+        if (refreshScheduled || disposed || !publicContext) return
+        refreshScheduled = true
+        Qt.callLater(function() {
+            refreshScheduled = false
+            if (!disposed) refresh()
+        })
+    }
+    onPayloadChanged: scheduleRefresh()
     function initialize() {
         if (!factory || !publicEnabled || publicContext) return
         publicContext = factory.create(surfaceId,adapter)
@@ -48,5 +61,8 @@ Item {
     }
     onPublicEnabledChanged: initialize()
     Component.onCompleted: initialize()
-    Component.onDestruction: if (factory && publicContext) factory.release(publicContext)
+    Component.onDestruction: {
+        disposed = true
+        if (factory && publicContext) factory.release(publicContext)
+    }
 }

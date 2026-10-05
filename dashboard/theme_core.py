@@ -306,6 +306,17 @@ class ThemeCatalog:
         if sum(Path(a['file']).stat().st_size for a in resolved['assets'])>24*1024*1024: raise ThemeError('assets','budget file per tema superato')
         scene=resolved['scene']
         if type(scene.get('enabled')) is not bool or not isinstance(scene.get('renderer'),str) or scene.get('renderer') not in self.scene_renderers: raise ThemeError('scene','renderer non disponibile')
+        bundle = getattr(self, 'bundle_metadata', {}).get(identifier)
+        if bundle:
+            selected = self.scene_renderers[scene['renderer']]
+            identity = selected.get('rendererIdentity', {})
+            pin = self.bundle_revisions[identifier]
+            own_revision = pin['id'] + '@' + pin['version'] + '#' + pin['digest']
+            selected_owned = (selected.get('apiVersion') == 2
+                and identity.get('origin') == 'bundle' and identity.get('revision') == own_revision)
+            claims_owned = 'scene.main' in bundle['coverage']['surfaces']
+            if claims_owned != selected_owned or not claims_owned and selected.get('apiVersion') == 2:
+                raise ThemeError('coverage.scene.main', 'renderer scena incompatibile con la copertura della revisione selezionata')
         resolved.pop('palettes')
         resolved.update(themeId=identifier,themeVersion=chain[-1]['version'],variant=variant,motionMode=motion_mode)
         resolved['presentationRegistry']=deepcopy(self.presentations); resolved['motionRegistry']=deepcopy(self.recipes)

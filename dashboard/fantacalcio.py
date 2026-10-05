@@ -268,6 +268,9 @@ class FantacalcioService(QObject):
             self.timer.start(int(min(retry, 86400) * 1000))
 
     def clear(self):
+        changed = bool(self.match or self.key or self.page is not None or
+                       self.live_page is not None or self.from_cache or
+                       self.error or self.cache_error)
         self.timer.stop()
         self.match = {}
         self.key = ""
@@ -276,7 +279,8 @@ class FantacalcioService(QObject):
         self.from_cache = False
         self.error = ""
         self.cache_error = ""
-        self.changed.emit()
+        if changed:
+            self.changed.emit()
 
     def close(self):
         self.closed = True

@@ -2,20 +2,20 @@
   "reportVersion": 1,
   "corpusVersion": 1,
   "apiFingerprint": "905a4b23c4c180a16ef541260c281ca6d430b3679c7066599a0f2b1f3d77f2a8",
-  "status": "passed",
+  "status": "failed",
   "requiredScenarios": 108,
   "selectedScenarios": 136,
   "requiredSurfaces": 44,
   "requiredFamilies": 16,
   "tracks": {
     "regressions": {
-      "status": "passed",
+      "status": "failed",
       "results": [
         {
           "script": "check_theme_semantic_residuals.py",
           "status": "passed",
           "exitCode": 0,
-          "elapsedSeconds": 1.867,
+          "elapsedSeconds": 1.947,
           "scope": [
             "Home next event absent/future/started/expired",
             "midnight/year boundary",
@@ -30,7 +30,7 @@
           "script": "check_dashboard.py",
           "status": "passed",
           "exitCode": 0,
-          "elapsedSeconds": 12.086,
+          "elapsedSeconds": 12.74,
           "scope": [
             "Home with/without next event",
             "clock boundaries",
@@ -44,9 +44,9 @@
         },
         {
           "script": "check_theme_ui.py",
-          "status": "passed",
-          "exitCode": 0,
-          "elapsedSeconds": 4.366,
+          "status": "failed",
+          "exitCode": 1,
+          "elapsedSeconds": 1.339,
           "scope": [
             "real Qt focus",
             "rapid swap/navigation",
@@ -54,15 +54,15 @@
             "scene continuity",
             "two engines"
           ],
-          "stdout": "Theme QML: typed facade, two Home layouts, Qt focus, rapid swaps, persistent scene, draft/save/recovery and fresh engine PASS\n",
-          "stderr": "",
+          "stdout": "",
+          "stderr": "Traceback (most recent call last):\n  File \"/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_runtime_fixtures.py\", line 165, in <module>\n    if __name__=='__main__':sys.exit(main())\n                                     ^^^^^^\n  File \"/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_runtime_fixtures.py\", line 137, in main\n    with patch('socket.socket.connect',side_effect=denied),patch('socket.getaddrinfo',side_effect=denied):runpy.run_path(str(ROOT/args.regression_child),run_name='__main__')\n                                                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen runpy>\", line 287, in run_path\n  File \"<frozen runpy>\", line 98, in _run_module_code\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_ui.py\", line 68, in <module>\n    assert root.property('overlay')=='menu';wait_ready(app,root)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
           "isolation": "private XDG/config/data/cache/state/store before imports; socket/DNS deny; process exit owns teardown"
         },
         {
           "script": "check_theme_motion.py",
           "status": "passed",
           "exitCode": 0,
-          "elapsedSeconds": 1.01,
+          "elapsedSeconds": 1.024,
           "scope": [
             "animation interruption",
             "settle",
@@ -77,7 +77,7 @@
           "script": "check_theme_recovery.py",
           "status": "passed",
           "exitCode": 0,
-          "elapsedSeconds": 0.39,
+          "elapsedSeconds": 0.429,
           "scope": [
             "missing catalog independent fallback",
             "cold urgent",
@@ -91,7 +91,7 @@
           "script": "check_notifications.py",
           "status": "passed",
           "exitCode": 0,
-          "elapsedSeconds": 11.438,
+          "elapsedSeconds": 11.684,
           "scope": [
             "six modes",
             "Unicode long text",
@@ -113,7 +113,7 @@
           "script": "check_theme_persistence.py",
           "status": "passed",
           "exitCode": 0,
-          "elapsedSeconds": 1.545,
+          "elapsedSeconds": 1.676,
           "scope": [
             "real QSettings atomic apply",
             "save failure",
@@ -127,7 +127,7 @@
           "script": "check_settings.py",
           "status": "passed",
           "exitCode": 0,
-          "elapsedSeconds": 7.297,
+          "elapsedSeconds": 7.491,
           "scope": [
             "all menu sections",
             "conditional disabled rows",
@@ -143,7 +143,7 @@
           "script": "check_sport_ui.py",
           "status": "passed",
           "exitCode": 0,
-          "elapsedSeconds": 4.914,
+          "elapsedSeconds": 6.05,
           "scope": [
             "selected ID retention",
             "removed fixture",
@@ -158,7 +158,7 @@
           "script": "check_sport_team_ui.py",
           "status": "passed",
           "exitCode": 0,
-          "elapsedSeconds": 5.12,
+          "elapsedSeconds": 5.068,
           "scope": [
             "calendar/results/info/squad",
             "picker favourite",
@@ -173,7 +173,7 @@
           "script": "check_fantacalcio_ui.py",
           "status": "passed",
           "exitCode": 0,
-          "elapsedSeconds": 5.941,
+          "elapsedSeconds": 6.613,
           "scope": [
             "votes missing/zero/provisional/history",
             "team route x match",
@@ -187,7 +187,7 @@
           "script": "check_motorsport_ui.py",
           "status": "passed",
           "exitCode": 0,
-          "elapsedSeconds": 3.458,
+          "elapsedSeconds": 3.774,
           "scope": [
             "F1/MotoGP x applicable tabs",
             "driver details/pits/laps/tyres/timing",
@@ -202,7 +202,7 @@
           "script": "check_events.py",
           "status": "passed",
           "exitCode": 0,
-          "elapsedSeconds": 0.07,
+          "elapsedSeconds": 0.079,
           "scope": [
             "source revision order",
             "dedup",
@@ -210,7 +210,7 @@
             "event expiry"
           ],
           "stdout": "",
-          "stderr": ".......\n----------------------------------------------------------------------\nRan 7 tests in 0.007s\n\nOK\n",
+          "stderr": ".......\n----------------------------------------------------------------------\nRan 7 tests in 0.008s\n\nOK\n",
           "isolation": "private XDG/config/data/cache/state/store before imports; socket/DNS deny; process exit owns teardown"
         },
         {

@@ -342,6 +342,8 @@ def _registry(registry, manifest, inventory, app_root):
             contents = row.get('contentIds')
             require(isinstance(contents, list) and contents and all(isinstance(c, str) and c in context_surfaces for c in contents) and len(contents) == len(set(contents)),
                     'registry.' + identifier + '.contentIds', 'superfici non valide')
+            require('scene.main' not in contents, 'registry.' + identifier + '.contentIds',
+                    'scene.main richiede sceneRenderers e theme.scene.renderer')
             for content in contents:
                 expected = context_surfaces[content]['hostFamily']
                 context_api = row.get('contextApi')
@@ -524,10 +526,16 @@ def validate_project(project, app_root=ROOT, profile=None, *, check_integrity=Fa
     require(pack.get('id') == manifest['id'] and pack.get('version') == manifest['version'], 'theme.json', 'identità diversa dal bundle')
     require(pack.get('extends') in (None, 'base'), 'extends', 'dipendenze fra temi devono essere risolte dal builder')
     require(not (set(pack.get('presentations', {})) - set(manifest['coverage']['surfaces'])), 'theme.presentations', 'renderer non dichiarato in coverage')
+    require('scene.main' not in pack.get('presentations', {}), 'theme.presentations.scene.main',
+            'la scena primaria si seleziona con theme.scene.renderer')
+    selected_scene = pack.get('scene', {}).get('renderer', 'builtin.actor')
+    scene_owned = 'scene.main' in manifest['coverage']['surfaces']
+    require(scene_owned == (selected_scene in registry.get('sceneRenderers', {})), 'coverage.scene.main',
+            'la scena selezionata richiede coverage propria; una scena Base richiede fallback')
     rows = {row['id']: row for row in registry.get('presentations', [])}
     for surface in manifest['coverage']['surfaces']:
         if surface == 'scene.main' and pack.get('scene', {}).get('renderer') in registry.get('sceneRenderers', {}):
-            require(pack['scene'].get('enabled') is True, 'theme.scene', 'scena dichiarata in coverage deve essere abilitata')
+            # Coverage describes a supplied capability, even if initially off.
             continue
         renderer = pack.get('presentations', {}).get(surface)
         require(renderer in rows and surface in rows[renderer]['contentIds'], 'theme.presentations.' + surface, 'renderer selezionato mancante/incompatibile')

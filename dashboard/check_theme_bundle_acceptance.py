@@ -148,8 +148,10 @@ Rectangle {
     else:
         document(project, 'theme.json', lambda value:value['scene'].update(enabled=True))
         def scene_coverage(value):
-            value['coverage']['surfaces'].append('scene.main')
-            value['coverage']['fallbacks'].remove('scene.main')
+            if 'scene.main' not in value['coverage']['surfaces']:
+                value['coverage']['surfaces'].append('scene.main')
+            if 'scene.main' in value['coverage']['fallbacks']:
+                value['coverage']['fallbacks'].remove('scene.main')
         document(project, 'bundle.json', scene_coverage)
         scene = project/'qml/Scene.qml'
         text=scene.read_text().replace('readonly property string error: ""',

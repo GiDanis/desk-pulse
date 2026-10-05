@@ -10,7 +10,7 @@ Rectangle {
     objectName: "themeLoading"
     anchors.fill: parent
     color: "#17242d"
-    visible: preparing && delayElapsed && !controller.urgentEvent.id
+    visible: preparing && delayElapsed && !controller.urgentEvent.id && controller.overlay !== "menu"
     onPreparingChanged: {
         delayElapsed = false
         if (preparing) showDelay.restart()
@@ -22,7 +22,7 @@ Rectangle {
         spacing: 18
         Text { anchors.horizontalCenter: parent.horizontalCenter; text: "Preparazione del tema…"; color: "#ffffff"; font.pixelSize: 30 }
         Text { anchors.horizontalCenter: parent.horizontalCenter; text: "Le nuove schermate saranno visibili appena pronte."; color: "#bdcbd3"; font.pixelSize: 20 }
-        Text { anchors.horizontalCenter: parent.horizontalCenter; text: "7 ANNULLA  ·  1 HOME"; color: "#bdcbd3"; font.pixelSize: 20 }
+        Text { anchors.horizontalCenter: parent.horizontalCenter; text: "7 ANNULLA  ·  1 HOME  ·  9 MENU"; color: "#bdcbd3"; font.pixelSize: 20 }
     }
     MouseArea { anchors.fill: parent }
 }

@@ -66,6 +66,10 @@ until(lambda:loading.property('visible'))
 assert service.activeThemeId=='base' and not service.readyToApply
 assert window.activeFocusItem().objectName()=='inputOwner'
 family=root.property('familyId');press(Qt.Key_Right);assert root.property('familyId')==family
+press(Qt.Key_9);assert root.property('overlay')=='menu' and not loading.property('visible')
+assert service.candidateAppearance, 'Opening Menu must not cancel the candidate'
+press(Qt.Key_Escape);assert root.property('overlay')==''
+until(lambda:loading.property('visible'))
 if args.capture_dir:
     args.capture_dir.mkdir(parents=True,exist_ok=True);assert window.grabWindow().save(str(args.capture_dir/'theme-loading.png'))
 events.set_demo_scenario('urgente');until(lambda:bool(as_value(root.property('urgentEvent')).get('id')))
@@ -87,6 +91,6 @@ assert not loading.property('visible')
 assert service.apply();wait_save(app,service)
 assert service.lifecycle.read()['active']['digest']==revision['digest']
 assert not messages,messages
-report={'status':'passed','qt':__import__('PySide6.QtCore',fromlist=['qVersion']).qVersion(),'backend':os.environ['QT_QPA_PLATFORM'],'checks':['application-owned-loading-feedback','delay-avoids-flash','old-theme-retained-until-ready','focus-preserved','navigation-held-while-loading','urgent-preempts-loading','urgent-dismiss-does-not-cancel-theme','cancel-returns-committed-theme','ready-removes-loading-before-frame-apply'],'qmlWarnings':messages,'testOnlyPreflightBypass':True}
+report={'status':'passed','qt':__import__('PySide6.QtCore',fromlist=['qVersion']).qVersion(),'backend':os.environ['QT_QPA_PLATFORM'],'checks':['application-owned-loading-feedback','delay-avoids-flash','old-theme-retained-until-ready','focus-preserved','navigation-held-while-loading','menu-remains-available-without-cancelling','urgent-preempts-loading','urgent-dismiss-does-not-cancel-theme','cancel-returns-committed-theme','ready-removes-loading-before-frame-apply'],'qmlWarnings':messages,'testOnlyPreflightBypass':True}
 if args.output:args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(report,indent=2)+'\n')
 print(json.dumps(report));window.close();engine.deleteLater();app.processEvents();events.close();private.cleanup()

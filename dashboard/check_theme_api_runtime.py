@@ -260,6 +260,15 @@ class PublicApiTests(unittest.TestCase):
             with self.assertRaises(AttributeError):
                 model.count = 3
 
+    def test_nested_equality_preserves_types_and_mapping_order(self):
+        from theme_contexts import snapshot_equal
+        self.assertTrue(snapshot_equal({'a': [0, False, {'n': None}], 'b': 1.0},
+                                       {'b': 1.0, 'a': [0, False, {'n': None}]}))
+        self.assertFalse(snapshot_equal({'a': [False]}, {'a': [0]}))
+        self.assertFalse(snapshot_equal({'a': [1]}, {'a': [1.0]}))
+        self.assertFalse(snapshot_equal({'a': (1,)}, {'a': [1]}))
+        self.assertFalse(snapshot_equal({'a': [None]}, {'a': []}))
+
     def test_cached_snapshot_never_treats_false_as_numeric_zero(self):
         context = self.factory.create('home.now')
         before = context._snapshot()

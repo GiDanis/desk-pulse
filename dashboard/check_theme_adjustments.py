@@ -63,7 +63,7 @@ class AdjustmentTests(unittest.TestCase):
         self.assertTrue(s.setSection('motionMode','reduced'),'Reduced remains global policy')
         self.assertTrue(s.setToken('shape.radiusCard',7),'compatibility editor remains available')
         metadata=s.selectedTheme
-        self.assertEqual((metadata['coverageMode'],metadata['ownCount'],metadata['fallbackCount']),('partial',4,40))
+        self.assertEqual((metadata['coverageMode'],metadata['ownCount'],metadata['fallbackCount']),('partial',5,39))
         self.assertEqual(metadata['adjustments'],['motionMode'])
         self.assertIn('Parziale',metadata['coverageSummary'])
         with patch.object(s.bundles,'verify_revision',side_effect=AssertionError('QML getter must not read files')):
@@ -122,7 +122,7 @@ def main_proof():
         settings=harness.root.findChild(QObject,'settingsPanel')
         rows=as_value(settings.property('simpleAppearanceRows'))
         assert rows[0]['enabled'] is False and rows[3]['enabled'] is False,rows
-        assert 'Parziale' in rows[2]['detail'] and '40' in rows[2]['detail'],rows[2]
+        assert 'Parziale' in rows[2]['detail'] and '5 propri' in rows[2]['detail'] and '39 Base' in rows[2]['detail'],rows[2]
         assert rows[1].get('enabled',True),'global motion policy must remain available'
         payload=harness.expression('publicSurfacePayload("settings.appearance")')
         by_id={row['id']:row for row in payload['rows']}
@@ -141,4 +141,3 @@ def main_proof():
 if __name__=='__main__':
     if '--main-proof' in sys.argv: main_proof()
     else: unittest.main()
-

@@ -26,8 +26,8 @@ class ToolTests(unittest.TestCase):
         self.assertEqual(report['status'], 'valid')
         owned = set(report['manifest']['coverage']['surfaces'])
         fallback = set(report['manifest']['coverage']['fallbacks'])
-        self.assertEqual(len(owned), 4)
-        self.assertEqual(len(fallback), 40)
+        self.assertEqual(len(owned), 5)
+        self.assertEqual(len(fallback), 39)
         self.assertFalse(owned & fallback)
         for row in report['registry']['presentations']:
             self.assertTrue(row['id'].startswith('test.newtheme.'))

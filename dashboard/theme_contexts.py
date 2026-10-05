@@ -42,15 +42,31 @@ PRIMITIVE_TYPES = {'string': str, 'int': int, 'real': float, 'bool': bool,
 
 
 def snapshot_equal(left, right):
-    """Canonical equality preserves false/zero and scalar numeric types."""
-    if type(left) is not type(right):
-        return False
-    if isinstance(left, dict):
-        return left.keys() == right.keys() and all(snapshot_equal(value, right[key])
-                                                   for key, value in left.items())
-    if isinstance(left, (list, tuple)):
-        return len(left) == len(right) and all(snapshot_equal(a, b) for a, b in zip(left, right))
-    return left == right
+    """Type-exact equality without recursive calls for large provider snapshots.
+
+    Python's native container equality equates False/0 and int/float. Preserve
+    that distinction while avoiding a Python function/generator for every leaf.
+    """
+    pending = [(left, right)]
+    while pending:
+        a, b = pending.pop()
+        kind = type(a)
+        if kind is not type(b):
+            return False
+        if a is b:
+            continue
+        if kind is dict:
+            if a.keys() != b.keys():
+                return False
+            for key, value in a.items():
+                pending.append((value, b[key]))
+        elif kind in (list, tuple):
+            if len(a) != len(b):
+                return False
+            pending.extend(zip(a, b))
+        elif a != b:
+            return False
+    return True
 
 
 def default_value(spec):

@@ -161,6 +161,11 @@ Window {
             {id:"key.9",key:9,actionId:"navigation.menu",targetId:"",label:"MENU",enabled:true}]
     }
     function publicSurfacePayload(surfaceId) {
+        const hints = [{key:1,label:"HOME"},{key:3,label:"AVVISI"},{key:7,label:"INDIETRO"},{key:9,label:"MENU"}]
+        // Auxiliary visuals have no provider/selection contract. Avoid coupling
+        // their payloads to every domain and settings binding in the dashboard.
+        if (surfaceId === "scene.main" || surfaceId.indexOf("alerts.") === 0)
+            return {commandHints:hints}
         let rows = [], selected = 0, tabs = [], tabId = "", description = "", feedback = ""
         if (surfaceId === "settings.sport") {
             rows=[{id:"favourite",title:"Squadra preferita",value:((sportData.favouriteTeam || {}).data || {}).name || sportData.favourite || "Nessuna"},
@@ -214,10 +219,10 @@ Window {
             draft:themeService ? {editing:themeService.editing,themeId:draft.themeId,paletteMode:draft.paletteMode || "auto",
                 motionMode:draft.motionMode,textScale:draftTokens["typography.textScale"] === undefined ? style.textScale : draftTokens["typography.textScale"],readyToApply:themeService.readyToApply,status:status,error:themeService.lastError} : null,
             operation:{requestId:"",status:operationStatus,errorCode:operationStatus === "failed" ? "appearance.operation.failed" : "",message:themeService ? themeService.lastError : ""},
-            sportMatch:sportMatch, teamData:teamData, fantasyState:fantasyState,
-            racingEvent:racingEvent,racingSession:racingSession,racingDriver:racingDriver,kind:familyId,live:racingDriverLive,
+            sportMatch:surfaceId === "sport.match.detail" ? sportMatch : null, teamData:surfaceId === "sport.team.detail" ? teamData : null, fantasyState:surfaceId === "sport.match.detail" ? fantasyState : null,
+            racingEvent:surfaceId.indexOf("racing.") === 0 ? racingEvent : null,racingSession:surfaceId.indexOf("racing.") === 0 ? racingSession : null,racingDriver:surfaceId === "racing.driver.detail" ? racingDriver : null,kind:familyId,live:surfaceId === "racing.driver.detail" ? racingDriverLive : false,
             detailOperation:{requestId:"",status:(surfaceId.indexOf("racing.") === 0 ? racingData.detailLoading : sportData.detailLoading) ? "pending" : "idle",errorCode:"",message:""},
-            teamPickerRows:teamPickerRows, calendarScope:teamData.calendarScope || "", serieAOnly:teamSerieAOnly,
+            teamPickerRows:surfaceId === "sport.team.picker" ? teamPickerRows : [], calendarScope:surfaceId === "sport.team.detail" ? teamData.calendarScope || "" : "", serieAOnly:surfaceId === "sport.team.detail" ? teamSerieAOnly : false,
             selectedRoundId:String(sportRound), favouriteTeamId:sportData.favouriteTeamId || "",
             savedTeamId:sportData.favouriteTeamId || "", origin:sportTeamDetail ? "team" : "sport",
             commandHints:[{key:1,label:"HOME"},{key:3,label:"AVVISI"},{key:7,label:"INDIETRO"},{key:9,label:"MENU"}]}
@@ -292,9 +297,10 @@ Window {
     function publicDispatch(context, action, target, arguments) {
         const args=arguments || {}, surface=context.contentId
         if (urgentEvent.id && surface !== "alerts.urgent") return false
-        if (themePreparing && !urgentEvent.id) {
+        if (themePreparing && !urgentEvent.id && !(surface === "overlay.menu" && overlay === "menu")) {
             if (action === "navigation.home") { home(); return true }
             if (action === "navigation.back" || action === "appearance.cancel") { themeService.cancel(); return true }
+            if (action === "navigation.menu") { pushOverlay("menu"); return true }
             return false
         }
         if (surface.indexOf("alerts.") === 0) {
@@ -894,9 +900,10 @@ Window {
             }
             return
         }
-        if (themePreparing) {
+        if (themePreparing && overlay !== "menu") {
             if (position === 1) home()
             else if (position === 7) themeService.cancel()
+            else if (position === 9) pushOverlay("menu")
             return
         }
         if (notificationPreviewMode !== "") {
