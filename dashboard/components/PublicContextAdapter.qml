@@ -11,7 +11,8 @@ Item {
     property var publicContext: null
     property bool valid: false
     property bool publicEnabled: true
-    readonly property var modelDomains: factory && typeof factory.modelDomains === "function"
+    property var selectedModelDomains: null
+    readonly property var modelDomains: selectedModelDomains !== null ? selectedModelDomains : factory && typeof factory.modelDomains === "function"
         ? factory.modelDomains(surfaceId) : ["weather","account","nextEvent","sport","team","fantasy","racing"]
     readonly property var payload: {
         if (!publicEnabled) return ({})
@@ -35,6 +36,7 @@ Item {
         if (c.controller) {
             const app = c.controller
             result.epoch = app.now.getTime()/1000
+            result.night = c.style && c.style.appearance ? c.style.appearance.variant === "night" : !!app.night
             result.familyId = app.familyId
             result.route = app.overlay
             result.urgent = !!app.urgentEvent.id

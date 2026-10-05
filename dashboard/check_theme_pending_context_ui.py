@@ -36,9 +36,13 @@ try:
     assert not adapter.property('refreshScheduled') and adapter.property('valid')
     assert home.property('currentContextReady') and home.property('currentReady')
     assert context.weather is weather and context.weather.temperature.value==2
+    service.beginEdit();assert service.setSection('paletteMode','night');harness.wait_ready()
+    deadline=time.monotonic()+5
+    while not context.clock.night and time.monotonic()<deadline:harness.pump(5)
+    assert context.clock.night and service.resolvedAppearance['variant']=='night'
     assert not harness.messages,harness.messages
     result={'status':'passed','qt':qVersion(),'checks':['real-provider-invalidation','deferred-context-positive-control',
-        'readiness-held-until-dto-publication','coherent-theme-guard','fresh-public-weather','dto-identity-retained'],
+        'readiness-held-until-dto-publication','coherent-theme-guard','fresh-public-weather','dto-identity-retained','effective-night-palette-in-clock-context'],
         'qmlWarnings':harness.messages,'scope':'Actual isolated Main and provider; readiness guard, not an invented frame acknowledgement.'}
     if len(sys.argv)>1:Path(sys.argv[1]).write_text(json.dumps(result,indent=2)+'\n')
     print(json.dumps(result))

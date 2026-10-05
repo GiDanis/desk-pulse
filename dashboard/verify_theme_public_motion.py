@@ -178,7 +178,9 @@ def verify(output, capture_dir=None):
         source_files=['Main.qml','theme_service.py','theme_runtime.py','theme_fixture_support.py',
                       'theme_api.py','theme_contexts.py','components/PublicContextAdapter.qml',
                       'components/SceneHost.qml','components/ViewHost.qml','components/MotionController.qml',
-                      'examples/bundles/studio-ambient/qml/Scene.qml','verify_theme_public_motion.py']
+                      'examples/bundles/studio-ambient/qml/Scene.qml','examples/bundles/studio-ambient/visual-registry.json',
+                      'examples/bundles/studio-ambient/bundle.json','examples/bundles/studio-ambient/theme.json',
+                      'theme_bundle.py','theme_bundle_preview.py','verify_theme_public_motion.py']
         source_manifest=ROOT/'release-manifest.json'
         all_stats=statistics([row['ms'] for row in raw]);ordinary=categories['sceneWarm']['p95']
         result={'reportVersion':1,'status':'passed','operation':'publicPrototypeMotion','qt':qVersion(),

@@ -136,13 +136,14 @@ def render_project(project, output, matrix=False, visible=False):
                         for case in cases:
                             snapshot = default_snapshot(type_name)
                             snapshot.update(contentId=surface, style=deepcopy(style), appearanceRevision=1)
+                            if 'clock' in snapshot:
+                                snapshot['clock'].update(timeText='23:59', dateText='DOMENICA 4 OTTOBRE 2026', timezone='Europe/Rome', locale='it_IT', night=variant=='night')
                             if 'motionPolicy' in contract.fields(type_name):
                                 snapshot['motionPolicy'].update(mode=mode, suspended=False, urgent=surface == 'alerts.urgent')
                             if host_family in ('page', 'overlay'):
                                 snapshot['lifecycle'].update(state='active', active=True, interactive=False, preview=True, generation=1)
                                 snapshot['viewport'] = snapshot['safeArea'] = {'x': 0, 'y': 0, 'width': page_width if host_family == 'page' else 960, 'height': page_height if host_family == 'page' else 640}
                             if type_name == 'PageContext':
-                                snapshot['clock'].update(timeText='23:59', dateText='DOMENICA 4 OTTOBRE 2026', timezone='Europe/Rome', locale='it_IT')
                                 if case != 'normal':
                                     weather = default_snapshot('WeatherData')
                                     weather.update(location='Angri', description='Zero è un valore valido')
@@ -169,6 +170,10 @@ def render_project(project, output, matrix=False, visible=False):
                                 snapshot.update(eventData=event, event={'id': event['id'], 'title': title, 'detail': body}, sourceText='Fixture offline', validityText='Dati sintetici', guideText='3 AVVISI · 1 HOME')
                             context = factory.create(surface)
                             snapshot.pop('surfaceInstanceId', None)
+                            if type_name == 'PageContext' and 'dataDomains' in renderer:
+                                for domain in ('weather', 'account', 'nextEvent', 'sport', 'team', 'fantasy', 'racing'):
+                                    if domain not in renderer['dataDomains']:
+                                        snapshot[domain] = None
                             assert factory.update(context, snapshot), 'Contesto fixture rifiutato: ' + type_name
                             component = QQmlComponent(engine, QUrl.fromLocalFile(str(project / renderer['file'])))
                             item = component.createWithInitialProperties({'context': context})
@@ -213,6 +218,7 @@ def render_project(project, output, matrix=False, visible=False):
                         if family == 'sceneRenderers':
                             context = factory.create('scene.main')
                             snapshot = default_snapshot('SceneContext'); snapshot.pop('surfaceInstanceId', None)
+                            snapshot['clock'].update(timeText='23:59', dateText='DOMENICA 4 OTTOBRE 2026', night=variant=='night')
                             snapshot.update(contentId='scene.main', style=style, suspended=False)
                             snapshot['lifecycle'].update(state='active', active=True, preview=True)
                             snapshot['motionPolicy'].update(mode=mode, suspended=False, urgent=False)

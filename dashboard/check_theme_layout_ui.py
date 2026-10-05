@@ -118,6 +118,7 @@ assert image.pixelColor(122,70).name()=='#445566'
 if args.capture_dir:
     args.capture_dir.mkdir(parents=True,exist_ok=True);assert image.save(str(args.capture_dir/'custom-layout.png'))
 assert service.apply(),service.lastError;wait_save(app,service)
+assert service.status == 'ready', {'status':service.status,'error':service.lastError,'journal':service.lifecycle.read()}
 # A legacy fallback keeps its calibrated geometry and Shell advertises that area.
 press(Qt.Key_Right);assert root.property('familyId')=='meteo';wait_ready(app,root)
 weather=root.findChild(QObject,'weatherNow')
@@ -145,7 +146,8 @@ assert context(home).property('viewport').property('height')==640
 assert scene.property('regionBlocked') and not scene.property('visible')
 assert as_value(scene.property('actorState')).property('paused')
 assert service.apply();wait_save(app,service)
-assert service.lifecycle.read()['active']['digest']==updated['digest']
+assert service.status == 'ready', {'status':service.status,'error':service.lastError,'journal':service.lifecycle.read()}
+assert service.lifecycle.read()['active']['digest']==updated['digest'], {'journal':service.lifecycle.read(),'expected':updated['digest'],'draft':service.draft}
 assert not messages,messages
 report={'status':'passed','qt':__import__('PySide6.QtCore',fromlist=['qVersion']).qVersion(),'backend':os.environ['QT_QPA_PLATFORM'],'checks':['bounded-custom-viewport','typed-page-and-shell-layout','overflow-clipped','actor-safe-region','legacy-fallback-geometry','nine-key-focus','cancel-restores-layout','full-canvas-revision','empty-safe-regions-pause-actor','coherent-frame-apply'],'qmlWarnings':messages}
 if args.output:args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(report,indent=2)+'\n')

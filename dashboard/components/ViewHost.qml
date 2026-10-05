@@ -171,7 +171,8 @@ Item {
         readiness = "loading"; lastError = ""
         const next = slot.createObject(host, {requestGeneration: generation, presentationId: identifier, requestedRevision: snapshot.revision,
             serviceGeneration: serviceGeneration, stagedAppearance: snapshot,
-            rendererKey: rendererKey(snapshot,identifier), usePublicApi: descriptor.apiVersion === 2})
+            rendererKey: rendererKey(snapshot,identifier), usePublicApi: descriptor.apiVersion === 2,
+            dataDomains: descriptor.dataDomains === undefined ? null : descriptor.dataDomains})
         pendingLoader = next
         if (service && descriptor.rendererIdentity) {
             next.resourceLease=service.acquireRevision(descriptor.rendererIdentity)
@@ -193,10 +194,11 @@ Item {
             property string presentationId: ""
             property string rendererKey: ""
             property bool usePublicApi: false
+            property var dataDomains: null
             property string resourceLease: ""
             Component.onDestruction: if (resourceLease && host.service) host.service.releaseRevision(resourceLease)
             property alias publicAdapter: publicAdapter
-            PublicContextAdapter { id: publicAdapter; publicEnabled: candidate.usePublicApi; factory: host.service ? host.service.apiFactory : null; legacy: candidate.presentationContext; surfaceId: host.contentId }
+            PublicContextAdapter { id: publicAdapter; publicEnabled: candidate.usePublicApi; selectedModelDomains: candidate.dataDomains; factory: host.service ? host.service.apiFactory : null; legacy: candidate.presentationContext; surfaceId: host.contentId }
             property int requestedRevision: 0
             property var stagedAppearance: null
             property bool useLiveStyle: false

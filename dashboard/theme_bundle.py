@@ -332,8 +332,16 @@ def _registry(registry, manifest, inventory, app_root):
                 and identifier not in seen, 'registry.id', 'ID duplicato o fuori namespace')
         seen.add(identifier)
         require(isinstance(row, dict), 'registry.' + identifier, 'descrittore richiesto')
-        allowed = {'id', 'file', 'apiVersion', 'contextApi', 'name', 'contentIds', 'events', 'parameters', 'sceneMode', 'footprint', 'respectsOccupiedRegions'}
+        allowed = {'id', 'file', 'apiVersion', 'contextApi', 'name', 'contentIds', 'events', 'parameters', 'sceneMode', 'footprint', 'respectsOccupiedRegions', 'dataDomains'}
         require(not set(row) - allowed, 'registry.' + identifier, 'campo sconosciuto')
+        if 'dataDomains' in row:
+            domains = row['dataDomains']
+            require(family == 'presentations' and row.get('contextApi') == 'page2',
+                    'registry.' + identifier + '.dataDomains', 'selezione domini riservata a PageContext')
+            require(isinstance(domains, list) and all(isinstance(name, str) and name in
+                    ('weather', 'account', 'nextEvent', 'sport', 'team', 'fantasy', 'racing') for name in domains)
+                    and len(domains) == len(set(domains)),
+                    'registry.' + identifier + '.dataDomains', 'domini non validi o duplicati')
         path = relative_path(row.get('file'))
         require(path in inventory and path.endswith('.qml'), 'registry.' + identifier + '.file', 'componente QML mancante')
         require(type(row.get('apiVersion')) is int and row['apiVersion'] in ((2,) if family in ('presentations', 'sceneRenderers') else (1,)),

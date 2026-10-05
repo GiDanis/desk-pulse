@@ -2,11 +2,11 @@
 
 **5 ottobre 2026 · implementazione A4; accettazione dell'intero engine distinta.**
 
-Il kit permette di creare e controllare un progetto QML esterno usando contratti pubblici reali. L'esempio introduce Home, shell e due notifiche indipendenti; include anche una ricetta, un'icona procedurale e una skin di scena. Le altre **40 superfici** dichiarano fallback Base. Questo dimostra estensibilità e copertura funzionale dichiarata, non 44 visuali nuovi o la chiusura della matrice della board.
+Il kit permette di creare e controllare un progetto QML esterno usando contratti pubblici reali. L'esempio introduce Home, shell e due notifiche indipendenti; include anche una ricetta, un'icona procedurale e una skin di scena. La scena è la quinta capacità propria, inizialmente disabilitata; le altre **39 superfici** dichiarano fallback Base. Questo dimostra estensibilità e copertura funzionale dichiarata, non 44 visuali nuovi o la chiusura della matrice della board.
 
 ## Strumenti disponibili
 
-`dashboard/smartpc-theme` e `theme_bundle_tools.py` espongono `init`, `validate`, `preview`, `pack`, `inspect`, `kit`, `transfer`, `export`. `theme_pack.py bundle ...` inoltra questi comandi; `theme_pack.py kit --bundle --output DESTINAZIONE` esporta l'SDK completo. I precedenti comandi schema 1 conservano il comportamento.
+`dashboard/smartpc-theme` e `theme_bundle_tools.py` espongono `init`, `validate`, `preview`, `pack`, `inspect`, `kit`, `transfer`, `import`, `export`, `list`, `remove` e `gc`. `theme_pack.py bundle ...` inoltra questi comandi; `theme_pack.py kit --bundle --output DESTINAZIONE` esporta l'SDK completo. I precedenti comandi schema 1 conservano il comportamento.
 
 Il kit include:
 
@@ -45,3 +45,9 @@ Queste fixture supplementari entrano nel runner di regressione A0.4; non aumenta
 Il kit non dichiara chiusi import/apply e tutte le superfici sul dispositivo, recovery da GUI bloccata, power cut, versioni/lease/GC, input fisico, stress/cold/idle/soak o leggibilità dell'intero runtime. Questi punti appartengono alle prove integrate A1/A2/A3/A5/A6. Le immagini sono prove di caricamento/layout sintetico; la validità estetica richiede una valutazione visiva del tema sul pannello.
 
 Icona e ricetta usano il contratto storico API 1 del rispettivo host; pagine, shell, notifiche e scena usano contesti tipizzati pubblici API 2. Nessun esempio accede a Main o ai controller. Le risorse restano estendibili nei formati e moduli dichiarati dal profilo; il kit non fissa tutte le palette, i font, le animazioni o il formato futuro del compagno.
+
+## Aggiornamento del 6 ottobre
+
+Le pagine PageContext possono dichiarare nel registry i soli `dataDomains` necessari: la Home del kit usa meteo e prossimo evento. In assenza della dichiarazione resta il contesto completo; i provider continuano a funzionare. Il contesto clock espone la variante giorno/notte effettiva, anche nella preview. La guida del kit documenta la scelta e i domini disponibili.
+
+Il dispositivo è dedicato alla dashboard: uso di RAM/CPU e budget del tracing vengono valutati rispetto a fluidità, affidabilità e stabilità, senza ulteriori cicli estesi solo per raggiungere soglie diagnostiche storiche.
