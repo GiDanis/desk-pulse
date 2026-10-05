@@ -126,6 +126,39 @@ class ServiceRecoveryTests(unittest.TestCase):
         service._saved_state(True,'')
         self.assertEqual(service.resolvedAppearance['tokens']['shape.radiusCard'],radius+1)
 
+    def test_completed_worker_waits_for_fresh_frame_after_transient_invalidation(self):
+        self.installed();service=self.service();self.preview(service)
+        with patch('theme_service.QThreadPool'):
+            self.assertTrue(service.apply())
+        service.heartbeat(False)
+        results=[];service.saveFinished.connect(results.append)
+        SaveJob(service._pending,service._save_result,profiles=service._pending_profiles)._run()
+        self.assertEqual(service.status,'saving');self.assertEqual(results,[])
+        self.assertIsNotNone(service.lifecycle.read()['pending'])
+        service.acknowledgeThemeFrame(service.revision,True)
+        import time
+        deadline=time.monotonic()+1
+        while service.status=='saving' and time.monotonic()<deadline:
+            app.processEvents();time.sleep(.003)
+        self.assertEqual(service.status,'ready',service.lastError)
+        self.assertEqual(results,[True]);self.assertIsNone(service.lifecycle.read()['pending'])
+        self.assertEqual(service.lifecycle.read()['active']['id'],'studio.ambient')
+
+    def test_lost_readiness_at_worker_completion_times_out_and_restores_preferences(self):
+        self.installed();service=self.service();self.preview(service)
+        with patch('theme_service.QThreadPool'):
+            self.assertTrue(service.apply())
+        service.heartbeat(False)
+        results=[];service.saveFinished.connect(results.append)
+        SaveJob(service._pending,service._save_result,profiles=service._pending_profiles)._run()
+        self.assertEqual(service.status,'saving')
+        service._save_frame_deadline=0
+        service._saved(True,'')
+        self.assertEqual(service.status,'error');self.assertEqual(results,[False])
+        self.assertEqual(json.loads(self.settings.value('appearance/config'))['themeId'],'base')
+        self.assertEqual(service.lifecycle.read()['active'],BASE)
+        self.assertEqual(self.settings.value('weather/location'),'provider-preserved')
+
     def test_journal_begin_failure_completes_async_save_as_failed(self):
         service=self.service();service.beginEdit();service.setToken('shape.radiusCard',5)
         state=service.lifecycle.read()

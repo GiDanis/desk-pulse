@@ -3,6 +3,7 @@ from copy import deepcopy
 from collections import OrderedDict
 import json
 import os
+import time
 from pathlib import Path
 
 from PySide6.QtCore import QObject, Property, QRunnable, QSettings, QStandardPaths, QThreadPool, QTimer, Signal, Slot
@@ -148,7 +149,7 @@ class ThemeService(QObject):
 
     def __init__(self, parent=None, *, store=None, root=None, trace=None):
         super().__init__(parent)
-        self._trace=trace; self._save_trace_request=None
+        self._trace=trace; self._save_trace_request=None; self._save_frame_deadline=None
         location = store or os.environ.get('SMARTPC_THEME_STORE') or str(Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation))/'themes')
         self.store = Path(location)
         self._root = Path(root) if root else Path(__file__).parent
@@ -798,6 +799,7 @@ class ThemeService(QObject):
             self._error='Attendere il primo frame coerente del tema'; self.editorChanged.emit(); return False
         self._remember_draft()
         self._pending_profiles=deepcopy(self._draft_profiles)
+        self._save_frame_deadline=None
         self._pending = deepcopy(self._draft); self._status = 'saving'; self._error = ''; self.editorChanged.emit()
         recorder=recorder_for(self._trace)
         self._save_trace_request=recorder.current_request if recorder is not None else None
@@ -807,6 +809,17 @@ class ThemeService(QObject):
 
     @Slot(bool,str)
     def _saved(self, ok, message):
+        if self._pending is None: return
+        # A provider refresh can briefly withdraw coherence while the settings
+        # worker is finishing. Wait for a fresh real frame rather than fail a
+        # valid apply depending on the heartbeat/callback ordering. The bounded
+        # deadline retains the existing journal rollback on lost readiness.
+        if ok and self._activation and not self._activation_frame:
+            if self._save_frame_deadline is None: self._save_frame_deadline=time.monotonic()+3
+            if time.monotonic()<self._save_frame_deadline:
+                QTimer.singleShot(25,lambda:self._saved(ok,message))
+                return
+        self._save_frame_deadline=None
         recorder=recorder_for(self._trace)
         request=self._save_trace_request
         if recorder is not None:
