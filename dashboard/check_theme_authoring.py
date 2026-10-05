@@ -59,7 +59,9 @@ class AuthoringTests(unittest.TestCase):
         before=(self.source/'theme.json').read_bytes()
         result=self.check()
         failures=[i for i in result['issues'] if i['code']=='contrast.minimum']
-        self.assertGreater(len(failures),5)
+        # Inherited semantic roles can now derive a readable foreground; the
+        # explicitly authored secondary color must still expose its real failures.
+        self.assertGreaterEqual(len(failures),5)
         self.assertTrue(all(i['variant']=='day' for i in failures))
         self.assertTrue(all(i['pointer']=='/palettes/day/colors.textSecondary' for i in failures))
         self.assertEqual(before,(self.source/'theme.json').read_bytes())

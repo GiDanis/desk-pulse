@@ -13,7 +13,17 @@ import time
 from PySide6.QtCore import QObject, Qt, Signal, Slot
 
 
-def _freeze(value, depth=0, budget=None):
+def _shared_snapshot_string(value, strings):
+    if strings is not None and len(value) <= 256:
+        canonical = strings.get(value)
+        if canonical is not None:
+            return canonical
+        if len(strings) < 2048:
+            strings[value] = value
+    return value
+
+
+def _freeze(value, depth=0, budget=None, strings=None):
     if budget is None:
         budget = [4096]
     budget[0] -= 1
@@ -24,17 +34,17 @@ def _freeze(value, depth=0, budget=None):
     if value is None or type(value) in (bool, int, str):
         if isinstance(value, str) and len(value) > 1024:
             raise ValueError('frame snapshot string exceeds 1024')
-        return value
+        return _shared_snapshot_string(value, strings) if isinstance(value, str) else value
     if type(value) is float and math.isfinite(value):
         return value
     if isinstance(value, dict):
         if len(value) > 256 or any(type(k) is not str for k in value):
             raise ValueError('frame snapshot requires bounded string keys')
-        return ('__map__', tuple((k, _freeze(v, depth + 1, budget)) for k, v in sorted(value.items())))
+        return ('__map__', tuple((_shared_snapshot_string(k, strings), _freeze(v, depth + 1, budget, strings)) for k, v in sorted(value.items())))
     if isinstance(value, (list, tuple)):
         if len(value) > 256:
             raise ValueError('frame snapshot list exceeds 256')
-        return ('__list__', tuple(_freeze(v, depth + 1, budget) for v in value))
+        return ('__list__', tuple(_freeze(v, depth + 1, budget, strings) for v in value))
     raise ValueError('frame snapshot must contain JSON primitives, not QObject handles')
 
 
@@ -207,6 +217,7 @@ class ThemeFrameTracker(QObject):
         self._attachment_id = 0
         self._capture_open = False
         self._queued_requests = {}
+        self._snapshot_strings = {}  # bounded per observer; shared frozen key/value strings
         self._delivered.connect(self._consume, Qt.ConnectionType.QueuedConnection)
 
     def attach(self, window, snapshot_provider, recorder=None):
@@ -241,6 +252,7 @@ class ThemeFrameTracker(QObject):
             self._latch = None
             self._capture_open = False
             self._queued_requests.clear()
+            self._snapshot_strings.clear()
         self._window = self._provider = self._recorder = None
 
     @Slot(str)
@@ -292,7 +304,7 @@ class ThemeFrameTracker(QObject):
             value = self._provider()
             if not isinstance(value, dict):
                 return False
-            terminal = _freeze(value)
+            terminal = _freeze(value, strings=self._snapshot_strings)
         except Exception:
             return False
         observed = time.perf_counter_ns()
@@ -346,7 +358,7 @@ class ThemeFrameTracker(QObject):
                 value = self._provider()
                 if not isinstance(value, dict):
                     raise ValueError('snapshot must be a map')
-                snapshot = _freeze(value)
+                snapshot = _freeze(value, strings=self._snapshot_strings)
             except Exception as error:
                 # Never serialize provider data or traceback/exception contents.
                 reason = 'snapshotError:' + type(error).__name__
@@ -402,7 +414,8 @@ class ThemeFrameTracker(QObject):
                 else:self._queued_requests.pop(request,None)
         now = time.perf_counter_ns()
         classification = classify_submission(submission)
-        result = dict(classification, frameSerial=submission.frame_serial,
+        frozen_participants = next((value for key, value in submission.ticket.snapshot[1] if key == 'participants'), None) if submission.ticket else None
+        result = dict(classification, frozenParticipants=frozen_participants, frameSerial=submission.frame_serial,
                       captureSerial=submission.ticket.capture_serial if submission.ticket else None,
                       capturedNs=submission.ticket.captured_ns if submission.ticket else None,
                       synchronizedNs=submission.synchronized_ns, submittedNs=submission.submitted_ns,

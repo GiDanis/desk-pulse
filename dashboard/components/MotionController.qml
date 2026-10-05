@@ -16,10 +16,13 @@ Item {
     onRunningChanged: if (traceRecorder) traceMotion(running ? "motion.started" : "motion.stopped")
     property var appearance: Theme.appearance
     property var currentRecipe: null
+    property var resourceService: Theme.service
+    property string resourceLease: ""
     property string lastError: ""
     property int playingRevision: -1
     visible: false
-    function settle() { if (traceRecorder && currentRecipe) traceMotion("motion.settle"); if (currentRecipe) { currentRecipe.settle(); currentRecipe.destroy(); currentRecipe = null } }
+    function settle() { if (resourceLease && resourceService) { resourceService.releaseRevision(resourceLease); resourceLease="" }
+        if (traceRecorder && currentRecipe) traceMotion("motion.settle"); if (currentRecipe) { currentRecipe.settle(); currentRecipe.destroy(); currentRecipe = null } }
     function play(target, eventId, direction, vertical, context) {
         settle()
         traceEventId = eventId
@@ -30,10 +33,12 @@ Item {
         if (!spec) { if (traceRecorder) traceMotion("motion.missingSpec"); return }
         const registry = appearance.motionRegistry[spec.recipe]
         if (!registry) { if (traceRecorder) traceMotion("motion.missingRecipe"); return }
-        const component = Qt.createComponent(Qt.resolvedUrl("../" + registry.file))
-        if (component.status !== Component.Ready) { lastError = component.errorString(); if (traceRecorder) traceMotion("motion.recipeError"); return }
+        if (resourceService && registry.rendererIdentity) resourceLease=resourceService.acquireRevision(registry.rendererIdentity)
+        if (registry.rendererIdentity && resourceService && !resourceLease) { lastError="Risorsa animazione non disponibile"; return }
+        const component = Qt.createComponent(registry.sourceUrl || Qt.resolvedUrl("../" + registry.file))
+        if (component.status !== Component.Ready) { settle(); lastError = component.errorString(); if (traceRecorder) traceMotion("motion.recipeError"); return }
         currentRecipe = component.createObject(root)
-        if (!currentRecipe) { lastError = component.errorString(); if (traceRecorder) traceMotion("motion.recipeError"); return }
+        if (!currentRecipe) { if (resourceLease && resourceService) { resourceService.releaseRevision(resourceLease); resourceLease="" }; lastError = component.errorString(); if (traceRecorder) traceMotion("motion.recipeError"); return }
         const curves = {linear: Easing.Linear, outCubic: Easing.OutCubic, outQuad: Easing.OutQuad, inOutQuad: Easing.InOutQuad}
         currentRecipe.play(target, Object.assign({},spec,context || {},{motionMode: appearance.motionMode, duration: appearance.motionMode === "reduced" ? Math.min(spec.durationMs,80) : spec.durationMs,
                            distance: appearance.motionMode === "reduced" ? Math.min(spec.distancePx,4) : spec.distancePx,

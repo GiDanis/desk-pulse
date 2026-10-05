@@ -1,10 +1,12 @@
 import QtQuick
 
 QtObject {
-    id: facade
+    id: styleFacade
     property var appearance: null
+    readonly property QtObject semantic: SemanticPaletteFacade { facade: styleFacade }
     property bool fallbackNight: false
     readonly property var fallbackTokens: ({"colors.background":"#101923","colors.backgroundOverlay":"#0b1219","colors.surface":"#1c2d38","colors.surfaceFocused":"#28403f","colors.border":"#35525d","colors.divider":"#31505b","colors.textPrimary":"#e9f1ef","colors.textSecondary":"#b3c2c7","colors.accent":"#6de0be","colors.bannerSurface":"#29423f","colors.debugSurface":"#273e48","colors.demoSurface":"#304750","shape.radiusCard":13,"shape.radiusRow":9,"shape.radiusPill":7,"shape.radiusButton":6,"metrics.spacing":24,"metrics.listRows":4,"metrics.borderWidth":2,"metrics.focusWidth":3,"typography.textScale":1.0,"typography.uiFamily":"","typography.numbersFamily":"","typography.displayFamily":"","typography.bodyWeight":400,"typography.headingWeight":700,"typography.size18":18,"typography.size19":19,"typography.size20":20,"typography.size21":21,"typography.size22":22,"typography.size23":23,"typography.size24":24,"typography.size25":25,"typography.size26":26,"typography.size27":27,"typography.size28":28,"typography.size29":29,"typography.size30":30,"typography.size31":31,"typography.size32":32,"typography.size33":33,"typography.size34":34,"typography.size35":35,"typography.size36":36,"typography.size37":37,"typography.size39":39,"typography.size40":40,"typography.size45":45,"typography.size46":46,"typography.size47":47,"typography.size52":52,"typography.size56":56,"typography.size65":65,"typography.size69":69,"typography.size139":139,"typography.size152":152,"typography.size44":44,"metrics.compactRows":3,"metrics.overviewRows":3,"metrics.fantasyRows":5,"typography.clockWeight":300,"shape.radiusPanel":10,"shape.radiusBadge":8,"shape.radiusDense":5,"shape.radiusMarker":2,"metrics.hairlineWidth":1})
+    readonly property var tokenSnapshot: tokens
     readonly property var tokens: appearance ? appearance.tokens : fallbackTokens
     readonly property color background: !appearance && fallbackNight ? "#0b1219" : tokens["colors.background"]
     readonly property color backgroundOverlay: tokens["colors.backgroundOverlay"]
@@ -74,4 +76,24 @@ QtObject {
     readonly property int radiusDense: tokens["shape.radiusDense"]
     readonly property int radiusMarker: tokens["shape.radiusMarker"]
     readonly property int hairlineWidth: tokens["metrics.hairlineWidth"]
+    readonly property color accentTextOnCanvas: tokens["semantic.accentTextOnCanvas"] || accent
+    readonly property color accentTextOnOverlay: tokens["semantic.accentTextOnOverlay"] || accent
+    readonly property color accentTextOnCard: tokens["semantic.accentTextOnCard"] || accent
+    readonly property color accentTextOnFocused: tokens["semantic.accentTextOnFocused"] || accent
+    readonly property color warningOnCanvas: tokens["semantic.warningOnCanvas"] || "#efbd75"
+    readonly property color warningOnOverlay: tokens["semantic.warningOnOverlay"] || "#efbd75"
+    readonly property color warningOnCard: tokens["semantic.warningOnCard"] || "#efbd75"
+    readonly property color warningOnFocused: tokens["semantic.warningOnFocused"] || "#efbd75"
+    readonly property color criticalOnCanvas: tokens["semantic.criticalOnCanvas"] || "#f08779"
+    readonly property color criticalOnOverlay: tokens["semantic.criticalOnOverlay"] || "#f08779"
+    readonly property color criticalOnCard: tokens["semantic.criticalOnCard"] || "#f08779"
+    readonly property color criticalOnFocused: tokens["semantic.criticalOnFocused"] || "#f08779"
+    readonly property color accountCriticalOnCanvas: tokens["semantic.accountCriticalOnCanvas"] || "#f28c82"
+    readonly property color accountCriticalOnOverlay: tokens["semantic.accountCriticalOnOverlay"] || "#f28c82"
+    readonly property color accountCriticalOnCard: tokens["semantic.accountCriticalOnCard"] || "#f28c82"
+    readonly property color accountCriticalOnFocused: tokens["semantic.accountCriticalOnFocused"] || "#f28c82"
+    readonly property color accentDecoration: tokens["semantic.accentDecoration"] || accent
+    readonly property color focusIndicator: tokens["semantic.focusIndicator"] || accent
+    readonly property color warningIndicator: tokens["semantic.warningIndicator"] || "#efbd75"
+    readonly property color criticalIndicator: tokens["semantic.criticalIndicator"] || "#f08779"
 }

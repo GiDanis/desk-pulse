@@ -1,10 +1,10 @@
 # Theme Engine — piano per avviare authoring AI e bundle completi
 
-**Revisione 1.5 · 4 ottobre 2026 · Europe/Rome**
+**Revisione 1.6 · 5 ottobre 2026 · Europe/Rome**
 
-**Stato: B0 implementato e collaudato; percorso completo A0–A6 ancora aperto.** [Consegna del bridge e prove](theme-engine-authoring-b0-report.md). Questo piano traduce la [specifica di authoring](theme-engine-ai-authoring-spec.md) in consegne verificabili. Mantiene il [MasterPlan](release-masterplan.md), i cinque riferimenti dello [studio UX](themes-and-ux-analysis.md) e il [contratto notifiche](theme-engine-notification-spec.md). Le decisioni estetiche definitive restano nel prototipo.
+**Stato: A1–A5 implementati; collaudo e consegna A6 in corso.** [Implementazione completa, evidenze e gate residui](theme-engine-a1-a6-implementation-report.md). I capitoli seguenti conservano motivazioni, baseline storica e criteri di accettazione del piano; le descrizioni al futuro non negano le funzioni ora implementate.
 
-**A0.1/A0.2 implementati:** [piano operativo](theme-engine-a0-a1-implementation-analysis.md), inventario di 44 superfici / 30 route, contratti pubblici canonici e tooling; normalizzazione dei dati, tracing e migrazione degli host mantengono la sequenza approvata. I [contratti canonici e il tooling](theme-engine-a0-contracts-report.md) sono consegnati. Tracing e corpus A0.3/A0.4 sono implementati; [architettura, copertura e limiti](theme-engine-a03-a04-implementation-report.md). Collaudo PC/EGLFS e installazione sono documentati nel resoconto; l'accettazione completa A0 resta aperta: i budget diagnostici 1 ms / 8 MiB non sono chiusi, mentre gli obiettivi 150/20 ms restano invariati. Modulo QML e host A1 restano aperti; publicApiBinding è deferredA1.
+**A0.1/A0.2 implementati:** [piano operativo](theme-engine-a0-a1-implementation-analysis.md), inventario di 44 superfici / 30 route, contratti pubblici canonici e tooling; normalizzazione dei dati, tracing e migrazione degli host mantengono la sequenza approvata. I [contratti canonici e il tooling](theme-engine-a0-contracts-report.md) sono consegnati. Tracing e corpus A0.3/A0.4 sono implementati; [architettura, copertura e limiti](theme-engine-a03-a04-implementation-report.md). Collaudo PC/EGLFS e installazione sono documentati nel resoconto; l'accettazione completa A0 resta aperta: i budget diagnostici 1 ms / 8 MiB non sono chiusi, mentre gli obiettivi 150/20 ms restano invariati. Modulo QML e host A1 sono implementati ed esercitati; il vecchio `deferredA1` resta soltanto nei report storici A0.
 
 ## 1. Baseline e valutazione delle aggiunte
 
@@ -26,7 +26,7 @@ L'esempio corretto è `#7a7a7a` su `#242424`: **3,616:1**. Il primo grigio più 
 
 - **Due profili:** schema 1 per generare temi con capacità già distribuite; bundle completo per composizioni QML/JS, animazioni, icone e asset nuovi. Il primo non sostituisce il secondo.
 - **Stack:** Python/PySide6 per dati, catalogo, verifica e persistenza; Qt Quick/QML per visuali e animazioni. Facade tipizzate; nessun resolver a ogni frame. Nuovo codice nativo soltanto per un limite misurato.
-- **Base condivisa:** provider, eventi, router/input e storage funzionale appartengono all'app. I renderer consumano contesti e azioni pubblici versionati. `SmartPC.ThemeApi 2` resta un nome proposto da realizzare.
+- **Base condivisa:** provider, eventi, router/input e storage funzionale appartengono all'app. I renderer consumano contesti e azioni pubblici versionati. `SmartPC.ThemeApi 2.0` è il modulo ora implementato.
 - **Personalizzazione:** pagine, shell, overlay/dettagli, tutte le sei superfici Avvisi, motion, icone e scene hanno copertura esplicita. Un fallback Base va dichiarato; non si presenta un tema parziale come integralmente ridisegnato.
 - **Creazione:** AI sul PC, kit indipendente dal servizio/modello, pacchetto usabile offline. Sul dispositivo: tema, anteprima/applica e pochi adattamenti di palette, testo e movimento.
 - **Fiducia:** primo profilo completo per codice visuale dell'autore generato nel progetto locale. QML non è una sandbox. Nessun Python, installer o plugin nativo incluso nel tema.

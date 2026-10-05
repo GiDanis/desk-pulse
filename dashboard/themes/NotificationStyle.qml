@@ -37,4 +37,9 @@ StyleFacade {
     readonly property bool showSource: notificationTokens[prefix+"showSource"]
     readonly property int noticeRows: notificationTokens[prefix+"rows"]
     readonly property real layoutY: anchor === "top" ? insetY : anchor === "bottom" ? 640-panelHeight-insetY : (640-panelHeight)/2+insetY
+    readonly property color guideColor: notificationTokens[prefix+"guideColor"] || noticeAccent
+    readonly property color badgeTextColor: notificationTokens[prefix+"badgeTextColor"] || noticeAccent
+    readonly property color focusedTitleColor: notificationTokens[prefix+"focusedTitleColor"] || titleColor
+    readonly property color focusedBodyColor: notificationTokens[prefix+"focusedBodyColor"] || bodyColor
+    readonly property color focusedSourceColor: notificationTokens[prefix+"focusedSourceColor"] || sourceColor
 }

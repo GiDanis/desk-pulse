@@ -41,6 +41,8 @@ def main() -> int:
     sig_timer.start()
 
     engine = QQmlApplicationEngine()
+    from theme_api import bootstrap_theme_api
+    bootstrap_theme_api(engine)
     system_info = SystemInfo()
     keypad = Keypad()
     demo = "--demo" in sys.argv
@@ -64,6 +66,8 @@ def main() -> int:
         state.accountThresholdsChanged.connect(update_account_events)
         update_account_events()
     application.aboutToQuit.connect(events.close)
+    if state.appearance:
+        application.aboutToQuit.connect(state.appearance.cancel)
     engine.setInitialProperties({"keypad": keypad, "dashboardState": state, "traceRecorder": trace})
     engine.load(QUrl.fromLocalFile(str(Path(__file__).with_name("Main.qml"))))
     if not engine.rootObjects():

@@ -8,6 +8,7 @@ when the device starts without an Internet connection.
 from __future__ import annotations
 
 import json
+import math
 import os
 import tempfile
 from datetime import datetime
@@ -70,6 +71,21 @@ def _number(value: Any, decimals: int = 0, suffix: str = "") -> str:
     return f"{value:.{decimals}f}{suffix}"
 
 
+def _finite(value):
+    return value if type(value) in (int,float) and math.isfinite(value) else None
+
+
+def _rain_value(hourly, current_time):
+    times=hourly.get("time",[]); values=hourly.get("precipitation_probability",[])
+    if not isinstance(times,list) or not isinstance(values,list) or len(times)!=len(values): return None
+    try:
+        current=datetime.fromisoformat(current_time)
+        candidates=[(abs((datetime.fromisoformat(stamp)-current).total_seconds()),value)
+                    for stamp,value in zip(times,values) if isinstance(stamp,str) and _finite(value) is not None]
+        return min(candidates,key=lambda item:item[0])[1] if candidates else None
+    except (ValueError,TypeError): return None
+
+
 def _weather_description(code: Any) -> str:
     try:
         return WEATHER_CODES_IT.get(int(code), "Condizioni variabili")
@@ -125,6 +141,10 @@ def normalize_response(payload: dict[str, Any]) -> dict[str, Any]:
                 day = datetime.fromisoformat(date_text).weekday()
                 forecast.append({
                     "day": "OGGI" if index == 0 else WEEKDAYS_IT[day],
+                    "date": date_text,
+                    "highValue": _finite(highs[index]),
+                    "lowValue": _finite(lows[index]),
+                    "rainProbabilityValue": _finite(rain_chances[index]) if index < len(rain_chances) else None,
                     "description": _weather_description(codes[index]),
                     "code": int(codes[index]),
                     "high": _number(highs[index], 0, "°"),
@@ -139,6 +159,14 @@ def normalize_response(payload: dict[str, Any]) -> dict[str, Any]:
 
     return {
         "location": "ANGRI · SALERNO",
+        "numeric": {"temperature":_finite(current.get("temperature_2m")),
+                    "feelsLike":_finite(current.get("apparent_temperature")),
+                    "humidity":_finite(current.get("relative_humidity_2m")),
+                    "precipitation":_finite(current.get("precipitation")),
+                    "rainProbability":_rain_value(hourly,current_time),
+                    "windSpeed":_finite(current.get("wind_speed_10m")),
+                    "windDirection":_finite(current.get("wind_direction_10m")),
+                    "gusts":_finite(current.get("wind_gusts_10m"))},
         "temperature": _number(current.get("temperature_2m"), 0, "°"),
         "description": _weather_description(code),
         "code": int(code) if isinstance(code, (int, float)) else -1,

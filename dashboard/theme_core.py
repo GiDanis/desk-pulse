@@ -63,7 +63,7 @@ def contrast_rules():
         for role in ('titleColor','bodyColor','sourceColor','accent'):
             yield prefix+role, prefix+'surface', 3 if role=='accent' else 4.5, prefix+role
         if mode=='inbox':
-            for role,minimum in (('titleColor',4.5),('bodyColor',4.5),('accent',3)):
+            for role,minimum in (('focusedTitleColor',4.5),('focusedBodyColor',4.5),('focusedSourceColor',4.5),('accent',3)):
                 yield prefix+role,prefix+'focusedSurface',minimum,prefix+role
 
 
@@ -93,6 +93,8 @@ class ThemeCatalog:
         self._trace=trace
         self.root=Path(root); self.user_directory=Path(user_directory) if user_directory else None
         self.contract=read_json(self.root/'themes/token-contract.json')['tokens']
+        from theme_semantics import token_specs
+        self.contract.update(token_specs(self.root))
         self.presentations={}; self.recipes={}; self.icon_sets={}; self.packs={}; self.directories={}; self.errors=[]
         self.reload()
 
@@ -100,6 +102,8 @@ class ThemeCatalog:
     def reload(self):
         self.errors=[]; self.packs={}; self.directories={}; self.asset_cache={}
         self.contract=read_json(self.root/'themes/token-contract.json')['tokens']
+        from theme_semantics import token_specs
+        self.contract.update(token_specs(self.root))
         self.icon_renderers=read_json(self.root/'icons/renderers.json')['renderers']
         self.scene_renderers=read_json(self.root/'scenes/registry.json')['renderers']
         self.presentations={row['id']:row for row in read_json(self.root/'presentations/registry.json')['presentations']}
@@ -226,7 +230,11 @@ class ThemeCatalog:
         self.validate_tokens(resolved['tokens'])
         for path,spec in self.contract.items():
             if 'effectiveMaximum' in spec and resolved['tokens'][path]*resolved['tokens']['typography.textScale']>spec['effectiveMaximum']: raise ThemeError(path,'dimensione effettiva incompatibile con il layout standard')
+        from theme_semantics import resolve_semantics
+        resolved['semanticDerivations']=resolve_semantics(resolved['tokens'],explicit,self.root)
         failures=contrast_issues(resolved['tokens'],trace=self._trace)
+        if identifier in getattr(self,'bundle_revisions',{}):
+            failures=[issue for issue in failures if issue['path']!='contrast.focus']
         if failures:
             first=failures[0]
             raise ThemeError(first['path'],first['message'],issues=failures)
@@ -257,8 +265,8 @@ class ThemeCatalog:
             if not isinstance(identifier_p,str): raise ThemeError('presentations.'+content,'ID richiesto')
             row=self.presentations.get(identifier_p)
             if not row or content not in row['contentIds']: raise ThemeError('presentations.'+content,'presentazione incompatibile')
-            if content.startswith('alerts.') and row.get('contextApi') != 'notification1': raise ThemeError('presentations.'+content,'NotificationContext API 1 richiesto')
-            if not contained(self.root,row['file']).is_file(): raise ThemeError('presentations.'+content,'componente mancante')
+            if content.startswith('alerts.') and row.get('contextApi') not in ('notification1','NotificationContext'): raise ThemeError('presentations.'+content,'NotificationContext API 1 richiesto')
+            if not contained(row.get('sourceRoot',self.root),row['file']).is_file(): raise ThemeError('presentations.'+content,'componente mancante')
             layout = row.get('layoutContract')
             if content.startswith('alerts.') and layout:
                 mode = content.rsplit('.',1)[-1]
@@ -303,6 +311,9 @@ class ThemeCatalog:
         resolved['presentationRegistry']=deepcopy(self.presentations); resolved['motionRegistry']=deepcopy(self.recipes)
         resolved['iconRegistry']=deepcopy(self.icon_renderers)
         resolved['sceneRegistry']=deepcopy(self.scene_renderers)
+        if self.scene_renderers[scene['renderer']].get('apiVersion') == 2:
+            resolved['presentations']['scene.main']=scene['renderer']
+            resolved['presentationRegistry'][scene['renderer']]={**deepcopy(self.scene_renderers[scene['renderer']]),'contentIds':['scene.main']}
         resolved['icons']=merge(self.icon_sets[resolved['iconSetId']],resolved['iconOverrides'])
         for key,icon in resolved['icons'].items():
             if not ID.fullmatch(key) or not isinstance(icon,(str,dict)): raise ThemeError('icons.'+key,'descrittore non valido')
@@ -312,5 +323,12 @@ class ThemeCatalog:
                 if icon.get('backend')=='component' and (not isinstance(icon.get('renderer'),str) or icon.get('renderer') not in self.icon_renderers): raise ThemeError('icons.'+key,'renderer sconosciuto')
                 if icon.get('backend')=='glyph' and (not isinstance(icon.get('glyph'),str) or len(icon['glyph'])!=1 or not isinstance(icon.get('family'),str)): raise ThemeError('icons.'+key,'glifo/famiglia non valido')
                 if icon.get('backend')=='image' and (not isinstance(icon.get('asset'),str) or icon.get('asset') not in assets or assets[icon['asset']]['type']!='image'): raise ThemeError('icons.'+key,'asset sconosciuto')
+        for registry in ('presentationRegistry','motionRegistry','iconRegistry','sceneRegistry'):
+            for descriptor in resolved[registry].values():
+                if isinstance(descriptor,dict) and 'file' in descriptor:
+                    path=contained(descriptor.get('sourceRoot',self.root),descriptor['file'])
+                    if not path.is_file(): raise ThemeError(registry,'componente mancante: '+str(path))
+                    descriptor['sourceUrl']=path.as_uri()
+                    descriptor.setdefault('rendererKey','app:'+descriptor['file'])
         resolved['parents']=[{'id':p['id'],'version':p['version']} for p in chain]
         return resolved

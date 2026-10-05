@@ -5,9 +5,13 @@ import json
 import os
 from pathlib import Path
 
-from PySide6.QtCore import QObject, Property, QRunnable, QSettings, QStandardPaths, QThreadPool, Signal, Slot
+from PySide6.QtCore import QObject, Property, QRunnable, QSettings, QStandardPaths, QThreadPool, QTimer, Signal, Slot
 from PySide6.QtGui import QFontDatabase, QGuiApplication, QImageReader
 from theme_core import ThemeCatalog, ThemeError
+from theme_runtime import make_catalog, preflight
+from theme_bundle import BundleManager, atomic_json
+from theme_lifecycle import LifecycleManager, BASE, selection_key
+from theme_api import PublicContextFactory
 from theme_trace_hooks import recorder_for, trace_span, trace_operation, trace_generation
 
 
@@ -16,10 +20,11 @@ class SaveResult(QObject):
 
 
 class SaveJob(QRunnable):
-    def __init__(self, configuration, result, *, trace=None, request_id=None):
+    def __init__(self, configuration, result, *, profiles=None, trace=None, request_id=None):
         super().__init__()
         self._trace=trace; self._trace_request=request_id
         self.configuration = deepcopy(configuration)
+        self.profiles=deepcopy(profiles) if profiles is not None else None
         self.result = result
 
     def run(self):
@@ -35,6 +40,7 @@ class SaveJob(QRunnable):
         values={'appearance/config':json.dumps(self.configuration,ensure_ascii=False,sort_keys=True),
                 'animationsEnabled':self.configuration['motionMode']!='off',
                 'nightMode':self.configuration.get('paletteMode','auto')}
+        if self.profiles is not None: values['appearance/themeOverrides']=json.dumps(self.profiles,ensure_ascii=False,sort_keys=True)
         previous={key:settings.value(key) for key in values}
         settings.setAtomicSyncRequired(True)
         for key,value in values.items(): settings.setValue(key,value)
@@ -63,6 +69,10 @@ class PackJob(QRunnable):
             if self.operation=='import':
                 inbox=self.store.parent/'theme-imports'; imported=[]
                 for folder in sorted(inbox.iterdir()) if inbox.is_dir() else []:
+                    if folder.name.startswith('.'): continue
+                    if folder.suffix in ('.smartpc-theme','.zip') or folder.is_dir() and (folder/'bundle.json').is_file():
+                        revision=BundleManager(self.store.parent,app_root=self.catalog.root).import_bundle(folder,preflight=preflight,require_preflight=True)
+                        imported.append(revision['id']+' '+revision['version']); continue
                     if not folder.is_dir() or not (folder/'theme.json').is_file(): continue
                     identifier=json.loads((folder/'theme.json').read_text())['id']
                     if identifier in self.catalog.packs: continue
@@ -72,7 +82,11 @@ class PackJob(QRunnable):
                 stamp=datetime.now().strftime('%Y%m%d-%H%M%S-%f')
                 identifier='personal.export.'+stamp.replace('-','')
                 output=self.store.parent/'theme-exports'/identifier
-                export_pack(self.catalog,self.configuration['themeId'],output,new_id=identifier,overrides=self.configuration['overrides'])
+                if self.configuration.get('bundleRevision'):
+                    output=output.with_suffix('.smartpc-theme')
+                    BundleManager(self.store.parent,app_root=self.catalog.root).export_bundle(self.configuration['bundleRevision'],output)
+                else:
+                    export_pack(self.catalog,self.configuration['themeId'],output,new_id=identifier,overrides=self.configuration['overrides'])
                 message='Esportato: '+str(output)
             self.result.finished.emit(True,message)
         except (ThemeError,OSError,ValueError,KeyError) as error:
@@ -129,13 +143,20 @@ class ThemeService(QObject):
     editorChanged = Signal()
     saveFinished = Signal(bool)
     candidateChanged = Signal()
+    frameStateChanged = Signal()
+    transferFinished = Signal(bool,str)
 
     def __init__(self, parent=None, *, store=None, root=None, trace=None):
         super().__init__(parent)
         self._trace=trace; self._save_trace_request=None
         location = store or os.environ.get('SMARTPC_THEME_STORE') or str(Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation))/'themes')
         self.store = Path(location)
-        self.catalog = ThemeCatalog(self.store, trace=trace, **({'root':root} if root else {}))
+        self._root = Path(root) if root else Path(__file__).parent
+        self.bundles = BundleManager(self.store.parent,app_root=self._root)
+        self.lifecycle = LifecycleManager(self.store.parent,app_root=self._root)
+        self._activation = None; self._activation_frame = False; self._gui_ready = False
+        self._leases = {}; self._api_factory = PublicContextFactory(self)
+        self.catalog = make_catalog(self.store,self._root,trace=trace)
         settings = QSettings('SmartPC', 'Dashboard')
         legacy = str(settings.value('animationsEnabled','true')).lower() not in ('false','0')
         legacy_palette = settings.value('nightMode','auto')
@@ -144,6 +165,13 @@ class ThemeService(QObject):
         self._committed = {'schemaVersion':1, 'themeId':'base', 'overrides':{}, 'motionMode':'normal' if legacy else 'off', 'paletteMode':legacy_palette}
         self._variant = 'day'; self._revision = 0; self._snapshot = {}; self._draft = None
         self._error = ''; self._status = 'ready'; self._pending = None
+        try: self._profiles=json.loads(settings.value('appearance/themeOverrides','{}'))
+        except (TypeError,ValueError): self._profiles={}
+        if not isinstance(self._profiles,dict): self._profiles={}
+        self._profiles={key:value for key,value in self._profiles.items()
+                        if isinstance(key,str) and isinstance(value,dict)
+                        and all(isinstance(value.get(section,{}),dict) for section in ('tokens','presentations','motion','scene','iconOverrides'))}
+        self._draft_profiles=None; self._pending_profiles=None
         self._candidate = None; self._candidate_config = None; self._draft_valid = True; self._generation = 0; self._active_content = ''; self._staged_fonts = set()
         self._prepared_contents = set(); self._awaiting_contents = set()
         self._font_owner = id(self)
@@ -153,16 +181,32 @@ class ThemeService(QObject):
         self._pack_result.finished.connect(self._pack_finished)
         if recorder_for(self._trace) is not None:
             self._trace.bind_service(self)
+        # Recovery is required even before the first appearance preference has
+        # been saved (for example, a crash during the first bundle preview).
+        recovery=self.lifecycle.recover()
+        journal=self.lifecycle.read()
         saved = settings.value('appearance/config')
         if saved:
             try:
                 config = json.loads(saved)
                 if not isinstance(config,dict): raise ThemeError('configuration','oggetto richiesto')
                 config.setdefault('paletteMode',settings.value('nightMode','auto'))
+                if recovery['recovered'] or journal.get('lastRecovery') or config.get('bundleRevision',BASE) != journal['active']:
+                    chosen=journal['active']
+                    if chosen == BASE:
+                        previous=self._previous_configuration()
+                        config=previous if previous and 'bundleRevision' not in previous else {**config,'themeId':'base','overrides':{}}
+                        config.pop('bundleRevision',None)
+                    else:
+                        config.update(themeId=chosen['id'],bundleRevision=chosen,overrides=journal['adaptations']['perRevision'].get(selection_key(chosen),{}))
+                    self._status='recovery'; self._error='Tema recuperato dopo attivazione interrotta'
                 self._validate_config(config)
                 self._committed = config
             except (ValueError, TypeError, ThemeError) as error:
                 self._error = 'Preferenze recuperate con Base: '+str(error); self._status = 'recovery'
+        elif journal['active'] != BASE:
+            self._committed.update(themeId=journal['active']['id'],bundleRevision=journal['active'],
+                                   overrides=journal['adaptations']['perRevision'].get(selection_key(journal['active']),{}))
         try:
             self._publish(self._committed)
         except (ThemeError,ValueError,OSError) as error:
@@ -171,8 +215,106 @@ class ThemeService(QObject):
             self._publish(self._committed)
         self.destroyed.connect(lambda: FontRegistry.update(self._font_owner, set(),trace=self._trace))
 
+    @Property(QObject,constant=True)
+    def apiFactory(self): return self._api_factory
+
+    @Slot(str)
+    def recoverScene(self, message):
+        self._recover_base(message)
+
+    @Property(bool,notify=frameStateChanged)
+    def needsFrameAcknowledgement(self): return not self._gui_ready or bool(self._activation and not self._activation_frame)
+
+    @Slot(int,bool)
+    def acknowledgeThemeFrame(self, revision, coherent):
+        if revision != self._revision or not coherent: return
+        self._gui_ready=True
+        if self._activation:
+            self._activation_frame=True
+        self.frameStateChanged.emit()
+        self.editorChanged.emit()
+
+    @Slot()
+    @Slot(bool)
+    def heartbeat(self, coherent=True):
+        # A responsive GUI can still lose a committed renderer's readiness.
+        # Only a real coherent submitted frame can make it ready again.
+        if not coherent and self._gui_ready:
+            self._gui_ready=False
+            self._activation_frame=False
+            self.frameStateChanged.emit()
+            self.editorChanged.emit()
+        self.lifecycle.heartbeat(ready=self._gui_ready)
+
+    def _cancel_activation(self):
+        if self._activation:
+            self.lifecycle.cancel(self._activation['ticket'])
+            self._activation=None; self._activation_frame=False
+            self.frameStateChanged.emit()
+
+    def _begin_activation(self, configuration):
+        self._cancel_activation()
+        atomic_json(self.store.parent/'theme-previous-configuration.json',self._committed)
+        identity=configuration.get('bundleRevision',BASE)
+        self._activation=self.lifecycle.begin(identity,configuration['overrides'])
+        self._activation_frame=False
+        self.frameStateChanged.emit()
+
+    def _previous_configuration(self):
+        """A backup is advisory; damage must never abort canonical recovery."""
+        path=self.store.parent/'theme-previous-configuration.json'
+        try:
+            previous=json.loads(path.read_text()) if path.is_file() else {}
+            if previous:
+                self._validate_config(previous)
+            return previous
+        except (OSError,ThemeError,ValueError,TypeError):
+            return {}
+
+    @Slot(int,result=bool)
+    def stepRevision(self, direction):
+        if self._draft is None or self._pending is not None or self._operation_pending: return False
+        versions=[r for r in getattr(self.catalog,'installed_bundle_revisions',[]) if r['id']==self._draft['themeId']]
+        if not versions: self._error='Il tema distribuito non ha revisioni importate'; self.editorChanged.emit(); return False
+        pin=self._draft.get('bundleRevision',{})
+        index=next((i for i,r in enumerate(versions) if r['digest']==pin.get('digest')),-1)
+        chosen=versions[(index+(1 if direction>=0 else -1))%len(versions)]
+        self._remember_draft()
+        candidate=deepcopy(self._draft)
+        candidate['bundleRevision']={k:chosen[k] for k in ('id','version','digest')}
+        # A revision has its own visual overrides; do not carry renderer IDs across versions.
+        candidate['overrides']=deepcopy((self._draft_profiles or {}).get(self._profile_key(candidate),self.lifecycle.read()['adaptations']['perRevision'].get(selection_key(candidate['bundleRevision']),{})))
+        scale=self._draft.get('overrides',{}).get('tokens',{}).get('typography.textScale')
+        if scale is not None: candidate['overrides'].setdefault('tokens',{})['typography.textScale']=scale
+        return self._change(candidate)
+
+    @Slot('QVariantMap',result=str)
+    def acquireRevision(self, identity):
+        if not identity or identity.get('origin')!='bundle': return ''
+        pin={'id':identity['revision'].split('@')[0],'version':identity['revision'].split('@')[1].split('#')[0],'digest':identity['digest']}
+        token=self.lifecycle.acquire(pin,'renderer')
+        try:
+            digests={asset.get('sha256') for asset in self.catalog.resolve(pin['id'])['assets'] if asset['type']=='font'} if getattr(self.catalog,'bundle_revisions',{}).get(pin['id'])==pin else set()
+            FontRegistry.update('host:'+token,digests,trace=self._trace)
+            self._leases[token]=True
+        except Exception:
+            FontRegistry.update('host:'+token,set(),trace=self._trace)
+            self.lifecycle.release(token)
+            raise
+        return token
+
+    @Slot(str)
+    def releaseRevision(self, token):
+        if token in self._leases:
+            FontRegistry.update('host:'+token,set(),trace=self._trace)
+            self.lifecycle.release(token); self._leases.pop(token,None)
+
     @trace_span("service.data")
     def _data(self, configuration, variant):
+        pin=configuration.get('bundleRevision')
+        if pin:
+            self.lifecycle._available(pin)
+            self.bundles.verify_revision(pin)
         key=(json.dumps(configuration,sort_keys=True,separators=(',',':')),variant)
         cached=self._resolved_cache.get(key)
         recorder=recorder_for(self._trace)
@@ -189,6 +331,9 @@ class ThemeService(QObject):
                 return deepcopy(result)
             if recorder is not None: recorder.record('service.cache.invalidate',variant=variant)
             self._resolved_cache.pop(key,None)
+        pin=configuration.get('bundleRevision')
+        if pin and getattr(self.catalog,'bundle_revisions',{}).get(configuration['themeId']) != pin:
+            self.catalog=make_catalog(self.store,self._root,selected=pin,trace=self._trace)
         result=self.catalog.resolve(configuration['themeId'],configuration['overrides'],variant,configuration['motionMode'])
         stamps={a['file']:(Path(a['file']).stat().st_size,Path(a['file']).stat().st_mtime_ns) for a in result['assets']}
         if recorder is not None:
@@ -201,9 +346,14 @@ class ThemeService(QObject):
 
     @trace_span("service.validateConfig")
     def _validate_config(self, configuration):
-        if not isinstance(configuration,dict) or type(configuration.get('schemaVersion')) is not int or configuration.get('schemaVersion') != 1 or set(configuration)-{'schemaVersion','themeId','overrides','motionMode','paletteMode'}:
+        if not isinstance(configuration,dict) or type(configuration.get('schemaVersion')) is not int or configuration.get('schemaVersion') != 1 or set(configuration)-{'schemaVersion','themeId','overrides','motionMode','paletteMode','bundleRevision'}:
             raise ThemeError('configuration','formato non supportato')
         if not all(key in configuration for key in ('themeId','overrides','motionMode')): raise ThemeError('configuration','campi obbligatori mancanti')
+        if 'bundleRevision' in configuration:
+            if not isinstance(configuration['bundleRevision'],dict) or configuration['bundleRevision'].get('id') != configuration['themeId']:
+                raise ThemeError('bundleRevision','identità diversa dal tema selezionato')
+            # An empty/partial identity is not an implicit legacy selection.
+            selection_key(configuration['bundleRevision'])
         if configuration.get('paletteMode','auto') not in ('auto','day','night'): raise ThemeError('paletteMode','modalità non valida')
         if not isinstance(configuration.get('overrides'),dict): raise ThemeError('overrides','oggetto richiesto')
         for variant in ('day','night'):
@@ -235,16 +385,18 @@ class ThemeService(QObject):
         families = [result['tokens'][key] for key in font_keys]
         families += [v['family'] for v in result['icons'].values() if isinstance(v,dict) and v.get('backend')=='glyph']
         needed, replacements = FontRegistry.acquire(result['assets'],families,trace=self._trace)
+        available_families=set(QFontDatabase.families())
+        default_family=QGuiApplication.font().family()
         for key in font_keys:
             value = result['tokens'][key]
             if not value:
-                result['tokens'][key] = QGuiApplication.font().family()
+                result['tokens'][key] = default_family
             else:
-                if value not in replacements and value not in QFontDatabase.families(): raise ThemeError(key,'famiglia font non disponibile')
+                if value not in replacements and value not in available_families: raise ThemeError(key,'famiglia font non disponibile')
                 result['tokens'][key] = replacements.get(value,value)
         for icon in result['icons'].values():
             if isinstance(icon,dict) and icon.get('backend')=='glyph':
-                if icon['family'] not in replacements and icon['family'] not in QFontDatabase.families(): raise ThemeError('icon.family','famiglia font non disponibile')
+                if icon['family'] not in replacements and icon['family'] not in available_families: raise ThemeError('icon.family','famiglia font non disponibile')
                 icon['family'] = replacements.get(icon['family'],icon['family'])
                 font = __import__('PySide6.QtGui',fromlist=['QRawFont','QFont'])
                 raw = font.QRawFont.fromFont(font.QFont(icon['family']))
@@ -257,7 +409,11 @@ class ThemeService(QObject):
         result.pop('generation', None); result.pop('requiredContents', None)
         self._revision += 1
         result['revision'] = self._revision
+        self._gui_ready=False
+        self.frameStateChanged.emit()
         result['paletteMode'] = configuration.get('paletteMode','auto')
+        result['bundleRevision']=deepcopy(configuration.get('bundleRevision',{}))
+        if self._activation: self.lifecycle.mark_ready(self._activation['ticket'])
         self._visible = deepcopy(configuration)
         self._snapshot = result
         self._active_fonts = needed; self._staged_fonts = set()
@@ -326,6 +482,7 @@ class ThemeService(QObject):
             if recorder is not None:
                 self._trace.finished(recorder.current_request,'failed',reason='candidateRejected')
                 self._trace.cleared(generation,outcome='failed')
+            self._cancel_activation()
             self._error = message or 'Presentazione non caricabile; aspetto precedente conservato'
         self.candidateChanged.emit()
         if not ok:
@@ -344,10 +501,28 @@ class ThemeService(QObject):
     def _recover_base(self, message):
         if recorder_for(self._trace) is not None: self._trace.recovery()
         self._clear_candidate()
-        self._committed = {'schemaVersion':1,'themeId':'base','overrides':{},'motionMode':'off','paletteMode':self._visible.get('paletteMode','auto')}
-        self._draft = None; self._publish(self._committed)
-        self._status = 'recovery'; self._error = message
-        self.editorChanged.emit()
+        result=self.lifecycle.recover(message,failed_active=self._activation is None and bool(self._visible.get('bundleRevision')))
+        if self._activation or self._visible.get('bundleRevision') or result['recovered']:
+            self._activation=None; self._activation_frame=False
+            selected=result['selection']
+            previous=self._previous_configuration()
+            if selected != BASE:
+                configuration={**self._committed,'themeId':selected['id'],'bundleRevision':selected,
+                    'overrides':self.lifecycle.read()['adaptations']['perRevision'].get(selection_key(selected),{})}
+            elif previous and 'bundleRevision' not in previous:
+                configuration=previous
+            else:
+                configuration={'schemaVersion':1,'themeId':'base','overrides':{},'motionMode':'off','paletteMode':self._visible.get('paletteMode','auto')}
+        else:
+            configuration={'schemaVersion':1,'themeId':'base','overrides':{},'motionMode':'off','paletteMode':self._visible.get('paletteMode','auto')}
+        self._committed=configuration; self._draft=None
+        self._publish(configuration)
+        settings=QSettings('SmartPC','Dashboard')
+        settings.setValue('appearance/config',json.dumps(configuration))
+        settings.setValue('animationsEnabled',configuration['motionMode']!='off')
+        settings.setValue('nightMode',configuration.get('paletteMode','auto')); settings.sync()
+        self._status='recovery'; self._error=message
+        self.frameStateChanged.emit(); self.editorChanged.emit()
 
     @Property('QVariantMap',notify=changed)
     def resolvedAppearance(self): return deepcopy(self._snapshot)
@@ -360,13 +535,17 @@ class ThemeService(QObject):
     @Property(str,notify=editorChanged)
     def lastError(self): return self._error
     @Property(bool,notify=editorChanged)
-    def readyToApply(self): return self._draft is not None and self._candidate is None and self._pending is None and not self._operation_pending and self._draft_valid
+    def readyToApply(self): return self._draft is not None and self._candidate is None and self._pending is None and not self._operation_pending and self._draft_valid and (not self._activation or self._activation_frame)
     @Property(bool,notify=editorChanged)
     def editing(self): return self._draft is not None
     @Property('QVariantMap',notify=editorChanged)
     def draft(self): return deepcopy(self._draft or self._committed)
     @Property('QVariantList',notify=editorChanged)
     def themes(self): return [{'id':p['id'],'name':p['name'],'version':p['version']} for p in self.catalog.packs.values()]
+    @Property('QVariantList',notify=editorChanged)
+    def revisions(self):
+        identifier=(self._draft or self._committed)['themeId']
+        return deepcopy([row for row in getattr(self.catalog,'installed_bundle_revisions',[]) if row['id']==identifier])
     @Property('QStringList',notify=editorChanged)
     def fontFamilies(self): return ['']+QFontDatabase.families()
     @Property('QStringList',notify=editorChanged)
@@ -390,13 +569,29 @@ class ThemeService(QObject):
     @trace_span("service.beginEdit")
     def beginEdit(self):
         if self._pending is not None or self._operation_pending: return
-        self._draft = deepcopy(self._committed); self._draft_valid = True; self._status = 'ready'; self._error = ''; self.editorChanged.emit()
+        self._draft = deepcopy(self._committed); self._draft_profiles=deepcopy(self._profiles); self._draft_valid = True; self._status = 'ready'; self._error = ''; self.editorChanged.emit()
+
+    @staticmethod
+    def _profile_key(configuration):
+        return selection_key(configuration['bundleRevision']) if configuration.get('bundleRevision') else 'schema1:'+configuration['themeId']
+
+    def _remember_draft(self):
+        if self._draft is not None and self._draft_profiles is not None:
+            self._draft_profiles[self._profile_key(self._draft)]=deepcopy(self._draft['overrides'])
 
     @Slot(str,result=bool)
     @trace_operation("selectDraft")
     def selectDraft(self, identifier):
         if self._draft is None or self._pending is not None or self._operation_pending: return False
         candidate = deepcopy(self._draft); candidate['themeId'] = identifier
+        pin=getattr(self.catalog,'bundle_revisions',{}).get(identifier)
+        if pin: candidate['bundleRevision']=deepcopy(pin)
+        else: candidate.pop('bundleRevision',None)
+        if identifier != self._draft['themeId']:
+            self._remember_draft()
+            candidate['overrides']=deepcopy((self._draft_profiles or {}).get(self._profile_key(candidate),{}))
+            scale=self._draft.get('overrides',{}).get('tokens',{}).get('typography.textScale')
+            if scale is not None: candidate['overrides'].setdefault('tokens',{})['typography.textScale']=scale
         return self._change(candidate)
 
     @Slot(str,'QVariant',result=bool)
@@ -419,7 +614,7 @@ class ThemeService(QObject):
     def transferPack(self, operation):
         if operation not in ('import','export') or self._operation_pending or self._pending is not None or self._candidate is not None: return False
         configuration = deepcopy(self._draft if self._draft is not None else self._committed)
-        catalog = ThemeCatalog(self.store,root=self.catalog.root,trace=self._trace)
+        catalog = make_catalog(self.store,self._root,selected=configuration.get('bundleRevision'),trace=self._trace)
         self._operation_pending = True; self._status = 'working'; self._error = ''; self.editorChanged.emit()
         QThreadPool.globalInstance().start(PackJob(operation,self.store,catalog,configuration,self._pack_result))
         return True
@@ -428,13 +623,13 @@ class ThemeService(QObject):
     def _pack_finished(self, ok, message):
         self._operation_pending = False; self._status = 'ready' if ok else 'error'
         if ok: self.reloadCatalog()
-        self._error = message; self.editorChanged.emit()
+        self._error = message; self.editorChanged.emit(); self.transferFinished.emit(ok,message)
 
     @Slot(result=bool)
     @trace_span("service.reloadCatalog")
     def reloadCatalog(self):
         try:
-            candidate = ThemeCatalog(self.store,root=self.catalog.root,trace=self._trace)
+            candidate = make_catalog(self.store,self._root,selected=(self._draft or self._committed).get('bundleRevision'),trace=self._trace)
             current = self._draft if self._draft is not None else self._committed
             candidate.resolve(current['themeId'],current['overrides'],self._variant,current['motionMode'])
             self.catalog = candidate; self._resolved_cache.clear(); self._error = '; '.join(candidate.errors)
@@ -468,7 +663,13 @@ class ThemeService(QObject):
             self._validate_config(candidate)
             resolved, needed = self._resolve(candidate)
             contents = self._prepared_contents | ({self._active_content} if self._active_content else set())
-            changed = {content for content in contents if resolved['presentations'].get(content) != self._snapshot['presentations'].get(content)}
+            def identity(snapshot,content):
+                identifier=snapshot['presentations'].get(content)
+                return snapshot['presentationRegistry'].get(identifier,{}).get('rendererKey',identifier)
+            contents |= {content for content in ('shell.main', 'scene.main') if content in resolved['presentations'] and (content != 'scene.main' or resolved['scene']['enabled'])}
+            changed = {content for content in contents if identity(resolved,content) != identity(self._snapshot,content)}
+            if candidate.get('bundleRevision') or self._visible.get('bundleRevision'):
+                self._begin_activation(candidate)
             self._draft = candidate
             if changed:
                 self._draft_valid = False
@@ -495,23 +696,29 @@ class ThemeService(QObject):
     @Slot(result=bool)
     @trace_operation("preview")
     def preview(self):
-        if self._draft is None: return False
+        if self._draft is None or self._pending is not None or self._operation_pending: return False
         return self._change(deepcopy(self._draft))
 
-    @Slot()
+    @Slot(result=bool)
     @trace_operation("cancel")
     def cancel(self):
-        if self._pending is not None: return
+        if self._pending is not None: return False
+        # Shutdown also calls cancel. With no preview there is nothing to
+        # republish: creating loaders while the Qt event loop exits is unsafe.
+        if self._draft is None and self._candidate is None and self._activation is None:
+            return True
         self._clear_candidate(trace_outcome='cancelled')
-        self._draft = None
+        self._cancel_activation()
+        self._draft = None; self._draft_profiles=None
         try: self._publish(self._committed)
         except (ThemeError, OSError, ValueError) as error:
-            self._recover_base(str(error)); return
-        self._error = ''; self.editorChanged.emit()
+            self._recover_base(str(error)); return True
+        self._error = ''; self.editorChanged.emit(); return True
 
     @Slot(result=bool)
     @trace_operation("resetDraft")
     def resetDraft(self):
+        if self._pending is not None or self._operation_pending: return False
         if self._draft is None: self.beginEdit()
         return self._change({'schemaVersion':1,'themeId':'base','overrides':{},'motionMode':'normal','paletteMode':'auto'})
 
@@ -519,17 +726,25 @@ class ThemeService(QObject):
     @trace_operation("apply")
     def apply(self):
         if self._draft is None or self._pending is not None or self._candidate is not None or not self._draft_valid or self._operation_pending: return False
+        if self._activation and not self._activation_frame:
+            self._error='Attendere il primo frame coerente del tema'; self.editorChanged.emit(); return False
         try:
             self._validate_config(self._draft)
         except (ThemeError,OSError,ValueError,TypeError) as error:
             self._error = str(error); self.editorChanged.emit(); return False
         if self._visible != self._draft:
             if not self._change(deepcopy(self._draft)) or self._candidate is not None: return False
+        # Reconstructing a preview after a save failure starts a new activation.
+        # Its frame acknowledgment cannot be inherited from the old preview.
+        if self._activation and not self._activation_frame:
+            self._error='Attendere il primo frame coerente del tema'; self.editorChanged.emit(); return False
+        self._remember_draft()
+        self._pending_profiles=deepcopy(self._draft_profiles)
         self._pending = deepcopy(self._draft); self._status = 'saving'; self._error = ''; self.editorChanged.emit()
         recorder=recorder_for(self._trace)
         self._save_trace_request=recorder.current_request if recorder is not None else None
         if recorder is not None: recorder.record('save.queued')
-        QThreadPool.globalInstance().start(SaveJob(self._pending,self._save_result,trace=recorder,request_id=self._save_trace_request))
+        QThreadPool.globalInstance().start(SaveJob(self._pending,self._save_result,profiles=self._pending_profiles,trace=recorder,request_id=self._save_trace_request))
         return True
 
     @Slot(bool,str)
@@ -538,7 +753,7 @@ class ThemeService(QObject):
         request=self._save_trace_request
         if recorder is not None:
             with recorder.scope(request), recorder.span('save.callback'):
-                self._saved_state(ok,message)
+                ok=self._saved_state(ok,message)
                 self._trace.finished(request,'noVisualChange' if ok else 'failed',persisted=ok)
         else:
             self._saved_state(ok,message)
@@ -546,8 +761,32 @@ class ThemeService(QObject):
 
     def _saved_state(self, ok, message):
         if ok:
+            try:
+                if not self._activation and self.lifecycle.read().get('lastRecovery'):
+                    self._activation=self.lifecycle.begin(BASE,self._pending['overrides'])
+                    self.lifecycle.mark_ready(self._activation['ticket'])
+                    self._activation_frame=self._gui_ready
+                if self._activation:
+                    self.lifecycle.commit(self._activation['ticket'],{'coherent':self._activation_frame,'presented':self._activation_frame,'key':selection_key(self._pending.get('bundleRevision',BASE))})
+                    self._activation=None; self._activation_frame=False
+            except (ThemeError,OSError) as error:
+                ok=False; message=str(error)
+                # Qt settings succeeded but journal failed: restore appearance preference only.
+                settings=QSettings('SmartPC','Dashboard'); settings.setValue('appearance/config',json.dumps(self._committed)); settings.setValue('animationsEnabled',self._committed['motionMode']!='off'); settings.setValue('nightMode',self._committed.get('paletteMode','auto')); settings.setValue('appearance/themeOverrides',json.dumps(self._profiles)); settings.sync()
+        if ok:
             self._committed = self._pending; self._draft = None
+            if self._pending_profiles is not None: self._profiles=self._pending_profiles
+            self._draft_profiles=None
         else:
+            try:
+                self._cancel_activation()
+            except (ThemeError,OSError) as error:
+                # A failed durable cancellation remains in the journal for boot
+                # recovery. Finish the asynchronous action and restore the GUI
+                # instead of leaving the editor permanently in "saving".
+                self._activation=None; self._activation_frame=False
+                message += '; '+str(error)
             self._publish(self._committed)
-        self._pending = None; self._status = 'ready' if ok else 'error'; self._error = message
+        self._pending = None; self._pending_profiles=None; self._status = 'ready' if ok else 'error'; self._error = message
         self.editorChanged.emit(); self.saveFinished.emit(ok)
+        return ok

@@ -26,9 +26,9 @@ Item {
     }
     function usageColor(used) {
         if (!current) return root.style.textSecondary
-        if (used >= dashboard.accountCriticalPercent) return SemanticStyle.accountCritical
-        if (used >= dashboard.accountWarningPercent) return SemanticStyle.warning
-        return root.style.accent
+        if (used >= dashboard.accountCriticalPercent) return root.style.accountCriticalOnCard
+        if (used >= dashboard.accountWarningPercent) return root.style.warningOnCard
+        return root.style.accentTextOnCard
     }
 
     Rectangle {
@@ -45,7 +45,7 @@ Item {
             text: root.current ? "AGGIORNATO · " + root.stamp(root.account.updatedAt) :
                   root.account.status === "stale" ? "NON AGGIORNATO · " + root.stamp(root.account.updatedAt) :
                   root.account.status === "unavailable" ? "ACCOUNT NON DISPONIBILE" : "ERRORE DATI ACCOUNT"
-            color: root.current ? root.style.accent : SemanticStyle.warning
+            color: root.current ? root.style.accentTextOnCard : root.style.warningOnCard
             font.pixelSize: root.style.font22; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight
         }
         AppText { style: root.style;
@@ -55,7 +55,7 @@ Item {
         }
     }
 
-    AppText { style: root.style; x: 0; y: 103; text: "UTILIZZO DEL PIANO"; color: root.style.accent; font.pixelSize: root.style.font24; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
+    AppText { style: root.style; x: 0; y: 103; text: "UTILIZZO DEL PIANO"; color: root.style.accentTextOnCard; font.pixelSize: root.style.font24; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
     AppText { style: root.style;
         x: 575; y: 105; width: 297; horizontalAlignment: Text.AlignRight
         visible: root.hasData && (dashboard.accountWindows.length > 2 || root.current && root.highestUsage >= dashboard.accountWarningPercent)

@@ -24,7 +24,7 @@ Item {
     Rectangle { width: 872; height: 76; radius: root.style.radiusRow; color: root.style.surface; border.color: root.style.border }
     AppText { style: root.style; x: 18; y: 9; text: "SERIE A · " + (sportInfo.season || ""); color: root.style.textPrimary; font.pixelSize: root.style.font27; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
     AppText { style: root.style; objectName: "sportSourceText"; x: 18; y: 43; width: 365; text: "Fonte: " + sportState.source + (sportInfo.calendarScope === "nearby" ? " · calendario parziale" : ""); color: root.style.textSecondary; font.pixelSize: root.style.font19; elide: Text.ElideRight }
-    AppText { style: root.style; x: 397; y: 14; width: 455; horizontalAlignment: Text.AlignRight; text: root.status(); color: sportState.status === "active" || sportState.status === "updating" ? root.style.accent : SemanticStyle.warning; font.pixelSize: root.style.font21; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
+    AppText { style: root.style; x: 397; y: 14; width: 455; horizontalAlignment: Text.AlignRight; text: root.status(); color: sportState.status === "active" || sportState.status === "updating" ? root.style.accentTextOnCard : root.style.warningOnCard; font.pixelSize: root.style.font21; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
     AppText { style: root.style; x: 397; y: 44; width: 455; horizontalAlignment: Text.AlignRight; text: sportInfo.cacheError || (sportState.status === "offline" || sportState.status === "stale" ? "Ultimo dato " + root.stamp(sportState.updatedAt) : sportInfo.fallbackReason ? "Fonte di riserva" : "Orari italiani"); color: root.style.textSecondary; font.pixelSize: root.style.font19 }
 
     readonly property bool tableView: dashboard.sportView === "CLASSIFICA"
@@ -33,7 +33,7 @@ Item {
     AppText { style: root.style;
         x: 0; y: 94; width: 872
         text: root.tableView ? "CLASSIFICA · PRIME POSIZIONI" : root.results ? "ULTIMI RISULTATI" + (sportInfo.resultsRound ? " · GIORNATA " + sportInfo.resultsRound : "") : root.inProgress ? ((sportInfo.activeMatches || []).length ? "PARTITE IN CORSO" : "RISULTATO FINALE") : "PROSSIME PARTITE" + (root.rows.length && root.rows[0].round ? " · GIORNATA " + root.rows[0].round : "")
-        color: root.style.accent; font.pixelSize: root.style.font26; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight
+        color: root.style.accentTextOnCanvas; font.pixelSize: root.style.font26; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight
     }
     Repeater {
         model: root.rows
@@ -44,8 +44,8 @@ Item {
             x: 0; y: 138 + index * 86; width: 872; height: 76; radius: root.style.radiusRow; color: root.style.surface; border.color: root.style.border
             Rectangle { visible: parent.favourite; x: 1; y: 10; width: 5; height: 56; radius: root.style.radiusMarker; color: root.style.accent }
             AppText { style: root.style; x: 16; y: 7; width: 664; text: root.tableView ? modelData.position + ".  " + modelData.team : modelData.homeTeam + " – " + modelData.awayTeam; color: root.style.textPrimary; font.pixelSize: root.style.font29; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
-            AppText { style: root.style; x: 16; y: 43; width: 694; text: root.tableView ? "G " + modelData.played + " · DR " + (modelData.goalDifference === null ? "—" : modelData.goalDifference) : modelData.when + " · " + modelData.statusText + (modelData.minute ? " " + modelData.minute : "") + (modelData.pendingVAR ? " · VAR" : ""); color: modelData.isLive ? root.style.accent : root.style.textSecondary; font.pixelSize: root.style.font21; elide: Text.ElideRight }
-            AppText { role: "numbers"; style: root.style; x: 689; y: 17; width: 163; horizontalAlignment: Text.AlignRight; text: root.tableView ? modelData.points + " PT" : root.score(modelData); color: root.style.accent; font.pixelSize: root.style.font33; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
+            AppText { style: root.style; x: 16; y: 43; width: 694; text: root.tableView ? "G " + modelData.played + " · DR " + (modelData.goalDifference === null ? "—" : modelData.goalDifference) : modelData.when + " · " + modelData.statusText + (modelData.minute ? " " + modelData.minute : "") + (modelData.pendingVAR ? " · VAR" : ""); color: modelData.isLive ? root.style.accentTextOnCard : root.style.textSecondary; font.pixelSize: root.style.font21; elide: Text.ElideRight }
+            AppText { role: "numbers"; style: root.style; x: 689; y: 17; width: 163; horizontalAlignment: Text.AlignRight; text: root.tableView ? modelData.points + " PT" : root.score(modelData); color: root.style.accentTextOnCard; font.pixelSize: root.style.font33; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
         }
     }
     AppText { style: root.style;

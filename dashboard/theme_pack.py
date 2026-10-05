@@ -65,6 +65,10 @@ def export_pack(catalog, identifier, destination, *, new_id, overrides=None):
 
 
 def main():
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == 'bundle':
+        from theme_bundle_tools import main as bundle_main
+        return bundle_main(sys.argv[2:])
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--store',type=Path)
     commands=parser.add_subparsers(dest='command',required=True)
@@ -82,6 +86,7 @@ def main():
         if name in ('install','profile','kit'):
             command.add_argument('--board');command.add_argument('--identity',type=Path)
         if name in ('profile','kit'):command.add_argument('--output',type=Path,required=name=='kit')
+        if name=='kit':command.add_argument('--bundle',action='store_true',help='Esporta SDK completo API2 e bundle; schema1 resta il default')
     args=parser.parse_args()
     if args.command in ('check','install','profile','kit'):
         if getattr(args,'board',None) and (args.store or getattr(args,'profile',None)):
@@ -120,7 +125,12 @@ def authoring_command(args):
                 with args.output.open('x') as output:output.write(json.dumps(profile,ensure_ascii=False,indent=2)+'\n')
                 report={'reportVersion':1,'operation':'profile','status':'created','destination':str(args.output.resolve()),
                         'qtVersion':profile['qtVersion'],'verification':profile['verification']}
-        elif args.command=='kit':report=write_kit(args.output,store=None if transport else store,profile=profile)
+        elif args.command=='kit':
+            if args.bundle:
+                from theme_bundle_tools import write_full_kit
+                args.output.parent.mkdir(parents=True,exist_ok=True)
+                report=write_full_kit(args.output,profile=profile)
+            else:report=write_kit(args.output,store=None if transport else store,profile=profile)
         else:
             report=check_project(args.source,store=None if transport else store,profile=profile,qt=args.qt,qt_python=args.qt_python)
             if args.command=='install' and report['status']=='valid':

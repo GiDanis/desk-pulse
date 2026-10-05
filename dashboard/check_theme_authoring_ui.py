@@ -78,6 +78,7 @@ prefs=Path(preferences.fileName());before=hashlib.sha256(prefs.read_bytes()).hex
 key(Qt.Key_9);assert root.property('overlay')=='menu'
 key(Qt.Key_Down);key(Qt.Key_5);assert root.property('overlay')=='settings'
 key(Qt.Key_5);assert root.property('overlay')=='appearance'
+root.findChild(QObject,'settingsPanel').setProperty('advancedAppearance',True)
 for _ in range(17):key(Qt.Key_Down)
 assert root.property('optionIndex')==17
 key(Qt.Key_5);until(lambda:service.status!='working')

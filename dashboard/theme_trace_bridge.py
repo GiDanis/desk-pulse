@@ -13,7 +13,7 @@ import time
 from PySide6.QtCore import QObject, Property, QMetaObject, Q_RETURN_ARG, QTimer, Qt, Slot
 from PySide6.QtQml import QJSValue
 from theme_trace import TraceRecorder
-from theme_frame_trace import ThemeFrameTracker
+from theme_frame_trace import ThemeFrameTracker, _freeze, _thaw
 
 
 class ThemeTraceBridge(QObject):
@@ -255,8 +255,10 @@ class ThemeTraceBridge(QObject):
         if settled:
             self._settled.add(request)
         snapshot = result.get('snapshot', {})
-        summary = {key: value for key, value in result.items() if key != 'snapshot'}
-        summary['participants'] = snapshot.get('participants', [])
+        summary = {key: value for key, value in result.items() if key not in ('snapshot', 'frozenParticipants')}
+        # Keep the copied immutable ticket structure; construct participant maps
+        # only during report export, after the measured work has finished.
+        summary['participants'] = result.get('frozenParticipants') or _freeze(snapshot.get('participants', []))
         summary['firstCoherent'] = first
         summary['firstSettled'] = bool(settled)
         summary['submittedSessionNs'] = result['submittedNs'] - self._clock_origin
@@ -317,7 +319,7 @@ class ThemeTraceBridge(QObject):
     def report(self):
         result = self.recorder.snapshot()
         result.update(frameProtocol='immutableGuiTicket/syncLatch/submissionSerial',
-            frameSummaries=self._frames, frameSummariesDropped=self._summaries_dropped, nativeSignalTimestampVerified=False,
+            frameSummaries=[{**row, 'participants': _thaw(row['participants'])} for row in self._frames], frameSummariesDropped=self._summaries_dropped, nativeSignalTimestampVerified=False,
             gilDelayQuantified=False, newPublicThemeApiVerified=False)
         result['notificationFrames'] = self._notification_frames
         result['notificationInputsCount'] = len(self._notification_inputs)

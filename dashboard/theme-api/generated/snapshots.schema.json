@@ -3130,6 +3130,10 @@
         "semantic": {
           "$ref": "#/$defs/SemanticPalette",
           "readOnly": true
+        },
+        "tokenSnapshot": {
+          "type": "object",
+          "readOnly": true
         }
       },
       "required": [
@@ -3494,6 +3498,10 @@
         },
         "semantic": {
           "$ref": "#/$defs/SemanticPalette",
+          "readOnly": true
+        },
+        "tokenSnapshot": {
+          "type": "object",
           "readOnly": true
         },
         "prefix": {
@@ -3867,6 +3875,26 @@
           "type": "string",
           "pattern": "^#[0-9a-fA-F]{6}$",
           "readOnly": true
+        },
+        "accentDecoration": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "focusIndicator": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "warningIndicator": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "criticalIndicator": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
         }
       },
       "required": [
@@ -3946,6 +3974,10 @@
           },
           "maxItems": 10000,
           "readOnly": true
+        },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
         }
       },
       "required": [
@@ -4019,6 +4051,10 @@
             "$ref": "#/$defs/AvailableAction"
           },
           "maxItems": 10000,
+          "readOnly": true
+        },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
         },
         "clock": {
@@ -4189,6 +4225,10 @@
           "maxItems": 10000,
           "readOnly": true
         },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
         "families": {
           "type": "array",
           "items": {
@@ -4297,6 +4337,10 @@
           "maxItems": 10000,
           "readOnly": true
         },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
         "rows": {
           "type": "array",
           "items": {
@@ -4385,6 +4429,10 @@
           "maxItems": 10000,
           "readOnly": true
         },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
         "keyMap": {
           "type": "array",
           "items": {
@@ -4471,6 +4519,10 @@
             "$ref": "#/$defs/AvailableAction"
           },
           "maxItems": 10000,
+          "readOnly": true
+        },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
         },
         "familyId": {
@@ -4579,6 +4631,10 @@
             "$ref": "#/$defs/AvailableAction"
           },
           "maxItems": 10000,
+          "readOnly": true
+        },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
         },
         "sectionId": {
@@ -4701,6 +4757,10 @@
           "maxItems": 10000,
           "readOnly": true
         },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
         "tabs": {
           "type": "array",
           "items": {
@@ -4818,6 +4878,10 @@
             "$ref": "#/$defs/AvailableAction"
           },
           "maxItems": 10000,
+          "readOnly": true
+        },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
         },
         "source": {
@@ -4941,6 +5005,10 @@
           "maxItems": 10000,
           "readOnly": true
         },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
         "match": {
           "$ref": "#/$defs/MatchData",
           "readOnly": true
@@ -5061,6 +5129,10 @@
           "maxItems": 10000,
           "readOnly": true
         },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
         "team": {
           "$ref": "#/$defs/TeamData",
           "readOnly": true
@@ -5164,6 +5236,10 @@
           "maxItems": 10000,
           "readOnly": true
         },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
         "teams": {
           "type": "array",
           "items": {
@@ -5255,6 +5331,10 @@
             "$ref": "#/$defs/AvailableAction"
           },
           "maxItems": 10000,
+          "readOnly": true
+        },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
         },
         "kind": {
@@ -5393,6 +5473,10 @@
           "maxItems": 10000,
           "readOnly": true
         },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
         "kind": {
           "type": "string",
           "enum": [
@@ -5510,6 +5594,10 @@
           "maxItems": 10000,
           "readOnly": true
         },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
         "actor": {
           "$ref": "#/$defs/ActorSnapshot",
           "readOnly": true
@@ -5541,10 +5629,6 @@
           "$ref": "#/$defs/ClockState",
           "readOnly": true
         },
-        "motionPolicy": {
-          "$ref": "#/$defs/MotionPolicy",
-          "readOnly": true
-        },
         "suspended": {
           "type": "boolean",
           "readOnly": true
@@ -5562,12 +5646,12 @@
         "safeArea",
         "commands",
         "actions",
+        "motionPolicy",
         "actor",
         "configuration",
         "occupiedRegions",
         "notification",
         "clock",
-        "motionPolicy",
         "suspended"
       ],
       "additionalProperties": false
@@ -5748,6 +5832,10 @@
               "type": "null"
             }
           ]
+        },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
         }
       },
       "required": [

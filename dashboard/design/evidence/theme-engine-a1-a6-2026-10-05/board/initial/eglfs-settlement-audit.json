@@ -1,0 +1,285 @@
+{
+  "status": "auditCompleteWithOriginalFailuresPreserved",
+  "scope": "Post-run immutable raw audit; no board rerun or repaired frame evidence.",
+  "harnessCadenceMs": 350,
+  "harnessModified": false,
+  "frameClassifierModified": false,
+  "denominatorsModified": false,
+  "conclusion": "All missing summaries correspond to absent immutable settled-frame observations before a subsequent revision publication. GUI stop callbacks and candidate/urgent changes cannot repair a submitted frame.",
+  "test": {
+    "script": "check_theme_trace_metrics.py",
+    "tests": 4,
+    "status": "passed"
+  },
+  "runs": [
+    {
+      "run": "trace-none-1-on",
+      "rawPath": "eglfs/trace-none-1-on/trace.json",
+      "rawSha256": "30c110e05334fe3d89143d6f9b796af4bdefb1a2ea6192d14f5ddd063b1208dc",
+      "originalMetricsUnchanged": true,
+      "originalComplete": true,
+      "requestedCount": 100,
+      "coherentFrames": 99,
+      "settledFrames": 99,
+      "settledFramesMissing": 0,
+      "incompleteReasons": [],
+      "missingSettledFrames": []
+    },
+    {
+      "run": "trace-none-2-on",
+      "rawPath": "eglfs/trace-none-2-on/trace.json",
+      "rawSha256": "f3569c18d7573a2e408a56ffe96a9a8edc532742521d6a815c682d1bd0006335",
+      "originalMetricsUnchanged": true,
+      "originalComplete": false,
+      "requestedCount": 100,
+      "coherentFrames": 99,
+      "settledFrames": 98,
+      "settledFramesMissing": 1,
+      "incompleteReasons": [
+        "missingOrDuplicateMotionSettledSummary"
+      ],
+      "missingSettledFrames": [
+        {
+          "requestId": "715d87c31dc9463b80fb98bf7500c103:22",
+          "revision": 22,
+          "outcome": "coherentSubmission",
+          "firstCoherentSubmissionMs": 158.962522,
+          "recordedSubmissionCount": 8,
+          "lastRecordedSubmission": {
+            "recordedSessionNs": 8944131015,
+            "frameSerial": 185,
+            "revision": 22,
+            "outcome": "displayedRevisionCoherent",
+            "motionSettled": false,
+            "motionSettlementEvidence": "capturedGuiState",
+            "synchronizedNs": 159541785841653,
+            "submittedNs": 159541796544011
+          },
+          "guiStopObservations": [
+            {
+              "recordedSessionNs": 8767079507,
+              "instanceId": "alerts.banner.large:live:3",
+              "motionEvent": "banner.large.enter",
+              "revision": 22
+            },
+            {
+              "recordedSessionNs": 8898051690,
+              "instanceId": "home.now:live:8",
+              "motionEvent": "layout.swap",
+              "revision": 22
+            }
+          ],
+          "nextRequest": {
+            "requestId": "715d87c31dc9463b80fb98bf7500c103:23",
+            "startedSessionNs": 8784179363
+          },
+          "nextPublication": {
+            "revision": 23,
+            "recordedSessionNs": 8913549285
+          },
+          "observation": "nextRevisionPublishedWithoutObservedSettledFrame",
+          "interpretation": "Missing immutable settled-frame proof; GUI stop or subsequent publication cannot supply a settlement latency."
+        }
+      ]
+    },
+    {
+      "run": "trace-none-3-on",
+      "rawPath": "eglfs/trace-none-3-on/trace.json",
+      "rawSha256": "5074c8ba07a2c0ecc005aac8d5e71f30cc476b981b0bf119a1c4797d68e1cbcc",
+      "originalMetricsUnchanged": true,
+      "originalComplete": true,
+      "requestedCount": 100,
+      "coherentFrames": 99,
+      "settledFrames": 99,
+      "settledFramesMissing": 0,
+      "incompleteReasons": [],
+      "missingSettledFrames": []
+    },
+    {
+      "run": "trace-three-1-on",
+      "rawPath": "eglfs/trace-three-1-on/trace.json",
+      "rawSha256": "96ea06797e7320638e7d2dfd6856f9892878ec6d7a5ab1ca3d3b14144e84dcd0",
+      "originalMetricsUnchanged": true,
+      "originalComplete": false,
+      "requestedCount": 100,
+      "coherentFrames": 100,
+      "settledFrames": 98,
+      "settledFramesMissing": 2,
+      "incompleteReasons": [
+        "missingOrDuplicateMotionSettledSummary"
+      ],
+      "missingSettledFrames": [
+        {
+          "requestId": "f1ff317415d24f73b8c26569d5add6e3:4",
+          "revision": 4,
+          "outcome": "coherentSubmission",
+          "firstCoherentSubmissionMs": 332.766385,
+          "recordedSubmissionCount": 5,
+          "lastRecordedSubmission": {
+            "recordedSessionNs": 2767040768,
+            "frameSerial": 15,
+            "revision": 4,
+            "outcome": "displayedRevisionCoherent",
+            "motionSettled": false,
+            "motionSettlementEvidence": "capturedGuiState",
+            "synchronizedNs": 159690252271741,
+            "submittedNs": 159690254276545
+          },
+          "guiStopObservations": [],
+          "nextRequest": {
+            "requestId": "f1ff317415d24f73b8c26569d5add6e3:5",
+            "startedSessionNs": 2529100384
+          },
+          "nextPublication": {
+            "revision": 5,
+            "recordedSessionNs": 2733696604
+          },
+          "observation": "nextRevisionPublishedWithoutObservedSettledFrame",
+          "interpretation": "Missing immutable settled-frame proof; GUI stop or subsequent publication cannot supply a settlement latency."
+        },
+        {
+          "requestId": "f1ff317415d24f73b8c26569d5add6e3:12",
+          "revision": 12,
+          "outcome": "coherentSubmission",
+          "firstCoherentSubmissionMs": 157.72068,
+          "recordedSubmissionCount": 8,
+          "lastRecordedSubmission": {
+            "recordedSessionNs": 5523531428,
+            "frameSerial": 88,
+            "revision": 12,
+            "outcome": "displayedRevisionCoherent",
+            "motionSettled": false,
+            "motionSettlementEvidence": "capturedGuiState",
+            "synchronizedNs": 159692998846632,
+            "submittedNs": 159693012322215
+          },
+          "guiStopObservations": [
+            {
+              "recordedSessionNs": 5338540204,
+              "instanceId": "home.now:live:8",
+              "motionEvent": "layout.swap",
+              "revision": 12
+            },
+            {
+              "recordedSessionNs": 5344726659,
+              "instanceId": "alerts.banner.small:live:4",
+              "motionEvent": "banner.small.enter",
+              "revision": 12
+            }
+          ],
+          "nextRequest": {
+            "requestId": "f1ff317415d24f73b8c26569d5add6e3:13",
+            "startedSessionNs": 5366296500
+          },
+          "nextPublication": {
+            "revision": 13,
+            "recordedSessionNs": 5488919256
+          },
+          "observation": "nextRevisionPublishedWithoutObservedSettledFrame",
+          "interpretation": "Missing immutable settled-frame proof; GUI stop or subsequent publication cannot supply a settlement latency."
+        }
+      ]
+    },
+    {
+      "run": "trace-three-2-on",
+      "rawPath": "eglfs/trace-three-2-on/trace.json",
+      "rawSha256": "7d312f83b9af1e12c66a93abe9ac7cb948d70da9904b398ff3ed5cfed4e154e3",
+      "originalMetricsUnchanged": true,
+      "originalComplete": false,
+      "requestedCount": 100,
+      "coherentFrames": 100,
+      "settledFrames": 99,
+      "settledFramesMissing": 1,
+      "incompleteReasons": [
+        "missingOrDuplicateMotionSettledSummary"
+      ],
+      "missingSettledFrames": [
+        {
+          "requestId": "4f1a4e6986c241e9b46241f06270547a:4",
+          "revision": 4,
+          "outcome": "coherentSubmission",
+          "firstCoherentSubmissionMs": 275.375906,
+          "recordedSubmissionCount": 8,
+          "lastRecordedSubmission": {
+            "recordedSessionNs": 2710778962,
+            "frameSerial": 18,
+            "revision": 4,
+            "outcome": "displayedRevisionCoherent",
+            "motionSettled": false,
+            "motionSettlementEvidence": "capturedGuiState",
+            "synchronizedNs": 159767900158941,
+            "submittedNs": 159767904114549
+          },
+          "guiStopObservations": [
+            {
+              "recordedSessionNs": 2663481170,
+              "instanceId": "home.now:live:8",
+              "motionEvent": "layout.swap",
+              "revision": 4
+            },
+            {
+              "recordedSessionNs": 2669871751,
+              "instanceId": "alerts.banner.small:live:4",
+              "motionEvent": "banner.small.enter",
+              "revision": 4
+            }
+          ],
+          "nextRequest": {
+            "requestId": "4f1a4e6986c241e9b46241f06270547a:5",
+            "startedSessionNs": 2465277073
+          },
+          "nextPublication": {
+            "revision": 5,
+            "recordedSessionNs": 2677964384
+          },
+          "observation": "nextRevisionPublishedWithoutObservedSettledFrame",
+          "interpretation": "Missing immutable settled-frame proof; GUI stop or subsequent publication cannot supply a settlement latency."
+        }
+      ]
+    },
+    {
+      "run": "trace-three-3-on",
+      "rawPath": "eglfs/trace-three-3-on/trace.json",
+      "rawSha256": "bd4a8202ed38f7abfa73a19349b2e1143ce2543224acd6a655caa05b5e5692f2",
+      "originalMetricsUnchanged": true,
+      "originalComplete": false,
+      "requestedCount": 100,
+      "coherentFrames": 100,
+      "settledFrames": 99,
+      "settledFramesMissing": 1,
+      "incompleteReasons": [
+        "missingOrDuplicateMotionSettledSummary"
+      ],
+      "missingSettledFrames": [
+        {
+          "requestId": "d5251c4063bd4c41925c2de0b0cd059a:4",
+          "revision": 4,
+          "outcome": "coherentSubmission",
+          "firstCoherentSubmissionMs": 343.621911,
+          "recordedSubmissionCount": 4,
+          "lastRecordedSubmission": {
+            "recordedSessionNs": 2672561268,
+            "frameSerial": 14,
+            "revision": 4,
+            "outcome": "displayedRevisionCoherent",
+            "motionSettled": false,
+            "motionSettlementEvidence": "capturedGuiState",
+            "synchronizedNs": 159845448561486,
+            "submittedNs": 159845450507206
+          },
+          "guiStopObservations": [],
+          "nextRequest": {
+            "requestId": "d5251c4063bd4c41925c2de0b0cd059a:5",
+            "startedSessionNs": 2436182269
+          },
+          "nextPublication": {
+            "revision": 5,
+            "recordedSessionNs": 2638250015
+          },
+          "observation": "nextRevisionPublishedWithoutObservedSettledFrame",
+          "interpretation": "Missing immutable settled-frame proof; GUI stop or subsequent publication cannot supply a settlement latency."
+        }
+      ]
+    }
+  ]
+}

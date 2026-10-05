@@ -26,12 +26,12 @@ Item {
     Rectangle { width: 872; height: 76; radius: root.style.radiusRow; color: root.style.surface; border.color: root.style.border }
     AppText { style: root.style; x: 18; y: 9; text: (dashboard.familyId === "f1" ? "FORMULA 1" : "MOTOGP") + " · " + (racingInfo.selectedYear || racingInfo.year || ""); color: root.style.textPrimary; font.pixelSize: root.style.font27; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
     AppText { style: root.style; objectName: "racingSourceText"; x: 18; y: 43; width: 370; text: "Fonte: " + (view === "IN CORSO" ? (racingInfo.live || {}).source || moduleInfo.source : moduleInfo.source); color: root.style.textSecondary; font.pixelSize: root.style.font21 }
-    AppText { style: root.style; x: 397; y: 15; width: 455; horizontalAlignment: Text.AlignRight; text: root.status(); color: view === "IN CORSO" ? ((racingInfo.live || {}).active ? root.style.accent : SemanticStyle.warning) : (moduleInfo.status === "active" || moduleInfo.status === "updating" ? root.style.accent : SemanticStyle.warning); font.pixelSize: root.style.font21; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
+    AppText { style: root.style; x: 397; y: 15; width: 455; horizontalAlignment: Text.AlignRight; text: root.status(); color: view === "IN CORSO" ? ((racingInfo.live || {}).active ? root.style.accentTextOnCard : root.style.warningOnCard) : (moduleInfo.status === "active" || moduleInfo.status === "updating" ? root.style.accentTextOnCard : root.style.warningOnCard); font.pixelSize: root.style.font21; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
     AppText { style: root.style; x: 397; y: 45; width: 455; horizontalAlignment: Text.AlignRight; text: racingInfo.cacheError || "Orari italiani · Europe/Rome"; color: root.style.textSecondary; font.pixelSize: root.style.font19 }
     AppText { style: root.style;
         x: 0; y: 93; width: 872; elide: Text.ElideRight
         text: view === "CLASSIFICA" ? "CLASSIFICA PILOTI" : view === "IN CORSO" ? (racingInfo.live || {}).meeting || "SESSIONE IN CORSO" : event.name || (view === "RISULTATI" ? "Nessun risultato disponibile" : "Nessun prossimo GP disponibile")
-        color: root.style.accent; font.pixelSize: root.style.font31; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight
+        color: root.style.accentTextOnCanvas; font.pixelSize: root.style.font31; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight
     }
     AppText { style: root.style;
         x: 0; y: 135; width: 872; color: root.style.textSecondary; font.pixelSize: root.style.font23; elide: Text.ElideRight
@@ -46,7 +46,7 @@ Item {
             x: 0; y: 181 + index * 70; width: 872; height: 60; radius: root.style.radiusBadge; color: root.style.surface; border.color: root.style.border
             AppText { style: root.style; x: 16; y: 7; width: 639; text: root.view === "PROGRAMMA" ? modelData.name : (modelData.position || "—") + ".  " + modelData.name; color: root.style.textPrimary; font.pixelSize: root.style.font27; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
             AppText { style: root.style; x: 16; y: 38; width: 635; text: root.view === "PROGRAMMA" ? modelData.when : modelData.team || ""; color: root.style.textSecondary; font.pixelSize: root.style.font18; elide: Text.ElideRight }
-            AppText { style: root.style; x: 663; y: 15; width: 190; horizontalAlignment: Text.AlignRight; text: root.view === "PROGRAMMA" ? "" : modelData.value || "—"; color: root.style.accent; font.pixelSize: root.style.font29; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
+            AppText { style: root.style; x: 663; y: 15; width: 190; horizontalAlignment: Text.AlignRight; text: root.view === "PROGRAMMA" ? "" : modelData.value || "—"; color: root.style.accentTextOnCard; font.pixelSize: root.style.font29; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
         }
     }
     AppText { style: root.style;

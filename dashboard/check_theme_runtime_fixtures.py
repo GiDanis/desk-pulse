@@ -83,6 +83,7 @@ def coverage_summary(lanes,cases):
 
 
 REGRESSIONS={
+    'check_theme_semantic_residuals.py':['Home next event absent/future/started/expired','midnight/year boundary','partial weather retains complete cache','scene occupied-region collision and actor continuity'],
     'check_dashboard.py':['Home with/without next event','clock boundaries','navigation','offline bulletin recovery','notification settings'],
     'check_theme_ui.py':['real Qt focus','rapid swap/navigation','save failure','scene continuity','two engines'],
     'check_theme_motion.py':['animation interruption','settle','reduced/off','no per-frame Python publication'],

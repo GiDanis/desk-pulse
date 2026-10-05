@@ -22,11 +22,11 @@ Item {
         const presence = controller.themeTracePresence(host,currentLoader)
         return {instanceId:traceIdentity(),surfaceId:contentId,revision:exiting ? style.appearance.revision : loadedRevision,
             observedRevision:style.appearance ? style.appearance.revision : -1,committedRevision:loadedRevision,exposed:presence.exposed,
-            frontCommitted:!!currentItem && loadedPresentationId === style.appearance.presentations[contentId],
-            frontCommittedRevision:style.appearance.revision,frontReady:!!currentItem && currentItem.presentationReady !== false,
-            frontRendererIdentity:loadedPresentationId,frontExpectedRendererIdentity:style.appearance.presentations[contentId],
-            mandatory:mandatory,committed:!!currentItem && readiness === "ready",ready:!!currentItem && currentItem.presentationReady !== false,
-            geometryValid:presence.geometryValid,opacity:presence.opacity,visualGeometry:presence.visualGeometry,rendererIdentity:loadedPresentationId,
+            frontCommitted:!!currentItem && loadedRendererKey === rendererKey(style.appearance,style.appearance.presentations[contentId]),
+            frontCommittedRevision:style.appearance.revision,frontReady:currentReady,
+            frontRendererIdentity:loadedRendererKey,frontExpectedRendererIdentity:rendererKey(style.appearance,style.appearance.presentations[contentId]),
+            mandatory:mandatory,committed:!!currentItem && readiness === "ready",ready:currentReady,
+            geometryValid:presence.geometryValid,opacity:presence.opacity,visualGeometry:presence.visualGeometry,rendererIdentity:loadedRendererKey,
             localGeneration:generation,motionRunning:layoutMotion.traceRunningNow(),retainedExit:exiting,actionsEnabled:interactive}
     }
     Connections {
@@ -69,11 +69,18 @@ Item {
         }
     }
     property var currentItem: null
+    readonly property bool currentReady: !!currentItem && (currentLoader && currentLoader.usePublicApi ? currentItem.ready === true && currentItem.contentReady !== false : currentItem.presentationReady !== false)
     property string readiness: "idle"
     property string lastError: ""
     property int loadedRevision: 0
     property int generation: 0
     property string loadedPresentationId: ""
+    property string loadedRendererKey: ""
+    function rendererKey(snapshot, identifier) {
+        const row = snapshot.presentationRegistry[identifier]
+        return row ? row.rendererKey || "app:"+row.file : ""
+    }
+    function restoreInput() { if (controller && typeof controller.restoreInputFocus === "function") controller.restoreInputFocus() }
     property var pendingLoader: null
     property var currentLoader: null
     property var context: null
@@ -87,7 +94,11 @@ Item {
             currentLoader.useLiveStyle = active
             if (active) currentLoader.stagedAppearance = null
         }
-        if (active) prepare(appearance,0)
+        if (active) {
+            const candidate=service ? service.candidateAppearance : ({})
+            if (candidate.generation && candidate.requiredContents.indexOf(contentId) >= 0) prepare(candidate,candidate.generation)
+            else prepare(appearance,0)
+        }
         else if (pendingLoader) { generation += 1; pendingLoader.destroy(); pendingLoader = null; readiness = currentItem ? "ready" : "idle" }
     }
     onInteractiveChanged: if (context) context.interactive = interactive
@@ -128,7 +139,8 @@ Item {
             if (old.item && typeof old.item.settleMotion === "function") old.item.settleMotion()
             old.destroy()
         }
-        pendingLoader = null; loadedPresentationId = candidate.presentationId
+        pendingLoader = null; loadedPresentationId = candidate.presentationId; loadedRendererKey = candidate.rendererKey
+        restoreInput()
         loadedRevision = appearance.revision; readiness = "ready"
         if (traceRecorder) traceEvent("host.commit.end",{serviceGeneration:candidate.serviceGeneration})
         if (old && renderActive && animateSwap) {
@@ -143,8 +155,8 @@ Item {
         if (!active || !snapshot) return
         if (traceRecorder) traceEvent("host.prepare",{targetRevision:snapshot.revision,serviceGeneration:serviceGeneration})
         const identifier = snapshot.presentations[contentId]
-        if (!serviceGeneration && pendingLoader && pendingLoader.presentationId === identifier && pendingLoader.status === Loader.Ready) { commit(pendingLoader); return }
-        if (currentItem && loadedPresentationId === identifier) { loadedRevision = snapshot.revision; readiness = "ready"; if (traceRecorder) traceEvent("host.reuse",{targetRevision:snapshot.revision,serviceGeneration:serviceGeneration}); return }
+        if (!serviceGeneration && pendingLoader && pendingLoader.rendererKey === rendererKey(snapshot,identifier) && pendingLoader.status === Loader.Ready) { commit(pendingLoader); return }
+        if (currentItem && loadedRendererKey === rendererKey(snapshot,identifier)) { loadedRevision = snapshot.revision; readiness = "ready"; if (traceRecorder) traceEvent("host.reuse",{targetRevision:snapshot.revision,serviceGeneration:serviceGeneration}); return }
         generation += 1
         if (pendingLoader) { pendingLoader.destroy(); pendingLoader = null }
         const descriptor = snapshot.presentationRegistry[identifier]
@@ -155,10 +167,16 @@ Item {
         }
         readiness = "loading"; lastError = ""
         const next = slot.createObject(host, {requestGeneration: generation, presentationId: identifier, requestedRevision: snapshot.revision,
-            serviceGeneration: serviceGeneration, stagedAppearance: snapshot})
+            serviceGeneration: serviceGeneration, stagedAppearance: snapshot,
+            rendererKey: rendererKey(snapshot,identifier), usePublicApi: descriptor.apiVersion === 2})
         pendingLoader = next
+        if (service && descriptor.rendererIdentity) {
+            next.resourceLease=service.acquireRevision(descriptor.rendererIdentity)
+            if (!next.resourceLease) { next.fail("Risorsa tema non disponibile: "+identifier); return }
+        }
         if (traceRecorder) traceEvent("host.loader.begin",{presentationId:identifier,targetRevision:snapshot.revision,serviceGeneration:serviceGeneration})
-        next.setSource(Qt.resolvedUrl("../"+descriptor.file), {context: next.presentationContext})
+        if (next.usePublicApi && service && service.apiFactory) service.apiFactory.installForEngine(next)
+        next.setSource(descriptor.sourceUrl || Qt.resolvedUrl("../"+descriptor.file), {context: next.usePublicApi ? next.publicAdapter.publicContext : next.presentationContext})
         next.active = true
     }
     MotionController { id: layoutMotion; appearance: host.appearance; traceRecorder: host.traceRecorder; traceOwner: host.traceInstanceId }
@@ -170,6 +188,12 @@ Item {
             property int requestGeneration: 0
             property int serviceGeneration: 0
             property string presentationId: ""
+            property string rendererKey: ""
+            property bool usePublicApi: false
+            property string resourceLease: ""
+            Component.onDestruction: if (resourceLease && host.service) host.service.releaseRevision(resourceLease)
+            property alias publicAdapter: publicAdapter
+            PublicContextAdapter { id: publicAdapter; publicEnabled: candidate.usePublicApi; factory: host.service ? host.service.apiFactory : null; legacy: candidate.presentationContext; surfaceId: host.contentId }
             property int requestedRevision: 0
             property var stagedAppearance: null
             property bool useLiveStyle: false
@@ -181,7 +205,13 @@ Item {
             width: host.width; height: host.height
             property bool acknowledged: false
             function ready() {
-                if (status !== Loader.Ready || acknowledged || item.presentationReady === false) return
+                if (status !== Loader.Ready || acknowledged) return
+                if (usePublicApi) {
+                    if (!publicAdapter.valid) { fail("Contratto dati pubblico non valido: "+presentationId); return }
+                    if (item.ready === undefined) { fail("Renderer API 2 senza ready: "+presentationId); return }
+                    if (item.error !== undefined && item.error) { fail("Errore renderer: "+String(item.error)); return }
+                    if (item.ready !== true || item.contentReady === false) return
+                } else if (item.presentationReady === false) return
                 if (requestGeneration !== host.generation || !host.active) { destroy(); return }
                 acknowledged = true
                 if (host.traceRecorder) host.traceEvent("host.presentation.ready",{candidateGeneration:requestGeneration,serviceGeneration:serviceGeneration,targetRevision:requestedRevision,presentationId:presentationId})
@@ -193,8 +223,11 @@ Item {
                 if (host.traceRecorder) host.traceEvent("host.loader.fail",{candidateGeneration:requestGeneration,serviceGeneration:serviceGeneration,errorKind:status === Loader.Error ? "loadError" : status === Loader.Loading ? "loadingTimeout" : "presentationTimeout"})
                 host.lastError = message
                 host.readiness = host.currentItem ? "ready" : "error"
+                host.restoreInput()
                 host.pendingLoader = null
                 const failedGeneration = serviceGeneration
+                const live = host.currentLoader === candidate
+                if (live && host.service) host.service.recoverVisual(host.contentId,message)
                 destroy()
                 if (failedGeneration) host.service.reportCandidate(failedGeneration,host.contentId,false,message)
                 else if (!host.currentItem && host.service) host.service.recoverVisual(host.contentId,message)
@@ -204,6 +237,9 @@ Item {
             Connections {
                 target: candidate.item; ignoreUnknownSignals: true
                 function onPresentationReadyChanged() { candidate.ready() }
+                function onReadyChanged() { candidate.ready() }
+                function onContentReadyChanged() { candidate.ready() }
+                function onErrorChanged() { if (candidate.item && candidate.item.error) candidate.fail("Errore renderer: "+String(candidate.item.error)) }
             }
             // Loading and presentation readiness have independent watchdogs.
             Timer {

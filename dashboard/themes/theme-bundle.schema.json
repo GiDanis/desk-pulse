@@ -1,0 +1,235 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "bundleFormat": {
+      "const": 1,
+      "type": "integer"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "engineApi": {
+      "const": 2,
+      "type": "integer"
+    },
+    "contextApis": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "type": "integer",
+          "const": 2
+        },
+        "notification": {
+          "type": "integer",
+          "const": 1
+        },
+        "shell": {
+          "type": "integer",
+          "const": 1
+        },
+        "overlay": {
+          "type": "integer",
+          "const": 1
+        },
+        "scene": {
+          "type": "integer",
+          "const": 1
+        },
+        "icon": {
+          "type": "integer",
+          "const": 1
+        },
+        "motion": {
+          "type": "integer",
+          "const": 1
+        }
+      },
+      "required": []
+    },
+    "targetProfile": {
+      "const": "a733-960x640-eglfs"
+    },
+    "qtMinimum": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "qtModules": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "QtQuick",
+          "QtQuick.Shapes",
+          "QtQuick.Controls",
+          "QtQuick.Layouts",
+          "QtQml",
+          "QtQuick.Window",
+          "SmartPC.ThemeApi",
+          "QtQuick.Timeline",
+          "QtQuick.Particles"
+        ]
+      },
+      "allOf": [
+        {
+          "contains": {
+            "const": "QtQuick"
+          }
+        },
+        {
+          "contains": {
+            "const": "SmartPC.ThemeApi"
+          }
+        }
+      ]
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "partial",
+            "complete"
+          ]
+        },
+        "surfaces": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "fallbacks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "mode",
+        "surfaces",
+        "fallbacks"
+      ]
+    },
+    "adjustments": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "paletteMode",
+          "textScale",
+          "motionMode"
+        ]
+      }
+    },
+    "trust": {
+      "const": "author-code"
+    },
+    "resources": {
+      "type": "array",
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240
+          },
+          "type": {
+            "enum": [
+              "qml",
+              "js",
+              "font",
+              "image",
+              "data",
+              "license",
+              "preview"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "path",
+          "type"
+        ]
+      }
+    },
+    "extendedTokens": {
+      "type": "object",
+      "maxProperties": 256,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "enum": [
+              "bool",
+              "int",
+              "real",
+              "color",
+              "string"
+            ]
+          },
+          "default": {},
+          "alias": {
+            "type": "string",
+            "pattern": "^[a-z][A-Za-z0-9]*$"
+          },
+          "minimum": {
+            "type": "number"
+          },
+          "maximum": {
+            "type": "number"
+          },
+          "enum": {
+            "type": "array"
+          }
+        },
+        "required": [
+          "type",
+          "default",
+          "alias"
+        ]
+      }
+    }
+  },
+  "required": [
+    "bundleFormat",
+    "id",
+    "version",
+    "name",
+    "engineApi",
+    "contextApis",
+    "targetProfile",
+    "qtMinimum",
+    "qtModules",
+    "coverage",
+    "adjustments",
+    "trust",
+    "resources"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:smartpc:theme-bundle:1",
+  "title": "SmartPC trusted visual theme bundle format1",
+  "description": "Semantic validation additionally checks exact44surface coverage, namespaces, Qt compatibility, resources and contrast."
+}

@@ -38,6 +38,10 @@ if [[ "${SMARTPC_QML_ONLY:-0}" != 1 ]] && "$python_bin" -c 'import PySide6.QtQui
     if [[ "$demo" == 1 ]]; then
         exec "$python_bin" "$dashboard_dir/app.py" --demo "$@"
     fi
+    if [[ "$mode" == --device ]]; then
+        theme_data_root="$("$python_bin" -c 'import os; from pathlib import Path; from PySide6.QtCore import QCoreApplication,QStandardPaths; a=QCoreApplication([]); a.setOrganizationName("SmartPC"); a.setApplicationName("SmartPC"); store=os.environ.get("SMARTPC_THEME_STORE"); print(str(Path(store).parent) if store else QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation))')"
+        exec "$python_bin" "$dashboard_dir/theme_supervisor.py" --data-root "$theme_data_root" -- "$python_bin" "$dashboard_dir/app.py" "$@"
+    fi
     exec "$python_bin" "$dashboard_dir/app.py" "$@"
 fi
 

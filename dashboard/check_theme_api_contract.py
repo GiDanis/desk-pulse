@@ -208,9 +208,9 @@ class ContractTests(unittest.TestCase):
         root = self.change('semantic-roles.json', lambda d: d['usages'][0].update(minimum=3))
         self.code('api.contract.invalid', lambda: ThemeApiContract(root))
 
-    def test_semantic_unknown_background_and_light_claim_rejected(self):
+    def test_semantic_unknown_background_and_stale_light_policy_rejected(self):
         for mutate in (lambda d: d['usages'][0].update(backgroundToken='colors.imagined'),
-                       lambda d: d['policy'].update(lightPaletteSupported=True)):
+                       lambda d: d['policy'].update(lightPaletteSupported=False)):
             root = self.change('semantic-roles.json', mutate)
             self.code('api.contract.invalid', lambda: ThemeApiContract(root))
 

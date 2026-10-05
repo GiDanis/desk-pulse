@@ -5,6 +5,6 @@ AppText {
     readonly property string homeKey: "1"
     readonly property string backKey: "7"
     text: urgent ? "5 DETTAGLI · " + backKey + " CHIUDI · " + homeKey + " HOME" : backKey + " INDIETRO · " + homeKey + " HOME"
-    color: style.accent
+    color: style.accentTextOnOverlay
     font.pixelSize: style.font25
 }

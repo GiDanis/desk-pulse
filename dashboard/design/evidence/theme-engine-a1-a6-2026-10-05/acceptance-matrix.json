@@ -1,0 +1,860 @@
+{
+  "matrixVersion": 1,
+  "scope": "Device acceptance matrix. Static validation or renderer preview alone cannot close a device gate. Physical keypad/reboot/soak proofs remain distinct.",
+  "cases": [
+    {
+      "id": "T01",
+      "scenario": "Bundle AI con pagine, shell e notifiche inedite",
+      "requiredOutcome": "Import/apply su installazione pulita; `/opt` e sorgenti core invariati",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "local/new-tests.json",
+          "level": "pcUnitAndRuntime",
+          "scope": "Suite nuove contratto/core/bundle/SDK/preflight/font/icone/tracing; contiene anche esito iniziale e rerun mirato.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/check_theme_authoring_ui.log",
+          "level": "pcMainRuntime",
+          "scope": "Import/preview/apply dal menu ordinario, sei modalità notifiche, palette e motion mode, persistenza reale e deadline.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/notifications.json",
+          "level": "pcMainRuntime",
+          "scope": "Sei renderer NotificationContext API2 in Main reale; eventi, timer, urgente e focus.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/overlay.json",
+          "level": "pcMainRuntime",
+          "scope": "MenuContext esterno, modello/azioni reali e readiness prima del primo frame.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "Bundle Studio Ambient importato con preflight reale e applicato in store privato.",
+        "Home, shell e small/large propri; quattro notifiche aggiuntive e menu esterno esercitati nei fixture Main.",
+        "Codice pubblico privo di controller/actionHandler privati nei renderer supplementari."
+      ],
+      "remainingVariants": [
+        "Installazione pulita sulla board con hash /opt/core prima/dopo import/apply e primo avvio offline.",
+        "Completamento/accettazione di cinque concetti indipendenti; esempio con 4 own +40 fallback non prova 44 redesign.",
+        "Collaudo del percorso completo AI → SDK → bundle finale → impostazioni sul dispositivo."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": false
+    },
+    {
+      "id": "T02",
+      "scenario": "Import del precedente JSON schema 1",
+      "requiredOutcome": "Aspetto compatibile, fallback dichiarati, nessun reset preferenze",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "local/new-tests.json",
+          "level": "pcUnitAndRuntime",
+          "scope": "Suite nuove contratto/core/bundle/SDK/preflight/font/icone/tracing; contiene anche esito iniziale e rerun mirato.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/check_theme_authoring_ui.log",
+          "level": "pcMainRuntime",
+          "scope": "Import/preview/apply dal menu ordinario, sei modalità notifiche, palette e motion mode, persistenza reale e deadline.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/legacy-summary.json",
+          "level": "pcLegacyRuntime",
+          "scope": "8 profili, 136 scenari ciascuno, 14 regressioni risolte; zero warning; corsia legacy distinta da API2.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/profiles.log",
+          "level": "pcStatePersistence",
+          "scope": "5 test ThemeService/journal/QSettings; ack host/frame simulati esplicitamente dal harness.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "Pacchetti JSON schema1 importati/esportati; compatibilità token e fallback notifiche verificata.",
+        "Override schema1 e preferenze funzionali preservati in passaggi A/B/ritorno e ricostruzione ThemeService."
+      ],
+      "remainingVariants": [
+        "Migrazione del pacchetto schema1 e preferenze effettive installate sul dispositivo, hash prima/dopo e riavvio.",
+        "Confronto visivo sul pannello per font/fallback del tema precedente, distinto dal resolver."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": false
+    },
+    {
+      "id": "T03",
+      "scenario": "API/Qt/modulo non disponibile, superficie incompatibile",
+      "requiredOutcome": "Incompatibilità prima dell'attivazione; corrente conservato",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "local/new-tests.json",
+          "level": "pcUnitAndRuntime",
+          "scope": "Suite nuove contratto/core/bundle/SDK/preflight/font/icone/tracing; contiene anche esito iniziale e rerun mirato.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/check_theme_bundle-after-api-optimization.log",
+          "level": "pcUnitAndSubprocess",
+          "scope": "25 prove bundle/identità/risorse/journal/lease/GC e supervisor esterno in processi di test.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/check_theme_bundle_preview-after-api-optimization.log",
+          "level": "pcIsolatedRendererPreflight",
+          "scope": "4 prove Qt: 72 combinazioni di quattro renderer +18 aux, palette effettiva, errori scena/icona/ricetta e font non valido.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "Versioni/API sconosciute e superficie/namespace/renderer legacy incompatibili respinti dai guard.",
+        "Import privo di preflight passato non può attivare; errori Qt degli ausiliari respinti prima di import."
+      ],
+      "remainingVariants": [
+        "Controlli negativi espliciti per Qt inferiore al minimo e modulo QML assente sul runtime target.",
+        "Prova incompatibilità dal menu sulla board mantenendo tema corrente e preferenze."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": false
+    },
+    {
+      "id": "T04",
+      "scenario": "Archivio traversal, link, duplicato, hash errato, zip bomb/spazio insufficiente",
+      "requiredOutcome": "Nessuna scrittura fuori staging, nessuna revisione parziale nel catalogo",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "local/check_theme_bundle-after-api-optimization.log",
+          "level": "pcUnitAndSubprocess",
+          "scope": "25 prove bundle/identità/risorse/journal/lease/GC e supervisor esterno in processi di test.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/check_theme_bundle_tools-after-api-optimization.log",
+          "level": "pcSdkAndArchive",
+          "scope": "7 prove SDK separato offline, archivio deterministico ed export revisione esatta.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "Traversal, duplicato case-fold, symlink, hardlink, hash alterato e plugin nativo respinti.",
+        "Staging pulito e catalogo senza revisioni parziali nei casi avversariali testati.",
+        "Immagine con dimensioni allocate eccessive respinta."
+      ],
+      "remainingVariants": [
+        "Zip bomb/compression ratio e quote numero/file/totale esercitate con archivi ostili reali.",
+        "Spazio insufficiente, permessi e interruzione scrittura/import sul filesystem del dispositivo.",
+        "Verifica indipendente che nessun file fuori staging venga scritto in tutte le classi di attacco."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": false
+    },
+    {
+      "id": "T05",
+      "scenario": "Errore QML/JS, icona componente, ricetta o scena, asset lento/mancante",
+      "requiredOutcome": "Preflight/ready fallisce, Apply non conferma; diagnostica della fase corretta",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "local/check_theme_bundle_preview-after-api-optimization.log",
+          "level": "pcIsolatedRendererPreflight",
+          "scope": "4 prove Qt: 72 combinazioni di quattro renderer +18 aux, palette effettiva, errori scena/icona/ricetta e font non valido.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/legacy-summary.json",
+          "level": "pcLegacyRuntime",
+          "scope": "8 profili, 136 scenari ciascuno, 14 regressioni risolte; zero warning; corsia legacy distinta da API2.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/scene-error.json",
+          "level": "pcMainRuntime",
+          "scope": "Errore esplicito della scena API2 attiva: Base/quarantena con eventi/prefs/focus conservati.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/scene-neverready.json",
+          "level": "pcMainRuntimeTestOnlyImport",
+          "scope": "Watchdog di scena mai pronta, fixture importata intenzionalmente con preflight testOnly per raggiungere il guard runtime.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/scene-frame.json",
+          "level": "pcMainRuntime",
+          "scope": "Scena ready=false dopo staging e prima del frame blocca Apply; ready=true abilita frame e Apply.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/overlay.json",
+          "level": "pcMainRuntime",
+          "scope": "MenuContext esterno, modello/azioni reali e readiness prima del primo frame.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "Errori QML in scena, icona e ricetta falliscono il vero preflight; font dichiarato non decodificabile non è ignorato.",
+        "Loader.Loading controllato da QQmlIncubationController e not-ready watchdog non pubblicano la candidata.",
+        "Readiness persa dopo staging blocca il primo frame/Apply sia overlay sia scena.",
+        "Errore runtime della scena provoca recupero/quarantena con stato funzionale intatto."
+      ],
+      "remainingVariants": [
+        "Fault JS runtime e asset lento/mancante per tutti i backend selezionabili, con diagnostica strutturata della fase corretta.",
+        "Scenari guasto/timeout su Qt6.8.2 e EGLFS, inclusi font/image decode e perdita di risorsa dopo Apply."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": false
+    },
+    {
+      "id": "T06",
+      "scenario": "Update stesso ID, stessi nomi dei renderer ma nuovi file",
+      "requiredOutcome": "Nuova identity, nuovo visuale coerente; vecchia versione ancora ripristinabile",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "local/check_theme_bundle-after-api-optimization.log",
+          "level": "pcUnitAndSubprocess",
+          "scope": "25 prove bundle/identità/risorse/journal/lease/GC e supervisor esterno in processi di test.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/profiles.log",
+          "level": "pcStatePersistence",
+          "scope": "5 test ThemeService/journal/QSettings; ack host/frame simulati esplicitamente dal harness.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "Nuovi digest/sourceUrl/rendererKey per stesso ID semantico e versioni affiancate.",
+        "Ritorno e update della revisione preservano override separati e vecchia revisione verificabile."
+      ],
+      "remainingVariants": [
+        "Rerun registrato del Main aggiornato e downgrade sul runtime target con identità/first-frame per Home, shell, notifiche, icone, ricette e scena.",
+        "Evidenza persistita del percorso UI cambio revisione e rollback dopo riavvio dispositivo."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": false
+    },
+    {
+      "id": "T07",
+      "scenario": "Export/import offline su secondo runtime compatibile",
+      "requiredOutcome": "Risorse e codice inclusi; nessuna dipendenza da cartelle dell'autore",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "local/check_theme_bundle_tools-after-api-optimization.log",
+          "level": "pcSdkAndArchive",
+          "scope": "7 prove SDK separato offline, archivio deterministico ed export revisione esatta.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/check_theme_bundle-after-api-optimization.log",
+          "level": "pcUnitAndSubprocess",
+          "scope": "25 prove bundle/identità/risorse/journal/lease/GC e supervisor esterno in processi di test.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "SDK copiato e usato offline fuori repository autore per init/validate/build.",
+        "Export della revisione installata è identico all’archivio originale; payload e hash deterministici."
+      ],
+      "remainingVariants": [
+        "Export/import offline fra PC e secondo runtime compatibile sul dispositivo, seguito da Apply e riavvio.",
+        "Rimozione/indisponibilità di tutte le cartelle autore durante esecuzione e verifica font/icone/scena/recipe incluse."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": false
+    },
+    {
+      "id": "T08",
+      "scenario": "Cancellazione/doppio import/cambio variante/navigazione durante staging",
+      "requiredOutcome": "Un candidato, generazione corretta, nessun callback superato pubblicato",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "local/check_theme_bundle-after-api-optimization.log",
+          "level": "pcUnitAndSubprocess",
+          "scope": "25 prove bundle/identità/risorse/journal/lease/GC e supervisor esterno in processi di test.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/legacy-summary.json",
+          "level": "pcLegacyRuntime",
+          "scope": "8 profili, 136 scenari ciascuno, 14 regressioni risolte; zero warning; corsia legacy distinta da API2.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/check_theme_authoring_ui.log",
+          "level": "pcMainRuntime",
+          "scope": "Import/preview/apply dal menu ordinario, sei modalità notifiche, palette e motion mode, persistenza reale e deadline.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/notifications.json",
+          "level": "pcMainRuntime",
+          "scope": "Sei renderer NotificationContext API2 in Main reale; eventi, timer, urgente e focus.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "Import idempotente e conflitto stessa versione/digest respinto.",
+        "Cancellazione e cambi rapidi/navigazione nei runner Main e legacy; deadline ed effetti eventi preservati.",
+        "Callback superati e candidata non pronta non pubblicati nei fault test."
+      ],
+      "remainingVariants": [
+        "Doppio import da UI mentre il worker è in corso, annulla/cambio variante/navigazione in ogni fase I/O/staging.",
+        "Matrice equivalente per nuovi renderer API2 e le revisioni immutabili sul target; contare un’unica candidata e callback per generazione."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": false
+    },
+    {
+      "id": "T09",
+      "scenario": "Crash, blocco GUI e reboot durante install/preview/apply",
+      "requiredOutcome": "Recovery esterno, Base/precedente, no crash loop e nessun reset DB",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "local/check_theme_bundle-after-api-optimization.log",
+          "level": "pcUnitAndSubprocess",
+          "scope": "25 prove bundle/identità/risorse/journal/lease/GC e supervisor esterno in processi di test.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/scene-error.json",
+          "level": "pcMainRuntime",
+          "scope": "Errore esplicito della scena API2 attiva: Base/quarantena con eventi/prefs/focus conservati.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/legacy-summary.json",
+          "level": "pcLegacyRuntime",
+          "scope": "8 profili, 136 scenari ciascuno, 14 regressioni risolte; zero warning; corsia legacy distinta da API2.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "Supervisor esterno recupera child crash, blocco startup e blocco dopo heartbeat pronto; return75 e quarantena.",
+        "Journal interrotto/corrotto recupera Base senza riscrivere file provider/eventi nei test isolati.",
+        "Errore scena Main preserva eventi, preferenze e focus."
+      ],
+      "remainingVariants": [
+        "Crash/blocco GUI del vero kiosk EGLFS durante install/preview/apply e ripartenza systemd senza crash loop.",
+        "Reboot reale in tutte le fasi, con hash DB/preferenze e recupero precedente/Base.",
+        "Timeout startup/heartbeat validati sul carico reale della board, non quelli ridotti dei child di test."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": true
+    },
+    {
+      "id": "T10",
+      "scenario": "Rimozione attivo/precedente o cleanup durante lease",
+      "requiredOutcome": "Sostituzione controllata; nessun asset in uso eliminato",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "local/check_theme_bundle-after-api-optimization.log",
+          "level": "pcUnitAndSubprocess",
+          "scope": "25 prove bundle/identità/risorse/journal/lease/GC e supervisor esterno in processi di test.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/new-tests.json",
+          "level": "pcUnitAndRuntime",
+          "scope": "Suite nuove contratto/core/bundle/SDK/preflight/font/icone/tracing; contiene anche esito iniziale e rerun mirato.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "Lease impedisce rimozione fino al rilascio; Base protetta.",
+        "GC protegge attivo/precedente/candidato; font digest condiviso e owner multipli verificati."
+      ],
+      "remainingVariants": [
+        "Rimozione/cleanup controllati dal percorso utente sul dispositivo con immagini/font/icone/recipe/scena effettivamente in uso.",
+        "Lease create/destroy durante animazioni, swap e crash del processo con pulizia di lease obsolete.",
+        "Validare che ogni backend rilasci risorse e che nessun asset attivo venga cancellato."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": false
+    },
+    {
+      "id": "T11",
+      "scenario": "Sei Avvisi, tre modalità, testi massimi e font diversi",
+      "requiredOutcome": "Input/readiness/frame ack/timer/ID/rank/letture/chiusure rispettati",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/notifications.json",
+          "level": "pcMainRuntime",
+          "scope": "Sei renderer NotificationContext API2 in Main reale; eventi, timer, urgente e focus.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/check_theme_authoring_ui.log",
+          "level": "pcMainRuntime",
+          "scope": "Import/preview/apply dal menu ordinario, sei modalità notifiche, palette e motion mode, persistenza reale e deadline.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/legacy-summary.json",
+          "level": "pcLegacyRuntime",
+          "scope": "8 profili, 136 scenari ciascuno, 14 regressioni risolte; zero warning; corsia legacy distinta da API2.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "Sei NotificationContext API2 realmente caricati nel Main.",
+        "ID small/large/detail/urgent, unread badge, inbox typed model, frame ack e deadline8s verificati.",
+        "Legacy normal/reduced/off, Unicode/testi lunghi, stale callback, not-ready, preview senza effetti DB e urgente freddo passano."
+      ],
+      "remainingVariants": [
+        "Sei nuovi renderer API2 × normal/reduced/off × testi massimi × font differenti sul dispositivo, inclusi badge/inbox/detail.",
+        "Misure clipping/regioni obbligatorie e leggibilità per grandi font sul pannello.",
+        "Percorso completo input/lettura/chiusura/rank e aggiornamento evento in ogni modalità con HID reale."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": false
+    },
+    {
+      "id": "T12",
+      "scenario": "Urgente reale durante preview/import/scena",
+      "requiredOutcome": "Contenuto e comandi immediati, priorità sopra tutte le decorazioni",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/notifications.json",
+          "level": "pcMainRuntime",
+          "scope": "Sei renderer NotificationContext API2 in Main reale; eventi, timer, urgente e focus.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/legacy-summary.json",
+          "level": "pcLegacyRuntime",
+          "scope": "8 profili, 136 scenari ciascuno, 14 regressioni risolte; zero warning; corsia legacy distinta da API2.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/scene-error.json",
+          "level": "pcMainRuntime",
+          "scope": "Errore esplicito della scena API2 attiva: Base/quarantena con eventi/prefs/focus conservati.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "Evento urgente sintetico durante preview non applicata preempie dettaglio e rifiuta azioni non urgenti.",
+        "Fallback urgente freddo e urgente durante staging legacy verificati; inputOwner conservato."
+      ],
+      "remainingVariants": [
+        "Urgente proveniente da provider reale durante import worker/staging/Apply e scena animata sul dispositivo.",
+        "Conferma contenuto/comandi immediati e ordine di composizione sopra qualunque decorazione nuova.",
+        "Prova del fallback urgente durante guasto/crash/blocco di un tema reale sul kiosk."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": false
+    },
+    {
+      "id": "T13",
+      "scenario": "Home senza evento; dati zero/null/stale/offline; elenchi vuoti",
+      "requiredOutcome": "Nessuno spazio vuoto artificiale o falsa disponibilità; fonte e stato corretti",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "local/legacy-summary.json",
+          "level": "pcLegacyRuntime",
+          "scope": "8 profili, 136 scenari ciascuno, 14 regressioni risolte; zero warning; corsia legacy distinta da API2.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/api-adapters-final.json",
+          "level": "pcMainAdapters",
+          "scope": "Payload del Main reale normalizzati per 44 superfici/16 famiglie, controlli semantici e nessun effetto provider/eventi.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/new-tests.json",
+          "level": "pcUnitAndRuntime",
+          "scope": "Suite nuove contratto/core/bundle/SDK/preflight/font/icone/tracing; contiene anche esito iniziale e rerun mirato.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "Home evento assente/futuro/iniziato/scaduto e transizioni mezzanotte/anno verificati.",
+        "Zero/null/offline/stale e forecast datato normalizzati senza inventare valori; snapshot incompleto conserva cache valida.",
+        "Liste vuote e stati dominio verificati in 136 scenari legacy e payload pubblici."
+      ],
+      "remainingVariants": [
+        "Equivalenti stati nei renderer nuovi effettivamente creati per tutte le superfici del tema, non solo in DTO/legacy.",
+        "Leggibilità e spazi dinamici su target con font/layout scelti; provider live e offline/reboot verificati separatamente."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": false
+    },
+    {
+      "id": "T14",
+      "scenario": "Liste/dettagli/overlay con refresh e cambio tema",
+      "requiredOutcome": "Selezione per ID, tab, scroll e draft conservati; nessun refresh causato dal tema",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "local/legacy-summary.json",
+          "level": "pcLegacyRuntime",
+          "scope": "8 profili, 136 scenari ciascuno, 14 regressioni risolte; zero warning; corsia legacy distinta da API2.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/api-adapters-final.json",
+          "level": "pcMainAdapters",
+          "scope": "Payload del Main reale normalizzati per 44 superfici/16 famiglie, controlli semantici e nessun effetto provider/eventi.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/profiles.log",
+          "level": "pcStatePersistence",
+          "scope": "5 test ThemeService/journal/QSettings; ack host/frame simulati esplicitamente dal harness.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/overlay.json",
+          "level": "pcMainRuntime",
+          "scope": "MenuContext esterno, modello/azioni reali e readiness prima del primo frame.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "Selezioni ID/tab/bookmark, queue di selezione, state scroll/draft ed eventi conservati negli swap legacy.",
+        "44 adapter Main non causano refresh/selezione provider o effetti eventi.",
+        "Menu esterno: righe typed, selection.move/select e menu.activate reali modificano stato e route corretti."
+      ],
+      "remainingVariants": [
+        "Liste/dettagli/overlay API2 personalizzati con refresh reale asincrono, reorder/rimozione righe e cambio tema/revisione durante risposta.",
+        "Conservazione di ID/tab/scroll/draft del tema completo sul dispositivo per ogni nuova presentazione e fallback."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": false
+    },
+    {
+      "id": "T15",
+      "scenario": "Normale/Ridotto/Off e renderer nascosti",
+      "requiredOutcome": "Stato finale utile, niente lavoro decorativo nascosto, lifecycle e media finalizzati",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "local/legacy-summary.json",
+          "level": "pcLegacyRuntime",
+          "scope": "8 profili, 136 scenari ciascuno, 14 regressioni risolte; zero warning; corsia legacy distinta da API2.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/check_theme_bundle_preview-after-api-optimization.log",
+          "level": "pcIsolatedRendererPreflight",
+          "scope": "4 prove Qt: 72 combinazioni di quattro renderer +18 aux, palette effettiva, errori scena/icona/ricetta e font non valido.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/new-tests.json",
+          "level": "pcUnitAndRuntime",
+          "scope": "Suite nuove contratto/core/bundle/SDK/preflight/font/icone/tracing; contiene anche esito iniziale e rerun mirato.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "Tween reali normal/reduced/off: interruzione/settle/stato finale e nessuna pubblicazione Python per frame.",
+        "72 combinazioni primarie +18 ausiliarie esercitano motion, icon e scene lifecycle/settlement.",
+        "Scene nascoste/bloccate si sospendono e ActorState resta persistente nei test legacy."
+      ],
+      "remainingVariants": [
+        "Contabilità effettiva idle/nascosto CPU/GPU/timer/media sul target per i backend usati dal tema finale.",
+        "Lifecycle e distruzione per asset animati/media aggiuntivi eventualmente dichiarati dal bundle; non dedurre correttezza dal solo renderer esempio.",
+        "Modalità ridotta/off provate su tutte le nuove notifiche/superfici del tema finale."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": false
+    },
+    {
+      "id": "T16",
+      "scenario": "Adattamenti di A → tema B → update B → ritorno A",
+      "requiredOutcome": "Accessibilità conservata; estetica per tema corretta; override legacy recuperabili",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/profiles.log",
+          "level": "pcStatePersistence",
+          "scope": "5 test ThemeService/journal/QSettings; ack host/frame simulati esplicitamente dal harness.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/check_theme_authoring_ui.log",
+          "level": "pcMainRuntime",
+          "scope": "Import/preview/apply dal menu ordinario, sei modalità notifiche, palette e motion mode, persistenza reale e deadline.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/new-tests.json",
+          "level": "pcUnitAndRuntime",
+          "scope": "Suite nuove contratto/core/bundle/SDK/preflight/font/icone/tracing; contiene anche esito iniziale e rerun mirato.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "A/B/ritorno schema1 e nuova revisione immutabile conservano profili separati; annulla non committa override.",
+        "Ricostruzione del servizio recupera preferenze; errore salvataggio/journal ripristina profili precedenti."
+      ],
+      "remainingVariants": [
+        "Accessibilità globale textScale/motion/palette attraverso A→B→updateB→ritornoA sul dispositivo, inclusi draft/riavvio.",
+        "Scelta esplicita di migrazione degli override non compatibili tra revisioni, test token/presentation/icon/scene/recipe con namespace modificato.",
+        "Export/recupero degli adattamenti legacy e comportamento user-facing quando una revisione manca o è in quarantena."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": false
+    },
+    {
+      "id": "T17",
+      "scenario": "Scene con tutti gli overlay/notifiche e cambio skin",
+      "requiredOutcome": "Ingombri rispettati, ActorState conservato, no input rubato",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "local/legacy-summary.json",
+          "level": "pcLegacyRuntime",
+          "scope": "8 profili, 136 scenari ciascuno, 14 regressioni risolte; zero warning; corsia legacy distinta da API2.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/scene-error.json",
+          "level": "pcMainRuntime",
+          "scope": "Errore esplicito della scena API2 attiva: Base/quarantena con eventi/prefs/focus conservati.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/scene-frame.json",
+          "level": "pcMainRuntime",
+          "scope": "Scena ready=false dopo staging e prima del frame blocca Apply; ready=true abilita frame e Apply.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/api-adapters-final.json",
+          "level": "pcMainAdapters",
+          "scope": "Payload del Main reale normalizzati per 44 superfici/16 famiglie, controlli semantici e nessun effetto provider/eventi.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "Identità ActorState preservata fra swap/collisione completa/unblock e layout legacy.",
+        "Scena API2 carica il contesto pubblico; fault e first-frame guard preservano stato funzionale/focus."
+      ],
+      "remainingVariants": [
+        "Scena API2 con tutti gli overlay/notifiche e cambi skin/revisione; ingombri effettivi e pose/sequenze ActorState senza reset.",
+        "Ordine visivo e input sul target per canvas/background/decoration/actor, animazioni sovrapposte e urgente.",
+        "Verifica media/compagno animato del tema concreto: il piccolo actor esempio non dimostra tutte le future rappresentazioni."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": false
+    },
+    {
+      "id": "T18",
+      "scenario": "100 cambi, cold fonts/assets, idle/nascosto, soak",
+      "requiredOutcome": "Budget/plateau e tutti i picchi registrati sul profilo hardware effettivo",
+      "status": "notVerified",
+      "evidence": [
+        {
+          "path": "local/new-tests.json",
+          "level": "pcUnitAndRuntime",
+          "scope": "Suite nuove contratto/core/bundle/SDK/preflight/font/icone/tracing; contiene anche esito iniziale e rerun mirato.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/api-profile-final.json",
+          "level": "pcDevelopmentProfile",
+          "scope": "Profilo cold/warm bridge DTO sul PC; non GPU/frame time o budget board.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "100 passaggi font sul PC mantengono una registrazione per digest e bounded retirement.",
+        "Ottimizzazione bridge/tracing e misure cold/warm locali documentate; nessuna deduzione di prestazioni target."
+      ],
+      "remainingVariants": [
+        "100 cambi tema/revisione sul vero profilo hardware con tutti i picchi CPU/RSS/PSS/GPU/glyph/assets registrati.",
+        "Font/assets cold, idle/nascosto, plateau RAM e budget 150/20ms più overhead tracing 1ms/8MiB misurati con workload comparabile.",
+        "Soak continuo di24ore ed endurance; il conteggio100cambi non lo sostituisce."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": true
+    },
+    {
+      "id": "T19",
+      "scenario": "Salvataggio/configuration failure e power cut fra fasi",
+      "requiredOutcome": "Nessuna falsa conferma; journal recuperabile; precedente selezionabile",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/profiles.log",
+          "level": "pcStatePersistence",
+          "scope": "5 test ThemeService/journal/QSettings; ack host/frame simulati esplicitamente dal harness.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/legacy-summary.json",
+          "level": "pcLegacyRuntime",
+          "scope": "8 profili, 136 scenari ciascuno, 14 regressioni risolte; zero warning; corsia legacy distinta da API2.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "local/check_theme_bundle-after-api-optimization.log",
+          "level": "pcUnitAndSubprocess",
+          "scope": "25 prove bundle/identità/risorse/journal/lease/GC e supervisor esterno in processi di test.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "QSettings read-only/sync failure reale e simulato non confermano Apply e ripristinano le preferenze visuali.",
+        "Errore journal dopo scrittura worker ripristina config/profili; candidata cancellata e precedente mantenuto.",
+        "Journal pending/corrotto recuperabile nei test, file funzionali intatti."
+      ],
+      "remainingVariants": [
+        "Power-cut reale fra staging/rename/journal-ready/QSettings/journal-commit e riavvio dispositivo.",
+        "Inject ENOSPC/fsync/rename/permissions con catalogo/precedente verificabili e diagnostica senza false conferme.",
+        "Applicazione su bundle non legacy e ripetuti crash in tutte le fasi con recovery esterno del kiosk."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": true
+    },
+    {
+      "id": "T20",
+      "scenario": "Percorso solo tastierino e ritorno dopo urgente",
+      "requiredOutcome": "Mappa 1/7 e input owner coerenti; prova fisica distinta dai QKeyEvent",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "local/legacy-summary.json",
+          "level": "pcLegacyRuntime",
+          "scope": "8 profili, 136 scenari ciascuno, 14 regressioni risolte; zero warning; corsia legacy distinta da API2.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/overlay.json",
+          "level": "pcMainRuntime",
+          "scope": "MenuContext esterno, modello/azioni reali e readiness prima del primo frame.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/notifications.json",
+          "level": "pcMainRuntime",
+          "scope": "Sei renderer NotificationContext API2 in Main reale; eventi, timer, urgente e focus.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "../theme-acceptance-supplement-2026-10-05/scene-error.json",
+          "level": "pcMainRuntime",
+          "scope": "Errore esplicito della scena API2 attiva: Base/quarantena con eventi/prefs/focus conservati.",
+          "observedStatus": "passed"
+        }
+      ],
+      "verifiedSubcases": [
+        "QKeyEvent/HID decoder nei test preservano mappa e navigazione; inputOwner recupera focus dopo route/swap/urgente/fault.",
+        "Menu API2 e sei notifiche esterne mantengono controllo input applicativo."
+      ],
+      "remainingVariants": [
+        "Percorso fisico esclusivamente tastierino sul dispositivo: 1/7, navigazione, import/preview/apply/cancel e ritorno dopo urgente.",
+        "HID fisico/detect/disconnessione/riconnessione distinto da decode fixture e QKeyEvent; ergonomia del percorso UI tema reale."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": true
+    },
+    {
+      "id": "T21",
+      "scenario": "Palette chiara, notte rossa e stati warning/critical/offline",
+      "requiredOutcome": "Colori informativi leggibili su superfici effettive, semantica della gravità riconoscibile e nessuna attribuzione biologica alla palette",
+      "status": "partiallyVerified",
+      "evidence": [
+        {
+          "path": "local/new-tests.json",
+          "level": "pcUnitAndRuntime",
+          "scope": "Suite nuove contratto/core/bundle/SDK/preflight/font/icone/tracing; contiene anche esito iniziale e rerun mirato.",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "/tmp/smartpc-theme-palettes.log",
+          "level": "pcMainSemanticPalette",
+          "scope": "Main reale:75 coppie contrasto per palette day e night; zero warning; nessuna misura ottica o accettazione concept.",
+          "observedStatus": "passed",
+          "temporarySource": true
+        }
+      ],
+      "verifiedSubcases": [
+        "Ruoli semantici e contrasteffettivi nel Main:75 coppie day e75night;40 ruoli derivati day/0night.",
+        "Derivazioni legacy non persistite e contrasto/fallback per notifiche verificati dal resolver.",
+        "Semantica decorativa separata dai foreground informativi; test non attribuisce benefici biologici."
+      ],
+      "remainingVariants": [
+        "Palette chiara e notte rossa con warning/critical/offline su target per tutti i renderer/font effettivi del tema.",
+        "Leggibilità ottica sul pannello960x640, contrasto perceived e riconoscibilità gravità con testi lunghi e impostazioni luce.",
+        "Accettazione visiva dei concept finali e stati provider reali; test numerici/PNG non sostituiscono la misura fisica."
+      ],
+      "boardStatus": "pendingRootEvidence",
+      "physicalProofRequired": true
+    }
+  ],
+  "generatedAt": "2026-10-05",
+  "status": "partiallyVerified",
+  "source": {
+    "gitHeadAtCollection": "b7402a4b8c35763e2a27359c4cb088556c36ceee",
+    "state": "uncommitted working tree; root must pin the final source/deployment revision"
+  },
+  "template": {
+    "path": "../../../authoring/templates/acceptance-matrix.json",
+    "sha256": "5c24bb695eafe1199ed11d1e295721b3b8257befe4f3991e9efa17e2d0789513"
+  },
+  "evidencePathBase": "This directory; relative paths refer to the evidence files actually read at collection time.",
+  "statusPolicy": {
+    "verified": "All required outcomes and applicable variants for the complete device case have supporting current evidence.",
+    "partiallyVerified": "Concrete automated or local runtime subcases pass, but one or more specified device/variant gates remain open.",
+    "notVerified": "Required acceptance measurement or complete outcome has no current evidence. Implementation and unit guard checks do not close a device/performance gate."
+  },
+  "boardValidation": {
+    "status": "notVerified",
+    "pending": "Root collection/deployment/Qt 6.8.2/EGLFS evidence is in progress; no board PASS is inferred from messages or PC runs."
+  },
+  "releaseDecision": {
+    "status": "notVerified",
+    "automaticReleasePermitted": false,
+    "reason": "Open hardware, endurance, physical-input, power-cut and optical gates remain independent of implemented engine code."
+  },
+  "independentConceptAcceptance": {
+    "status": "notVerified",
+    "requiredConcepts": 5,
+    "verifiedConcepts": 0,
+    "note": "The shipped example declares four own renderers and forty explicit Base fallbacks. Supplemental test-generated renderers are not five independently art-directed finished themes."
+  },
+  "observedBaseline": {
+    "localQt": "6.11.2",
+    "localBackend": "offscreen/software",
+    "apiPayloadSurfaces": 44,
+    "apiContextFamilies": 16,
+    "legacyProfilesExecuted": 8,
+    "legacyUniqueScenarios": 136,
+    "legacyScenarioExecutions": 1088,
+    "legacyCanonicalRequirements": 108,
+    "legacyRegressionsPassed": 14,
+    "legacyQmlWarnings": 0,
+    "supplementalMainCasesPassed": 5,
+    "supplementalProfileTestsPassed": 5,
+    "note": "44 real Main payload adapters do not mean 44 new complete graphical renderers; the A0 legacy track retains its historical deferredA1 label."
+  },
+  "collectionNotes": [
+    "Initial authoring contrast-count and legacy settings/notifications-index failures are retained in original reports; targeted reruns and legacy-combined/summary resolve them without inventing original PASS.",
+    "No live provider availability, physical keypad, actual power removal, optical reading or 24-hour endurance result is inferred from fixture, QKeyEvent, supervisor-child or FrameSwapped tests."
+  ],
+  "counts": {
+    "verified": 0,
+    "partiallyVerified": 20,
+    "notVerified": 1
+  }
+}

@@ -4,6 +4,7 @@ import "components"
 
 Item {
     id: root
+    objectName: "settingsPanel"
     property StyleFacade style: Theme
     required property var dashboard
     readonly property var entries: [
@@ -65,11 +66,25 @@ Item {
         {title: "Utilizzo critico", value: dashboard.accountCriticalPercent + "%", detail: "Soglia superiore · banner secondo le Notifiche"}
     ] : []
     readonly property var themeService: backend ? backend.appearance : null
-    readonly property var homePresentations: Object.keys(Theme.appearance.presentationRegistry).filter(id => Theme.appearance.presentationRegistry[id].contentIds.indexOf("home.now") >= 0)
+    readonly property var homePresentations: Object.keys(Theme.appearance.presentationRegistry).filter(id => (Theme.appearance.presentationRegistry[id].contentIds || []).indexOf("home.now") >= 0)
     readonly property var navigationRecipes: Object.keys(Theme.appearance.motionRegistry).filter(id => (Theme.appearance.motionRegistry[id].events || []).indexOf("navigate.family") >= 0)
     function presentationName(id) { return (Theme.appearance.presentationRegistry[id] || {}).name || id }
     function recipeName(id) { return (Theme.appearance.motionRegistry[id] || {}).name || id }
-    readonly property var appearanceRows: themeService ? [
+    property bool advancedAppearance: false
+    readonly property var appearanceRows: advancedAppearance ? advancedAppearanceRows : simpleAppearanceRows
+    readonly property var simpleAppearanceRows: themeService ? [
+        {title:"Palette", value:({auto:"AUTOMATICA",day:"GIORNO",night:"NOTTE"})[themeService.draft.paletteMode || "auto"],detail:"Automatico segue gli orari del dispositivo"},
+        {title:"Movimento", value:({normal:"NORMALE",reduced:"RIDOTTO",off:"DISATTIVO"})[themeService.draft.motionMode],detail:"Animazioni del tema e della scena"},
+        {title:"Tema",value:(themeService.themes.find(t => t.id === themeService.draft.themeId) || {}).name || themeService.draft.themeId,detail:"4/6 sceglie · anteprima prima del salvataggio"},
+        {title:"Dimensione testo",value:Math.round(root.style.textScale*100)+"%",detail:"Piccolo adattamento della leggibilità"},
+        {title:"Versione del tema",value:Theme.appearance.themeVersion,detail:"4/6 sceglie una revisione installata"},
+        {title:"Applica e salva",value:themeService.status === "saving" ? "SALVATAGGIO…" : "SALVA",detail:"Conserva il tema al prossimo avvio",enabled:themeService.readyToApply},
+        {title:"Annulla anteprima",value:"RIPRISTINA",detail:"Torna al tema salvato",enabled:themeService.status !== "saving"},
+        {title:"Importa temi",value:"IMPORTA",detail:"Pacchetti locali ricevuti dal PC"},
+        {title:"Esporta tema",value:"ESPORTA",detail:"Pacchetto completo per un altro dispositivo"},
+        {title:"Personalizzazione avanzata",value:"APRI",detail:"Editor di compatibilità · la composizione si crea nel tema"}
+    ] : []
+    readonly property var advancedAppearanceRows: themeService ? [
         {title: "Palette", value: ({auto:"AUTOMATICA",day:"GIORNO",night:"NOTTE"})[themeService.draft.paletteMode || "auto"], detail: "Bozza · segue gli orari di Luminosità in automatico"},
         {title: "Movimento", value: ({normal:"NORMALE",reduced:"RIDOTTO",off:"DISATTIVO"})[themeService.draft.motionMode], detail: "Transizioni e scena rispettano la stessa policy"},
         {title: "Tema", value: (themeService.themes.find(t => t.id === themeService.draft.themeId) || {}).name || themeService.draft.themeId, detail: "Preset e pacchetti personali nel catalogo"},
@@ -89,7 +104,8 @@ Item {
         {title: "Carattere orologio", value: root.style.displayFamily || "PREDEFINITO", detail: "Famiglia del display grande · indipendente da testo e numeri"},
         {title: "Importa pacchetti", value: "IMPORTA", detail: "Cartella theme-imports · contenuti locali validati"},
         {title: "Esporta personalizzazione", value: "ESPORTA", detail: "Cartella theme-exports · include font e risorse del pacchetto"},
-        {title: "Avvisi", detail: "Composizioni, testo, forme e animazioni · anteprima isolata", target: "appearanceNotifications"}
+        {title: "Avvisi", detail: "Composizioni, testo, forme e animazioni · anteprima isolata", target: "appearanceNotifications"},
+        {title:"Personalizzazione rapida",value:"TORNA",detail:"Tema, palette, testo e movimento"}
     ] : []
     readonly property var notificationModes: ["small","large","urgent","badge","inbox","detail"]
     readonly property var notificationLabels: ["PICCOLO","GRANDE","URGENTE","BADGE","ELENCO","DETTAGLIO"]
@@ -97,7 +113,7 @@ Item {
     readonly property string notificationPrefix: "notifications."+notificationMode+"."
     readonly property NotificationStyle notificationMetrics: NotificationStyle { appearance: Theme.appearance; mode: root.notificationMode }
     function notificationContent(mode) { return mode === "small" || mode === "large" ? "alerts.banner."+mode : "alerts."+mode }
-    function notificationPresentations(mode) { return Object.keys(Theme.appearance.presentationRegistry).filter(id => Theme.appearance.presentationRegistry[id].contentIds.indexOf(notificationContent(mode)) >= 0) }
+    function notificationPresentations(mode) { return Object.keys(Theme.appearance.presentationRegistry).filter(id => (Theme.appearance.presentationRegistry[id].contentIds || []).indexOf(notificationContent(mode)) >= 0) }
     readonly property string notificationMotionPrefix: notificationMode === "small" || notificationMode === "large" ? "banner."+notificationMode : "alerts."+notificationMode
     readonly property var notificationAppearanceRows: themeService ? [
         {title:"Superficie da regolare",value:notificationLabels[dashboard.notificationAppearanceMode],detail:"Ruoli indipendenti · 4/6 cambia modalità"}
@@ -163,6 +179,22 @@ Item {
     function cycle(values, current, direction) {
         return values[(Math.max(0, values.indexOf(current)) + direction + values.length) % values.length]
     }
+    function editSimpleAppearance(direction) {
+        const service=themeService
+        if (!service || service.status === "saving" || service.status === "working") return
+        if (!service.editing) service.beginEdit()
+        let accepted=true
+        if (selected === 0) accepted=service.setSection("paletteMode",cycle(["auto","day","night"],service.draft.paletteMode || "auto",direction))
+        else if (selected === 1) accepted=service.setSection("motionMode",cycle(["normal","reduced","off"],service.draft.motionMode,direction))
+        else if (selected === 2) accepted=service.selectDraft(cycle(service.themes.map(t => t.id),service.draft.themeId,direction))
+        else if (selected === 3) accepted=service.setToken("typography.textScale",Math.max(.85,Math.min(1.1,Math.round((root.style.textScale+direction*.05)*100)/100)))
+        else if (selected === 4) accepted=service.stepRevision(direction)
+        else if (selected === 5) accepted=service.apply()
+        else if (selected === 6) service.cancel()
+        else if (selected === 7 || selected === 8) accepted=service.transferPack(selected === 7 ? "import" : "export")
+        else if (selected === 9) { advancedAppearance=true; dashboard.optionIndex=0 }
+        feedback=service.lastError || (!accepted ? "Operazione non disponibile" : selected === 5 ? "Salvataggio in corso…" : "Anteprima · Applica e salva per conservarla")
+    }
     function editAppearance(direction) {
         const service = themeService
         if (!service || (service.status === "saving" || service.status === "working")) return
@@ -186,6 +218,7 @@ Item {
         else if (selected === 13) service.cancel()
         else if (selected === 14) service.resetDraft()
         else if (selected === 15) service.reloadCatalog()
+        else if (selected === 20) { advancedAppearance=false; dashboard.optionIndex=0 }
         else if (selected === 17 || selected === 18) service.transferPack(selected === 17 ? "import" : "export")
         feedback = service.lastError || (selected === 12 ? "Salvataggio in corso…" : "Anteprima · Applica e salva per conservarla")
     }
@@ -199,7 +232,7 @@ Item {
     readonly property string description: section === "system" ? "Regola l'immagine · livelli dal 20 al 100%, passi di 5%" : section === "sources" ? "Aggiornamento manuale · attesa minima 30 secondi tra richieste" : section === "notifications" ? "Due regole separate: quando interrompere e quali categorie" : section === "notificationQuiet" ? "Gli urgenti restano visibili per le categorie abilitate" : section === "notificationCategories" ? "Disattivare una categoria non cancella l'elenco Avvisi" : section === "accountSettings" ? "Preferenze salvate · soglie separate dall'acquisto di crediti" : (section === "appearance" || section === "appearanceNotifications") ? "Anteprima · Applica e salva, oppure 7 per annullare" : "Preferenze salvate automaticamente"
     readonly property string explanation: section === "notifications" ? "Gli avvisi ricevuti restano consultabili da 3 AVVISI.\nLe soglie di utilizzo si regolano in Account ChatGPT." : section === "notificationQuiet" ? (backend && backend.quietHoursEnabled ? quietRange + " · " + (quietActive ? "silenzio in corso" : "fuori fascia") : "Fascia disattivata · nessuna pausa oraria") + "\nLe categorie disattivate restano nascoste anche fuori fascia." : section === "notificationCategories" ? "Meteo/Account consentiti: banner fuori fascia, urgenti sempre.\nMeteo/Account nascosti: restano nell'elenco 3 AVVISI." : ""
     property string feedback: ""
-    onSectionChanged: feedback = ""
+    onSectionChanged: { feedback = ""; if (section !== "appearance" && section !== "appearanceNotifications") advancedAppearance=false }
 
     function setSelected(index) {
         if (section === "settings") dashboard.settingsIndex = index
@@ -231,7 +264,8 @@ Item {
             feedback = backend.demo ? "Demo · nessuna richiesta esterna" : !sent ? "Attendi 30 secondi prima di riprovare" : row.target === "account" ? "Cache riletta · gli aggiornamenti arrivano dal PC" : "Richiesta inviata · lo stato viene aggiornato dalla fonte"
         } else if (section === "appearance") {
             if (row.target) { dashboard.optionIndex = 0; dashboard.pushOverlay(row.target) }
-            else editAppearance(direction)
+            else if (advancedAppearance) editAppearance(direction)
+            else editSimpleAppearance(direction)
         } else if (section === "appearanceNotifications") {
             editNotifications(direction)
         } else if (section === "system") backend.adjustDisplaySetting(selected + 1, direction)
@@ -250,7 +284,7 @@ Item {
     AppIcon { style: root.style; z: 1; x: 870; y: 29; iconId: "system.settings"; opticalSize: 32 }
     Rectangle { anchors.fill: parent; color: root.style.backgroundOverlay }
     AppText { style: root.style; x: 44; y: root.rows.length <= 2 ? 334 : 410; width: 872; height: 66; visible: root.explanation !== ""; text: root.explanation; color: root.style.textSecondary; font.pixelSize: root.style.font22; lineHeight: 1.35 }
-    AppText { style: root.style; x: 44; y: 30; width: 872; text: root.heading; color: root.style.accent; font.pixelSize: root.style.font37; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
+    AppText { style: root.style; x: 44; y: 30; width: 872; text: root.heading; color: root.style.accentTextOnOverlay; font.pixelSize: root.style.font37; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
     AppText { style: root.style; x: 44; y: 84; width: 872; text: root.description; color: root.style.textSecondary; font.pixelSize: root.style.font22; elide: Text.ElideRight }
     Repeater {
         model: root.rows.slice(root.pageStart, root.pageStart + root.style.listRows)
@@ -262,14 +296,14 @@ Item {
             objectName: root.section + "Row" + rowIndex
             x: 44; y: 132 + index * (348 / root.style.listRows); width: 872; height: 348 / root.style.listRows - 10; radius: root.style.radiusRow
             color: selectedRow ? root.style.surfaceFocused : root.style.surface
-            border.color: selectedRow ? root.style.accent : root.style.border; border.width: selectedRow ? root.style.focusWidth : root.style.hairlineWidth
+            border.color: selectedRow ? root.style.focusIndicator : root.style.border; border.width: selectedRow ? root.style.focusWidth : root.style.hairlineWidth
             AppText { style: root.style; x: 20; y: 10; width: 485; text: modelData.title; color: modelData.enabled === false ? root.style.textSecondary : root.style.textPrimary; font.pixelSize: root.style.font28; font.weight: (selectedRow) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
             AppText { style: root.style; x: 20; y: parent.height - 30; width: 825; text: modelData.detail || ""; color: root.style.textSecondary; font.pixelSize: root.style.font20; elide: Text.ElideRight }
-            AppText { style: root.style; x: 515; y: 13; width: 334; horizontalAlignment: Text.AlignRight; text: modelData.value || "›"; color: modelData.enabled === false ? root.style.textSecondary : selectedRow ? root.style.accent : root.style.textPrimary; font.pixelSize: root.style.font25; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
+            AppText { style: root.style; x: 515; y: 13; width: 334; horizontalAlignment: Text.AlignRight; text: modelData.value || "›"; color: modelData.enabled === false ? root.style.textSecondary : selectedRow ? root.style.accentTextOnFocused : root.style.textPrimary; font.pixelSize: root.style.font25; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
             MouseArea { anchors.fill: parent; onClicked: { root.setSelected(parent.rowIndex); root.activate(1) } }
         }
     }
     AppText { style: root.style; x: 44; y: 499; width: 872; text: ((root.section === "appearance" || root.section === "appearanceNotifications") && root.themeService ? root.themeService.lastError : "") || root.feedback || (root.rows.length ? (root.selected + 1) + "/" + root.rows.length + " · " : "") + (root.section === "settings" || root.section === "integrations" || root.section === "notifications" || root.rows[root.selected] && root.rows[root.selected].target && root.section !== "sources" ? "2/8 SELEZIONA · 5 APRI" : root.section === "sources" ? "2/8 SELEZIONA · 5 AGGIORNA" : "2/8 SELEZIONA · 4/6 REGOLA · 5 CAMBIA"); color: root.style.textSecondary; font.pixelSize: root.style.font21; elide: Text.ElideRight }
     Rectangle { x: 44; y: 548; width: 872; height: 1; color: root.style.border }
-    KeyGuide { style: root.style; x: 44; y: 571; color: root.style.accent; font.pixelSize: root.style.font25 }
+    KeyGuide { style: root.style; x: 44; y: 571; color: root.style.accentTextOnOverlay; font.pixelSize: root.style.font25 }
 }

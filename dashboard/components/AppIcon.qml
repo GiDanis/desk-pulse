@@ -7,10 +7,15 @@ Item {
     property color tint: style.accent
     property int opticalSize: 32
     property var appearance: style.appearance
+    property var resourceService: Theme.service
+    property string resourceLease: ""
+    property string resourceError: ""
+    function releaseResource() { if (resourceLease && resourceService) resourceService.releaseRevision(resourceLease); resourceLease="" }
+    Component.onDestruction: releaseResource()
     readonly property var descriptor: appearance && appearance.icons[iconId] ? appearance.icons[iconId] : "unknown"
     readonly property string backend: typeof descriptor === "string" ? "geometry" : descriptor.backend
     readonly property string symbol: typeof descriptor === "string" ? descriptor : descriptor.symbol || "unknown"
-    readonly property string lastError: assetImage.status === Image.Error ? "Icona non disponibile: " + iconId : ""
+    readonly property string lastError: resourceError || (assetImage.status === Image.Error ? "Icona non disponibile: " + iconId : "")
     readonly property string assetFile: {
         if (!appearance || backend !== "image") return ""
         const asset = appearance.assets.find(a => a.id === descriptor.asset)
@@ -24,13 +29,23 @@ Item {
         anchors.fill: parent
         active: root.visible && (root.backend === "geometry" || root.backend === "component" || root.backend === "image" && assetImage.status !== Image.Ready)
         readonly property string rendererId: root.backend === "component" ? root.descriptor.renderer : "builtin.geometry"
+        readonly property var rendererDescriptor: root.appearance ? root.appearance.iconRegistry[rendererId] : null
+        readonly property string rendererKey: rendererDescriptor ? rendererDescriptor.rendererKey || rendererDescriptor.file : "builtin.geometry"
+        onRendererKeyChanged: load()
         readonly property string rendererFile: root.appearance && root.appearance.iconRegistry[rendererId] ? root.appearance.iconRegistry[rendererId].file : "icons/GeometryIcon.qml"
-        onRendererFileChanged: load()
         onActiveChanged: if (active) load()
         Component.onCompleted: if (active) load()
         function load() {
             if (!active) return
-            setSource(Qt.resolvedUrl("../" + rendererFile), {style: root.style, iconId: root.iconId, descriptor: root.descriptor, symbol: assetImage.status === Image.Error ? "unknown" : root.symbol, tint: root.tint, opticalSize: root.opticalSize})
+            root.releaseResource()
+            root.resourceError=""
+            if (root.resourceService && rendererDescriptor && rendererDescriptor.rendererIdentity) root.resourceLease=root.resourceService.acquireRevision(rendererDescriptor.rendererIdentity)
+            if (rendererDescriptor && rendererDescriptor.rendererIdentity && root.resourceService && !root.resourceLease) {
+                root.resourceError="Risorsa icona non disponibile: "+root.iconId
+                setSource("")
+                return
+            }
+            setSource((root.appearance && root.appearance.iconRegistry[rendererId] ? root.appearance.iconRegistry[rendererId].sourceUrl : "") || Qt.resolvedUrl("../" + rendererFile), {style: root.style, iconId: root.iconId, descriptor: root.descriptor, symbol: assetImage.status === Image.Error ? "unknown" : root.symbol, tint: root.tint, opticalSize: root.opticalSize})
         }
         onLoaded: {
             item.iconId = Qt.binding(function() { return root.iconId })

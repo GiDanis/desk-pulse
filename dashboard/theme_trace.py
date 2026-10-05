@@ -139,6 +139,8 @@ class TraceRecorder:
         self._max_open = max_open_requests
         self._events = []
         self._strings = {}  # bounded, recorder-local sharing; no global intern leak
+        self._metadata_keys = {}  # validated keys and serialized cost, <=256 entries
+        self._event_costs = {}  # event name cost, <=256 entries
         self._requests = OrderedDict()
         self._generations = OrderedDict()
         self._revisions = OrderedDict()
@@ -216,15 +218,23 @@ class TraceRecorder:
         timestamp = self._timestamp_locked() if timestamp is None else timestamp
         self._sequence += 1
         sequence = self._sequence
-        cost += 256 + _string_cost(event)
+        event_cost = self._event_costs.get(event)
+        if event_cost is None:
+            event_cost = _string_cost(event)
+            if len(self._event_costs) < 256:
+                self._event_costs[event] = event_cost
+        cost += 256 + event_cost
         if len(self._events) >= self._max_events or self._bytes + self._summary_bytes + cost > self._max_payload:
             self._dropped += 1
             if request_id in self._requests:
                 self._requests[request_id]["recordsDropped"] += 1
             return timestamp, None
-        flat = []
-        for key, value in metadata.items():
-            flat.extend((self._share_string(key), self._share_string(value)))
+        if isinstance(metadata, tuple):
+            flat = metadata
+        else:
+            flat = []
+            for key, value in metadata.items():
+                flat.extend((self._share_string(key), self._share_string(value)))
         # Compact immutable storage. Dicts and JSON are constructed at export,
         # outside the measured work, while retaining every accepted raw record.
         self._events.append((sequence, timestamp, threading.get_ident(),
@@ -242,17 +252,41 @@ class TraceRecorder:
             self._strings[value] = value
         return value
 
+    def _key_info(self, key):
+        info = self._metadata_keys.get(key) if isinstance(key, str) else None
+        if info is None:
+            _string(key, "metadata key", 64)
+            if key.lower().replace("_", "") in _SENSITIVE_KEYS:
+                raise TracePayloadError(f"sensitive diagnostic field is forbidden: {key}")
+            info = (key, _string_cost(key) + 4)
+            if len(self._metadata_keys) < 256:
+                self._metadata_keys[key] = info
+        return info
+
+    def _record_fields(self, values):
+        # Single traversal: validation remains identical to _metadata, while
+        # avoiding a transient dictionary and a second per-field sharing pass.
+        if len(values) > 32:
+            raise TracePayloadError("at most 32 metadata fields are permitted")
+        flat, size = [], 2
+        for key, value in values.items():
+            canonical_key, key_cost = self._key_info(key)
+            frozen, value_cost = _primitive(value)
+            flat.extend((canonical_key, self._share_string(frozen)))
+            size += key_cost + value_cost
+        return tuple(flat), size
+
     @_recording_cost("record")
     def record(self, event, request_id=None, **metadata):
         """Append one record; return its sequence, or None if disabled/dropped."""
         if not self.enabled:
             return None
         _string(event, "event", 96)
-        copied, cost = _metadata(metadata)
         request_id = self._resolve_request(request_id)
         if request_id is not None:
             _string(request_id, "request ID", 96)
         with self._lock:
+            copied, cost = self._record_fields(metadata)
             return self._append_locked(event, request_id, copied, cost)[1]
 
     @_recording_cost("begin")

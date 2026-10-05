@@ -64,7 +64,7 @@ def contract_typeinfo(contract):
 def rendered_files(contract):
     metadata = contract.metadata()
     lines = ['# SmartPC Theme API 2 — contract reference', '',
-             '**Contract only: QML runtime module, broker and adapters are not implemented.**', '',
+             '**Canonical contract reference. Runtime registration, broker and private adapters are implemented in `theme_api.py`; this static check does not attest a running Qt backend.**', '',
              'Generated from the four canonical JSON documents. Do not edit generated files.', '',
              f'API fingerprint: `{contract.fingerprint}`', '',
              'This fingerprint is independent from the schema-1 registry fingerprint.', '',
@@ -88,12 +88,12 @@ def rendered_files(contract):
     for name, model in contract.models.items():
         lines.append(f"| {name} | {model['itemType']} | {model['identityRole']} |")
     lines += ['', '## Actions', '', 'Shape and per-surface allowlist checks do not authorize an action in the live app.', '',
-              'The A1 broker must also check lifecycle, generation, urgent priority and backend state.', '',
+              'The runtime broker also checks lifecycle, generation and private router availability. The app router owns urgent priority and current backend availability.', '',
               '| Action | Target | Required arguments |', '| --- | --- | --- |']
     for name, action in contract.actions.items():
         lines.append(f"| {name} | {'required' if action['target'].get('minLength') else 'optional'} | {json.dumps(action['arguments'], ensure_ascii=False).replace('|', '&#124;')} |")
     lines += ['', '## Semantic roles', '',
-              'The usage graph is a contract. New foreground resolution and runtime contrast checks require A1/G21.', '',
+              'The usage graph is a contract. Runtime foreground resolution and contrast checks are supplied by the application resolver.', '',
               '| Usage | Foreground role | Background token | Minimum | Kind |', '| --- | --- | --- | --- | --- |']
     for usage in contract.semantic_document['usages']:
         lines.append(f"| {usage['id']} | {usage['foreground']} | {usage['backgroundToken']} | {usage['minimum']} | {usage['kind']} |")

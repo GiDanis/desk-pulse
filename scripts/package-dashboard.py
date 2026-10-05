@@ -23,8 +23,8 @@ def files(root, diagnostics=False):
         relative=path.relative_to(root)
         if not path.is_file() or any(x in ('__pycache__','design','.git') or x.startswith('.') for x in relative.parts):continue
         if not diagnostics and relative.parts[:3] == ('fixtures','theme-runtime','renderers'):continue
-        if path.name in ('release-manifest.json','README.md') or path.suffix=='.pyc':continue
-        if path.suffix in ALLOWED or path.name in ('qmldir','LICENSE') or path.resolve() in declared:yield path,relative
+        if path.name=='release-manifest.json' or path.name=='README.md' and len(relative.parts)==1 or path.suffix=='.pyc':continue
+        if path.suffix in ALLOWED or path.name in ('qmldir','LICENSE','smartpc-theme') or path.resolve() in declared:yield path,relative
 
 def digest(file):return hashlib.sha256(file.read_bytes()).hexdigest()
 
@@ -40,6 +40,7 @@ def build(source,output,diagnostics=False):
     dirty=bool(subprocess.check_output(['git','status','--porcelain'],cwd=source,text=True))
     (output/'release-manifest.json').write_text(json.dumps({'version':VERSION,'gitCommit':commit,'dirty':dirty,'distributionKind':'diagnostic' if diagnostics else 'runtime','sha256':manifest},indent=2)+'\n')
     (output/'run.sh').chmod(0o755)
+    if (output/'smartpc-theme').exists(): (output/'smartpc-theme').chmod(0o755)
     verify(output)
 
 def verify(root):

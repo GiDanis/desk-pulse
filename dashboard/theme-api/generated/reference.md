@@ -1,10 +1,10 @@
 # SmartPC Theme API 2 — contract reference
 
-**Contract only: QML runtime module, broker and adapters are not implemented.**
+**Canonical contract reference. Runtime registration, broker and private adapters are implemented in `theme_api.py`; this static check does not attest a running Qt backend.**
 
 Generated from the four canonical JSON documents. Do not edit generated files.
 
-API fingerprint: `30013160355ad8ccb3f7c3e39569061e6f4cd9aa64893ea2444fa8a48901cec0`
+API fingerprint: `905a4b23c4c180a16ef541260c281ca6d430b3679c7066599a0f2b1f3d77f2a8`
 
 This fingerprint is independent from the schema-1 registry fingerprint.
 
@@ -74,6 +74,7 @@ This fingerprint is independent from the schema-1 registry fingerprint.
 | safeArea | Rect | required / non-null | {} |
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
 
 Method `requestAction(string, string, legacyMap) → ActionResult`.
 
@@ -92,6 +93,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | safeArea | Rect | required / non-null | {} |
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
 | clock | ClockState | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
 | weather | WeatherData | required / nullable | {} |
@@ -119,6 +121,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | safeArea | Rect | required / non-null | {} |
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
 | families | FamilyModel | required / non-null | {} |
 | currentFamilyId | string | required / non-null | {} |
 | currentViewId | string | required / non-null | {} |
@@ -143,6 +146,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | safeArea | Rect | required / non-null | {} |
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
 | rows | MenuRowModel | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
 
@@ -163,6 +167,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | safeArea | Rect | required / non-null | {} |
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
 | keyMap | CommandModel | required / non-null | {} |
 | firstRun | bool | required / non-null | {} |
 
@@ -183,6 +188,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | safeArea | Rect | required / non-null | {} |
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
 | familyId | string | required / non-null | {} |
 | clock | ClockState | required / non-null | {} |
 | weather | WeatherData | required / nullable | {} |
@@ -205,6 +211,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | safeArea | Rect | required / non-null | {} |
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
 | sectionId | string | required / non-null | {} |
 | rows | SettingRowModel | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
@@ -230,6 +237,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | safeArea | Rect | required / non-null | {} |
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
 | tabs | TabModel | required / non-null | {} |
 | rows | InfoRowModel | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
@@ -253,6 +261,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | safeArea | Rect | required / non-null | {} |
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
 | source | SourceState | required / non-null | {} |
 | matches | MatchModel | required / non-null | {} |
 | standings | StandingModel | required / non-null | {} |
@@ -278,6 +287,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | safeArea | Rect | required / non-null | {} |
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
 | match | MatchData | required / non-null | {} |
 | source | SourceState | required / non-null | {} |
 | tabs | TabModel | required / non-null | {} |
@@ -303,6 +313,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | safeArea | Rect | required / non-null | {} |
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
 | team | TeamData | required / non-null | {} |
 | tabs | TabModel | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
@@ -326,6 +337,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | safeArea | Rect | required / non-null | {} |
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
 | teams | TeamIdentityModel | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
 | savedTeamId | string | required / non-null | {} |
@@ -347,6 +359,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | safeArea | Rect | required / non-null | {} |
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
 | kind | string | required / non-null | {"enum": ["f1", "motogp"]} |
 | source | SourceState | required / non-null | {} |
 | racing | RacingData | required / non-null | {} |
@@ -373,6 +386,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | safeArea | Rect | required / non-null | {} |
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
 | kind | string | required / non-null | {"enum": ["f1", "motogp"]} |
 | driver | DriverData | required / non-null | {} |
 | source | SourceState | required / non-null | {} |
@@ -398,12 +412,12 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | safeArea | Rect | required / non-null | {} |
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | required / non-null | {} |
 | actor | ActorSnapshot | required / non-null | {} |
 | configuration | SceneConfiguration | required / non-null | {} |
 | occupiedRegions | array | required / non-null | {"items": "Rect", "maxItems": 64} |
 | notification | NotificationEvent | required / nullable | {} |
 | clock | ClockState | required / non-null | {} |
-| motionPolicy | MotionPolicy | required / non-null | {} |
 | suspended | bool | required / non-null | {} |
 
 Method `requestAction(string, string, legacyMap) → ActionResult`.
@@ -445,6 +459,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | itemModel | NotificationEventModel | optional / non-null | {} |
 | commands | CommandModel | optional / non-null | {} |
 | sourceMetadata | SourceState | optional / nullable | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
 
 Method `requestAction(string, string, legacyMap) → bool`.
 
@@ -1188,6 +1203,7 @@ Signal `settleMotionRequested()`.
 | radiusMarker | int | required / non-null | {} |
 | hairlineWidth | int | required / non-null | {} |
 | semantic | SemanticPalette | required / non-null | {} |
+| tokenSnapshot | legacyMap | optional / non-null | {} |
 
 ### NotificationStyle
 
@@ -1262,6 +1278,7 @@ Signal `settleMotionRequested()`.
 | radiusMarker | int | required / non-null | {} |
 | hairlineWidth | int | required / non-null | {} |
 | semantic | SemanticPalette | required / non-null | {} |
+| tokenSnapshot | legacyMap | optional / non-null | {} |
 | prefix | string | required / non-null | {} |
 | surfaceColor | color | required / non-null | {} |
 | noticeFocusedSurface | color | required / non-null | {} |
@@ -1322,6 +1339,10 @@ Signal `settleMotionRequested()`.
 | accountCriticalOnOverlay | color | required / non-null | {} |
 | accountCriticalOnCard | color | required / non-null | {} |
 | accountCriticalOnFocused | color | required / non-null | {} |
+| accentDecoration | color | optional / non-null | {} |
+| focusIndicator | color | optional / non-null | {} |
+| warningIndicator | color | optional / non-null | {} |
+| criticalIndicator | color | optional / non-null | {} |
 
 ## Models
 
@@ -1362,7 +1383,7 @@ Signal `settleMotionRequested()`.
 
 Shape and per-surface allowlist checks do not authorize an action in the live app.
 
-The A1 broker must also check lifecycle, generation, urgent priority and backend state.
+The runtime broker also checks lifecycle, generation and private router availability. The app router owns urgent priority and current backend availability.
 
 | Action | Target | Required arguments |
 | --- | --- | --- |
@@ -1401,7 +1422,7 @@ The A1 broker must also check lifecycle, generation, urgent priority and backend
 
 ## Semantic roles
 
-The usage graph is a contract. New foreground resolution and runtime contrast checks require A1/G21.
+The usage graph is a contract. Runtime foreground resolution and contrast checks are supplied by the application resolver.
 
 | Usage | Foreground role | Background token | Minimum | Kind |
 | --- | --- | --- | --- | --- |

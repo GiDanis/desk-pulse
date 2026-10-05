@@ -152,8 +152,8 @@ class ThemeApiContract:
         for name, document in self.documents.items():
             self.require(isinstance(document, dict) and type(document.get('contractVersion')) is int
                          and document['contractVersion'] == 1, name, 'versione contratto non supportata')
-            self.require(document.get('module') == module and document.get('apiState') == 'contractOnly', name,
-                         'contratto incoerente; modulo runtime non ancora disponibile')
+            self.require(document.get('module') == module and document.get('apiState') == 'implemented', name,
+                         'contratto incoerente con la versione del modulo implementato')
         for name in ('types', 'contexts', 'models'):
             mapping = self.context_document.get(name)
             self.require(isinstance(mapping, dict) and bool(mapping), name, 'mappa richiesta')
@@ -268,16 +268,16 @@ class ThemeApiContract:
             self.require(bool(usage.get('surfaces')) and not set(usage['surfaces']) - set(self.surfaces), usage['id'], 'superficie uso sconosciuta')
             self.require(usage.get('variants') == ['day', 'night'], usage['id'], 'varianti richieste')
         self.require(bool(roles) and bool(usage_ids), 'semantic', 'grafo vuoto')
-        self.require(self.semantic_document['policy']['runtimeChecksActive'] is False
-                     and self.semantic_document['policy']['lightPaletteSupported'] is False,
-                     'semantic.policy', 'G21 non ancora implementato')
+        self.require(self.semantic_document['policy']['runtimeChecksActive'] is True
+                     and self.semantic_document['policy']['lightPaletteSupported'] is True,
+                     'semantic.policy', 'policy semantica incoerente con il runtime G21')
 
     @property
     def fingerprint(self):
         return hashlib.sha256(canonical_bytes(self.documents)).hexdigest()
 
     def metadata(self):
-        return {'availability': 'contractOnly', 'contractVersion': 1,
+        return {'availability': 'contractOnly', 'declaredImplementation': 'implemented', 'contractVersion': 1,
                 'module': deepcopy(self.surfaces_document['module']), 'apiFingerprint': self.fingerprint,
                 'surfaces': len(self.surfaces), 'contexts': len(self.contexts),
                 'types': len(self.types), 'models': len(self.models), 'actions': len(self.actions),

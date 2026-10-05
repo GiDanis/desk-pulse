@@ -124,8 +124,16 @@ for _ in range(3):
     if state.appearance.resolvedAppearance["motionMode"] == "off": break
     press(4)
 assert not state.animationsEnabled
-window.setProperty("optionIndex",12)
+appearance_panel = window.findChild(QObject, "settingsPanel")
+appearance_rows = appearance_panel.property("rows")
+appearance_rows = appearance_rows.toVariant() if hasattr(appearance_rows, "toVariant") else appearance_rows
+window.setProperty("optionIndex", next(index for index, row in enumerate(appearance_rows)
+                                     if row["title"] == "Applica e salva"))
+save_results = []
+state.appearance.saveFinished.connect(lambda success: save_results.append(success))
 press(5)
+assert save_results == [True] and not state.appearance.editing, "motion preference did not finish saving"
+assert state.appearance.resolvedAppearance["motionMode"] == "off"
 press(1)
 press(6)
 assert window.findChild(QObject, "contentLayer").property("x") == 0

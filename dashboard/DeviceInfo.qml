@@ -51,7 +51,7 @@ Item {
         return true
     }
     Rectangle { anchors.fill: parent; color: root.style.backgroundOverlay }
-    AppText { style: root.style; renderType: Text.NativeRendering; x: 44; y: 30; text: "INFORMAZIONI"; color: root.style.accent; font.pixelSize: root.style.font37; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
+    AppText { style: root.style; renderType: Text.NativeRendering; x: 44; y: 30; text: "INFORMAZIONI"; color: root.style.accentTextOnOverlay; font.pixelSize: root.style.font37; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
     AppText { style: root.style; renderType: Text.NativeRendering; x: 605; y: 43; width: 310; horizontalAlignment: Text.AlignRight; text: "AGG. " + dashboard.eventStamp(snapshot.updatedAt); color: root.style.textSecondary; font.pixelSize: root.style.font20 }
     Repeater {
         model: root.tabs
@@ -60,8 +60,8 @@ Item {
             required property int index
             x: 44 + index * 221; y: 93; width: 209; height: 43; radius: root.style.radiusPill
             color: dashboard.infoPage === index ? root.style.surfaceFocused : root.style.surface
-            border.color: dashboard.infoPage === index ? root.style.accent : root.style.border
-            AppText { style: root.style; renderType: Text.NativeRendering; anchors.centerIn: parent; text: modelData; color: dashboard.infoPage === index ? root.style.accent : root.style.textSecondary; font.pixelSize: root.style.font21; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
+            border.color: dashboard.infoPage === index ? root.style.focusIndicator : root.style.border
+            AppText { style: root.style; renderType: Text.NativeRendering; anchors.centerIn: parent; text: modelData; color: dashboard.infoPage === index ? root.style.accentTextOnFocused : root.style.textSecondary; font.pixelSize: root.style.font21; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
             MouseArea { anchors.fill: parent; onClicked: root.changeTab(index) }
         }
     }
@@ -74,7 +74,7 @@ Item {
             objectName: "infoRow" + rowIndex
             x: 44; y: 153 + index * (332 / root.style.listRows); width: 872; height: 332 / root.style.listRows - 9; radius: root.style.radiusBadge
             color: rowIndex === dashboard.infoIndex ? root.style.surfaceFocused : root.style.surface
-            border.color: rowIndex === dashboard.infoIndex ? root.style.accent : root.style.border
+            border.color: rowIndex === dashboard.infoIndex ? root.style.focusIndicator : root.style.border
             AppText { style: root.style; renderType: Text.NativeRendering; x: 18; y: 9; width: 283; text: modelData.title; color: root.style.textSecondary; font.pixelSize: root.style.font24; elide: Text.ElideRight }
             AppText { style: root.style; renderType: Text.NativeRendering; x: 310; y: 9; width: 541; horizontalAlignment: Text.AlignRight; text: modelData.value; color: root.style.textPrimary; font.pixelSize: root.style.font26; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
             AppText { style: root.style; renderType: Text.NativeRendering; x: 18; y: parent.height - 29; width: 832; text: modelData.detail; color: root.style.textSecondary; font.pixelSize: root.style.font19; elide: Text.ElideRight }
@@ -84,5 +84,5 @@ Item {
     AppText { style: root.style; renderType: Text.NativeRendering; x: 44; y: 492; width: 872; text: dashboard.infoPage === 3 ? "Aggiornamenti manuali in Impostazioni › Dati e aggiornamenti" : "Misure automatiche ogni 5 s · qualità Wi-Fi ogni 30 s"; color: root.style.textSecondary; font.pixelSize: root.style.font20; elide: Text.ElideRight }
     AppText { style: root.style; renderType: Text.NativeRendering; x: 44; y: 521; width: 872; text: (dashboard.infoIndex + 1) + "/" + root.rows.length + " · 4/6 SCHEDA · 2/8 SCORRI"; color: root.style.textSecondary; font.pixelSize: root.style.font21 }
     Rectangle { x: 44; y: 548; width: 872; height: 1; color: root.style.border }
-    KeyGuide { style: root.style; renderType: Text.NativeRendering; x: 44; y: 571; color: root.style.accent; font.pixelSize: root.style.font25 }
+    KeyGuide { style: root.style; renderType: Text.NativeRendering; x: 44; y: 571; color: root.style.accentTextOnOverlay; font.pixelSize: root.style.font25 }
 }

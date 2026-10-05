@@ -42,7 +42,7 @@ Item {
         return label + " · " + (programme ? "Programma " + acquired(event.programmeAt || racingInfo.fetchedAt) : "Calendario " + acquired(racingInfo.fetchedAt))
     }
     Rectangle { anchors.fill: parent; color: dashboard.color }
-    AppText { style: root.style; x: 44; y: 29; width: 872; text: settings ? "IMPOSTAZIONI · " + (dashboard.racingSettingsKind === "f1" ? "F1" : "MOTOGP") : driver ? dashboard.racingDriverLive ? "TEMPI DEL PILOTA" : (root.session.name || "SESSIONE").toUpperCase() + " · DETTAGLI PILOTA" : table ? "CLASSIFICA · " + (racingInfo.year || "") : timing ? "TEMPI DELLA SESSIONE" : detail ? (root.session.name || "SESSIONE") : eventList ? "CALENDARIO · " + (racingInfo.year || "") : "PROGRAMMA DEL WEEKEND"; color: root.style.accent; font.pixelSize: driver ? root.style.font30 : root.style.font35; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
+    AppText { style: root.style; x: 44; y: 29; width: 872; text: settings ? "IMPOSTAZIONI · " + (dashboard.racingSettingsKind === "f1" ? "F1" : "MOTOGP") : driver ? dashboard.racingDriverLive ? "TEMPI DEL PILOTA" : (root.session.name || "SESSIONE").toUpperCase() + " · DETTAGLI PILOTA" : table ? "CLASSIFICA · " + (racingInfo.year || "") : timing ? "TEMPI DELLA SESSIONE" : detail ? (root.session.name || "SESSIONE") : eventList ? "CALENDARIO · " + (racingInfo.year || "") : "PROGRAMMA DEL WEEKEND"; color: root.style.accentTextOnOverlay; font.pixelSize: driver ? root.style.font30 : root.style.font35; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
     AppText { style: root.style; visible: !settings && !table && !eventList; x: 44; y: 85; width: 872; text: driver ? dashboard.racingDriver.name || "Pilota non più presente nel feed" : timing ? ((racingInfo.live || {}).meeting || "") : root.event.name || ""; color: root.style.textPrimary; font.pixelSize: root.style.font29; elide: Text.ElideRight }
     AppText { style: root.style; visible: eventList; x: 44; y: 88; text: dashboard.racingView === "RISULTATI" ? "GP CONCLUSI · 5 RISULTATI DELLE SESSIONI" : "TUTTI I GP · 5 APRI IL WEEKEND"; color: root.style.textSecondary; font.pixelSize: root.style.font23 }
     Repeater {
@@ -51,8 +51,8 @@ Item {
             required property string modelData
             required property int index
             readonly property bool selected: index === (root.table ? dashboard.racingStandingTab : root.programme ? dashboard.racingEventPage : root.driver ? dashboard.racingDriverPage : root.timing ? dashboard.racingTimingPage : dashboard.racingDetailPage)
-            x: 44 + index * (884 / root.tabs.length); y: root.table ? 83 : 133; width: 884 / root.tabs.length - 12; height: 43; radius: root.style.radiusPill; color: selected ? root.style.surfaceFocused : root.style.surface; border.color: selected ? root.style.accent : root.style.border
-            AppText { style: root.style; anchors.centerIn: parent; text: modelData; color: selected ? root.style.accent : root.style.textSecondary; font.pixelSize: root.tabs.length > 2 ? root.style.font22 : root.style.font24; font.weight: (selected ) ? root.style.headingWeight : root.style.bodyWeight}
+            x: 44 + index * (884 / root.tabs.length); y: root.table ? 83 : 133; width: 884 / root.tabs.length - 12; height: 43; radius: root.style.radiusPill; color: selected ? root.style.surfaceFocused : root.style.surface; border.color: selected ? root.style.focusIndicator : root.style.border
+            AppText { style: root.style; anchors.centerIn: parent; text: modelData; color: selected ? root.style.accentTextOnFocused : root.style.textSecondary; font.pixelSize: root.tabs.length > 2 ? root.style.font22 : root.style.font24; font.weight: (selected ) ? root.style.headingWeight : root.style.bodyWeight}
         }
     }
     AppText { style: root.style; visible: table && dashboard.familyId !== "f1"; x: 44; y: 90; text: "PILOTI · " + (racingInfo.standingsLabel ? "DOPO " + racingInfo.standingsLabel : "CLASSIFICA DELLA STAGIONE"); color: root.style.textSecondary; font.pixelSize: root.style.font24 }
@@ -63,10 +63,10 @@ Item {
             required property int index
             readonly property bool selected: root.pageStart + index === dashboard.racingIndex
             x: 44; y: (root.programme || root.timing ? 195 : 148) + index * (root.programme || root.timing ? 97 : 111); width: 872; height: root.programme || root.timing ? 85 : 96; radius: root.style.radiusRow
-            color: selected ? root.style.surfaceFocused : root.style.surface; border.color: selected ? root.style.accent : root.style.border; border.width: selected ? root.style.focusWidth : root.style.hairlineWidth
+            color: selected ? root.style.surfaceFocused : root.style.surface; border.color: selected ? root.style.focusIndicator : root.style.border; border.width: selected ? root.style.focusWidth : root.style.hairlineWidth
             AppText { style: root.style; x: 18; y: 12; width: root.table || root.timing ? 670 : 827; text: root.table || root.timing ? (modelData.position || "—") + ".  " + modelData.name : modelData.name || ""; color: root.style.textPrimary; font.pixelSize: root.style.font29; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
             AppText { style: root.style; x: 18; y: 57; width: 827; text: root.table || root.timing ? modelData.team || "" : root.programme ? (modelData.when || "") + " · " + (modelData.statusText || "") : (modelData.when || "") + " · " + (modelData.circuit || ""); color: root.style.textSecondary; font.pixelSize: root.style.font22; elide: Text.ElideRight }
-            AppText { style: root.style; visible: root.table || root.timing; x: 688; y: 29; width: 167; horizontalAlignment: Text.AlignRight; text: modelData.value || "—"; color: root.style.accent; font.pixelSize: root.style.font29; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
+            AppText { style: root.style; visible: root.table || root.timing; x: 688; y: 29; width: 167; horizontalAlignment: Text.AlignRight; text: modelData.value || "—"; color: root.style.accentTextOnOverlay; font.pixelSize: root.style.font29; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
         }
     }
     AppText { style: root.style; visible: !settings && !detail && !infoPage && !root.rows.length; x: 44; y: 210; width: 872; text: root.programme ? "Programma non ancora pubblicato.\nAggiorna da Impostazioni › Dati e aggiornamenti." : "Dati non disponibili"; color: root.style.textSecondary; font.pixelSize: root.style.font29; wrapMode: Text.WordWrap }
@@ -79,10 +79,10 @@ Item {
             delegate: SelectableRow { style: root.style;
                 required property var modelData
                 required property int index
-                x: 0; y: index * 97; width: 872; height: 85; radius: root.style.radiusBadge; color: root.style.surface; border.color: parent.resultStart + index === dashboard.racingResultIndex ? root.style.accent : root.style.border; border.width: root.style.borderWidth
+                x: 0; y: index * 97; width: 872; height: 85; radius: root.style.radiusBadge; color: root.style.surface; border.color: parent.resultStart + index === dashboard.racingResultIndex ? root.style.focusIndicator : root.style.border; border.width: root.style.borderWidth
                 AppText { style: root.style; x: 18; y: 10; width: 644; text: (modelData.position || "—") + ".  " + modelData.name; color: root.style.textPrimary; font.pixelSize: root.style.font29; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
                 AppText { style: root.style; x: 18; y: 51; width: 642; text: (modelData.team || "") + (modelData.laps !== null && modelData.laps !== undefined ? " · " + modelData.laps + " giri" : ""); color: root.style.textSecondary; font.pixelSize: root.style.font21; elide: Text.ElideRight }
-                AppText { style: root.style; x: 668; y: 28; width: 186; horizontalAlignment: Text.AlignRight; text: modelData.value || "—"; color: root.style.accent; font.pixelSize: root.style.font28; elide: Text.ElideRight }
+                AppText { style: root.style; x: 668; y: 28; width: 186; horizontalAlignment: Text.AlignRight; text: modelData.value || "—"; color: root.style.accentTextOnOverlay; font.pixelSize: root.style.font28; elide: Text.ElideRight }
             }
         }
         AppText { style: root.style;
@@ -100,7 +100,7 @@ Item {
             delegate: SelectableRow { style: root.style;
                 required property var modelData
                 required property int index
-                x: 0; y: index * 97; width: 872; height: 85; radius: root.style.radiusBadge; color: root.style.surface; border.color: parent.start + index === root.infoIndex ? root.style.accent : root.style.border
+                x: 0; y: index * 97; width: 872; height: 85; radius: root.style.radiusBadge; color: root.style.surface; border.color: parent.start + index === root.infoIndex ? root.style.focusIndicator : root.style.border
                 AppText { style: root.style; x: 18; y: 7; width: 835; text: modelData.label; color: root.style.textSecondary; font.pixelSize: root.style.font20; elide: Text.ElideRight }
                 AppText { style: root.style; x: 18; y: 32; width: 835; height: 49; text: modelData.value; color: root.style.textPrimary; font.pixelSize: root.timing && dashboard.racingTimingPage === 2 ? root.style.font22 : root.style.font26; wrapMode: root.timing && dashboard.racingTimingPage === 2 ? Text.WordWrap : Text.NoWrap; maximumLineCount: 2; elide: Text.ElideRight }
             }
@@ -113,12 +113,12 @@ Item {
         delegate: SelectableRow { style: root.style;
             required property string modelData
             required property int index
-            x: 44; y: 136 + index * 88; width: 872; height: 75; radius: root.style.radiusRow; color: index === dashboard.racingSettingsIndex ? root.style.surfaceFocused : root.style.surface; border.color: index === dashboard.racingSettingsIndex ? root.style.accent : root.style.border; border.width: root.style.borderWidth
+            x: 44; y: 136 + index * 88; width: 872; height: 75; radius: root.style.radiusRow; color: index === dashboard.racingSettingsIndex ? root.style.surfaceFocused : root.style.surface; border.color: index === dashboard.racingSettingsIndex ? root.style.focusIndicator : root.style.border; border.width: root.style.borderWidth
             AppText { style: root.style; x: 18; anchors.verticalCenter: parent.verticalCenter; text: modelData; color: root.style.textPrimary; font.pixelSize: root.style.font29 }
-            AppText { style: root.style; x: 580; width: 274; anchors.verticalCenter: parent.verticalCenter; horizontalAlignment: Text.AlignRight; text: root.settingValue(index); color: root.style.accent; font.pixelSize: root.style.font28 }
+            AppText { style: root.style; x: 580; width: 274; anchors.verticalCenter: parent.verticalCenter; horizontalAlignment: Text.AlignRight; text: root.settingValue(index); color: root.style.accentTextOnOverlay; font.pixelSize: root.style.font28 }
         }
     }
     AppText { style: root.style; visible: settings; x: 44; y: 427; width: 872; text: dashboard.racingSettingsIndex === 2 ? "5 APRI DATI E AGGIORNAMENTI\nUn unico menu per aggiornare tutte le fonti." : "2/8 SELEZIONA · 4/6 REGOLA · 5 CAMBIA\nCalendario, risultati e classifiche salvati sul dispositivo."; color: root.style.textSecondary; font.pixelSize: root.style.font23; lineHeight: 1.4 }
     AppText { style: root.style; objectName: "racingFooter"; visible: !settings; x: 44; y: 551; width: 872; text: root.sourceFooter(); color: root.style.textSecondary; font.pixelSize: root.style.font21; elide: Text.ElideRight }
-    AppText { style: root.style; x: 44; y: 592; text: (root.tabs.length > 1 ? "4/6 SCHEDE · " : "") + (root.driver && !dashboard.racingDriverLive || root.detail && dashboard.racingDetailPage === 1 || root.programme && dashboard.racingEventPage > 0 ? "5 AGGIORNA · " : "") + "7 INDIETRO · 1 HOME"; color: root.style.accent; font.pixelSize: root.style.font23 }
+    AppText { style: root.style; x: 44; y: 592; text: (root.tabs.length > 1 ? "4/6 SCHEDE · " : "") + (root.driver && !dashboard.racingDriverLive || root.detail && dashboard.racingDetailPage === 1 || root.programme && dashboard.racingEventPage > 0 ? "5 AGGIORNA · " : "") + "7 INDIETRO · 1 HOME"; color: root.style.accentTextOnOverlay; font.pixelSize: root.style.font23 }
 }

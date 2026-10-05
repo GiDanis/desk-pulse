@@ -23,11 +23,11 @@ Item {
             y: 92+index*(root.listHeight/root.effectiveRows); width: root.width; height: root.listHeight/root.effectiveRows-10
             color: selected ? root.style.noticeFocusedSurface : root.style.surfaceColor
             radius: root.style.noticeRadius; border.color: selected ? root.style.noticeAccent : root.style.noticeBorder; border.width: selected ? root.context.style.focusWidth : root.style.noticeBorderWidth
-            NotificationText { id: title; style: root.style; role: "title"; x: root.style.padding; y: 8; width: parent.width-2*x; text: (modelData.seen ? "" : "●  ")+modelData.title; maximumLineCount: 1; elide: Text.ElideRight }
-            NotificationText { style: root.style; x: root.style.padding; y: title.y+title.height+Math.min(10,root.style.gap); width: parent.width-2*x; height: Math.max(0,parent.height-y-8); text: modelData.detail; maximumLineCount: 1; elide: Text.ElideRight }
+            NotificationText { id: title; focused: parent.selected; style: root.style; role: "title"; x: root.style.padding; y: 8; width: parent.width-2*x; text: (modelData.seen ? "" : "●  ")+modelData.title; maximumLineCount: 1; elide: Text.ElideRight }
+            NotificationText { focused: parent.selected; style: root.style; x: root.style.padding; y: title.y+title.height+Math.min(10,root.style.gap); width: parent.width-2*x; height: Math.max(0,parent.height-y-8); text: modelData.detail; maximumLineCount: 1; elide: Text.ElideRight }
             MouseArea { anchors.fill: parent; onClicked: { root.context.requestAction("selectEvent",modelData.id); root.context.requestAction("openDetails",modelData.id) } }
         }
     }
-    NotificationText { id: status; objectName: "notificationSource"; style: root.style; role: "source"; visible: root.style.showSource; y: guide.y-root.style.gap-height; width: root.width; text: (root.context.items.length ? "AVVISO "+(root.selectedIndex+1)+"/"+root.context.items.length+" · " : "")+"Fonte meteo: "+root.context.sourceStatus; maximumLineCount: 1; elide: Text.ElideRight }
+    NotificationText { id: status; objectName: "notificationSource"; style: root.style; role: "source"; visible: root.style.showSource; y: guide.y-root.style.gap-height; width: root.width; text: (root.context.items.length ? "AVVISO "+(root.selectedIndex+1)+"/"+root.context.items.length+" · " : "")+"Stato avvisi: "+root.context.sourceStatus; maximumLineCount: 1; elide: Text.ElideRight }
     NotificationText { id: guide; objectName: "notificationGuide"; style: root.style; role: "guide"; y: root.height-height-root.style.padding; width: root.width; text: root.context.guideText; maximumLineCount: 1; elide: Text.ElideRight }
 }

@@ -251,7 +251,11 @@ key(Qt.Key_Escape); service.cancel(); events.publish_snapshot('probe',[]); wait(
 report['cases'].append('inbox_selection_identity_during_refresh_and_density_change')
 
 # Guided editor and previews never touch real notification delivery or database.
-execute('pushOverlay("appearance")'); root.setProperty('optionIndex',19); key(Qt.Key_Return)
+execute('pushOverlay("appearance")')
+# This section exercises the retained compatibility editor, explicitly opened
+# from the new ordinary appearance menu.
+root.findChild(QObject,'settingsPanel').setProperty('advancedAppearance',True)
+root.setProperty('optionIndex',19); key(Qt.Key_Return)
 assert root.property('overlay')=='appearanceNotifications' and service.editing
 root.setProperty('optionIndex',9); old = service.resolvedAppearance['tokens']['notifications.small.titleSize']; key(Qt.Key_Right)
 assert service.resolvedAppearance['tokens']['notifications.small.titleSize']==old+2
