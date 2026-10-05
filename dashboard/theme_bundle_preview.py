@@ -60,7 +60,7 @@ def render_project(project, output, matrix=False, visible=False):
         from theme_contexts import default_snapshot
         from theme_api_contract import ThemeApiContract
         from theme_core import ThemeCatalog
-        from theme_bundle import validate_project, register_catalog
+        from theme_bundle import validate_project, register_catalog, DEFAULT_SHELL_LAYOUT
         project = Path(project).resolve(); output = Path(output).resolve()
         if output.exists() and any(output.iterdir()):
             raise ValueError('Cartella anteprime non vuota: scegliere una nuova destinazione')
@@ -69,6 +69,8 @@ def render_project(project, output, matrix=False, visible=False):
         if valid['status'] not in ('valid', 'passed', 'verified'):
             return {'reportVersion': 1, 'operation': 'preview', 'status': 'failed', 'validation': valid}
         registry = json.loads((project / 'visual-registry.json').read_text())
+        layout = deepcopy(valid['manifest'].get('layout', DEFAULT_SHELL_LAYOUT))
+        page_width, page_height = layout['content']['width'], layout['content']['height']
         app = QGuiApplication([])
         previous_handler = qInstallMessageHandler(lambda kind, context, message: messages.append(message))
         engine = QQmlApplicationEngine(); bootstrap_theme_api(engine)
@@ -116,6 +118,7 @@ def render_project(project, output, matrix=False, visible=False):
             for renderer in registry.get('presentations', []):
                 for surface in renderer['contentIds']:
                     type_name = contract.surfaces[surface]['context']
+                    host_family = contract.surfaces[surface]['hostFamily']
                     for variant, mode in pairs:
                         appearance = catalog.resolve(valid['id'], variant=variant)
                         for token, value in appearance['tokens'].items():
@@ -135,10 +138,11 @@ def render_project(project, output, matrix=False, visible=False):
                             snapshot.update(contentId=surface, style=deepcopy(style), appearanceRevision=1)
                             if 'motionPolicy' in contract.fields(type_name):
                                 snapshot['motionPolicy'].update(mode=mode, suspended=False, urgent=surface == 'alerts.urgent')
-                            if type_name == 'PageContext':
+                            if host_family in ('page', 'overlay'):
                                 snapshot['lifecycle'].update(state='active', active=True, interactive=False, preview=True, generation=1)
+                                snapshot['viewport'] = snapshot['safeArea'] = {'x': 0, 'y': 0, 'width': page_width if host_family == 'page' else 960, 'height': page_height if host_family == 'page' else 640}
+                            if type_name == 'PageContext':
                                 snapshot['clock'].update(timeText='23:59', dateText='DOMENICA 4 OTTOBRE 2026', timezone='Europe/Rome', locale='it_IT')
-                                snapshot['viewport'] = snapshot['safeArea'] = {'x': 0, 'y': 0, 'width': 872, 'height': 455}
                                 if case != 'normal':
                                     weather = default_snapshot('WeatherData')
                                     weather.update(location='Angri', description='Zero è un valore valido')
@@ -151,6 +155,7 @@ def render_project(project, output, matrix=False, visible=False):
                                 snapshot['lifecycle'].update(state='active', active=True, interactive=False, preview=True, generation=1)
                                 snapshot.update(currentFamilyId='oggi', currentViewId='ORA')
                                 snapshot['viewport'] = snapshot['safeArea'] = {'x': 0, 'y': 0, 'width': 960, 'height': 640}
+                                snapshot['layout'] = deepcopy(layout)
                             elif type_name == 'NotificationContext':
                                 snapshot.update(active=True, preview=True, ready=True, viewportWidth=960, viewportHeight=640, mode='large' if surface.endswith('large') else 'small')
                                 snapshot['visualStyle'].update(style)
@@ -170,11 +175,14 @@ def render_project(project, output, matrix=False, visible=False):
                             if not isinstance(item, QQuickItem):
                                 raise ValueError(renderer['file'] + ': ' + '\n'.join(error.toString() for error in component.errors()))
                             item.setParentItem(window.contentItem()); item.setParent(window)
-                            width, height = (872, 455) if type_name == 'PageContext' else (960, 640) if type_name == 'ShellContext' else (860, 340 if surface.endswith('large') else 92)
+                            if host_family == 'page' and 'layout' in valid['manifest']:
+                                item.setClip(True)
+                            width, height = (page_width, page_height) if host_family == 'page' else (960, 640) if host_family in ('shell', 'overlay') else (860, 340 if surface.endswith('large') else 92)
                             item.setSize(__import__('PySide6.QtCore', fromlist=['QSizeF']).QSizeF(width, height))
                             pump(120)
-                            if item.metaObject().indexOfProperty('ready') >= 0:
-                                assert item.property('ready') is True, renderer['file'] + ' non ready: ' + repr(messages) + repr([(c.metaObject().className(), c.property('text')) for c in item.findChildren(QObject) if c.metaObject().indexOfProperty('text') >= 0])
+                            assert item.metaObject().indexOfProperty('ready') >= 0, renderer['file'] + ' API2 senza ready'
+                            assert item.property('ready') is True, renderer['file'] + ' non ready: ' + repr(messages)
+                            assert item.property('contentReady') is not False, renderer['file'] + ' contentReady=false'
                             assert item.width() > 0 and item.height() > 0 and item.isVisible()
                             if item.metaObject().indexOfMethod('settleMotion()') >= 0:
                                 QMetaObject.invokeMethod(item, 'settleMotion')
@@ -189,7 +197,7 @@ def render_project(project, output, matrix=False, visible=False):
                             screenshot = f"{surface}-{variant}-{mode}-{case}.png"
                             if image.isNull() or not image.save(str(output / screenshot)):
                                 raise ValueError('Screenshot Qt non acquisito')
-                            rows.append({'surface': surface, 'renderer': renderer['id'], 'variant': variant, 'motion': mode, 'case': case, 'status': 'passed', 'screenshot': screenshot, 'contextType': type_name, 'geometry': [width, height], 'suspendedDecorationsStopped': True})
+                            rows.append({'surface': surface, 'renderer': renderer['id'], 'variant': variant, 'motion': mode, 'case': case, 'status': 'passed', 'screenshot': screenshot, 'contextType': type_name, 'geometry': [width, height], 'contentRect': deepcopy(layout['content']) if host_family == 'page' else None, 'suspendedDecorationsStopped': True})
                             item.setParentItem(None); item.deleteLater(); factory.release(context); context.deleteLater(); pump(10)
                         style_object.deleteLater(); pump(5)
             # All declared auxiliary renderers are executable payload too.
@@ -209,6 +217,8 @@ def render_project(project, output, matrix=False, visible=False):
                             snapshot['lifecycle'].update(state='active', active=True, preview=True)
                             snapshot['motionPolicy'].update(mode=mode, suspended=False, urgent=False)
                             snapshot['actor'].update(actorId='fixture.actor', pose='idle', locomotion='idle', paused=mode != 'normal', motionMode=mode)
+                            snapshot['viewport'] = {'x': 0, 'y': 0, 'width': 960, 'height': 640}
+                            snapshot['safeArea'] = deepcopy(layout['sceneSafeRegions'][0]) if descriptor.get('sceneMode') == 'actor' and layout['sceneSafeRegions'] else deepcopy(snapshot['viewport'])
                             assert factory.update(context, snapshot)
                             properties = {'context': context}
                         elif family == 'iconRenderers':
@@ -216,9 +226,17 @@ def render_project(project, output, matrix=False, visible=False):
                         component = QQmlComponent(engine, QUrl.fromLocalFile(str(project / descriptor['file'])))
                         item = component.createWithInitialProperties(properties)
                         assert item is not None, '\n'.join(error.toString() for error in component.errors())
+                        if family in ('sceneRenderers', 'iconRenderers'):
+                            assert isinstance(item, QQuickItem), descriptor['file'] + ' richiede un elemento visuale QQuickItem'
                         item.setParent(window)
                         if isinstance(item, QQuickItem):
-                            item.setParentItem(window.contentItem()); item.setWidth(36); item.setHeight(36)
+                            item.setParentItem(window.contentItem())
+                            if family == 'sceneRenderers':
+                                footprint = descriptor.get('footprint', {'width': 30, 'height': 30})
+                                size = (footprint['width'], footprint['height']) if descriptor.get('sceneMode') == 'actor' else (960, 640)
+                            else:
+                                size = (36, 36)
+                            item.setWidth(size[0]); item.setHeight(size[1])
                         if family == 'recipes':
                             target = QQuickItem(window.contentItem()); target.setParent(window); target.setOpacity(1)
                             engine.rootContext().setContextProperty('_themePreviewTarget', target)
@@ -226,7 +244,12 @@ def render_project(project, output, matrix=False, visible=False):
                                 'play(_themePreviewTarget, {motionMode:"' + mode + '",duration:60,exit:false,opacityFrom:0.6},1,false)')
                             expression.evaluate(); assert not expression.hasError(), expression.error().toString()
                         pump(100)
-                        if item.metaObject().indexOfProperty('ready') >= 0: assert item.property('ready') is True
+                        if family == 'sceneRenderers':
+                            assert item.metaObject().indexOfProperty('ready') >= 0, descriptor['file'] + ' API2 senza ready'
+                            assert item.property('ready') is True, descriptor['file'] + ' non ready'
+                            assert item.property('contentReady') is not False, descriptor['file'] + ' contentReady=false'
+                        elif item.metaObject().indexOfProperty('ready') >= 0:
+                            assert item.property('ready') is True
                         expression = QQmlExpression(QQmlEngine.contextForObject(item), item, 'settle()' if family == 'recipes' else 'settleMotion()')
                         expression.evaluate(); assert not expression.hasError(), expression.error().toString()
                         if context:
@@ -239,7 +262,7 @@ def render_project(project, output, matrix=False, visible=False):
                         if family == 'recipes':
                             assert item.property('running') is False and abs(target.opacity() - 1) < .001
                             target.deleteLater()
-                        auxiliary.append({'family': family, 'renderer': identifier, 'variant': variant, 'motion': mode, 'status': 'passed', 'settleVerified': True})
+                        auxiliary.append({'family': family, 'renderer': identifier, 'variant': variant, 'motion': mode, 'status': 'passed', 'settleVerified': True, 'geometry': [item.width(), item.height()] if isinstance(item, QQuickItem) else None})
                         if isinstance(item, QQuickItem): item.setParentItem(None)
                         item.deleteLater()
                         if context:

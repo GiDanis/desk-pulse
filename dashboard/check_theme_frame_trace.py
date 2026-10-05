@@ -1,5 +1,6 @@
 """Immutable identity, phase invalidation and conservative frame classification."""
 import dataclasses
+import json
 import os
 from pathlib import Path
 import threading
@@ -8,7 +9,7 @@ from unittest.mock import patch
 
 from PySide6.QtCore import Qt
 from theme_frame_trace import (FrameSubmission, FrameTicket, MotionStopProof, ThemeFrameTracker,
-                               _freeze, _thaw, classify_submission)
+                               _freeze, _thaw, _frozen_map_get, classify_submission)
 
 
 def snapshot(revision=1, request='one'):
@@ -24,6 +25,51 @@ def submission(value):
 
 
 class ClassifierTests(unittest.TestCase):
+    def test_flattened_map_exact_json_replay_matches_original_pair_codec(self):
+        # Independent copy of the original representation, to detect lost or
+        # type-coerced fields rather than mirroring the new implementation.
+        def old_freeze(value):
+            if isinstance(value, dict):
+                return ('__map__', tuple((key, old_freeze(item)) for key, item in sorted(value.items())))
+            if isinstance(value, (list, tuple)):
+                return ('__list__', tuple(old_freeze(item) for item in value))
+            return value
+        def old_thaw(value):
+            if not isinstance(value, tuple): return value
+            kind, items = value
+            return {key: old_thaw(item) for key, item in items} if kind == '__map__' else [old_thaw(item) for item in items]
+        payload = snapshot()
+        payload.update(emptyMap={}, emptyList=[], values=[False, 0, True, 1, 1.0, -0.0, None, 'Ω界', '__map__'],
+                       nested={'quote"': {'slash\\': [1, {'': 'zero key'}]}})
+        old_json = json.dumps(old_thaw(old_freeze(payload)), sort_keys=True, ensure_ascii=False, allow_nan=False)
+        copied = _freeze(payload)
+        self.assertEqual(json.dumps(_thaw(copied), sort_keys=True, ensure_ascii=False, allow_nan=False), old_json)
+        self.assertEqual(len(copied[1]), 2 * len(payload))
+        self.assertTrue(all(type(key) is str for key in copied[1][::2]))
+        self.assertEqual(_frozen_map_get(copied, 'requestId'), 'one')
+        self.assertEqual(_thaw(_frozen_map_get(copied, 'participants')), payload['participants'])
+        self.assertEqual(_frozen_map_get(copied, 'missing', 'fallback'), 'fallback')
+        payload['participants'][0]['instanceId'] = 'mutated'
+        payload['nested'].clear(); payload['values'].clear()
+        self.assertEqual(json.dumps(_thaw(copied), sort_keys=True, ensure_ascii=False, allow_nan=False), old_json)
+        with self.assertRaises(TypeError): copied[1][0] = 'mutated'
+
+    def test_flattened_map_retains_exact_node_and_shape_limits(self):
+        accepted = [[None] * 255 for index in range(16)]
+        accepted[-1].pop()  # root + 16 lists + 4079 scalar leaves =4096nodes
+        budget = [4096]
+        self.assertEqual(_thaw(_freeze(accepted, budget=budget)), accepted)
+        self.assertEqual(budget, [0])
+        accepted[-1].append(None)
+        with self.assertRaisesRegex(ValueError, '4096 nodes'): _freeze(accepted)
+        for value in ([None] * 257, {str(i): i for i in range(257)}, {'a': 'x' * 1025}, {1: 'bad key'}):
+            with self.subTest(kind=type(value).__name__):
+                with self.assertRaises(ValueError): _freeze(value)
+        nested = None
+        for index in range(16): nested = {'a': nested}
+        self.assertEqual(_thaw(_freeze(nested)), nested)
+        with self.assertRaisesRegex(ValueError, 'nesting exceeds 16'): _freeze({'a': nested})
+
     def test_snapshot_frozen_before_mutation_and_aba_identity(self):
         current = snapshot()
         frozen = submission(current)

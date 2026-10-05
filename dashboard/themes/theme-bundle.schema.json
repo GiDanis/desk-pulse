@@ -211,6 +211,49 @@
           "alias"
         ]
       }
+    },
+    "layout": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "header": {
+          "$ref": "#/$defs/viewportRect"
+        },
+        "content": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/viewportRect"
+            },
+            {
+              "properties": {
+                "width": {
+                  "exclusiveMinimum": 0
+                },
+                "height": {
+                  "exclusiveMinimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "guide": {
+          "$ref": "#/$defs/viewportRect"
+        },
+        "sceneSafeRegions": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/viewportRect"
+          }
+        }
+      },
+      "required": [
+        "header",
+        "content",
+        "guide",
+        "sceneSafeRegions"
+      ],
+      "description": "Author-owned shell geometry in the 960x640 viewport. Semantic validator additionally checks x+width and y+height bounds; built-in page fallbacks retain original geometry."
     }
   },
   "required": [
@@ -231,5 +274,61 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:smartpc:theme-bundle:1",
   "title": "SmartPC trusted visual theme bundle format1",
-  "description": "Semantic validation additionally checks exact44surface coverage, namespaces, Qt compatibility, resources and contrast."
+  "description": "Semantic validation additionally checks exact44surface coverage, namespaces, Qt compatibility, resources and contrast.",
+  "$defs": {
+    "viewportRect": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 960
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 640
+        },
+        "width": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 960
+        },
+        "height": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 640
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "layout"
+        ]
+      },
+      "then": {
+        "properties": {
+          "coverage": {
+            "properties": {
+              "surfaces": {
+                "contains": {
+                  "const": "shell.main"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

@@ -33,11 +33,58 @@ MAX_MANIFEST_BYTES = 128 * 1024
 REQUIRED = {'bundle.json', 'theme.json', 'visual-registry.json'}
 ALLOWED_SUFFIXES = {'.json', '.qml', '.qmltypes', '.js', '.mjs', '.ttf', '.otf', '.woff', '.woff2',
                     '.png', '.jpg', '.jpeg', '.svg', '.webp', '.gif', '.txt', '.md', '.license'}
+DATA_SUFFIXES = {'.json', '.txt', '.qmltypes'}
+NON_VISUAL_CODE_SUFFIXES = {
+    '.so', '.dll', '.dylib', '.exe', '.elf', '.com', '.o', '.a', '.pyd', '.sys', '.drv',
+    '.msi', '.msp', '.deb', '.rpm', '.apk', '.appimage', '.run', '.whl', '.jar', '.class',
+    '.py', '.pyc', '.pyo', '.sh', '.bash', '.zsh', '.fish', '.bat', '.cmd', '.desktop',
+    '.ps1', '.psm1', '.vbs', '.scr', '.wsf', '.wsh', '.ahk', '.pl', '.rb', '.php', '.lua',
+    '.c', '.cc', '.cpp', '.h', '.hpp', '.rs', '.go', '.java', '.ts', '.tsx', '.jsx', '.wasm',
+}
 REGISTRY_FIELDS = {'registryVersion', 'presentations', 'recipes', 'iconRenderers', 'sceneRenderers', 'iconSets'}
 MANIFEST_FIELDS = {'bundleFormat', 'id', 'version', 'name', 'engineApi', 'contextApis', 'targetProfile',
-                   'qtMinimum', 'qtModules', 'coverage', 'adjustments', 'trust', 'resources', 'extendedTokens'}
+                   'qtMinimum', 'qtModules', 'coverage', 'adjustments', 'trust', 'resources', 'extendedTokens', 'layout'}
 CONTEXT_APIS = {'page': 2, 'notification': 1, 'shell': 1, 'overlay': 1, 'scene': 1, 'icon': 1, 'motion': 1}
 RESOURCE_TYPES = {'qml', 'js', 'font', 'image', 'data', 'license', 'preview'}
+DEFAULT_SHELL_LAYOUT = {
+    'header': {'x': 0, 'y': 0, 'width': 960, 'height': 90},
+    'content': {'x': 44, 'y': 90, 'width': 872, 'height': 455},
+    'guide': {'x': 44, 'y': 558, 'width': 872, 'height': 56},
+    'sceneSafeRegions': [
+        {'x': 0, 'y': 90, 'width': 32, 'height': 455},
+        {'x': 928, 'y': 90, 'width': 32, 'height': 455},
+    ],
+}
+
+
+def validate_layout(layout):
+    """Validate author geometry before it can influence app-owned hosts.
+
+    Rectangles use physical viewport coordinates; individual page contexts use
+    a local (0, 0) viewport with the selected content rectangle's dimensions.
+    Zero-sized header/guide regions allow a shell to integrate those visuals.
+    """
+    require(isinstance(layout, dict) and set(layout) == set(DEFAULT_SHELL_LAYOUT),
+            'layout', 'header/content/guide/sceneSafeRegions richiesti senza campi extra')
+    def rectangle(value, path, positive=False):
+        require(isinstance(value, dict) and set(value) == {'x', 'y', 'width', 'height'},
+                path, 'rettangolo x/y/width/height richiesto')
+        for name, maximum in (('x', 960), ('y', 640), ('width', 960), ('height', 640)):
+            number = value[name]
+            require(type(number) in (int, float) and 0 <= number <= maximum and math.isfinite(number),
+                    path + '.' + name, 'numero finito non negativo entro viewport richiesto')
+        require(value['x'] + value['width'] <= 960 and value['y'] + value['height'] <= 640,
+                path, 'rettangolo fuori dal viewport 960×640')
+        if positive:
+            require(value['width'] > 0 and value['height'] > 0, path, 'area contenuto positiva richiesta')
+    for name in ('header', 'content', 'guide'):
+        rectangle(layout[name], 'layout.' + name, name == 'content')
+    regions = layout['sceneSafeRegions']
+    require(isinstance(regions, list) and len(regions) <= 64,
+            'layout.sceneSafeRegions', 'lista di massimo 64 rettangoli richiesta')
+    for index, region in enumerate(regions):
+        rectangle(region, 'layout.sceneSafeRegions.' + str(index))
+    return deepcopy(layout)
 
 
 def canonical_bytes(value):
@@ -105,6 +152,22 @@ def manager_lock(root):
 def _inventory(root, *, allow_integrity=True):
     root = Path(root).resolve()
     require(root.is_dir(), 'source', 'cartella richiesta')
+    manifest_path = root / 'bundle.json'
+    require(manifest_path.exists(), 'bundle.json', 'manifest mancante')
+    manifest_mode = manifest_path.lstat()
+    require(stat.S_ISREG(manifest_mode.st_mode) and manifest_mode.st_nlink == 1,
+            'bundle.json', 'manifest regolare senza link richiesto')
+    require(manifest_mode.st_size <= MAX_MANIFEST_BYTES, 'bundle.json', 'manifest troppo grande')
+    try:
+        descriptor = os.open(manifest_path, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0))
+    except OSError as error:
+        raise ThemeError('bundle.json', 'manifest regolare senza link richiesto') from error
+    with os.fdopen(descriptor, 'rb') as stream:
+        opened_mode = os.fstat(stream.fileno())
+        require(stat.S_ISREG(opened_mode.st_mode) and opened_mode.st_nlink == 1,
+                'bundle.json', 'manifest regolare senza link richiesto')
+        require(opened_mode.st_size <= MAX_MANIFEST_BYTES, 'bundle.json', 'manifest troppo grande')
+        opaque_paths = _declared_visual_data(stream.read(MAX_MANIFEST_BYTES + 1))
     entries, normalized, total = {}, set(), 0
     for parent, directories, files in os.walk(root, followlinks=False):
         for name in directories:
@@ -119,7 +182,7 @@ def _inventory(root, *, allow_integrity=True):
             normalized.add(key)
             mode = path.lstat()
             require(stat.S_ISREG(mode.st_mode) and mode.st_nlink == 1, relative, 'link/file speciale non supportato')
-            require(path.suffix.lower() in ALLOWED_SUFFIXES, relative, 'tipo file non consentito')
+            _validate_file_suffix(relative, opaque_paths)
             require(mode.st_size <= MAX_FILE_BYTES, relative, 'file troppo grande')
             total += mode.st_size
             require(total <= MAX_PAYLOAD_BYTES, 'payload', 'budget complessivo superato')
@@ -128,10 +191,53 @@ def _inventory(root, *, allow_integrity=True):
                 require(allow_integrity, relative, 'inventario generato dal builder')
                 continue
             with path.open('rb') as stream:
+                if path.suffix.lower() not in ALLOWED_SUFFIXES:
+                    _validate_opaque_header(stream.read(16), relative)
+                    stream.seek(0)
                 digest = hashlib.file_digest(stream, 'sha256').hexdigest()
             entries[relative] = {'sha256': digest, 'bytes': mode.st_size}
     require(REQUIRED <= set(entries), 'payload', 'manifest o registry mancante')
     return entries
+
+
+def _declared_visual_data(contents):
+    """Read only bounded declarations; full manifest validation follows later."""
+    require(len(contents) <= MAX_MANIFEST_BYTES, 'bundle.json', 'manifest troppo grande')
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            require(key not in result, 'bundle.json', 'chiave JSON duplicata')
+            result[key] = value
+        return result
+    try:
+        manifest = json.loads(contents.decode('utf-8'), object_pairs_hook=unique)
+    except (ValueError, UnicodeError) as error:
+        raise ThemeError('bundle.json', 'JSON non valido') from error
+    require(isinstance(manifest, dict), 'bundle.json', 'manifest oggetto richiesto')
+    resources = manifest.get('resources', [])
+    require(isinstance(resources, list) and len(resources) <= MAX_FILES, 'resources', 'inventario risorse non valido')
+    paths = set()
+    for resource in resources:
+        require(isinstance(resource, dict), 'resources', 'descrittore risorsa non valido')
+        if resource.get('type') == 'data':
+            paths.add(relative_path(resource.get('path')))
+    return paths
+
+
+def _validate_file_suffix(relative, opaque_paths):
+    path = Path(relative)
+    require(not {suffix.lower() for suffix in path.suffixes} & NON_VISUAL_CODE_SUFFIXES,
+            relative, 'codice nativo/script/installatore non consentito')
+    require(path.suffix.lower() in ALLOWED_SUFFIXES or relative in opaque_paths,
+            relative, 'tipo file non consentito: dati visuali opachi richiedono dichiarazione data')
+
+
+def _validate_opaque_header(header, relative):
+    # This prevents common renamed executable payloads, not arbitrary code or
+    # malicious author QML. The trusted author-code model remains unchanged.
+    magic = (b'\x7fELF', b'MZ', b'#!', b'\xfe\xed\xfa\xce', b'\xce\xfa\xed\xfe',
+             b'\xfe\xed\xfa\xcf', b'\xcf\xfa\xed\xfe', b'\xca\xfe\xba\xbe', b'\xbe\xba\xfe\xca')
+    require(not header.startswith(magic), relative, 'eseguibile rinominato non consentito come dato visuale')
 
 
 def payload_digest(entries):
@@ -190,6 +296,9 @@ def _manifest(value, root, profile=None):
     own, fallback = set(coverage['surfaces']), set(coverage['fallbacks'])
     require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
     require(coverage['mode'] != 'complete' or not fallback, 'coverage', 'copertura completa non ammette fallback')
+    if 'layout' in value:
+        require('shell.main' in own, 'layout', 'layout personalizzato richiede shell.main di proprietà del tema')
+        validate_layout(value['layout'])
     resources = value['resources']
     require(isinstance(resources, list) and len(resources) <= MAX_FILES, 'resources', 'inventario risorse non valido')
     ids, paths = set(), set()
@@ -399,8 +508,12 @@ def validate_project(project, app_root=ROOT, profile=None, *, check_integrity=Fa
         suffix = path.suffix.lower()
         expected = {'qml': {'.qml'}, 'js': {'.js', '.mjs'}, 'font': {'.ttf', '.otf', '.woff', '.woff2'},
                     'image': {'.png', '.jpg', '.jpeg', '.svg', '.webp', '.gif'}, 'preview': {'.png', '.jpg', '.jpeg', '.svg', '.webp'},
-                    'license': {'.txt', '.md', '.license'}, 'data': {'.json', '.txt', '.qmltypes'}}
-        require(suffix in expected[resource['type']], resource['path'], 'tipo risorsa/estensione incompatibili')
+                    'license': {'.txt', '.md', '.license'}, 'data': DATA_SUFFIXES}
+        if resource['type'] == 'data':
+            require(suffix in DATA_SUFFIXES or suffix not in ALLOWED_SUFFIXES,
+                    resource['path'], 'tipo risorsa/estensione incompatibili: codice/font/immagini richiedono tipo specifico')
+        else:
+            require(suffix in expected[resource['type']], resource['path'], 'tipo risorsa/estensione incompatibili')
         if resource['type'] in ('image', 'preview'):
             image_bytes += _image_budget(path)
             require(image_bytes <= MAX_IMAGE_BYTES, 'resources', 'budget complessivo pixel superato')
@@ -462,6 +575,20 @@ def register_catalog(catalog, revision):
     revisions = getattr(catalog, 'bundle_revisions', {})
     revisions[manifest['id']] = {k: deepcopy(revision[k]) for k in ('id', 'version', 'digest')}
     catalog.bundle_revisions = revisions
+    metadata = getattr(catalog, 'bundle_metadata', {})
+    metadata[manifest['id']] = deepcopy(manifest)
+    catalog.bundle_metadata = metadata
+    revision_metadata = getattr(catalog, 'bundle_revision_metadata', {})
+    revision_metadata[key] = deepcopy(manifest)
+    catalog.bundle_revision_metadata = revision_metadata
+    layouts = getattr(catalog, 'bundle_layouts', {})
+    # Registration of another revision of the same ID must also clear an old
+    # custom layout when the newly selected manifest omits it.
+    if 'layout' in manifest:
+        layouts[manifest['id']] = validate_layout(manifest['layout'])
+    else:
+        layouts.pop(manifest['id'], None)
+    catalog.bundle_layouts = layouts
 
 
 def generate_extended_facade(manifest):
@@ -562,11 +689,16 @@ def _extract_archive(source, destination):
             require(stat.S_IFMT(mode) in (0, stat.S_IFREG), path, 'link/file speciale non supportato')
             require(not info.flag_bits & 1, path, 'archivio cifrato non supportato')
             require(info.compress_type in (zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED), path, 'compressione non supportata')
-            require(Path(path).suffix.lower() in ALLOWED_SUFFIXES, path, 'tipo file non consentito')
             require(info.file_size <= MAX_FILE_BYTES, path, 'file troppo grande')
             total += info.file_size
             require(total <= MAX_PAYLOAD_BYTES, 'archive', 'budget espanso superato')
         require(REQUIRED | {'integrity.json'} <= {i.filename for i in entries}, 'archive', 'payload incompleto')
+        manifest_info = next(info for info in entries if info.filename == 'bundle.json')
+        require(manifest_info.file_size <= MAX_MANIFEST_BYTES, 'bundle.json', 'manifest troppo grande')
+        with archive.open(manifest_info) as stream:
+            opaque_paths = _declared_visual_data(stream.read(MAX_MANIFEST_BYTES + 1))
+        for info in entries:
+            _validate_file_suffix(info.filename, opaque_paths)
         require(shutil.disk_usage(destination.parent).free >= total + MAX_PAYLOAD_BYTES,
                 'storage', 'spazio insufficiente per staging e precedente')
         for info in entries:
@@ -581,6 +713,8 @@ def _extract_archive(source, destination):
                         break
                     written += len(chunk)
                     require(written <= info.file_size and written <= MAX_FILE_BYTES, info.filename, 'dimensione espansa incoerente')
+                    if written == len(chunk) and Path(info.filename).suffix.lower() not in ALLOWED_SUFFIXES:
+                        _validate_opaque_header(chunk[:16], info.filename)
                     output.write(chunk)
                 output.flush()
                 os.fsync(output.fileno())

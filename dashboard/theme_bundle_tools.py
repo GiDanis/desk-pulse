@@ -34,6 +34,12 @@ def issue(code, message, **detail):
     return {'code': code, 'message': message, **detail}
 
 
+def parse_identity(value):
+    match=re.fullmatch(r'(.+)@([0-9]+\.[0-9]+\.[0-9]+)#([0-9a-f]{64})',value)
+    if not match: raise ValueError('Identity richiesta: ID@VERSION#DIGEST')
+    return dict(zip(('id','version','digest'),match.groups()))
+
+
 def initialize(destination, identifier='studio.personal', name='Tema personale', *, example=EXAMPLE):
     """A runnable project with explicit coverage, never a pretend full renderer set."""
     from theme_core import ThemeError
@@ -210,6 +216,9 @@ def main(argv=None):
     kit = commands.add_parser('kit'); kit.add_argument('destination', type=Path); kit.add_argument('--profile', type=Path)
     info = commands.add_parser('inspect'); info.add_argument('archive', type=Path)
     receive = commands.add_parser('import'); receive.add_argument('project', type=Path); receive.add_argument('--store', type=Path, required=True, help='Application data root containing theme-bundles; does not apply the theme')
+    listing=commands.add_parser('list'); listing.add_argument('--store',type=Path,required=True)
+    removal=commands.add_parser('remove'); removal.add_argument('identity'); removal.add_argument('--store',type=Path,required=True)
+    collection=commands.add_parser('gc'); collection.add_argument('--store',type=Path,required=True); collection.add_argument('--keep',type=int,default=2)
     transfer = commands.add_parser('transfer'); transfer.add_argument('archive', type=Path); transfer.add_argument('--board', required=True); transfer.add_argument('--identity', type=Path)
     export = commands.add_parser('export'); export.add_argument('identity'); export.add_argument('destination', type=Path); export.add_argument('--store', type=Path, required=True)
     args = parser.parse_args(argv)
@@ -238,11 +247,18 @@ def main(argv=None):
             from theme_runtime import preflight
             revision=BundleManager(args.store,app_root=ROOT).import_bundle(args.project,preflight=preflight,require_preflight=True)
             report={'reportVersion':1,'operation':'import','status':'imported','revision':revision,'applied':False,'verification':{'preflight':'passed','boardEglfs':'notVerified'}}
+        elif args.command == 'list':
+            from theme_bundle import BundleManager
+            rows=BundleManager(args.store,app_root=ROOT).list_revisions(include_quarantined=True)
+            report={'reportVersion':1,'operation':'list','status':'listed','revisions':[{key:row[key] for key in ('id','version','digest','quarantined')} for row in rows]}
+        elif args.command in ('remove','gc'):
+            from theme_lifecycle import LifecycleManager
+            manager=LifecycleManager(args.store,app_root=ROOT)
+            result=manager.remove(parse_identity(args.identity)) if args.command == 'remove' else manager.gc(keep_per_theme=args.keep)
+            report={'reportVersion':1,'operation':args.command,'status':'completed',**result}
         elif args.command == 'export':
             from theme_bundle import BundleManager
-            match = re.fullmatch(r'(.+)@([0-9]+\.[0-9]+\.[0-9]+)#([0-9a-f]{64})', args.identity)
-            if not match: raise ValueError('Identity richiesta: ID@VERSION#DIGEST')
-            identity = dict(zip(('id', 'version', 'digest'), match.groups()))
+            identity = parse_identity(args.identity)
             report = BundleManager(args.store).export_bundle(identity, args.destination)
         elif args.command == 'transfer':
             from theme_transfer import BoardTransport

@@ -107,7 +107,8 @@ import SmartPC.ThemeApi 2.0
 Rectangle {
     id: root
     required property NotificationContext context
-    readonly property bool ready: title.width > 0 && body.width > 0
+    property bool injectedReady: true
+    readonly property bool ready: injectedReady && title.width > 0 && body.width > 0
     readonly property bool contentReady: ready
     readonly property string error: ""
     readonly property var mandatoryRegions: [{role:"title",x:16,y:12,width:title.width,height:title.height}, {role:"body",x:16,y:52,width:body.width,height:body.height}]
@@ -212,11 +213,26 @@ def test_notifications(revision):
     assert SERVICE.editing and SERVICE.draft['overrides']['tokens']['shape.radiusCard']==8
     assert hosts['detail'].property('preempted') and not hosts['detail'].property('show')
     assert public_context(hosts['urgent']).property('eventData').property('id')==as_value(ROOT_ITEM.property('urgentEvent'))['id']
+    # A committed renderer can lose readiness without disappearing. The built-in
+    # urgent visual must become available immediately, before supervisor recovery.
+    urgent_item=as_value(hosts['urgent'].property('currentItem'))
+    urgent_identity=as_value(ROOT_ITEM.property('urgentEvent'))['id']
+    deadline=EVENTS._banner_until
+    assert urgent_item.setProperty('injectedReady',False)
+    APP.processEvents()
+    assert not hosts['urgent'].property('currentReady')
+    assert hosts['urgent'].property('urgentFallbackActive')
+    assert as_value(hosts['urgent'].property('currentItem')) is urgent_item
+    assert as_value(ROOT_ITEM.property('urgentEvent'))['id']==urgent_identity
+    assert EVENTS._banner_until==deadline
+    assert urgent_item.setProperty('injectedReady',True)
+    APP.processEvents()
+    assert not hosts['urgent'].property('urgentFallbackActive')
     assert not evaluate('notificationAction("detail", "scrollDetails", selectedAlert.id, {offset:100})')
     assert WINDOW.activeFocusItem().objectName()=='inputOwner'
     EVENTS.set_demo_scenario('nessuno'); SERVICE.cancel(); pump()
     ROOT_ITEM.setProperty('overlay',''); wait_ready(APP, ROOT_ITEM)
-    return ['six-api2-contexts','small-large-event-identities','timer-deadline-retained','badge-unread','inbox-model','detail-identity','urgent-during-preview','nonurgent-action-preempted','input-focus']
+    return ['six-api2-contexts','small-large-event-identities','timer-deadline-retained','badge-unread','inbox-model','detail-identity','urgent-during-preview','urgent-readiness-loss-immediate-fallback','urgent-identity-deadline-retained','nonurgent-action-preempted','input-focus']
 
 
 def test_scene(revision):

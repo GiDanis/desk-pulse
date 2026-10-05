@@ -331,4 +331,6 @@ class ThemeCatalog:
                     descriptor['sourceUrl']=path.as_uri()
                     descriptor.setdefault('rendererKey','app:'+descriptor['file'])
         resolved['parents']=[{'id':p['id'],'version':p['version']} for p in chain]
+        if identifier in getattr(self, 'bundle_layouts', {}):
+            resolved['layout'] = deepcopy(self.bundle_layouts[identifier])
         return resolved

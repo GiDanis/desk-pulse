@@ -31,12 +31,19 @@
           "level": "pcMainRuntime",
           "scope": "MenuContext esterno, modello/azioni reali e readiness prima del primo frame.",
           "observedStatus": "passed"
+        },
+        {
+          "path": "local/final-integration/layout-ui.json",
+          "level": "pcMainRuntime",
+          "scope": "10 controlli del layout negoziato/Main reale: viewport public/full canvas, clipping, fallback legacy, focus e cancel/apply.",
+          "observedStatus": "passed"
         }
       ],
       "verifiedSubcases": [
         "Bundle Studio Ambient importato con preflight reale e applicato in store privato.",
         "Home, shell e small/large propri; quattro notifiche aggiuntive e menu esterno esercitati nei fixture Main.",
-        "Codice pubblico privo di controller/actionHandler privati nei renderer supplementari."
+        "Codice pubblico privo di controller/actionHandler privati nei renderer supplementari.",
+        "Layout manifest applicato alle pagine API2 senza ridimensionare i fallback legacy."
       ],
       "remainingVariants": [
         "Installazione pulita sulla board con hash /opt/core prima/dopo import/apply e primo avvio offline.",
@@ -407,12 +414,19 @@
           "level": "pcLegacyRuntime",
           "scope": "8 profili, 136 scenari ciascuno, 14 regressioni risolte; zero warning; corsia legacy distinta da API2.",
           "observedStatus": "passed"
+        },
+        {
+          "path": "local/final-integration/urgent-readiness.json",
+          "level": "pcMainRuntime",
+          "scope": "11 controlli notifiche con sei API2, timer/identità e perdita readiness urgente; zero warning.",
+          "observedStatus": "passed"
         }
       ],
       "verifiedSubcases": [
         "Sei NotificationContext API2 realmente caricati nel Main.",
         "ID small/large/detail/urgent, unread badge, inbox typed model, frame ack e deadline8s verificati.",
-        "Legacy normal/reduced/off, Unicode/testi lunghi, stale callback, not-ready, preview senza effetti DB e urgente freddo passano."
+        "Legacy normal/reduced/off, Unicode/testi lunghi, stale callback, not-ready, preview senza effetti DB e urgente freddo passano.",
+        "Perdita readiness del visuale urgente gestita immediatamente dal fallback app."
       ],
       "remainingVariants": [
         "Sei nuovi renderer API2 × normal/reduced/off × testi massimi × font differenti sul dispositivo, inclusi badge/inbox/detail.",
@@ -445,11 +459,18 @@
           "level": "pcMainRuntime",
           "scope": "Errore esplicito della scena API2 attiva: Base/quarantena con eventi/prefs/focus conservati.",
           "observedStatus": "passed"
+        },
+        {
+          "path": "local/final-integration/urgent-readiness.json",
+          "level": "pcMainRuntime",
+          "scope": "Perdita readiness dell’urgente committato: fallback immediato, deadline e identità conservate, focus/preemption.",
+          "observedStatus": "passed"
         }
       ],
       "verifiedSubcases": [
         "Evento urgente sintetico durante preview non applicata preempie dettaglio e rifiuta azioni non urgenti.",
-        "Fallback urgente freddo e urgente durante staging legacy verificati; inputOwner conservato."
+        "Fallback urgente freddo e urgente durante staging legacy verificati; inputOwner conservato.",
+        "Il fallback urgente non attende il recupero supervisionato del processo."
       ],
       "remainingVariants": [
         "Urgente proveniente da provider reale durante import worker/staging/Apply e scena animata sul dispositivo.",
@@ -600,11 +621,18 @@
           "level": "pcUnitAndRuntime",
           "scope": "Suite nuove contratto/core/bundle/SDK/preflight/font/icone/tracing; contiene anche esito iniziale e rerun mirato.",
           "observedStatus": "passed"
+        },
+        {
+          "path": "local/final-integration/adjustments.log",
+          "level": "pcUnitAndMainRuntime",
+          "scope": "4 test: allowlist exact revision, vecchi override rimossi, global Off/Reduced, getter senza I/O, Main UI e coverage. Ack unitari simulati esplicitamente.",
+          "observedStatus": "passed"
         }
       ],
       "verifiedSubcases": [
         "A/B/ritorno schema1 e nuova revisione immutabile conservano profili separati; annulla non committa override.",
-        "Ricostruzione del servizio recupera preferenze; errore salvataggio/journal ripristina profili precedenti."
+        "Ricostruzione del servizio recupera preferenze; errore salvataggio/journal ripristina profili precedenti.",
+        "Palette/scala testo rispettano la revisione; una scala precedente non consentita non viene ereditata."
       ],
       "remainingVariants": [
         "Accessibilità globale textScale/motion/palette attraverso A→B→updateB→ritornoA sul dispositivo, inclusi draft/riavvio.",
@@ -643,11 +671,18 @@
           "level": "pcMainAdapters",
           "scope": "Payload del Main reale normalizzati per 44 superfici/16 famiglie, controlli semantici e nessun effetto provider/eventi.",
           "observedStatus": "passed"
+        },
+        {
+          "path": "local/final-integration/layout-ui.json",
+          "level": "pcMainRuntime",
+          "scope": "Area sicura attore e sospensione senza regione compatibile, negoziazione full canvas/cancel; gli altri overlay rimangono sotto i gate esistenti.",
+          "observedStatus": "passed"
         }
       ],
       "verifiedSubcases": [
         "Identità ActorState preservata fra swap/collisione completa/unblock e layout legacy.",
-        "Scena API2 carica il contesto pubblico; fault e first-frame guard preservano stato funzionale/focus."
+        "Scena API2 carica il contesto pubblico; fault e first-frame guard preservano stato funzionale/focus.",
+        "Aree sicure del manifest governano l’attore; assenza di spazio compatibile sospende la locomozione decorativa."
       ],
       "remainingVariants": [
         "Scena API2 con tutti gli overlay/notifiche e cambi skin/revisione; ingombri effettivi e pose/sequenze ActorState senza reset.",

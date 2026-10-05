@@ -90,7 +90,7 @@ Window {
         const scene = sceneHost.traceParticipant(app)
         participants.push(scene); moving = moving || scene.motionRunning
         return {revision:revision,requestId:traceRecorder.requestForRevision(revision),
-            candidatePending:!!(themeService && themeService.candidateAppearance.generation),sceneGraphValid:true,
+            candidatePending:!!(themeService && themeCandidate.generation),sceneGraphValid:true,
             motionRunning:moving,participants:participants,route:overlay,inputFocus:activeFocusItem ? activeFocusItem.objectName : ""}
     }
     Connections { target: app.traceRecorder ? app.style : null
@@ -111,13 +111,15 @@ Window {
     readonly property string activeContentId: familyId === "oggi" ? (viewIndex[0] === 0 ? "home.now" : "home.day") : familyId === "meteo" ? (viewIndex[1] === 0 ? "weather.now" : "weather.forecast") : familyId === "account" ? "account.usage" : familyId === "sport" ? (sportView === "LA MIA SQUADRA" ? "sport.team" : "sport.overview") : "racing.overview"
     onActiveContentIdChanged: { if (traceRecorder) traceRecorder.traceEvent("navigation.content",{surfaceId:activeContentId}); if (themeService) themeService.setActiveContent(activeContentId) }
     readonly property var themeService: dashboardState ? dashboardState.appearance : null
+    readonly property var themeCandidate: themeService ? themeService.candidateAppearance : ({})
+    readonly property bool themePreparing: !!themeCandidate.generation
 
     readonly property var publicRoutes: {"alertDetail": "alerts.detail", "alerts": "alerts.inbox", "info": "device.info", "commands": "overlay.commands", "menu": "overlay.menu", "detail": "overlay.summary", "racingList": "racing.calendar", "racingDriver": "racing.driver.detail", "racingEvent": "racing.event.detail", "racingTiming": "racing.live", "racingSession": "racing.session.detail", "racingTable": "racing.standings", "accountSettings": "settings.account", "appearance": "settings.appearance", "appearanceNotifications": "settings.appearance.notifications", "system": "settings.display", "settings": "settings.index", "integrations": "settings.integrations", "modules": "settings.modules", "notifications": "settings.notifications", "notificationCategories": "settings.notifications.categories", "notificationQuiet": "settings.notifications.quiet", "racingSettings": "settings.racing", "sources": "settings.sources", "sportSettings": "settings.sport", "sportList": "sport.fixtures", "sportDetail": "sport.match.detail", "sportTable": "sport.standings", "sportTeam": "sport.team.detail", "sportTeamPicker": "sport.team.picker"}
     readonly property string overlayContentId: publicRoutes[overlay] || ""
     function restoreInputFocus() { inputOwner.forceActiveFocus() }
     function hasCandidateSurface(surfaceId) {
         if (!themeService || !surfaceId) return false
-        const snapshot=themeService.candidateAppearance
+        const snapshot=themeCandidate
         if (!snapshot.generation) return false
         const descriptor=snapshot.presentationRegistry[snapshot.presentations[surfaceId]]
         return !!descriptor && descriptor.apiVersion === 2
@@ -127,6 +129,18 @@ Window {
         const id = style.appearance.presentations[surfaceId]
         const descriptor = style.appearance.presentationRegistry[id]
         return !!descriptor && descriptor.apiVersion === 2
+    }
+    readonly property var negotiatedLayout: style.appearance && hasExternalSurface("shell.main") ? style.appearance.layout || null : null
+    function pageGeometry(surfaceId) {
+        const area = negotiatedLayout && hasExternalSurface(surfaceId) ? negotiatedLayout.content : null
+        return area ? Qt.rect(area.x,area.y,area.width,area.height) : Qt.rect(44,90,872,455)
+    }
+    function shellGeometry() {
+        const layout = negotiatedLayout
+        function rectangle(area) { return Qt.rect(area.x,area.y,area.width,area.height) }
+        return {header:layout ? rectangle(layout.header) : Qt.rect(0,0,960,90),
+            content:pageGeometry(activeContentId),guide:layout ? rectangle(layout.guide) : Qt.rect(44,558,872,56),
+            sceneSafeRegions:layout ? layout.sceneSafeRegions.map(rectangle) : [Qt.rect(0,90,32,455),Qt.rect(928,90,32,455)]}
     }
     function publicRows(rows) {
         return rows.map(row => {
@@ -193,7 +207,7 @@ Window {
             families:families, currentFamilyId:familyId, currentViewId:activeContentId, route:overlay,
             navigation:{familyId:familyId,viewId:activeContentId,overlayId:overlayContentId,familyPosition:family+1,familyCount:families.length,
                 viewPosition:(isRacing ? currentFamily.views.indexOf(racingView) : familyId === "sport" ? sportViews.indexOf(sportView) : (viewIndex[currentFamily.slot] || 0))+1,viewCount:currentFamily.views.length},
-            layout:{header:Qt.rect(0,0,960,90),content:Qt.rect(44,90,872,455),guide:Qt.rect(44,558,872,56),sceneSafeRegions:[Qt.rect(0,90,32,455),Qt.rect(928,90,32,455)]},
+            layout:shellGeometry(),
             uiStatus:{urgent:!!urgentEvent.id,recovery:!!(dashboardState && dashboardState.themeRecoveryError) || !!(themeService && themeService.status === "recovery"),quiet:quietActive,night:night,diagnostics:diagnostics},
             keyMap:publicKeyMap(),firstRun:!!(dashboardState && dashboardState.firstRun),
             tabs:tabs.map(label => ({id:label,label:label,enabled:true})), description:description,feedback:feedback,
@@ -278,6 +292,11 @@ Window {
     function publicDispatch(context, action, target, arguments) {
         const args=arguments || {}, surface=context.contentId
         if (urgentEvent.id && surface !== "alerts.urgent") return false
+        if (themePreparing && !urgentEvent.id) {
+            if (action === "navigation.home") { home(); return true }
+            if (action === "navigation.back" || action === "appearance.cancel") { themeService.cancel(); return true }
+            return false
+        }
         if (surface.indexOf("alerts.") === 0) {
             if (action === "scrollDetails") return notificationAction(surface.split(".").pop(),action,target,{offset:alertScroll+args.delta})
             if (action === "moveSelection") return notificationAction(surface.split(".").pop(),action,target,args.direction)
@@ -875,6 +894,11 @@ Window {
             }
             return
         }
+        if (themePreparing) {
+            if (position === 1) home()
+            else if (position === 7) themeService.cancel()
+            return
+        }
         if (notificationPreviewMode !== "") {
             if (position === 7) notificationPreviewMode = ""
             else if (position === 1) home()
@@ -1114,7 +1138,7 @@ Window {
         }
     }
     function currentThemeRenderCoherent() {
-        if (!themeService || themeService.candidateAppearance.generation) return false
+        if (!themeService || themeCandidate.generation) return false
         const hosts=[smallBanner,largeBanner,urgentHost,badgeHost,inboxHost,detailHost,shellHost,overlayHost]
         for (const host of hosts) if (host.active && (!host.currentReady || host.readiness !== "ready" || host.loadedRevision !== themeService.revision)) return false
         for (const host of contentLayer.children) if (host.active && (!host.currentReady || host.readiness !== "ready" || host.loadedRevision !== themeService.revision)) return false
@@ -1203,14 +1227,14 @@ Window {
         id: contentLayer
         objectName: "contentLayer"
         x: 0; y: 90; width: 960; height: 455
-        ViewHost { objectName: "homeNow"; contentId: "home.now"; controller: app; style: app.style; active: app.familyId === "oggi" && app.viewIndex[0] === 0; interactive: active && app.overlay === "" && !app.urgentEvent.id; x: 44 }
-        ViewHost { objectName: "homeDay"; contentId: "home.day"; controller: app; style: app.style; active: app.familyId === "oggi" && app.viewIndex[0] === 1; interactive: active && app.overlay === "" && !app.urgentEvent.id; x: 44 }
-        ViewHost { objectName: "weatherNow"; contentId: "weather.now"; controller: app; style: app.style; active: app.familyId === "meteo" && app.viewIndex[1] === 0; interactive: active && app.overlay === "" && !app.urgentEvent.id; x: 44 }
-        ViewHost { objectName: "weatherForecast"; contentId: "weather.forecast"; controller: app; style: app.style; active: app.familyId === "meteo" && app.viewIndex[1] === 1; interactive: active && app.overlay === "" && !app.urgentEvent.id; x: 44 }
-        ViewHost { objectName: "racingPanel"; contentId: "racing.overview"; controller: app; style: app.style; active: app.isRacing; interactive: active && app.overlay === "" && !app.urgentEvent.id; x: 44 }
-        ViewHost { objectName: "sportTeamPanel"; contentId: "sport.team"; controller: app; style: app.style; active: app.familyId === "sport" && app.sportView === "LA MIA SQUADRA"; interactive: active && app.overlay === "" && !app.urgentEvent.id; x: 44 }
-        ViewHost { objectName: "sportPanel"; contentId: "sport.overview"; controller: app; style: app.style; active: app.familyId === "sport" && app.sportView !== "LA MIA SQUADRA"; interactive: active && app.overlay === "" && !app.urgentEvent.id; x: 44 }
-        ViewHost { objectName: "accountPanel"; contentId: "account.usage"; controller: app; style: app.style; active: app.familyId === "account"; interactive: active && app.overlay === "" && !app.urgentEvent.id; x: 44 }
+        PageHost { objectName: "homeNow"; contentId: "home.now"; controller: app; style: app.style; active: app.familyId === "oggi" && app.viewIndex[0] === 0; interactive: active && app.overlay === "" && !app.urgentEvent.id }
+        PageHost { objectName: "homeDay"; contentId: "home.day"; controller: app; style: app.style; active: app.familyId === "oggi" && app.viewIndex[0] === 1; interactive: active && app.overlay === "" && !app.urgentEvent.id }
+        PageHost { objectName: "weatherNow"; contentId: "weather.now"; controller: app; style: app.style; active: app.familyId === "meteo" && app.viewIndex[1] === 0; interactive: active && app.overlay === "" && !app.urgentEvent.id }
+        PageHost { objectName: "weatherForecast"; contentId: "weather.forecast"; controller: app; style: app.style; active: app.familyId === "meteo" && app.viewIndex[1] === 1; interactive: active && app.overlay === "" && !app.urgentEvent.id }
+        PageHost { objectName: "racingPanel"; contentId: "racing.overview"; controller: app; style: app.style; active: app.isRacing; interactive: active && app.overlay === "" && !app.urgentEvent.id }
+        PageHost { objectName: "sportTeamPanel"; contentId: "sport.team"; controller: app; style: app.style; active: app.familyId === "sport" && app.sportView === "LA MIA SQUADRA"; interactive: active && app.overlay === "" && !app.urgentEvent.id }
+        PageHost { objectName: "sportPanel"; contentId: "sport.overview"; controller: app; style: app.style; active: app.familyId === "sport" && app.sportView !== "LA MIA SQUADRA"; interactive: active && app.overlay === "" && !app.urgentEvent.id }
+        PageHost { objectName: "accountPanel"; contentId: "account.usage"; controller: app; style: app.style; active: app.familyId === "account"; interactive: active && app.overlay === "" && !app.urgentEvent.id }
     }
 
     AppText { style: app.style; x: 44; y: 614; width: 872; font.pixelSize: app.style.font18; color: app.style.warningOnCanvas; visible: (app.dashboardState && !!app.dashboardState.themeRecoveryError || app.themeService && app.themeService.status === "recovery") && !app.urgentEvent.id; text: app.dashboardState && app.dashboardState.themeRecoveryError ? "ASPETTO DI RECUPERO · ripristinare il pacchetto software" : "ASPETTO DI RECUPERO · controllare Impostazioni → Aspetto" }
@@ -1222,7 +1246,7 @@ Window {
     onTeamTabChanged: animateTab()
     onRacingStandingTabChanged: animateTab()
     readonly property var notificationRegions: [smallBanner,largeBanner,detailHost,inboxHost,badgeHost,urgentHost].filter(host => host.show || host.exiting).reduce((regions,host) => regions.concat(host.context ? host.context.occupiedRegions : [Qt.rect(host.x,host.y,host.width,host.height)]),[])
-    SceneHost { id: sceneHost; controller: app; traceRecorder: app.traceRecorder; style: app.style; familyId: app.familyId; occupiedRegions: app.notificationRegions; notificationEvent: app.urgentEvent.id ? app.urgentEvent : app.bannerEvent; suspended: app.overlay !== "" || !!app.urgentEvent.id || app.night || app.quietActive }
+    SceneHost { id: sceneHost; controller: app; traceRecorder: app.traceRecorder; style: app.style; familyId: app.familyId; occupiedRegions: app.notificationRegions; enforceSafeRegions: !!app.negotiatedLayout; safeRegions: app.negotiatedLayout ? app.negotiatedLayout.sceneSafeRegions : []; notificationEvent: app.urgentEvent.id ? app.urgentEvent : app.bannerEvent; suspended: app.overlay !== "" || !!app.urgentEvent.id || app.night || app.quietActive }
     onUrgentEventChanged: { if (traceRecorder) traceRecorder.traceEvent("notification.urgent",{eventId:String(urgentEvent.id || ""),eventRevision:String(urgentEvent.revision || ""),rank:urgentEvent.notificationRank || 0}); if (urgentEvent.id) { navigationMotion.settle(); tabMotion.settle() } }
 
     Rectangle { visible: !shellHost.currentItem || !shellHost.active; x: 44; y: 558; width: 872; height: 2; color: app.style.divider }
@@ -1273,6 +1297,7 @@ Window {
     }
     OverlayHost { id: overlayHost; objectName: "overlayHost"; controller: app; style: app.style; contentId: app.overlayContentId.indexOf("alerts.") === 0 ? "" : app.overlayContentId; anchors.fill: parent; active: app.hasExternalSurface(contentId) || app.hasCandidateSurface(contentId); renderActive: app.hasExternalSurface(contentId); interactive: active && !app.urgentEvent.id }
     Rectangle { anchors.fill: parent; color: app.style.backgroundOverlay; visible: app.overlay === "alerts" || app.overlay === "alertDetail" }
+    ThemeLoading { controller: app }
     NotificationHost {
         id: inboxHost; objectName: "alertsInbox"; contentId: "alerts.inbox"; controller: app
         show: app.overlay === "alerts" && !app.urgentEvent.id; preempted: !!app.urgentEvent.id; exitAllowed: false

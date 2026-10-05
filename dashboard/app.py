@@ -56,8 +56,6 @@ def main() -> int:
         from theme_trace_bridge import ThemeTraceBridge
         trace = ThemeTraceBridge()
     state = DashboardState(weather, system_info, account, events, demo=demo, sport=sport, racing=racing, trace=trace)
-    if sport: application.aboutToQuit.connect(sport.close)
-    for service in racing.values(): application.aboutToQuit.connect(service.close)
     if not demo:
         def update_account_events() -> None:
             events.ingest_account(account.moduleState, state.accountWarningPercent,
@@ -65,16 +63,24 @@ def main() -> int:
         account.changed.connect(update_account_events)
         state.accountThresholdsChanged.connect(update_account_events)
         update_account_events()
-    application.aboutToQuit.connect(events.close)
-    if state.appearance:
-        application.aboutToQuit.connect(state.appearance.cancel)
     engine.setInitialProperties({"keypad": keypad, "dashboardState": state, "traceRecorder": trace})
     engine.load(QUrl.fromLocalFile(str(Path(__file__).with_name("Main.qml"))))
     if not engine.rootObjects():
         return 1
     if trace:
         trace.attach(engine.rootObjects()[0])
-    result = application.exec()
+    # Close Python services after the event loop returns. On Qt 6.8, invoking
+    # these callbacks from aboutToQuit can re-enter QML during Qt teardown.
+    try:
+        result = application.exec()
+    finally:
+        if state.appearance:
+            state.appearance.cancel()
+        if sport:
+            sport.close()
+        for service in racing.values():
+            service.close()
+        events.close()
     if trace:
         trace.write_report(options.theme_trace_output)
     return result

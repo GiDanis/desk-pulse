@@ -48,6 +48,8 @@ Item {
     property string familyId: "oggi"
     property bool suspended: false
     property var occupiedRegions: []
+    property bool enforceSafeRegions: false
+    property var safeRegions: []
     property var notificationEvent: ({})
     readonly property var descriptor: appearance ? appearance.sceneRegistry[appearance.scene.renderer] : ({})
     readonly property bool canvasScene: descriptor && (descriptor.sceneMode === "canvas" || descriptor.sceneMode === "background" || descriptor.sceneMode === "decoration")
@@ -56,8 +58,21 @@ Item {
     readonly property point nominalAnchor: Qt.point(familyId === "oggi" ? width - actorWidth - 10 : 12, height - 115)
     function intersects(point) { return occupiedRegions.some(region => point.x < region.x+region.width && point.x+actorWidth > region.x && point.y < region.y+region.height && point.y+actorHeight > region.y) }
     readonly property point alternateAnchor: Qt.point(familyId === "oggi" ? 12 : width-actorWidth-10,height-115)
-    readonly property point desiredAnchor: !intersects(nominalAnchor) ? nominalAnchor : !intersects(alternateAnchor) ? alternateAnchor : nominalAnchor
-    readonly property bool regionBlocked: !canvasScene && intersects(desiredAnchor) || canvasScene && occupiedRegions.length > 0 && !descriptor.respectsOccupiedRegions
+    readonly property var candidateAnchors: {
+        if (!enforceSafeRegions) return [nominalAnchor,alternateAnchor]
+        const preferred = familyId === "oggi" ? safeRegions.slice().reverse() : safeRegions
+        return preferred.filter(region => region.width >= actorWidth && region.height >= actorHeight).map(region =>
+            Qt.point(Math.max(region.x,Math.min(nominalAnchor.x,region.x+region.width-actorWidth)),
+                     Math.max(region.y,Math.min(nominalAnchor.y,region.y+region.height-actorHeight))))
+    }
+    readonly property point desiredAnchor: candidateAnchors.find(point => !intersects(point)) || candidateAnchors[0] || Qt.point(0,0)
+    readonly property rect actorSafeArea: {
+        if (!enforceSafeRegions || canvasScene) return Qt.rect(0,0,width,height)
+        const area = safeRegions.find(region => desiredAnchor.x >= region.x && desiredAnchor.y >= region.y
+            && desiredAnchor.x+actorWidth <= region.x+region.width && desiredAnchor.y+actorHeight <= region.y+region.height)
+        return area ? Qt.rect(area.x,area.y,area.width,area.height) : Qt.rect(0,0,0,0)
+    }
+    readonly property bool regionBlocked: !canvasScene && (!candidateAnchors.length || intersects(desiredAnchor)) || canvasScene && occupiedRegions.length > 0 && !descriptor.respectsOccupiedRegions
     readonly property QtObject actorState: ActorState {
         paused: root.suspended || root.regionBlocked || !root.sceneEnabled || root.appearance.motionMode !== "normal"
         anchor: root.desiredAnchor
@@ -102,12 +117,13 @@ Item {
     MotionController { id: movement; appearance: root.appearance; traceRecorder: root.traceRecorder; traceOwner: root.traceInstanceId }
     Item {
         id: actor
+        clip: root.enforceSafeRegions || root.canvasScene
         width: root.canvasScene ? root.width : root.actorWidth
         height: root.canvasScene ? root.height : root.actorHeight
         ViewHost {
             id: publicScene
             contentId: "scene.main"; controller: root.controller; style: root.style
-            anchors.fill: parent; active: root.sceneEnabled && root.publicRenderer || root.controller && root.controller.hasCandidateSurface("scene.main") && root.controller.themeService.candidateAppearance.scene.enabled; renderActive: root.visible
+            anchors.fill: parent; active: root.sceneEnabled && root.publicRenderer || root.controller && root.controller.hasCandidateSurface("scene.main") && root.controller.themeCandidate.scene.enabled; renderActive: root.visible
             interactive: false; animateSwap: false
             contextFactory: Component {
                 QtObject {
@@ -118,6 +134,7 @@ Item {
                     property bool interactive: false
                     property int viewportWidth: root.width
                     property int viewportHeight: root.height
+                    property rect safeArea: root.actorSafeArea
                     property var actorState: root.actorState
                     property var occupiedRegions: root.occupiedRegions
                     property var notificationEvent: root.notificationEvent

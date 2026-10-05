@@ -156,6 +156,7 @@ class ThemeService(QObject):
         self.lifecycle = LifecycleManager(self.store.parent,app_root=self._root)
         self._activation = None; self._activation_frame = False; self._gui_ready = False
         self._leases = {}; self._api_factory = PublicContextFactory(self)
+        self._bundle_metadata_cache = OrderedDict()
         self.catalog = make_catalog(self.store,self._root,trace=trace)
         settings = QSettings('SmartPC', 'Dashboard')
         legacy = str(settings.value('animationsEnabled','true')).lower() not in ('false','0')
@@ -208,6 +209,7 @@ class ThemeService(QObject):
             self._committed.update(themeId=journal['active']['id'],bundleRevision=journal['active'],
                                    overrides=journal['adaptations']['perRevision'].get(selection_key(journal['active']),{}))
         try:
+            self._committed=self._normalize_adjustments(self._committed)
             self._publish(self._committed)
         except (ThemeError,ValueError,OSError) as error:
             self._error = 'Risorse recuperate con Base: '+str(error); self._status = 'recovery'
@@ -344,6 +346,49 @@ class ThemeService(QObject):
         while len(self._resolved_cache)>32:self._resolved_cache.popitem(last=False)
         return result
 
+    def _bundle_metadata(self, configuration, *, load=False):
+        """Exact immutable revision metadata; QML getters never read the store."""
+        pin=configuration.get('bundleRevision')
+        if not pin: return {}
+        key=selection_key(pin)
+        metadata=getattr(self.catalog,'bundle_revision_metadata',{}).get(key) or self._bundle_metadata_cache.get(key)
+        if metadata is None and load:
+            metadata=deepcopy(self.bundles.verify_revision(pin)['manifest'])
+            self._bundle_metadata_cache[key]=metadata
+            while len(self._bundle_metadata_cache)>32: self._bundle_metadata_cache.popitem(last=False)
+        return metadata or {}
+
+    def _adjustments(self, configuration, *, load=False):
+        metadata=self._bundle_metadata(configuration,load=load)
+        if not configuration.get('bundleRevision'): return ['paletteMode','textScale','motionMode']
+        # Reduced/Off remain system policy even when an author declares no controls.
+        return sorted(set(metadata.get('adjustments',[])) | {'motionMode'})
+
+    def _normalize_adjustments(self, configuration):
+        allowed=self._adjustments(configuration,load=True)
+        if 'paletteMode' not in allowed: configuration['paletteMode']='auto'
+        if 'textScale' not in allowed:
+            configuration.get('overrides',{}).get('tokens',{}).pop('typography.textScale',None)
+        return configuration
+
+    def _guard_adjustment(self, name):
+        if name in self._adjustments(self._draft,load=True): return True
+        self._error='Adattamento non supportato dal tema: '+name
+        self.editorChanged.emit()
+        return False
+
+    def _theme_metadata(self, identifier, configuration=None):
+        pack=self.catalog.packs[identifier]
+        configuration=configuration or {'themeId':identifier,'bundleRevision':getattr(self.catalog,'bundle_revisions',{}).get(identifier)}
+        metadata=self._bundle_metadata(configuration)
+        coverage=metadata.get('coverage',{})
+        own=len(coverage.get('surfaces',[])); fallback=len(coverage.get('fallbacks',[]))
+        mode=coverage.get('mode','builtin')
+        summary=('Completo · '+str(own)+' visuali propri') if mode=='complete' else ('Parziale · '+str(own)+' propri · '+str(fallback)+' Base') if mode=='partial' else 'Visuali distribuiti con la dashboard'
+        return {'id':identifier,'name':pack['name'],'version':(configuration.get('bundleRevision') or {}).get('version',pack['version']),
+                'coverageMode':mode,'ownCount':own,'fallbackCount':fallback,'coverageSummary':summary,
+                'adjustments':self._adjustments(configuration)}
+
     @trace_span("service.validateConfig")
     def _validate_config(self, configuration):
         if not isinstance(configuration,dict) or type(configuration.get('schemaVersion')) is not int or configuration.get('schemaVersion') != 1 or set(configuration)-{'schemaVersion','themeId','overrides','motionMode','paletteMode','bundleRevision'}:
@@ -405,6 +450,7 @@ class ThemeService(QObject):
 
     @trace_span("service.publish")
     def _publish(self, configuration, prepared=None):
+        configuration=self._normalize_adjustments(deepcopy(configuration))
         result, needed = prepared if prepared is not None else self._resolve(configuration)
         result.pop('generation', None); result.pop('requiredContents', None)
         self._revision += 1
@@ -413,6 +459,8 @@ class ThemeService(QObject):
         self.frameStateChanged.emit()
         result['paletteMode'] = configuration.get('paletteMode','auto')
         result['bundleRevision']=deepcopy(configuration.get('bundleRevision',{}))
+        result['adjustments']=self._adjustments(configuration)
+        result['coverage']=deepcopy(self._bundle_metadata(configuration).get('coverage',{}))
         if self._activation: self.lifecycle.mark_ready(self._activation['ticket'])
         self._visible = deepcopy(configuration)
         self._snapshot = result
@@ -541,7 +589,13 @@ class ThemeService(QObject):
     @Property('QVariantMap',notify=editorChanged)
     def draft(self): return deepcopy(self._draft or self._committed)
     @Property('QVariantList',notify=editorChanged)
-    def themes(self): return [{'id':p['id'],'name':p['name'],'version':p['version']} for p in self.catalog.packs.values()]
+    def themes(self):
+        selected=self._draft or self._committed
+        return [self._theme_metadata(identifier,selected if identifier==selected['themeId'] else None) for identifier in self.catalog.packs]
+    @Property('QVariantMap',notify=editorChanged)
+    def selectedTheme(self):
+        configuration=self._draft or self._committed
+        return self._theme_metadata(configuration['themeId'],configuration)
     @Property('QVariantList',notify=editorChanged)
     def revisions(self):
         identifier=(self._draft or self._committed)['themeId']
@@ -598,6 +652,7 @@ class ThemeService(QObject):
     @trace_operation("setToken")
     def setToken(self, path, value):
         if self._draft is None or self._pending is not None or self._operation_pending: return False
+        if path=='typography.textScale' and not self._guard_adjustment('textScale'): return False
         candidate = deepcopy(self._draft); candidate['overrides'].setdefault('tokens',{})[path] = value
         return self._change(candidate)
 
@@ -605,6 +660,7 @@ class ThemeService(QObject):
     @trace_operation("setTokens")
     def setTokens(self, values):
         if self._draft is None or self._pending is not None or self._operation_pending: return False
+        if 'typography.textScale' in values and not self._guard_adjustment('textScale'): return False
         candidate = deepcopy(self._draft)
         candidate['overrides'].setdefault('tokens',{}).update(values)
         return self._change(candidate)
@@ -641,6 +697,7 @@ class ThemeService(QObject):
     @trace_operation("setSection")
     def setSection(self, section, value):
         if self._draft is None or self._pending is not None or self._operation_pending: return False
+        if section=='paletteMode' and not self._guard_adjustment('paletteMode'): return False
         candidate = deepcopy(self._draft)
         if section in ('motionMode','paletteMode'): candidate[section] = value
         elif section in ('presentations','motion','scene','iconOverrides','iconSetId'): candidate['overrides'][section] = value
@@ -660,6 +717,7 @@ class ThemeService(QObject):
     @trace_span("service.change")
     def _change(self, candidate):
         try:
+            candidate=self._normalize_adjustments(deepcopy(candidate))
             self._validate_config(candidate)
             resolved, needed = self._resolve(candidate)
             contents = self._prepared_contents | ({self._active_content} if self._active_content else set())

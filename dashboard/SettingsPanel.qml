@@ -66,6 +66,8 @@ Item {
         {title: "Utilizzo critico", value: dashboard.accountCriticalPercent + "%", detail: "Soglia superiore · banner secondo le Notifiche"}
     ] : []
     readonly property var themeService: backend ? backend.appearance : null
+    readonly property var catalogTheme: themeService ? themeService.selectedTheme : ({})
+    function supportsAdjustment(name) { return !themeService || (catalogTheme.adjustments || []).indexOf(name) >= 0 }
     readonly property var homePresentations: Object.keys(Theme.appearance.presentationRegistry).filter(id => (Theme.appearance.presentationRegistry[id].contentIds || []).indexOf("home.now") >= 0)
     readonly property var navigationRecipes: Object.keys(Theme.appearance.motionRegistry).filter(id => (Theme.appearance.motionRegistry[id].events || []).indexOf("navigate.family") >= 0)
     function presentationName(id) { return (Theme.appearance.presentationRegistry[id] || {}).name || id }
@@ -73,10 +75,10 @@ Item {
     property bool advancedAppearance: false
     readonly property var appearanceRows: advancedAppearance ? advancedAppearanceRows : simpleAppearanceRows
     readonly property var simpleAppearanceRows: themeService ? [
-        {title:"Palette", value:({auto:"AUTOMATICA",day:"GIORNO",night:"NOTTE"})[themeService.draft.paletteMode || "auto"],detail:"Automatico segue gli orari del dispositivo"},
+        {title:"Palette", value:({auto:"AUTOMATICA",day:"GIORNO",night:"NOTTE"})[themeService.draft.paletteMode || "auto"],detail:supportsAdjustment("paletteMode") ? "Automatico segue gli orari del dispositivo" : "Palette gestita dal tema",enabled:supportsAdjustment("paletteMode")},
         {title:"Movimento", value:({normal:"NORMALE",reduced:"RIDOTTO",off:"DISATTIVO"})[themeService.draft.motionMode],detail:"Animazioni del tema e della scena"},
-        {title:"Tema",value:(themeService.themes.find(t => t.id === themeService.draft.themeId) || {}).name || themeService.draft.themeId,detail:"4/6 sceglie · anteprima prima del salvataggio"},
-        {title:"Dimensione testo",value:Math.round(root.style.textScale*100)+"%",detail:"Piccolo adattamento della leggibilità"},
+        {title:"Tema",value:(themeService.themes.find(t => t.id === themeService.draft.themeId) || {}).name || themeService.draft.themeId,detail:catalogTheme.coverageSummary || "4/6 sceglie · anteprima prima del salvataggio"},
+        {title:"Dimensione testo",value:Math.round(root.style.textScale*100)+"%",detail:supportsAdjustment("textScale") ? "Piccolo adattamento della leggibilità" : "Dimensione definita dal tema",enabled:supportsAdjustment("textScale")},
         {title:"Versione del tema",value:Theme.appearance.themeVersion,detail:"4/6 sceglie una revisione installata"},
         {title:"Applica e salva",value:themeService.status === "saving" ? "SALVATAGGIO…" : "SALVA",detail:"Conserva il tema al prossimo avvio",enabled:themeService.readyToApply},
         {title:"Annulla anteprima",value:"RIPRISTINA",detail:"Torna al tema salvato",enabled:themeService.status !== "saving"},
@@ -85,11 +87,11 @@ Item {
         {title:"Personalizzazione avanzata",value:"APRI",detail:"Editor di compatibilità · la composizione si crea nel tema"}
     ] : []
     readonly property var advancedAppearanceRows: themeService ? [
-        {title: "Palette", value: ({auto:"AUTOMATICA",day:"GIORNO",night:"NOTTE"})[themeService.draft.paletteMode || "auto"], detail: "Bozza · segue gli orari di Luminosità in automatico"},
+        {title: "Palette", value: ({auto:"AUTOMATICA",day:"GIORNO",night:"NOTTE"})[themeService.draft.paletteMode || "auto"], detail: supportsAdjustment("paletteMode") ? "Bozza · segue gli orari di Luminosità in automatico" : "Palette gestita dal tema",enabled:supportsAdjustment("paletteMode")},
         {title: "Movimento", value: ({normal:"NORMALE",reduced:"RIDOTTO",off:"DISATTIVO"})[themeService.draft.motionMode], detail: "Transizioni e scena rispettano la stessa policy"},
-        {title: "Tema", value: (themeService.themes.find(t => t.id === themeService.draft.themeId) || {}).name || themeService.draft.themeId, detail: "Preset e pacchetti personali nel catalogo"},
+        {title: "Tema", value: (themeService.themes.find(t => t.id === themeService.draft.themeId) || {}).name || themeService.draft.themeId, detail:catalogTheme.coverageSummary || "Preset e pacchetti personali nel catalogo"},
         {title: "Composizione Home", value: presentationName(Theme.presentations["home.now"]), detail: "Stessi dati · disposizione a sinistra o centrata"},
-        {title: "Dimensione testo", value: Math.round(root.style.textScale * 100) + "%", detail: "Da 85 a 110% · ogni stile conserva i propri ruoli"},
+        {title: "Dimensione testo", value: Math.round(root.style.textScale * 100) + "%", detail:supportsAdjustment("textScale") ? "Da 85 a 110% · ogni stile conserva i propri ruoli" : "Dimensione definita dal tema",enabled:supportsAdjustment("textScale")},
         {title: "Densità", value: root.style.listRows === 4 ? "REGOLARE" : "AMPIA", detail: "Paginazione coerente anche in Sport e Motorsport"},
         {title: "Angoli delle schede", value: root.style.radiusCard + " px", detail: "Da 0 a 24 · passi di 2 pixel"},
         {title: "Colore accento", value: root.style.accent.toString(), detail: "I colori degli avvisi ufficiali restano riconoscibili"},

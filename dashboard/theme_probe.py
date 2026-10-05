@@ -79,8 +79,10 @@ def profile(root,store,service=None):
             'registryFingerprint':fingerprint,'registries':registries,
             'apiFingerprint':api['apiFingerprint'],'themeApiContract':api,
             'installedThemes':[{'id':p['id'],'version':p['version']} for p in catalog.packs.values()],
+            'bundleCapabilities':{'declaredImplementation':'implemented','bundleFormat':1,'engineApi':2,
+                                  'scope':'Declared capabilities; import/preflight and device qualification remain separate'},
             'limitations':['QML layouts/input/frames and EGLFS performance not verified by this probe',
-                            'G21: adaptive semantic colors for light palettes pending'],
+                            'Optical readability and complete theme qualification are separate device gates'],
             'verification':{'qtProfile':'verified','boardRuntime':'notVerified'}}
 
 

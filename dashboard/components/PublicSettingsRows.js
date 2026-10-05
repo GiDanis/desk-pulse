@@ -178,6 +178,8 @@ function canonicalize(surface,rows,options) {
     options=options || {};options.families=options.families || []
     var backend=options.backend || {},appearance=options.appearance || {},tokens=appearance.tokens || {}
     var busy=options.status === "saving" || options.status === "working"
+    var selectedCatalogTheme=(options.themes || []).filter(function(theme) { return theme.id === (options.draft || {}).themeId })[0]
+    var adjustments=selectedCatalogTheme && selectedCatalogTheme.adjustments !== undefined ? selectedCatalogTheme.adjustments : appearance.adjustments
     return rows.map(function(raw,index) {
         var row=Object.assign({},raw),id=identity(surface,row,index,options)
         row.id=id || String(row.id || surface+":"+index)
@@ -219,7 +221,9 @@ function canonicalize(surface,rows,options) {
             } else if (["appearance.advanced","appearance.simple","appearance.notifications","appearance.back","notifications.visual.reset"].indexOf(id) >= 0) row.actionId="settings.activate"
             else if (id === "appearance.palette") setChoice(row,choices(["auto","day","night"],["Automatica","Giorno","Notte"]),(options.draft || {}).paletteMode || "auto")
             else if (id === "appearance.motion") setChoice(row,choices(["normal","reduced","off"],["Normale","Ridotto","Disattivo"]),(options.draft || {}).motionMode || "off")
-            else if (id === "appearance.theme") { setChoice(row,(options.themes || []).map(function(theme) { return {id:theme.id,label:theme.name,value:theme.id} }),(options.draft || {}).themeId);row.control="theme" }
+            else if (id === "appearance.theme") { setChoice(row,(options.themes || []).map(function(theme) { return {id:theme.id,label:theme.name,value:theme.id} }),(options.draft || {}).themeId);row.control="theme"
+                if (selectedCatalogTheme && selectedCatalogTheme.coverageSummary) { row.detail=selectedCatalogTheme.coverageSummary;row.description=selectedCatalogTheme.coverageSummary }
+            }
             else if (id === "appearance.textScale") setNumber(row,.85,1.1,.05,tokens["typography.textScale"])
             else if (id === "appearance.cardRadius") setNumber(row,0,24,2,tokens["shape.radiusCard"])
             else if (id === "appearance.density") setChoice(row,choices(["regular","wide"],["Regolare","Ampia"]),tokens["metrics.listRows"] === 4 ? "regular" : "wide")
@@ -250,6 +254,12 @@ function canonicalize(surface,rows,options) {
                 var prefix=selectedMode === "small" || selectedMode === "large" ? "banner."+selectedMode : "alerts."+selectedMode
                 var legacyPrefix=selectedMode === "small" || selectedMode === "large" ? "banner" : "panel"
                 setChoice(row,recipeChoices(appearance,prefix+(exit ? ".exit" : ".enter"),legacyPrefix+(exit ? ".exit" : ".enter")))
+            }
+        }
+        if ((id === "appearance.palette" || id === "appearance.textScale") && adjustments !== undefined) {
+            var adjustment=id === "appearance.palette" ? "paletteMode" : "textScale"
+            if (adjustments.indexOf(adjustment) < 0) {
+                row.enabled=false;row.reason=id === "appearance.palette" ? "Palette gestita dal tema" : "Dimensione definita dal tema"
             }
         }
         return row

@@ -40,7 +40,14 @@ def _freeze(value, depth=0, budget=None, strings=None):
     if isinstance(value, dict):
         if len(value) > 256 or any(type(k) is not str for k in value):
             raise ValueError('frame snapshot requires bounded string keys')
-        return ('__map__', tuple((_shared_snapshot_string(k, strings), _freeze(v, depth + 1, budget, strings)) for k, v in sorted(value.items())))
+        # One immutable alternating tuple replaces a retained tuple per field.
+        # Keep every key/value and its original primitive type; JSON export and
+        # classifier input are unchanged. No hash/equality deduplication occurs.
+        fields = []
+        for key, item in sorted(value.items()):
+            fields.append(_shared_snapshot_string(key, strings))
+            fields.append(_freeze(item, depth + 1, budget, strings))
+        return ('__map__', tuple(fields))
     if isinstance(value, (list, tuple)):
         if len(value) > 256:
             raise ValueError('frame snapshot list exceeds 256')
@@ -52,9 +59,20 @@ def _thaw(value):
     if isinstance(value, tuple):
         kind, items = value
         if kind == '__map__':
-            return {k: _thaw(v) for k, v in items}
+            return {items[index]: _thaw(items[index + 1]) for index in range(0, len(items), 2)}
         return [_thaw(v) for v in items]
     return value
+
+
+def _frozen_map_get(value, key, default=None):
+    """Read a copied immutable map without thawing it or allocating slices."""
+    if not isinstance(value, tuple) or len(value) != 2 or value[0] != '__map__':
+        return default
+    fields = value[1]
+    for index in range(0, len(fields), 2):
+        if fields[index] == key:
+            return fields[index + 1]
+    return default
 
 
 @dataclass(frozen=True)
@@ -321,7 +339,7 @@ class ThemeFrameTracker(QObject):
     def _ticket_request(ticket):
         if ticket is None:
             return None
-        value = next((value for key,value in ticket.snapshot[1] if key=='requestId'), None)
+        value = _frozen_map_get(ticket.snapshot, 'requestId')
         return value if isinstance(value,str) and value else None
 
     def has_pending_submission(self, request):
@@ -414,7 +432,7 @@ class ThemeFrameTracker(QObject):
                 else:self._queued_requests.pop(request,None)
         now = time.perf_counter_ns()
         classification = classify_submission(submission)
-        frozen_participants = next((value for key, value in submission.ticket.snapshot[1] if key == 'participants'), None) if submission.ticket else None
+        frozen_participants = _frozen_map_get(submission.ticket.snapshot, 'participants') if submission.ticket else None
         result = dict(classification, frozenParticipants=frozen_participants, frameSerial=submission.frame_serial,
                       captureSerial=submission.ticket.capture_serial if submission.ticket else None,
                       capturedNs=submission.ticket.captured_ns if submission.ticket else None,

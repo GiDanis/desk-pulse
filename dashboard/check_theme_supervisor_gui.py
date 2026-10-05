@@ -78,7 +78,7 @@ def gui_child(mode, data_root, proof_path):
         window = shiboken6.wrapInstance(shiboken6.getCppPointer(root)[0], QQuickWindow)
         window.setVisibility(QWindow.Visibility.Windowed); window.resize(960, 640)
         window.frameSwapped.connect(lambda: proof.update(frames=proof['frames'] + 1))
-        app.aboutToQuit.connect(service.cancel); app.aboutToQuit.connect(events.close)
+
         home = root.findChild(QObject, 'homeNow')
         timer = QTimer(); timer.setInterval(50)
         def tick():
@@ -102,7 +102,11 @@ def gui_child(mode, data_root, proof_path):
                 proof['faultTriggered'] = True
                 atomic_json(proof_path, proof)
                 if mode == 'cleanExit':
-                    app.quit()
+                    # Inject an unsolicited Qt exit, independently of the
+                    # operator shutdown callbacks. Closing services from Qt
+                    # aboutToQuit can itself fault on the Qt 6.8 fixture.
+                    timer.stop()
+                    QTimer.singleShot(100,lambda: app.exit(0))
                 elif mode == 'crash':
                     os._exit(23)
                 elif mode == 'heartbeatBlock':
@@ -115,6 +119,7 @@ def gui_child(mode, data_root, proof_path):
         timer.timeout.connect(tick); timer.start()
         code = app.exec()
         timer.stop(); window.close()
+        service.cancel(); events.close()
         QThreadPool.globalInstance().waitForDone(3000)
         engine.deleteLater()
         QCoreApplication.sendPostedEvents(None,QEvent.Type.DeferredDelete)

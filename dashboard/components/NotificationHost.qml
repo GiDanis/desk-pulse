@@ -109,7 +109,7 @@ ViewHost {
         id: urgentFallback
         objectName: "urgentFallback"
         onActiveChanged: if (host.traceRecorder) host.traceEvent("notification.fallback",{fallbackActive:active,mode:host.mode,eventId:host.eventSource.id || ""})
-        active: host.mode === "urgent" && host.show && !host.currentItem
+        active: host.mode === "urgent" && host.show && !host.currentReady
         x: -host.x; y: -host.y; width: 960; height: 640; asynchronous: false
         sourceComponent: Component {
             UrgentVisual {

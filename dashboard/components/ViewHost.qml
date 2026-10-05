@@ -57,6 +57,10 @@ Item {
     property StyleFacade style: Theme
     property var appearance: Theme.appearance
     property var service: controller.themeService
+    // The application marshals one immutable candidate map per change. Hosts
+    // share that QML snapshot; standalone hosts keep a single local binding.
+    readonly property var candidateSnapshot: controller && controller.themeCandidate !== undefined
+        ? controller.themeCandidate : (service ? service.candidateAppearance : ({}))
     property bool active: false
     property bool renderActive: active
     property bool exiting: false
@@ -95,7 +99,7 @@ Item {
             if (active) currentLoader.stagedAppearance = null
         }
         if (active) {
-            const candidate=service ? service.candidateAppearance : ({})
+            const candidate=candidateSnapshot
             if (candidate.generation && candidate.requiredContents.indexOf(contentId) >= 0) prepare(candidate,candidate.generation)
             else prepare(appearance,0)
         }
@@ -104,16 +108,13 @@ Item {
     onInteractiveChanged: if (context) context.interactive = interactive
     onAppearanceChanged: if (active) prepare(appearance,0)
     onContentIdChanged: if (active) prepare(appearance,0)
-    Connections {
-        target: host.service
-        function onCandidateChanged() {
-            const candidate = host.service.candidateAppearance
+    onCandidateSnapshotChanged: {
+            const candidate = candidateSnapshot
             if (candidate.generation && host.active && candidate.requiredContents.indexOf(host.contentId) >= 0) host.prepare(candidate,candidate.generation)
             else if (host.pendingLoader && host.pendingLoader.serviceGeneration) {
                 host.generation += 1; host.pendingLoader.destroy(); host.pendingLoader = null
                 host.readiness = host.currentItem ? "ready" : "idle"
             }
-        }
     }
     function dataUpdated(domain) {
         const ownsDomain = contentId.indexOf(domain+".") === 0 || domain === "weather" && contentId.indexOf("home.") === 0

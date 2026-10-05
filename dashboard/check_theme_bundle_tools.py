@@ -80,6 +80,33 @@ class ToolTests(unittest.TestCase):
         self.assertEqual(report['verification']['preflight'],'passed')
         self.assertFalse((data_root/'theme-activation.json').exists())
 
+    def test_administration_respects_live_resource_leases(self):
+        from theme_bundle import BundleManager
+        from theme_lifecycle import LifecycleManager
+        data_root=self.base/'administration';manager=BundleManager(data_root)
+        revision=manager.import_bundle(EXAMPLE)
+        identity=revision['id']+'@'+revision['version']+'#'+revision['digest']
+        lifecycle=LifecycleManager(data_root);lease=lifecycle.acquire(revision,'cli-test')
+        command=[sys.executable,str(ROOT/'theme_bundle_tools.py')]
+        def run(arguments):
+            result=subprocess.run(command+arguments+['--store',str(data_root)],capture_output=True,text=True,timeout=15)
+            return result,json.loads(result.stdout)
+        result,report=run(['list'])
+        self.assertEqual(result.returncode,0)
+        self.assertEqual(report['revisions'][0]['digest'],revision['digest'])
+        result,report=run(['remove',identity])
+        self.assertEqual(result.returncode,1)
+        self.assertEqual(report['status'],'invalid')
+        self.assertTrue(Path(revision['path']).exists())
+        lifecycle.release(lease)
+        result,report=run(['remove',identity])
+        self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+        self.assertEqual(report['removed']['digest'],revision['digest'])
+        self.assertFalse(Path(revision['path']).exists())
+        result,report=run(['gc','--keep','2'])
+        self.assertEqual(result.returncode,0)
+        self.assertEqual(report['removed'],[])
+
     def test_deterministic_archive_and_source_preserved(self):
         before = {str(path.relative_to(EXAMPLE)): path.read_bytes() for path in EXAMPLE.rglob('*') if path.is_file()}
         first = self.base / 'first.smartpc-theme'; second = self.base / 'second.smartpc-theme'

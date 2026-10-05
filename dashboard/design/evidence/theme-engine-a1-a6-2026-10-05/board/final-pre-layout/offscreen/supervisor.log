@@ -1,0 +1,23 @@
+test_actual_gui_crash_rolls_back_previous_and_restarts (__main__.SupervisorGuiTests.test_actual_gui_crash_rolls_back_previous_and_restarts) ... ok
+test_actual_gui_readiness_loss_with_live_event_loop_rolls_back (__main__.SupervisorGuiTests.test_actual_gui_readiness_loss_with_live_event_loop_rolls_back) ... ok
+test_actual_gui_startup_block_rolls_back_previous_and_restarts (__main__.SupervisorGuiTests.test_actual_gui_startup_block_rolls_back_previous_and_restarts) ... ok
+test_actual_gui_thread_hang_rolls_back_previous_and_restarts (__main__.SupervisorGuiTests.test_actual_gui_thread_hang_rolls_back_previous_and_restarts) ... ok
+test_unexpected_clean_gui_exit_rolls_back_instead_of_boot_loop (__main__.SupervisorGuiTests.test_unexpected_clean_gui_exit_rolls_back_instead_of_boot_loop) ... FAIL
+
+======================================================================
+FAIL: test_unexpected_clean_gui_exit_rolls_back_instead_of_boot_loop (__main__.SupervisorGuiTests.test_unexpected_clean_gui_exit_rolls_back_instead_of_boot_loop)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-theme-a1a6-final-diagnostics/check_theme_supervisor_gui.py", line 240, in test_unexpected_clean_gui_exit_rolls_back_instead_of_boot_loop
+    self.verify_fault('cleanExit', 'codice 0')
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-theme-a1a6-final-diagnostics/check_theme_supervisor_gui.py", line 200, in verify_fault
+    self.assertIn(expected_reason, result.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'codice 0' not found in '{"supervisor": "recovered", "recovered": true, "selection": {"id": "studio.ambient", "version": "1.0.0", "digest": "f1f3676293b2242a13e2c13a58b9d24b6986c3998b539f1d64567c115fc9e4b0"}, "failed": {"digest": "1af93ddc2fc15485eac38edbe4353da051c307aa71ae9e4adad4782cfa663b71", "id": "studio.ambient", "version": "1.0.1"}, "reason": "processo GUI terminato con codice -11"}\n'
+
+----------------------------------------------------------------------
+Ran 5 tests in 92.053s
+
+FAILED (failures=1)
+{"status": "failed", "testsRun": 5, "failures": 1, "errors": 0}

@@ -19,6 +19,11 @@ def files(root, diagnostics=False):
             candidate=(manifest_file.parent/asset['path']).resolve()
             if not candidate.is_relative_to(manifest_file.parent.resolve()): raise ValueError('Asset outside its pack')
             declared.add(candidate)
+    for manifest_file in root.rglob('bundle.json'):
+        for resource in json.loads(manifest_file.read_text()).get('resources',[]):
+            candidate=(manifest_file.parent/resource['path']).resolve()
+            if not candidate.is_relative_to(manifest_file.parent.resolve()): raise ValueError('Resource outside its bundle')
+            declared.add(candidate)
     for path in sorted(root.rglob('*')):
         relative=path.relative_to(root)
         if not path.is_file() or any(x in ('__pycache__','design','.git') or x.startswith('.') for x in relative.parts):continue
