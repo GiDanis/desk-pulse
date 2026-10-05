@@ -50,7 +50,12 @@ Item {
     }
     function refresh() { if (factory && publicContext && !disposed) valid=factory.updateLegacy(publicContext,payload) }
     // A completed public action must expose its resulting state synchronously.
-    function flushRefresh() { refreshScheduled = false; refresh() }
+    function flushRefresh() {
+        if (disposed) return
+        refreshScheduled = true
+        refresh()
+        refreshScheduled = false
+    }
     // One provider/navigation transaction can invalidate several dependent
     // bindings. Publish its final snapshot once before the next GUI frame.
     // Initial creation remains synchronous for the renderer's required context.
@@ -61,8 +66,8 @@ Item {
         refreshScheduled = true
         Qt.callLater(function() {
             if (!refreshScheduled) return
-            refreshScheduled = false
             if (!disposed) refresh()
+            refreshScheduled = false
         })
     }
     onPayloadChanged: scheduleRefresh()

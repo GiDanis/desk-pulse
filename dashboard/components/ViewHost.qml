@@ -73,7 +73,9 @@ Item {
         }
     }
     property var currentItem: null
-    readonly property bool currentReady: !!currentItem && (currentLoader && currentLoader.usePublicApi ? currentItem.ready === true && currentItem.contentReady !== false : currentItem.presentationReady !== false)
+    readonly property bool currentContextReady: !currentLoader || !currentLoader.usePublicApi ||
+        (currentLoader.publicAdapter.valid && !currentLoader.publicAdapter.refreshScheduled)
+    readonly property bool currentReady: !!currentItem && currentContextReady && (currentLoader && currentLoader.usePublicApi ? currentItem.ready === true && currentItem.contentReady !== false : currentItem.presentationReady !== false)
     property string readiness: "idle"
     property string lastError: ""
     property int loadedRevision: 0
@@ -208,6 +210,7 @@ Item {
             function ready() {
                 if (status !== Loader.Ready || acknowledged) return
                 if (usePublicApi) {
+                    if (publicAdapter.refreshScheduled) return
                     if (!publicAdapter.valid) { fail("Contratto dati pubblico non valido: "+presentationId); return }
                     if (item.ready === undefined) { fail("Renderer API 2 senza ready: "+presentationId); return }
                     if (item.error !== undefined && item.error) { fail("Errore renderer: "+String(item.error)); return }
@@ -232,6 +235,10 @@ Item {
                 destroy()
                 if (failedGeneration) host.service.reportCandidate(failedGeneration,host.contentId,false,message)
                 else if (!host.currentItem && host.service) host.service.recoverVisual(host.contentId,message)
+            }
+            Connections {
+                target: publicAdapter
+                function onRefreshScheduledChanged() { if (!publicAdapter.refreshScheduled) candidate.ready() }
             }
             onLoaded: { if (host.traceRecorder) host.traceEvent("host.loader.ready",{candidateGeneration:requestGeneration,serviceGeneration:serviceGeneration,targetRevision:requestedRevision}); ready() }
             onStatusChanged: if (status === Loader.Error) fail("Errore caricamento " + presentationId)
