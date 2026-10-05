@@ -6,10 +6,13 @@ process health are separate acknowledgments owned by the application.
 """
 from __future__ import annotations
 from copy import deepcopy
+import hashlib
 import os
 import math
 from pathlib import Path
 import shutil
+import stat
+import tempfile
 import time
 import uuid
 from theme_bundle import (BundleManager, atomic_json, manager_lock, read_json,
@@ -44,7 +47,17 @@ class LifecycleManager:
         self.root = Path(data_root).resolve()
         self.root.mkdir(parents=True, exist_ok=True)
         self.path = self.root / 'theme-activation.json'
-        self.health_path = self.root / 'theme-gui-health.json'
+        # Heartbeats are ephemeral IPC, not durable settings. On the kiosk
+        # /tmp is tmpfs (also shared by supervisor/child with PrivateTmp).
+        # Avoid one atomic fsync/write to the SD card every second, while the
+        # activation journal and leases remain durable in the data root.
+        health_root=Path(tempfile.gettempdir())/('smartpc-theme-health-'+str(os.getuid()))
+        health_root.mkdir(mode=0o700,exist_ok=True)
+        info=health_root.lstat()
+        require(stat.S_ISDIR(info.st_mode) and info.st_uid == os.getuid() and not info.st_mode & 0o077,
+                'health', 'directory heartbeat privata richiesta')
+        identity=hashlib.sha256(os.fsencode(str(self.root))).hexdigest()
+        self.health_path=health_root/(identity+'.json')
         self.leases_root = self.root / 'theme-leases'
         self.leases_root.mkdir(exist_ok=True)
         self.bundle_manager = BundleManager(self.root, **({'app_root': app_root} if app_root else {}))

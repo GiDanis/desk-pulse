@@ -247,6 +247,19 @@ class BundleTests(unittest.TestCase):
                                 capture_output=True, text=True, timeout=6)
         self.assertEqual(result.returncode, 75, result.stderr)
         self.assertIn('heartbeat', result.stderr)
+
+    def test_heartbeat_is_private_ephemeral_ipc_and_preserves_journal(self):
+        lifecycle=LifecycleManager(self.manager.root)
+        ticket=lifecycle.begin(BASE)['ticket']
+        before=lifecycle.path.read_bytes()
+        record=lifecycle.heartbeat(ready=False)
+        self.assertFalse(lifecycle.health_path.is_relative_to(self.manager.root))
+        self.assertEqual(lifecycle.path.read_bytes(),before)
+        self.assertFalse((self.manager.root/'theme-gui-health.json').exists())
+        self.assertEqual(lifecycle.health_path.parent.stat().st_mode & 0o077,0)
+        self.assertEqual(json.loads(lifecycle.health_path.read_text())['pid'],os.getpid())
+        self.assertFalse(record['ready'])
+        self.assertEqual(lifecycle.read()['pending']['ticket'],ticket)
         self.assertEqual(lifecycle.read()['active'], BASE)
 
     def test_activation_requires_ready_and_revision_frame(self):
