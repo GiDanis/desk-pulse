@@ -2,7 +2,7 @@
 
 **Revisione 1.6 · 5 ottobre 2026 · Europe/Rome**
 
-**Stato: A1–A5 implementati; collaudo e consegna A6 in corso.** [Implementazione completa, evidenze e gate residui](theme-engine-a1-a6-implementation-report.md). I capitoli seguenti conservano motivazioni, baseline storica e criteri di accettazione del piano; le descrizioni al futuro non negano le funzioni ora implementate.
+**Stato: A1–A6 implementati; runtime e kit AI consegnati il 6 ottobre. Qualifica fisica/prolungata e validazione dei futuri temi distinte.** [Implementazione completa, evidenze e gate residui](theme-engine-a1-a6-implementation-report.md). I capitoli seguenti conservano motivazioni, baseline storica e criteri di accettazione del piano; le descrizioni al futuro non negano le funzioni ora implementate.
 
 Riferimenti: [MasterPlan](release-masterplan.md), [guida del runtime attuale](theme-engine-implementation-guide.md), [contratto notifiche](theme-engine-notification-spec.md), [collaudo notifiche](theme-engine-notification-migration-report.md), [architettura](theme-engine-construction-spec.md), [presentation e compagno](theme-engine-presentation-spec.md), [motion](theme-engine-motion-spec.md), [icone](theme-engine-icon-spec.md), [studio UX](themes-and-ux-analysis.md), [navigazione](ux-navigation-v2.md). [Inventario di questa analisi](evidence/theme-ai-authoring-analysis-2026-10-03/source-audit.json).
 
@@ -496,7 +496,7 @@ I nove tasti conservano significato e decoder. Focus, etichetta del tasto e azio
 
 Misure acquisite del runtime notifiche: frame p95 ordinario 17,847 ms; input→frame p95 35,025 ms; PSS fixture 110,83 MiB. Stress reali di 100 cambi: cambio→frame p95 155,921 ms senza font aggiuntivi e 143,556 ms con tre TTF; primi usi fino a 232,135 ms. Picchi PSS 120,01/122,54 MiB, crescita nel campione 0,34/0,30 MiB. [Evidenze e limiti](theme-engine-notification-migration-report.md#prestazioni-e-risorse). Questi dati non attestano i bundle futuri.
 
-Conservare gli obiettivi iniziali: frame animato ordinario p95 ≤20 ms, input p95 ≤100 ms e cambio completo p95 ≤150 ms. Il primo profilo ha già uno scostamento dichiarato di 5,9 ms da quest'ultimo obiettivo: A0 deve profilare e decidere come chiuderlo oppure registrare una decisione esplicita sul budget, non aumentare la soglia automaticamente per far passare il test.
+I riferimenti storici sono frame animato ordinario p95 ≤20 ms e input p95 ≤100 ms. La decisione del 5 ottobre permette attesa con caricamento per il cambio completo, occasionale: 150 ms è un riferimento storico non bloccante. Il 6 ottobre il dispositivo dedicato permette maggiore uso di RAM/CPU e riduce la ripetizione degli stress: i budget diagnostici 1 ms / 8 MiB diventano informativi. La consegna resta subordinata a funzionamento, risposta dei comandi/notifiche, recupero e stabilità; i risultati misurati si conservano senza trasformare gli scostamenti in PASS prestazionali.
 
 Misurare per ogni profilo: cold start; primo glifo/immagine; cambio da/verso Base; primo frame della notifica; durata preparazione e coerenza; cold/warm frame; CPU idle/nascosto; RSS/PSS/cgroup e plateau; lease/font/texture osservabili; spazio storage/staging. Distinguere font registrati, usati e cache grafiche. Variare il contenuto, non solo ripetere tre testi brevi con gli stessi glifi.
 

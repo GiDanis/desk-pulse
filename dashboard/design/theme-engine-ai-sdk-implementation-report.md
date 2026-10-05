@@ -51,3 +51,5 @@ Icona e ricetta usano il contratto storico API 1 del rispettivo host; pagine, sh
 Le pagine PageContext possono dichiarare nel registry i soli `dataDomains` necessari: la Home del kit usa meteo e prossimo evento. In assenza della dichiarazione resta il contesto completo; i provider continuano a funzionare. Il contesto clock espone la variante giorno/notte effettiva, anche nella preview. La guida del kit documenta la scelta e i domini disponibili.
 
 Il dispositivo è dedicato alla dashboard: uso di RAM/CPU e budget del tracing vengono valutati rispetto a fluidità, affidabilità e stabilità, senza ulteriori cicli estesi solo per raggiungere soglie diagnostiche storiche.
+
+Il kit finale `bb4d76c` è consegnato con 433 file SDK verificati e profilo letto dal servizio installato dopo il reboot. Init/lint/preflight/pack/import/export usando soltanto il kit passano; l’archivio esportato è byte-identico. [Report di consegna](evidence/theme-engine-a1-a6-2026-10-05/sdk-delivery/theme-bb4d76c-sdk-delivery.json). Gli strumenti coprono la creazione AI → bundle → importazione/selezione dalle impostazioni; il codice runtime rimane la stessa base per i temi successivi.

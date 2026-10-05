@@ -1,6 +1,6 @@
 {
   "matrixVersion": 1,
-  "scope": "Device acceptance matrix. Static validation or renderer preview alone cannot close a device gate. Physical keypad/reboot/soak proofs remain distinct.",
+  "scope": "Device acceptance matrix. Static validation or renderer preview alone cannot close a device gate. Physical keypad/reboot/soak proofs remain distinct. Software delivery is recorded separately from full physical/long-run qualification. Final UI proofs use 17db764; bb4d76c changes only save-frame deferral and its recovery tests, as recorded in board/final-subscriptions/source-continuity.json.",
   "cases": [
     {
       "id": "T01",
@@ -37,6 +37,24 @@
           "level": "pcMainRuntime",
           "scope": "10 controlli del layout negoziato/Main reale: viewport public/full canvas, clipping, fallback legacy, focus e cancel/apply.",
           "observedStatus": "passed"
+        },
+        {
+          "path": "board/final-subscriptions/eglfs/layout-ui.json",
+          "level": "finalDeviceOrSdkEvidence",
+          "scope": "Main EGLFS public/full viewport and revision apply; source 17db764",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "board/final-subscriptions/eglfs/notifications.json",
+          "level": "finalDeviceOrSdkEvidence",
+          "scope": "Six public notification renderers and lifecycle in real Main EGLFS",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "sdk-delivery/theme-bb4d76c-sdk-delivery.json",
+          "level": "finalDeviceOrSdkEvidence",
+          "scope": "Standalone final SDK, actual lint/Qt preflight and byte-exact private-store roundtrip",
+          "observedStatus": "passed"
         }
       ],
       "verifiedSubcases": [
@@ -47,10 +65,10 @@
       ],
       "remainingVariants": [
         "Installazione pulita sulla board con hash /opt/core prima/dopo import/apply e primo avvio offline.",
-        "Completamento/accettazione di cinque concetti indipendenti; esempio con 4 own +40 fallback non prova 44 redesign.",
+        "Completamento/accettazione di cinque concetti indipendenti; esempio con 5 own +39 fallback non prova 44 redesign.",
         "Collaudo del percorso completo AI → SDK → bundle finale → impostazioni sul dispositivo."
       ],
-      "boardStatus": "pendingRootEvidence",
+      "boardStatus": "verifiedSubcasesRemainingQualification",
       "physicalProofRequired": false
     },
     {
@@ -82,6 +100,12 @@
           "level": "pcStatePersistence",
           "scope": "5 test ThemeService/journal/QSettings; ack host/frame simulati esplicitamente dal harness.",
           "observedStatus": "passed"
+        },
+        {
+          "path": "board/final-install/deployment-report.json",
+          "level": "finalDeviceOrSdkEvidence",
+          "scope": "435 source hashes; real production preferences and all 16 existing event states retained",
+          "observedStatus": "passed"
         }
       ],
       "verifiedSubcases": [
@@ -92,7 +116,7 @@
         "Migrazione del pacchetto schema1 e preferenze effettive installate sul dispositivo, hash prima/dopo e riavvio.",
         "Confronto visivo sul pannello per font/fallback del tema precedente, distinto dal resolver."
       ],
-      "boardStatus": "pendingRootEvidence",
+      "boardStatus": "verifiedSubcasesRemainingQualification",
       "physicalProofRequired": false
     },
     {
@@ -236,6 +260,12 @@
           "level": "pcStatePersistence",
           "scope": "5 test ThemeService/journal/QSettings; ack host/frame simulati esplicitamente dal harness.",
           "observedStatus": "passed"
+        },
+        {
+          "path": "board/final-subscriptions/eglfs/layout-ui.json",
+          "level": "finalDeviceOrSdkEvidence",
+          "scope": "Imported full-canvas revision uses new digest/layout and commits; shared final QML unchanged",
+          "observedStatus": "passed"
         }
       ],
       "verifiedSubcases": [
@@ -246,7 +276,7 @@
         "Rerun registrato del Main aggiornato e downgrade sul runtime target con identità/first-frame per Home, shell, notifiche, icone, ricette e scena.",
         "Evidenza persistita del percorso UI cambio revisione e rollback dopo riavvio dispositivo."
       ],
-      "boardStatus": "pendingRootEvidence",
+      "boardStatus": "verifiedSubcasesRemainingQualification",
       "physicalProofRequired": false
     },
     {
@@ -345,6 +375,12 @@
           "level": "pcLegacyRuntime",
           "scope": "8 profili, 136 scenari ciascuno, 14 regressioni risolte; zero warning; corsia legacy distinta da API2.",
           "observedStatus": "passed"
+        },
+        {
+          "path": "board/final-install/post-reboot.json",
+          "level": "finalDeviceOrSdkEvidence",
+          "scope": "Real production device reboot with different boot ID, ready heartbeat and NRestarts=0; not reboot mid-write",
+          "observedStatus": "passed"
         }
       ],
       "verifiedSubcases": [
@@ -357,7 +393,7 @@
         "Reboot reale in tutte le fasi, con hash DB/preferenze e recupero precedente/Base.",
         "Timeout startup/heartbeat validati sul carico reale della board, non quelli ridotti dei child di test."
       ],
-      "boardStatus": "pendingRootEvidence",
+      "boardStatus": "verifiedSubcasesRemainingQualification",
       "physicalProofRequired": true
     },
     {
@@ -420,6 +456,12 @@
           "level": "pcMainRuntime",
           "scope": "11 controlli notifiche con sei API2, timer/identità e perdita readiness urgente; zero warning.",
           "observedStatus": "passed"
+        },
+        {
+          "path": "board/final-subscriptions/eglfs/notifications.json",
+          "level": "finalDeviceOrSdkEvidence",
+          "scope": "Six notification presentations with private events, original system deadlines and focus",
+          "observedStatus": "passed"
         }
       ],
       "verifiedSubcases": [
@@ -433,7 +475,7 @@
         "Misure clipping/regioni obbligatorie e leggibilità per grandi font sul pannello.",
         "Percorso completo input/lettura/chiusura/rank e aggiornamento evento in ogni modalità con HID reale."
       ],
-      "boardStatus": "pendingRootEvidence",
+      "boardStatus": "verifiedSubcasesRemainingQualification",
       "physicalProofRequired": false
     },
     {
@@ -503,6 +545,12 @@
           "level": "pcUnitAndRuntime",
           "scope": "Suite nuove contratto/core/bundle/SDK/preflight/font/icone/tracing; contiene anche esito iniziale e rerun mirato.",
           "observedStatus": "passed"
+        },
+        {
+          "path": "board/final-subscriptions/offscreen/pending-context.json",
+          "level": "finalDeviceOrSdkEvidence",
+          "scope": "Actual provider invalidation holds coherence until fresh DTO, preserves zero and identity; effective night state",
+          "observedStatus": "passed"
         }
       ],
       "verifiedSubcases": [
@@ -514,7 +562,7 @@
         "Equivalenti stati nei renderer nuovi effettivamente creati per tutte le superfici del tema, non solo in DTO/legacy.",
         "Leggibilità e spazi dinamici su target con font/layout scelti; provider live e offline/reboot verificati separatamente."
       ],
-      "boardStatus": "pendingRootEvidence",
+      "boardStatus": "verifiedSubcasesRemainingQualification",
       "physicalProofRequired": false
     },
     {
@@ -546,6 +594,12 @@
           "level": "pcMainRuntime",
           "scope": "MenuContext esterno, modello/azioni reali e readiness prima del primo frame.",
           "observedStatus": "passed"
+        },
+        {
+          "path": "board/final-subscriptions/eglfs/overlay.json",
+          "level": "finalDeviceOrSdkEvidence",
+          "scope": "External menu model/action broker and protected focus; immediate selection result",
+          "observedStatus": "passed"
         }
       ],
       "verifiedSubcases": [
@@ -557,7 +611,7 @@
         "Liste/dettagli/overlay API2 personalizzati con refresh reale asincrono, reorder/rimozione righe e cambio tema/revisione durante risposta.",
         "Conservazione di ID/tab/scroll/draft del tema completo sul dispositivo per ogni nuova presentazione e fallback."
       ],
-      "boardStatus": "pendingRootEvidence",
+      "boardStatus": "verifiedSubcasesRemainingQualification",
       "physicalProofRequired": false
     },
     {
@@ -583,6 +637,12 @@
           "level": "pcUnitAndRuntime",
           "scope": "Suite nuove contratto/core/bundle/SDK/preflight/font/icone/tracing; contiene anche esito iniziale e rerun mirato.",
           "observedStatus": "passed"
+        },
+        {
+          "path": "board/final-subscriptions/eglfs/public-motion.json",
+          "level": "finalDeviceOrSdkEvidence",
+          "scope": "Real public scene motion, navigation/notification and passive frame timings, no forced diagnostic animation",
+          "observedStatus": "passed"
         }
       ],
       "verifiedSubcases": [
@@ -595,7 +655,7 @@
         "Lifecycle e distruzione per asset animati/media aggiuntivi eventualmente dichiarati dal bundle; non dedurre correttezza dal solo renderer esempio.",
         "Modalità ridotta/off provate su tutte le nuove notifiche/superfici del tema finale."
       ],
-      "boardStatus": "pendingRootEvidence",
+      "boardStatus": "verifiedSubcasesRemainingQualification",
       "physicalProofRequired": false
     },
     {
@@ -677,6 +737,12 @@
           "level": "pcMainRuntime",
           "scope": "Area sicura attore e sospensione senza regione compatibile, negoziazione full canvas/cancel; gli altri overlay rimangono sotto i gate esistenti.",
           "observedStatus": "passed"
+        },
+        {
+          "path": "board/final-subscriptions/eglfs/layout-ui.json",
+          "level": "finalDeviceOrSdkEvidence",
+          "scope": "Safe regions/full canvas can pause the public actor without losing identity",
+          "observedStatus": "passed"
         }
       ],
       "verifiedSubcases": [
@@ -689,7 +755,7 @@
         "Ordine visivo e input sul target per canvas/background/decoration/actor, animazioni sovrapposte e urgente.",
         "Verifica media/compagno animato del tema concreto: il piccolo actor esempio non dimostra tutte le future rappresentazioni."
       ],
-      "boardStatus": "pendingRootEvidence",
+      "boardStatus": "verifiedSubcasesRemainingQualification",
       "physicalProofRequired": false
     },
     {
@@ -709,6 +775,18 @@
           "level": "pcDevelopmentProfile",
           "scope": "Profilo cold/warm bridge DTO sul PC; non GPU/frame time o budget board.",
           "observedStatus": "passed"
+        },
+        {
+          "path": "board/before-subscriptions/status.txt",
+          "level": "finalDeviceOrSdkEvidence",
+          "scope": "1,200 physical EGLFS theme swaps plus idle/isolated offline on fa7fe11; tracing misses preserved, no final-source long soak claim",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "board/final-subscriptions/eglfs/public-motion.json",
+          "level": "finalDeviceOrSdkEvidence",
+          "scope": "Final subscription prototype: scene warm p95 17.68ms, navigation intervals 62.73ms, notification intervals 44.71ms; informational timings",
+          "observedStatus": "passed"
         }
       ],
       "verifiedSubcases": [
@@ -720,7 +798,7 @@
         "Font/assets cold, idle/nascosto, plateau RAM e budget 150/20ms più overhead tracing 1ms/8MiB misurati con workload comparabile.",
         "Soak continuo di24ore ed endurance; il conteggio100cambi non lo sostituisce."
       ],
-      "boardStatus": "pendingRootEvidence",
+      "boardStatus": "verifiedSubcasesRemainingQualification",
       "physicalProofRequired": true
     },
     {
@@ -746,6 +824,18 @@
           "level": "pcUnitAndSubprocess",
           "scope": "25 prove bundle/identità/risorse/journal/lease/GC e supervisor esterno in processi di test.",
           "observedStatus": "passed"
+        },
+        {
+          "path": "board/final-install/save-recovery.log",
+          "level": "finalDeviceOrSdkEvidence",
+          "scope": "15 board service tests, including async worker/fresh-frame race and bounded rollback; frame ack simulated in service unit tests",
+          "observedStatus": "passed"
+        },
+        {
+          "path": "board/final-install/first-install-check-rollback.json",
+          "level": "finalDeviceOrSdkEvidence",
+          "scope": "Real installer rollback from overstrict missing-Base-journal assertion, followed by corrected successful install",
+          "observedStatus": "failedHarnessCheckThenRolledBack"
         }
       ],
       "verifiedSubcases": [
@@ -758,7 +848,7 @@
         "Inject ENOSPC/fsync/rename/permissions con catalogo/precedente verificabili e diagnostica senza false conferme.",
         "Applicazione su bundle non legacy e ripetuti crash in tutte le fasi con recovery esterno del kiosk."
       ],
-      "boardStatus": "pendingRootEvidence",
+      "boardStatus": "verifiedSubcasesRemainingQualification",
       "physicalProofRequired": true
     },
     {
@@ -790,6 +880,12 @@
           "level": "pcMainRuntime",
           "scope": "Errore esplicito della scena API2 attiva: Base/quarantena con eventi/prefs/focus conservati.",
           "observedStatus": "passed"
+        },
+        {
+          "path": "board/final-subscriptions/eglfs/overlay.json",
+          "level": "finalDeviceOrSdkEvidence",
+          "scope": "Synthetic nine-key navigation/focus; physical HID not verified in this run",
+          "observedStatus": "passed"
         }
       ],
       "verifiedSubcases": [
@@ -800,7 +896,7 @@
         "Percorso fisico esclusivamente tastierino sul dispositivo: 1/7, navigazione, import/preview/apply/cancel e ritorno dopo urgente.",
         "HID fisico/detect/disconnessione/riconnessione distinto da decode fixture e QKeyEvent; ergonomia del percorso UI tema reale."
       ],
-      "boardStatus": "pendingRootEvidence",
+      "boardStatus": "verifiedSubcasesRemainingQualification",
       "physicalProofRequired": true
     },
     {
@@ -821,6 +917,12 @@
           "scope": "Main reale:75 coppie contrasto per palette day e night; zero warning; nessuna misura ottica o accettazione concept.",
           "observedStatus": "passed",
           "temporarySource": true
+        },
+        {
+          "path": "board/final-subscriptions/offscreen/pending-context.json",
+          "level": "finalDeviceOrSdkEvidence",
+          "scope": "Actual public clock effective night palette state; panel optical/visual qualification remains open",
+          "observedStatus": "passed"
         }
       ],
       "verifiedSubcases": [
@@ -833,7 +935,7 @@
         "Leggibilità ottica sul pannello960x640, contrasto perceived e riconoscibilità gravità con testi lunghi e impostazioni luce.",
         "Accettazione visiva dei concept finali e stati provider reali; test numerici/PNG non sostituiscono la misura fisica."
       ],
-      "boardStatus": "pendingRootEvidence",
+      "boardStatus": "verifiedSubcasesRemainingQualification",
       "physicalProofRequired": true
     }
   ],
@@ -891,5 +993,22 @@
     "verified": 0,
     "partiallyVerified": 20,
     "notVerified": 1
+  },
+  "deliveryDecision": {
+    "date": "2026-10-06",
+    "status": "softwareImplementedInstalledAndDelivered",
+    "runtimeSourceCommit": "bb4d76cc988add76b85aeba6a7d753d4ecad5a01",
+    "runtimeFiles": 435,
+    "physicalRebootVerified": true,
+    "automaticRestarts": 0,
+    "preferencesPreserved": true,
+    "existingEventRowsRetained": 16,
+    "sdkFiles": 433,
+    "policy": "Explicit user decision: dedicated dashboard device may use more RAM/CPU; stop further extended stress repetitions. Historical tracing budgets and full-change 150ms are informational, with measured misses retained. Physical keypad, power cut, long soak and aesthetic qualification remain distinct.",
+    "evidence": [
+      "board/final-install/deployment-report.json",
+      "board/final-install/post-reboot.json",
+      "sdk-delivery/theme-bb4d76c-sdk-delivery.json"
+    ]
   }
 }

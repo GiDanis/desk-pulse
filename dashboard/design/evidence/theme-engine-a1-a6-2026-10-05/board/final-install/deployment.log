@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/var/tmp/smartpc-theme-bb4d76c-deploy.py", line 56, in <module>
+    live=health(pid);verify(runtime)
+  File "/var/tmp/smartpc-theme-bb4d76c-deploy.py", line 34, in health
+    return {'health':record,'dataRoot':str(root),'journal':json.loads((root/'theme-activation.json').read_text())}
+                                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.13/pathlib/_local.py", line 548, in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/pathlib/_abc.py", line 632, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/pathlib/_local.py", line 539, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/var/lib/smartpc-dashboard/.local/share/SmartPC/SmartPC/theme-activation.json'
