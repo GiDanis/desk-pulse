@@ -8,23 +8,27 @@
 
 ---
 
-## 🌟 Novità della Versione v0.6.1
+## 🎨 Novità della Versione v0.6.6: Theme & Motion Engine
 
-Il rilascio **v0.6.1** introduce una profonda rifinitura architetturale, gestione avanzata delle notifiche e la verifica di stabilità 24h su hardware reale:
+Il rilascio **v0.6.6** introduce un rivoluzionario **Motore di Temi, Animazioni e Presentazioni** che disaccoppia completamente lo stile visivo e i layout dai dati applicativi e dai servizi Linux sottostanti:
 
-- ⚙️ **Motore Impostazioni Modulare & Info Dispositivo:**
-  - Componenti dedicati `SettingsPanel.qml` e `DeviceInfo.qml` per una navigazione istantanea e chiara.
-  - Monitoraggio asincrono della qualità segnale Wi-Fi (%) tramite `nmcli` senza scansioni di rete o esposizione di credenziali.
-  - Telemetria hardware in tempo reale (temperatura CPU della board, IP, memoria RAM e stato disco).
-- 🌙 **Gestione Notifiche & Fascia Silenzio:**
-  - Fascia oraria di silenzio personalizzabile (*Quiet Hours*) con muting automatico notturno degli avvisi non urgenti.
-  - Controllo granulare delle categorie a schermo per Meteo, quote ChatGPT e notifiche gol.
-- 🎩 **Fantacalcio Live:**
-  - Supporto per voti e pagelle in tempo reale durante le partite in corso della Serie A.
-  - Visualizzazione titolari, panchina e gestione coerente dei senza voto (SV).
-- 🛡️ **Soak Test di Stabilità 24 Ore Superato:**
-  - Documentato test di funzionamento continuo per 24 ore sulla Orange Pi fisica (`os/diagnostics/2026-10-01-24h/`).
-  - Zero memory leak, equilibrio termico a circa 43°C e stabilità `NRestarts=0`.
+- 🎭 **Token Semantici di Design & Palette Adattive:**
+  - Contratto semantico completo per colori, bordi, tipografie e raggi di curvatura—zero valori esadecimali hardcoded nelle viste.
+  - Cambio automatico Giorno/Notte e modalità notturne dedicate ad alto contrasto (es. Notte Rossa per camere oscurate).
+  - Include due temi di produzione verificati: **Neo-Retro Base** e **Braun Functional**.
+- 🎬 **Motore di Movimento Dichiarativo:**
+  - Ricette di transizione intercambiabili (`Fade`, `Slide`, `Cut`, `SceneMove`, `Value`) con garanzia di frame-pacing.
+  - Politica di riduzione del movimento ad attivazione automatica o su preferenza utente.
+- 🧩 **Layout di Presentazione Modulari:**
+  - Layout grafici svincolati dai provider dati; le superfici possono cambiare aspetto dinamicamente senza alterare la logica.
+  - Sei superfici di notifica estensibili (Small Rail, Large Split, Urgent, Inbox, Detail, Badge).
+- 🛠️ **SDK di Creazione Temi Offline (`smartpc-theme` CLI):**
+  - Tool da riga di comando per creare, validare, fare anteprime e impacchettare bundle di temi personali (`init`, `validate`, `preview`, `pack`, `inspect`, `export`).
+  - Validazione schema-1 rigorosa eseguibile senza dipendenze grafiche.
+- ⚡ **Cambio Tema a Caldo Senza Riavvio:**
+  - Cambio di profilo istantaneo in `Menu → Impostazioni → Aspetto` preservando lo stato dei moduli e la ricezione dati.
+- 🛡️ **Soak Test 24 Ore Documentato:**
+  - Collaudo di funzionamento continuo di 24 ore sulla Orange Pi fisica (`os/diagnostics/2026-10-01-24h/`): zero memory leak e stabilità `NRestarts=0`.
 
 ---
 

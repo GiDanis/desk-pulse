@@ -18,7 +18,7 @@
 </p>
 
 <p align="center">
-  <a href="#-whats-new-in-v061">What's New in v0.6.1</a> •
+  <a href="#-whats-new-in-v066-extensible-theme--motion-engine">What's New in v0.6.6</a> •
   <a href="#-os-workspaces">Workspaces</a> •
   <a href="#-why-a-dedicated-desk-os">Why Desk OS?</a> •
   <a href="#-architecture">Architecture</a> •
@@ -41,21 +41,26 @@ Instead of treating the board as a desktop computer running a slow browser kiosk
 
 ---
 
-## ✨ What's New in v0.6.1
+## 🎨 What's New in v0.6.6: Extensible Theme & Motion Engine
 
-The **v0.6.1** release brings modular architectural refinement, enhanced live sports tracking, and verified long-term hardware reliability:
+The **v0.6.6** release introduces a revolutionary **Theme, Motion & Presentation Engine** that completely decouples visual design, animations, and typography from the underlying Linux services and data engines:
 
-- ⚙️ **Modular Settings & System Info Engine:**
-  - Extracted clean `SettingsPanel.qml` and `DeviceInfo.qml` components for crisp, responsive navigation.
-  - Non-blocking asynchronous Wi-Fi signal quality monitoring (%) via Linux `nmcli` without active scanning or leaking credentials.
-  - Real-time hardware vitals (IP address, board CPU temperature, memory, disk usage).
-- 🌙 **Advanced Notification & Quiet Hours Management:**
-  - Dedicated Quiet Hours (*"Fascia silenzio"*) with automatic night muting of non-urgent banners.
-  - Granular on-screen alert toggles for Weather, ChatGPT quotas, and Favourite Team goal banners.
-- 🎩 **Fantacalcio Live Assistant:**
-  - Real-time matchday ratings and vote sync during active Serie A matches.
-  - Dedicated starters, bench, substitutes, and SV distinction.
-- 🛡️ **24-Hour Continuous Operation Soak Test:**
+- 🎭 **Semantic Design Tokens & Adaptive Palettes:**
+  - Full design token contract across colors, borders, typographies, and radii—no hardcoded hex values in UI views.
+  - Automatic Day/Night palette switching and specialized high-contrast night modes (e.g. Red Night Mode for dark rooms).
+  - Ships with two battle-tested production themes: **Neo-Retro Base** and **Braun Functional**.
+- 🎬 **Declarative Motion Engine:**
+  - Replaceable transition recipes (`Fade`, `Slide`, `Cut`, `SceneMove`, `Value`) with adaptive frame-pacing.
+  - Motion reduction policy automatically adapts to high-load situations or user accessibility preferences.
+- 🧩 **Pluggable Presentation Layouts:**
+  - Layouts are decoupled from data providers; surfaces can swap presentations dynamically without altering state logic.
+  - Six extensible presentation surfaces for notifications (Small Rail, Large Split, Urgent, Inbox, Detail, Badge).
+- 🛠️ **Offline AI Authoring SDK (`smartpc-theme` CLI):**
+  - Standalone developer CLI for authoring, linting, packaging, and inspecting theme bundles (`init`, `validate`, `preview`, `pack`, `inspect`, `export`).
+  - Strict schema-1 validation with zero runtime dependencies needed during compilation.
+- ⚡ **Zero-Flicker Hot-Reload:**
+  - Switch themes seamlessly in `Menu → Settings → Appearance` without restarting the dashboard or dropping background data feeds.
+- 🛡️ **Verified 24-Hour Continuous Operation Soak Test:**
   - Documented 24-hour continuous burn-in run on the physical Orange Pi Zero 3W (`os/diagnostics/2026-10-01-24h/`).
   - Zero memory leaks, thermal equilibrium at ~43°C, and `NRestarts=0` stability.
 
