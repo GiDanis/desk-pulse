@@ -399,12 +399,13 @@ module smartpc_lid_incline6deg() {
                     cube([case_w + 20, case_d * 2, 100]);
             }
 
-            // 2. Male alignment lip (slides 2.2mm down into base female rebate, wall = 2.4mm)
+            // 2. Male alignment lip (slides 2.2mm down into base female rebate, solid wall = 1.6mm > 1.2mm)
+            lip_wall = 1.6;
             translate([wall_t - 0.6, front_wall_t - 0.6, -2.2])
                 difference() {
-                    rounded_box(case_w - 2*(wall_t - 0.6), case_d - wall_t - front_wall_t + 2*0.6, 2.2, corner_r - 0.8);
-                    translate([wall_t, front_wall_t, -0.5])
-                        rounded_box(case_w - 2*(wall_t - 0.6) - 2*wall_t, case_d - wall_t - front_wall_t + 2*0.6 - 2*front_wall_t, 3.0, corner_r - 1.5);
+                    rounded_box(case_w - 2*(wall_t - 0.6), case_d - (wall_t - 0.6) - (front_wall_t - 0.6), 2.2, corner_r - 0.8);
+                    translate([lip_wall, lip_wall, -0.5])
+                        rounded_box(case_w - 2*(wall_t - 0.6) - 2*lip_wall, case_d - (wall_t - 0.6) - (front_wall_t - 0.6) - 2*lip_wall, 3.5, corner_r - 1.5);
                 }
 
             // 3. Internal Corner Screw Bosses (Clipped by ceiling so they never protrude!)
@@ -429,8 +430,8 @@ module smartpc_lid_incline6deg() {
             translate([cradle_x, cradle_y / cos(tilt_angle), -cradle_depth])
             rounded_box(cradle_w, cradle_d / cos(tilt_angle), cradle_depth + 10, cradle_r);
 
-        // 5. Internal Component Cavity: leaves ceiling_t (2.2mm) solid floor everywhere
-        translate([wall_t, front_wall_t, -3.0])
+        // 5. Internal Component Cavity: starts at Z=0 to preserve the 1.6mm male lip thickness
+        translate([wall_t, front_wall_t, 0.0])
             intersection() {
                 rounded_box(case_w - 2*wall_t, case_d - wall_t - front_wall_t, 50, corner_r - 1.0);
                 
@@ -460,15 +461,13 @@ module smartpc_lid_incline6deg() {
                 }
         }
 
-        // 7. Upper Rear Exhaust Slats (2 horizontal slots above the ports, fin = 1.6mm)
-        for (rz = [2.2, 5.2]) {
-            translate([52.0, case_d, rz])
-                rotate([90, 0, 0])
-                hull() {
-                    translate([-15.0, 0]) cylinder(d=1.4, h=3*wall_t, center=true);
-                    translate([ 15.0, 0]) cylinder(d=1.4, h=3*wall_t, center=true);
-                }
-        }
+        // 7. Upper Rear Exhaust Slat (Single wide slot at Z=2.4mm, leaves >3.1mm solid roof material)
+        translate([52.0, case_d, 2.4])
+            rotate([90, 0, 0])
+            hull() {
+                translate([-18.0, 0]) cylinder(d=1.4, h=3*wall_t, center=true);
+                translate([ 18.0, 0]) cylinder(d=1.4, h=3*wall_t, center=true);
+            }
 
         // 6. Blind Screw Pilot Holes for M2.5 (No holes on top surface!)
         // Front posts (taller): hole depth 7.5mm (stops at Z=4.5, ceiling is at Z=11.5)
