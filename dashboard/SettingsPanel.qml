@@ -16,6 +16,7 @@ Item {
         {title: "Account ChatGPT", detail: "Soglie di utilizzo e avvisi", target: "accountSettings"},
         {title: "Sport", detail: "Squadra, stagioni e riepiloghi Home", target: "integrations"},
         {title:"Casa / Smart Life",detail:"Dispositivi scelti e aggiornamenti",target:"casaSettings"},
+        {title:"Rete locale",detail:"iliadbox, dispositivi e preferiti",target:"networkSettings"},
         {title: "Dati e aggiornamenti", detail: "Stato delle fonti e aggiornamento manuale", target: "sources"}
     ].filter(row => row.target !== "integrations" || dashboard.dashboardState &&
         (dashboard.dashboardState.sportAvailable || dashboard.dashboardState.racingAvailable.length))
@@ -34,7 +35,8 @@ Item {
         .concat(backend && backend.sportAvailable ? [{title: "Serie A", detail: sourceDetail(dashboard.sport), target: "sport", value: "AGGIORNA"}] : [])
         .concat(backend && backend.racingAvailable.indexOf("f1") >= 0 ? [{title: "Formula 1", detail: sourceDetail(dashboard.racingStates.f1), target: "f1", value: "AGGIORNA"}] : [])
         .concat(backend && backend.racingAvailable.indexOf("motogp") >= 0 ? [{title: "MotoGP", detail: sourceDetail(dashboard.racingStates.motogp), target: "motogp", value: "AGGIORNA"}] : [])
-        .concat(backend ? [{title:"Casa / Smart Life",detail:sourceDetail(dashboard.casa)+" · "+(dashboard.casaData.modeText || "Da configurare"),target:"casa",value:"AGGIORNA",enabled:!!dashboard.casaData.configured && !dashboard.casaData.busy}] : []) : []
+        .concat(backend ? [{title:"Casa / Smart Life",detail:sourceDetail(dashboard.casa)+" · "+(dashboard.casaData.modeText || "Da configurare"),target:"casa",value:"AGGIORNA",enabled:!!dashboard.casaData.configured && !dashboard.casaData.busy}] : [])
+        .concat(backend ? [{title:"Rete locale",detail:sourceDetail(dashboard.network)+" · "+(dashboard.networkData.modeText || "Da configurare"),target:"network",value:"AGGIORNA",enabled:!!dashboard.networkData.configured && !dashboard.networkData.busy}] : []) : []
     function sourceDetail(value) {
         if (!value) return "Non disponibile"
         const names = {active: "Aggiornato", updating: "Aggiornamento…", offline: "Offline · dati salvati", stale: "Dati salvati", error: "Errore", unavailable: "Non disponibile"}

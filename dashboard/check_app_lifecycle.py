@@ -17,6 +17,7 @@ def child(mode):
         from PySide6.QtGui import QGuiApplication
         from PySide6.QtQml import QQmlApplicationEngine
         from app import main
+        from network import NetworkService
         from casa import CasaService
         from events import EventService
         from theme_service import ThemeService
@@ -35,6 +36,12 @@ def child(mode):
             load(engine, url)
             if mode == "normal":
                 QTimer.singleShot(100, QGuiApplication.instance().quit)
+
+        network_close = NetworkService.close
+        def close_network(service):
+            network_close(service)
+            assert service._closed and service._stop.is_set() and not service._timer.isActive()
+            closed.append("network")
 
         def close_casa(service):
             casa_close(service)
@@ -57,12 +64,13 @@ def child(mode):
         with (
             patch.object(QQmlApplicationEngine, "load", load_window),
             patch.object(CasaService, "close", close_casa),
+            patch.object(NetworkService, "close", close_network),
             patch.object(EventService, "close", close_events),
             patch.object(ThemeService, "cancel", close_theme),
         ):
             result = main()
         assert result == (1 if mode == "qml-failure" else 0)
-        assert sorted(closed) == ["casa", "events", "theme"], closed
+        assert sorted(closed) == ["casa", "events", "network", "theme"], closed
         print(json.dumps({"mode": mode, "result": result, "closed": closed}))
     finally:
         private.cleanup()

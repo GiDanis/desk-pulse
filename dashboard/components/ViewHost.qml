@@ -289,12 +289,14 @@ Item {
                 host.restoreInput()
                 host.pendingLoader = null
                 const failedGeneration = serviceGeneration
+                const reportTarget = host.service
+                const failedContent = host.contentId
                 const live = host.currentLoader === candidate
                 if (live && host.service) host.service.recoverVisual(host.contentId,message)
                 destroy()
                 if (failedGeneration) {
                     Qt.callLater(function() {
-                        if (host.service) host.service.reportCandidate(failedGeneration, host.contentId, false, message)
+                        if (reportTarget) reportTarget.reportCandidate(failedGeneration, failedContent, false, message)
                     })
                 }
                 else if (!host.currentItem && host.service) host.service.recoverVisual(host.contentId,message)
@@ -314,7 +316,9 @@ Item {
             }
             // Loading and presentation readiness have independent watchdogs.
             Timer {
-                interval: 3000
+                // Cold committed renderers contend with initial providers and
+                // shader/font setup on the board. Swaps keep the 3s watchdog.
+                interval: !host.currentItem && candidate.serviceGeneration === 0 ? 8000 : 3000
                 running: candidate.active && candidate.status === Loader.Loading
                 onTriggered: candidate.fail("Timeout caricamento " + candidate.presentationId)
             }

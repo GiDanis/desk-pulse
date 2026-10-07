@@ -3,7 +3,7 @@
   "module": {
     "uri": "SmartPC.ThemeApi",
     "major": 2,
-    "minor": 2
+    "minor": 3
   },
   "apiState": "implemented",
   "surfaces": [
@@ -345,6 +345,96 @@
       ],
       "fallback": "base",
       "rendererState": "legacy",
+      "layout": {
+        "policy": "legacyFixed",
+        "width": 872,
+        "height": 455
+      }
+    },
+    {
+      "id": "network.detail",
+      "context": "NetworkContext",
+      "contextVersion": 1,
+      "hostFamily": "overlay",
+      "legacySource": "Main.qml",
+      "legacyRoute": "networkDetail",
+      "variants": [
+        "default"
+      ],
+      "actions": [
+        "navigation.back",
+        "navigation.home",
+        "navigation.inbox",
+        "navigation.menu",
+        "selection.move",
+        "selection.select",
+        "details.open",
+        "sources.refresh",
+        "network.favourite.toggle",
+        "navigation.tab.select"
+      ],
+      "fallback": "base",
+      "rendererState": "publicBuiltin",
+      "layout": {
+        "policy": "legacyFixed",
+        "width": 960,
+        "height": 640
+      }
+    },
+    {
+      "id": "network.devices",
+      "context": "NetworkContext",
+      "contextVersion": 1,
+      "hostFamily": "page",
+      "legacySource": "Main.qml",
+      "legacyRoute": null,
+      "variants": [
+        "default"
+      ],
+      "actions": [
+        "navigation.back",
+        "navigation.home",
+        "navigation.inbox",
+        "navigation.menu",
+        "selection.move",
+        "selection.select",
+        "details.open",
+        "navigation.family.step",
+        "navigation.view.step",
+        "network.filter.step"
+      ],
+      "fallback": "base",
+      "rendererState": "publicBuiltin",
+      "layout": {
+        "policy": "legacyFixed",
+        "width": 872,
+        "height": 455
+      }
+    },
+    {
+      "id": "network.overview",
+      "context": "NetworkContext",
+      "contextVersion": 1,
+      "hostFamily": "page",
+      "legacySource": "Main.qml",
+      "legacyRoute": null,
+      "variants": [
+        "default"
+      ],
+      "actions": [
+        "navigation.back",
+        "navigation.home",
+        "navigation.inbox",
+        "navigation.menu",
+        "selection.move",
+        "selection.select",
+        "details.open",
+        "navigation.family.step",
+        "navigation.view.step",
+        "network.filter.step"
+      ],
+      "fallback": "base",
+      "rendererState": "publicBuiltin",
       "layout": {
         "policy": "legacyFixed",
         "width": 872,
@@ -947,6 +1037,39 @@
       ],
       "fallback": "base",
       "rendererState": "fixedComponent",
+      "layout": {
+        "policy": "legacyFixed",
+        "width": 960,
+        "height": 640
+      }
+    },
+    {
+      "id": "settings.network",
+      "context": "NetworkContext",
+      "contextVersion": 1,
+      "hostFamily": "overlay",
+      "legacySource": "Main.qml",
+      "legacyRoute": "networkSettings",
+      "variants": [
+        "default"
+      ],
+      "actions": [
+        "navigation.back",
+        "navigation.home",
+        "navigation.inbox",
+        "navigation.menu",
+        "selection.move",
+        "selection.select",
+        "details.open",
+        "sources.refresh",
+        "network.favourite.toggle",
+        "network.favourite.move",
+        "network.config.reload",
+        "network.polling.toggle",
+        "network.alias.set"
+      ],
+      "fallback": "base",
+      "rendererState": "publicBuiltin",
       "layout": {
         "policy": "legacyFixed",
         "width": 960,
@@ -2184,6 +2307,30 @@
       {
         "id": "weather.now:default",
         "surfaceId": "weather.now",
+        "variant": "default",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "network.overview:default",
+        "surfaceId": "network.overview",
+        "variant": "default",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "network.devices:default",
+        "surfaceId": "network.devices",
+        "variant": "default",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "network.detail:default",
+        "surfaceId": "network.detail",
+        "variant": "default",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "settings.network:default",
+        "surfaceId": "settings.network",
         "variant": "default",
         "verification": "requiredNotExecuted"
       }

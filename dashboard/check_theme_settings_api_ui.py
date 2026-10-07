@@ -47,7 +47,7 @@ def verify():
         # Documented IDs must work even when display labels and legacy targets
         # differ, and no renderer receives a private controller/model.
         index=context('settings.index')
-        assert ids(index)==['appearance','display','modules','notifications','account','integrations','casa','sources']
+        assert ids(index)==['appearance','display','modules','notifications','account','integrations','casa','network','sources']
         assert all(index.rows.get(i).enabled for i in range(index.rows.count))
         assert request(index,'settings.activate','display').status=='completed'
         assert harness.value('overlay')=='system'

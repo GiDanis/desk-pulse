@@ -13,7 +13,7 @@ QtObject {
     readonly property string dateText: controller ? controller.dateText() : ""
     readonly property var model: controller ? ({weather: controller.weather, account: controller.account,
         nextEvent: controller.nextEvent, sport: controller.sport, racing: controller.racing,
-        team: controller.teamState, casa: controller.casa, now: controller.now}) : ({})
+        team: controller.teamState, casa: controller.casa, network:controller.network, now: controller.now}) : ({})
     readonly property var selection: controller ? ({familyId: controller.familyId, sportId: controller.sportFocusedId,
         teamId: controller.teamFocusedId, racingId: controller.racingFocusedId, fantasyId: controller.fantasyFocusedId,
         view: controller.viewName(), overlay: controller.overlay}) : ({})

@@ -256,13 +256,15 @@ def verify_integrity(root):
 
 
 def effective_manifest(value, surfaces):
-    """Runtime-only Base fallback for the four additive Casa surfaces."""
+    """Runtime-only Base fallback for versioned additive surfaces."""
     result=deepcopy(value)
     coverage=result['coverage']
     known=set(coverage['surfaces']) | set(coverage['fallbacks'])
-    casa={'casa.overview','casa.devices','casa.detail','settings.casa'}
-    if set(surfaces)-known == casa:
-        coverage['fallbacks']=sorted(set(coverage['fallbacks']) | casa)
+    groups=[{'casa.overview','casa.devices','casa.detail','settings.casa'},
+            {'network.overview','network.devices','network.detail','settings.network'}]
+    missing=set(surfaces)-known
+    if missing and missing <= set.union(*groups) and all(not (group & missing) or group <= missing for group in groups):
+        coverage['fallbacks']=sorted(set(coverage['fallbacks']) | missing)
         coverage['mode']='partial'
     return result
 
@@ -357,7 +359,7 @@ def _registry(registry, manifest, inventory, app_root):
             require(family == 'presentations' and row.get('contextApi') == 'page2',
                     'registry.' + identifier + '.dataDomains', 'selezione domini riservata a PageContext')
             require(isinstance(domains, list) and all(isinstance(name, str) and name in
-                    ('weather', 'account', 'nextEvent', 'sport', 'team', 'fantasy', 'racing') for name in domains)
+                    ('weather', 'account', 'nextEvent', 'sport', 'team', 'fantasy', 'racing', 'network') for name in domains)
                     and len(domains) == len(set(domains)),
                     'registry.' + identifier + '.dataDomains', 'domini non validi o duplicati')
         path = relative_path(row.get('file'))

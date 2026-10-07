@@ -270,7 +270,7 @@ class PublicApiTests(unittest.TestCase):
         self.assertEqual(self.factory.modelDomains('sport.team.picker'), ['sport'])
         self.assertEqual(self.factory.modelDomains('racing.driver.detail'), ['racing'])
         self.assertEqual(self.factory.modelDomains('home.now'),
-                         ['weather', 'account', 'nextEvent', 'sport', 'team', 'fantasy', 'racing'])
+                         ['weather', 'account', 'nextEvent', 'sport', 'team', 'fantasy', 'racing', 'network'])
 
     def test_nested_equality_preserves_types_and_mapping_order(self):
         from theme_contexts import snapshot_equal

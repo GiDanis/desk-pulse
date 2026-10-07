@@ -3,7 +3,7 @@
   "module": {
     "uri": "SmartPC.ThemeApi",
     "major": 2,
-    "minor": 2
+    "minor": 3
   },
   "apiState": "implemented",
   "privateHandles": [
@@ -2665,6 +2665,160 @@
           "readOnly": true
         }
       }
+    },
+    "NetworkDetail": {
+      "fields": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "section": {
+          "type": "string",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "value": {
+          "type": "string",
+          "readOnly": true
+        },
+        "detail": {
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "NetworkDevice": {
+      "fields": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "originalName": {
+          "type": "string",
+          "readOnly": true
+        },
+        "kind": {
+          "type": "string",
+          "readOnly": true
+        },
+        "mac": {
+          "type": "string",
+          "readOnly": true
+        },
+        "vendor": {
+          "type": "string",
+          "readOnly": true
+        },
+        "interface": {
+          "type": "string",
+          "readOnly": true
+        },
+        "primaryAddress": {
+          "type": "string",
+          "readOnly": true
+        },
+        "connectionText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "statusText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "previous": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "favourite": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "lastSeen": {
+          "type": "real",
+          "readOnly": true,
+          "nullable": true
+        },
+        "collectedAt": {
+          "type": "real",
+          "readOnly": true
+        },
+        "details": {
+          "type": "NetworkDetailModel",
+          "readOnly": true
+        }
+      }
+    },
+    "NetworkData": {
+      "fields": {
+        "reachableText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "coverage": {
+          "type": "string",
+          "readOnly": true
+        },
+        "wanText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "localText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "feedback": {
+          "type": "string",
+          "readOnly": true
+        },
+        "modeText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "configured": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "hasInventory": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "busy": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "polling": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "readOnly": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "countCurrent": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "knownCount": {
+          "type": "int",
+          "readOnly": true,
+          "minimum": 0
+        },
+        "devices": {
+          "type": "NetworkDeviceModel",
+          "readOnly": true
+        },
+        "favourites": {
+          "type": "NetworkDeviceModel",
+          "readOnly": true
+        }
+      }
     }
   },
   "models": {
@@ -2857,6 +3011,21 @@
       "itemType": "CasaMetric",
       "identityRole": "code",
       "maxItems": 128
+    },
+    "NetworkDetailModel": {
+      "itemType": "NetworkDetail",
+      "identityRole": "id",
+      "maxItems": 128
+    },
+    "NetworkDeviceModel": {
+      "itemType": "NetworkDevice",
+      "identityRole": "id",
+      "maxItems": 256
+    },
+    "NetworkSettingRowModel": {
+      "itemType": "SettingRow",
+      "identityRole": "id",
+      "maxItems": 260
     }
   },
   "contexts": {
@@ -2972,6 +3141,11 @@
           "type": "RacingData",
           "nullable": true,
           "readOnly": true
+        },
+        "network": {
+          "type": "NetworkData",
+          "readOnly": true,
+          "nullable": true
         }
       },
       "methods": {
@@ -3717,6 +3891,59 @@
         },
         "feedback": {
           "type": "string",
+          "readOnly": true
+        }
+      },
+      "methods": {
+        "requestAction": {
+          "parameters": [
+            "string",
+            "string",
+            "legacyMap"
+          ],
+          "result": "ActionResult"
+        }
+      }
+    },
+    "NetworkContext": {
+      "version": 1,
+      "extends": "SurfaceContext",
+      "fields": {
+        "source": {
+          "type": "SourceState",
+          "readOnly": true
+        },
+        "selection": {
+          "type": "SelectionState",
+          "readOnly": true
+        },
+        "selectedDevice": {
+          "type": "NetworkDevice",
+          "readOnly": true,
+          "nullable": true
+        },
+        "rows": {
+          "type": "NetworkSettingRowModel",
+          "readOnly": true
+        },
+        "description": {
+          "type": "string",
+          "readOnly": true
+        },
+        "feedback": {
+          "type": "string",
+          "readOnly": true
+        },
+        "network": {
+          "type": "NetworkData",
+          "readOnly": true
+        },
+        "detailRows": {
+          "type": "NetworkDetailModel",
+          "readOnly": true
+        },
+        "deviceRows": {
+          "type": "NetworkDeviceModel",
           "readOnly": true
         }
       },

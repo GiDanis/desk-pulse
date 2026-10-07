@@ -151,8 +151,9 @@ def write_full_kit(destination, *, profile=None):
             relative = path.relative_to(ROOT)
             if not path.is_file() or path.is_symlink() or '__pycache__' in relative.parts:
                 continue
-            allowed = (len(relative.parts) == 1 and (path.suffix in {'.py', '.qml', '.sh'} or path.name == 'smartpc-theme')) or relative.parts[0] in SDK_DIRS
-            if not allowed or path.suffix not in SDK_SUFFIXES and path.name not in ('qmldir', 'smartpc-theme'):
+            public_ca = relative.as_posix() == 'resources/iliadbox-ca.pem'
+            allowed = public_ca or (len(relative.parts) == 1 and (path.suffix in {'.py', '.qml', '.sh'} or path.name == 'smartpc-theme')) or relative.parts[0] in SDK_DIRS
+            if not allowed or not public_ca and path.suffix not in SDK_SUFFIXES and path.name not in ('qmldir', 'smartpc-theme'):
                 continue
             target = sdk / relative; target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(path, target)
@@ -174,7 +175,7 @@ def write_full_kit(destination, *, profile=None):
         if (ROOT.parent / 'LICENSE').is_file():
             shutil.copyfile(ROOT.parent / 'LICENSE', stage / 'LICENSE')
         dump(stage / 'kit-manifest.json', {'kitVersion': 2, 'engineApi': 2, 'apiFingerprint': contract.fingerprint,
-                                          'module': 'SmartPC.ThemeApi 2.0', 'sdkSha256': copied,
+                                          'module': 'SmartPC.ThemeApi 2.' + str(contract.documents['contexts.json']['module']['minor']), 'sdkSha256': copied,
                                           'runtimeProof': 'Generate with validate --runtime; board acceptance is separate'})
         stage.rename(destination)
     finally:

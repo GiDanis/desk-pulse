@@ -1306,6 +1306,53 @@ Module {
         }
     }
     Component {
+        name: "NetworkDetail"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkDetail 2.0", "SmartPC.ThemeApi/NetworkDetail 2.1", "SmartPC.ThemeApi/NetworkDetail 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "section"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "title"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "value"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "detail"
+            type: "QString"
+            isReadonly: true
+        }
+        Signal {
+            name: "idChanged"
+        }
+        Signal {
+            name: "sectionChanged"
+        }
+        Signal {
+            name: "titleChanged"
+        }
+        Signal {
+            name: "valueChanged"
+        }
+        Signal {
+            name: "detailChanged"
+        }
+    }
+    Component {
         name: "ShellLayout"
         prototype: "QObject"
         exports: ["SmartPC.ThemeApi/ShellLayout 2.0", "SmartPC.ThemeApi/ShellLayout 2.1", "SmartPC.ThemeApi/ShellLayout 2.2"]
@@ -3255,6 +3302,38 @@ Module {
         }
     }
     Component {
+        name: "NetworkDetailModel"
+        prototype: "QAbstractListModel"
+        exports: ["SmartPC.ThemeApi/NetworkDetailModel 2.0", "SmartPC.ThemeApi/NetworkDetailModel 2.1", "SmartPC.ThemeApi/NetworkDetailModel 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "count"
+            type: "int"
+            isReadonly: true
+        }
+        Signal {
+            name: "countChanged"
+        }
+        Method {
+            name: "get"
+            type: "QObject"
+            isPointer: true
+            Parameter {
+                name: "arg0"
+                type: "int"
+            }
+        }
+        Method {
+            name: "indexOf"
+            type: "int"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+        }
+    }
+    Component {
         name: "Family"
         prototype: "QObject"
         exports: ["SmartPC.ThemeApi/Family 2.0", "SmartPC.ThemeApi/Family 2.1", "SmartPC.ThemeApi/Family 2.2"]
@@ -3868,6 +3947,134 @@ Module {
         }
         Signal {
             name: "metricsChanged"
+        }
+    }
+    Component {
+        name: "NetworkDevice"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkDevice 2.0", "SmartPC.ThemeApi/NetworkDevice 2.1", "SmartPC.ThemeApi/NetworkDevice 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "name"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "originalName"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "kind"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "mac"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "vendor"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "interface"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "primaryAddress"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "connectionText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "statusText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "previous"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "favourite"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "lastSeen"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "collectedAt"
+            type: "double"
+            isReadonly: true
+        }
+        Property {
+            name: "details"
+            type: "NetworkDetailModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Signal {
+            name: "idChanged"
+        }
+        Signal {
+            name: "nameChanged"
+        }
+        Signal {
+            name: "originalNameChanged"
+        }
+        Signal {
+            name: "kindChanged"
+        }
+        Signal {
+            name: "macChanged"
+        }
+        Signal {
+            name: "vendorChanged"
+        }
+        Signal {
+            name: "interfaceChanged"
+        }
+        Signal {
+            name: "primaryAddressChanged"
+        }
+        Signal {
+            name: "connectionTextChanged"
+        }
+        Signal {
+            name: "statusTextChanged"
+        }
+        Signal {
+            name: "previousChanged"
+        }
+        Signal {
+            name: "favouriteChanged"
+        }
+        Signal {
+            name: "lastSeenChanged"
+        }
+        Signal {
+            name: "collectedAtChanged"
+        }
+        Signal {
+            name: "detailsChanged"
         }
     }
     Component {
@@ -5096,6 +5303,70 @@ Module {
         }
     }
     Component {
+        name: "NetworkDeviceModel"
+        prototype: "QAbstractListModel"
+        exports: ["SmartPC.ThemeApi/NetworkDeviceModel 2.0", "SmartPC.ThemeApi/NetworkDeviceModel 2.1", "SmartPC.ThemeApi/NetworkDeviceModel 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "count"
+            type: "int"
+            isReadonly: true
+        }
+        Signal {
+            name: "countChanged"
+        }
+        Method {
+            name: "get"
+            type: "QObject"
+            isPointer: true
+            Parameter {
+                name: "arg0"
+                type: "int"
+            }
+        }
+        Method {
+            name: "indexOf"
+            type: "int"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+        }
+    }
+    Component {
+        name: "NetworkSettingRowModel"
+        prototype: "QAbstractListModel"
+        exports: ["SmartPC.ThemeApi/NetworkSettingRowModel 2.0", "SmartPC.ThemeApi/NetworkSettingRowModel 2.1", "SmartPC.ThemeApi/NetworkSettingRowModel 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "count"
+            type: "int"
+            isReadonly: true
+        }
+        Signal {
+            name: "countChanged"
+        }
+        Method {
+            name: "get"
+            type: "QObject"
+            isPointer: true
+            Parameter {
+                name: "arg0"
+                type: "int"
+            }
+        }
+        Method {
+            name: "indexOf"
+            type: "int"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+        }
+    }
+    Component {
         name: "MenuContext"
         prototype: "SurfaceContext"
         exports: ["SmartPC.ThemeApi/MenuContext 2.0", "SmartPC.ThemeApi/MenuContext 2.1", "SmartPC.ThemeApi/MenuContext 2.2"]
@@ -5716,6 +5987,135 @@ Module {
         }
         Signal {
             name: "readOnlyChanged"
+        }
+    }
+    Component {
+        name: "NetworkData"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkData 2.0", "SmartPC.ThemeApi/NetworkData 2.1", "SmartPC.ThemeApi/NetworkData 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "reachableText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "coverage"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "wanText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "localText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "feedback"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "modeText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "configured"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "hasInventory"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "busy"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "polling"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "readOnly"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "countCurrent"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "knownCount"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "devices"
+            type: "NetworkDeviceModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "favourites"
+            type: "NetworkDeviceModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Signal {
+            name: "reachableTextChanged"
+        }
+        Signal {
+            name: "coverageChanged"
+        }
+        Signal {
+            name: "wanTextChanged"
+        }
+        Signal {
+            name: "localTextChanged"
+        }
+        Signal {
+            name: "feedbackChanged"
+        }
+        Signal {
+            name: "modeTextChanged"
+        }
+        Signal {
+            name: "configuredChanged"
+        }
+        Signal {
+            name: "hasInventoryChanged"
+        }
+        Signal {
+            name: "busyChanged"
+        }
+        Signal {
+            name: "pollingChanged"
+        }
+        Signal {
+            name: "readOnlyChanged"
+        }
+        Signal {
+            name: "countCurrentChanged"
+        }
+        Signal {
+            name: "knownCountChanged"
+        }
+        Signal {
+            name: "devicesChanged"
+        }
+        Signal {
+            name: "favouritesChanged"
         }
     }
     Component {
@@ -6459,6 +6859,92 @@ Module {
         }
     }
     Component {
+        name: "NetworkContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/NetworkContext 2.0", "SmartPC.ThemeApi/NetworkContext 2.1", "SmartPC.ThemeApi/NetworkContext 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selectedDevice"
+            type: "NetworkDevice"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "rows"
+            type: "NetworkSettingRowModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "description"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "feedback"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "network"
+            type: "NetworkData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "detailRows"
+            type: "NetworkDetailModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "deviceRows"
+            type: "NetworkDeviceModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Signal {
+            name: "sourceChanged"
+        }
+        Signal {
+            name: "selectionChanged"
+        }
+        Signal {
+            name: "selectedDeviceChanged"
+        }
+        Signal {
+            name: "rowsChanged"
+        }
+        Signal {
+            name: "descriptionChanged"
+        }
+        Signal {
+            name: "feedbackChanged"
+        }
+        Signal {
+            name: "networkChanged"
+        }
+        Signal {
+            name: "detailRowsChanged"
+        }
+        Signal {
+            name: "deviceRowsChanged"
+        }
+    }
+    Component {
         name: "MatchModel"
         prototype: "QAbstractListModel"
         exports: ["SmartPC.ThemeApi/MatchModel 2.0", "SmartPC.ThemeApi/MatchModel 2.1", "SmartPC.ThemeApi/MatchModel 2.2"]
@@ -7072,6 +7558,12 @@ Module {
             isReadonly: true
             isPointer: true
         }
+        Property {
+            name: "network"
+            type: "NetworkData"
+            isReadonly: true
+            isPointer: true
+        }
         Signal {
             name: "clockChanged"
         }
@@ -7098,6 +7590,9 @@ Module {
         }
         Signal {
             name: "racingChanged"
+        }
+        Signal {
+            name: "networkChanged"
         }
     }
     Component {

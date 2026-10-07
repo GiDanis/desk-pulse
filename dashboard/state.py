@@ -37,7 +37,7 @@ DEMO_WEATHER = {
 MIN_BRIGHTNESS = 20
 MAX_BRIGHTNESS = 100
 BRIGHTNESS_STEP = 5
-TOGGLEABLE_MODULES = ("meteo", "account", "sport", "f1", "motogp", "casa")
+TOGGLEABLE_MODULES = ("meteo", "account", "sport", "f1", "motogp", "casa", "network")
 
 
 def _account_threshold(name: str, default: int) -> int:
@@ -68,22 +68,31 @@ class DashboardState(QObject):
     accountChanged = Signal()
     sportChanged = Signal()
     racingChanged = Signal()
+    networkChanged = Signal()
+    networkRefreshFinished = Signal(bool, str)
     casaChanged = Signal()
     casaRefreshFinished = Signal(bool, str)
     systemChanged = Signal()
     settingsChanged = Signal()
+    modulesChanged = Signal()
     accountThresholdsChanged = Signal()
     eventChanged = Signal()
 
     def __init__(self, weather: QObject, system: QObject, account: QObject,
-                 events: EventService | None = None, demo: bool = False, sport: QObject | None = None, racing=None, trace=None, casa=None) -> None:
+                 events: EventService | None = None, demo: bool = False, sport: QObject | None = None, racing=None, trace=None, casa=None, network=None) -> None:
         super().__init__()
+        self.settingsChanged.connect(self.modulesChanged)
         self._weather = weather
         self._system = system
         self._account = account
         self._events = events
         self._sport = sport
         self._racing = racing or {}
+        self._network = network
+        if network is not None:
+            network.changed.connect(self.networkChanged)
+            network.changed.connect(self.modulesChanged)
+            network.refreshFinished.connect(self.networkRefreshFinished)
         self._casa = casa
         if casa is not None:
             casa.changed.connect(self.casaChanged)
@@ -182,6 +191,8 @@ class DashboardState(QObject):
     def refreshSource(self, source: str) -> bool:
         """Manual refresh keeps provider guards and adds a 30-second cooldown."""
         now = time.monotonic()
+        if source == 'network':
+            return bool(self._network and self._network.refresh())
         if source == 'casa':
             return bool(self._casa and self._casa.refresh())
         if self._demo or now - self._last_source_refresh.get(source, -60) < 30:
@@ -230,6 +241,39 @@ class DashboardState(QObject):
     @Slot(result=bool)
     def toggleCasaPolling(self):
         return bool(self._casa and self._casa.togglePolling())
+
+    @Property('QVariantMap', notify=networkChanged)
+    def networkState(self):
+        return self._network.moduleState if self._network else module_state(status='unavailable',source='iliadbox')
+
+    @Property(bool, notify=networkChanged)
+    def networkAvailable(self):
+        data=self.networkState['data']
+        return bool(data.get('hasInventory'))
+
+    @Slot(bool)
+    def setNetworkVisible(self,visible):
+        if self._network: self._network.setVisible(visible)
+
+    @Slot(str,result=bool)
+    def toggleNetworkFavourite(self,identity):
+        return bool(self._network and self._network.toggleFavourite(identity))
+
+    @Slot(str,int,result=bool)
+    def moveNetworkFavourite(self,identity,direction):
+        return bool(self._network and self._network.moveFavourite(identity,direction))
+
+    @Slot(result=bool)
+    def reloadNetworkConfig(self):
+        return bool(self._network and self._network.reloadConfig())
+
+    @Slot(result=bool)
+    def toggleNetworkPolling(self):
+        return bool(self._network and self._network.togglePolling())
+
+    @Slot(str,str,result=bool)
+    def setNetworkAlias(self,identity,alias):
+        return bool(self._network and self._network.setAlias(identity,alias))
 
     @Property("QVariantMap", notify=accountChanged)
     def accountState(self) -> dict[str, Any]:
@@ -371,10 +415,10 @@ class DashboardState(QObject):
     def appearance(self):
         return self._appearance
 
-    @Property("QVariantList", notify=settingsChanged)
+    @Property("QVariantList", notify=modulesChanged)
     def visibleModules(self) -> list[str]:
         return ["oggi"] + [module_id for module_id in TOGGLEABLE_MODULES
-                           if self._module_visible[module_id] and (module_id != "sport" or self._sport is not None) and (module_id not in ("f1","motogp") or module_id in self._racing) and (module_id != "casa" or self.casaAvailable)]
+                           if self._module_visible[module_id] and (module_id != "sport" or self._sport is not None) and (module_id not in ("f1","motogp") or module_id in self._racing) and (module_id != "casa" or self.casaAvailable) and (module_id != "network" or self.networkAvailable)]
 
     @Slot(str)
     def toggleModuleVisibility(self, module_id: str) -> None:

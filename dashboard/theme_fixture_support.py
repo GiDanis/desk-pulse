@@ -131,7 +131,9 @@ class LegacyHarness:
         self.events=EventService(path=base/'state/events.sqlite3',auto_refresh=False);self.events._tick_timer.stop()
         from casa import CasaService
         self.casa=CasaService(auto_refresh=False,demo=True,clock=lambda:self.now)
-        self.state=DashboardState(self.weather,self.system,self.account,self.events,sport=self.sport,racing=self.racing,casa=self.casa)
+        from network import NetworkService
+        self.network=NetworkService(auto_refresh=False,demo=True,clock=lambda:self.now)
+        self.state=DashboardState(self.weather,self.system,self.account,self.events,sport=self.sport,racing=self.racing,casa=self.casa,network=self.network)
         self.state.markCommandsSeen();self.state._quiet_enabled=False;self.events.set_quiet(False,0,1)
         self.state._night_mode=profile['variant'];self.state._brightness_mode='manual';self.state._manual_brightness=100
         self.service=self.state.appearance
@@ -322,7 +324,7 @@ class LegacyHarness:
     def assert_surface(self,case):
         from PySide6.QtCore import QObject
         from theme_test_support import as_value
-        sid=case['surfaceId'];names={'home.now':'homeNow','home.clock':'homeClock','home.day':'homeDay','weather.now':'weatherNow','weather.forecast':'weatherForecast','account.usage':'accountPanel','sport.overview':'sportPanel','sport.team':'sportTeamPanel','racing.overview':'racingPanel','casa.overview':'casaOverview','casa.devices':'casaDevices','alerts.badge':'unreadAlertsBadge','alerts.banner.small':'eventBanner','alerts.banner.large':'eventLargeBanner','alerts.urgent':'eventUrgent','alerts.inbox':'alertsInbox','alerts.detail':'alertDetail'}
+        sid=case['surfaceId'];names={'home.now':'homeNow','home.clock':'homeClock','home.day':'homeDay','weather.now':'weatherNow','weather.forecast':'weatherForecast','account.usage':'accountPanel','sport.overview':'sportPanel','sport.team':'sportTeamPanel','racing.overview':'racingPanel','casa.overview':'casaOverview','casa.devices':'casaDevices','network.overview':'networkOverview','network.devices':'networkDevices','alerts.badge':'unreadAlertsBadge','alerts.banner.small':'eventBanner','alerts.banner.large':'eventLargeBanner','alerts.urgent':'eventUrgent','alerts.inbox':'alertsInbox','alerts.detail':'alertDetail'}
         if sid in names:
             obj=self.root.findChild(QObject,names[sid]);assert obj is not None and obj.property('readiness')=='ready',(sid,'not ready')
             item=as_value(obj.property('currentItem'));assert item is not None,(sid,'no renderer')
@@ -343,20 +345,20 @@ class LegacyHarness:
             if case['variant'] in ('normal','reduced','off'):assert mode==case['variant']
             if case['variant']=='canvas':assert host.property('canvasScene') and renderer=='fixture.canvas','canvas variant not actually instantiated'
             if case['variant']=='paused':assert host.property('suspended') and actor.property('paused')
-        elif sid in ('settings.casa','casa.detail'):
+        elif sid in ('settings.casa','casa.detail','settings.network','network.detail'):
             host=self.root.findChild(QObject,'overlayHost')
             assert host and host.property('readiness')=='ready' and host.property('visible'),sid
         elif sid.startswith('settings.') and sid not in ('settings.sport','settings.racing'):
             assert self.expression('settingsPanel.active && settingsPanel.rows.length > 0'),sid
         elif sid=='shell.main':assert self.window.width()==960 and self.window.height()==640
         else:assert self.value('overlay')==case['initialProperties'].get('overlay'),sid
-        if sid not in names and sid not in ('shell.main','scene.main','settings.casa','casa.detail'):
+        if sid not in names and sid not in ('shell.main','scene.main','settings.casa','casa.detail','settings.network','network.detail'):
             source={'device.info':'DeviceInfo','sport.team.detail':'SportTeamOverlay','sport.team.picker':'SportTeamOverlay'}.get(sid, 'MotorsportOverlay' if sid.startswith('racing.') or sid=='settings.racing' else 'SportOverlay' if sid.startswith('sport.') or sid=='settings.sport' else 'SettingsPanel' if sid.startswith('settings.') else 'DashboardOverlay')
             components=[obj for obj in self.root.findChildren(QObject) if obj.metaObject().className().startswith(source+'_') and obj.metaObject().indexOfProperty('dashboard')>=0]
             assert len(components)==1 and components[0].property('visible') and components[0].property('width')>0 and components[0].property('height')>0,(sid,'legacy component not exposed',source)
     def close(self):
         from PySide6.QtCore import QThreadPool,qInstallMessageHandler
-        self.events.close();self.sport.close();self.casa.close()
+        self.events.close();self.sport.close();self.network.close();self.casa.close()
         for service in self.racing.values():service.close()
         self.window.close();self.engine.deleteLater();self.pump(20)
         assert QThreadPool.globalInstance().waitForDone(3000),'fixture worker teardown timeout'

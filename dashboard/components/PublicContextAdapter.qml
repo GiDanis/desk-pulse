@@ -15,7 +15,7 @@ Item {
     property var selectedModelDomains: null
     property string dataProjection: "full"
     readonly property var modelDomains: selectedModelDomains !== null ? selectedModelDomains : factory && typeof factory.modelDomains === "function"
-        ? factory.modelDomains(surfaceId) : ["weather","account","nextEvent","sport","team","fantasy","racing","casa"]
+        ? factory.modelDomains(surfaceId) : ["weather","account","nextEvent","sport","team","fantasy","racing","casa","network"]
     readonly property var payload: {
         if (!publicEnabled) return ({})
         const c = legacy

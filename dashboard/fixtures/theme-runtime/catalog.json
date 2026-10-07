@@ -1,24 +1,25 @@
 {
   "corpusVersion": 1,
-  "apiFingerprint": "14f139f20d19c3b093f579741eb0bb7653cbff956a8cc34987df5365b7675448",
+  "apiFingerprint": "c723fe97b5b5032fcc535c427544342770875bf01c6ae373856acd6a84521adc",
   "families": [
-    "home",
-    "weather",
     "account",
-    "shell",
-    "general",
-    "settings",
+    "casa",
     "device",
-    "sport-overview",
-    "sport-list",
-    "sport-match",
-    "team",
-    "team-picker",
+    "general",
+    "home",
+    "network",
+    "notifications",
     "racing",
     "racing-driver",
-    "notifications",
     "scene",
-    "casa"
+    "settings",
+    "shell",
+    "sport-list",
+    "sport-match",
+    "sport-overview",
+    "team",
+    "team-picker",
+    "weather"
   ],
   "scenarios": [
     {
@@ -1233,10 +1234,42 @@
         "weather.now:default"
       ],
       "family": "weather"
+    },
+    {
+      "id": "network.overview:default",
+      "file": "scenarios/network.overview--default.json",
+      "covers": [
+        "network.overview:default"
+      ],
+      "sha256": "3858edccc92afda2e5afb5bfe4f84371b2a06a16d06c03f160995dc33871f9a9"
+    },
+    {
+      "id": "network.devices:default",
+      "file": "scenarios/network.devices--default.json",
+      "covers": [
+        "network.devices:default"
+      ],
+      "sha256": "3b685856934806c888ca4eb1989fb75a5e598ad37a811a0752e72c0f157f5f8a"
+    },
+    {
+      "id": "network.detail:default",
+      "file": "scenarios/network.detail--default.json",
+      "covers": [
+        "network.detail:default"
+      ],
+      "sha256": "4d8ed23e5a5646fbe24e20a43d8750793167d2b01889e25f5a727a4df4f3c082"
+    },
+    {
+      "id": "settings.network:default",
+      "file": "scenarios/settings.network--default.json",
+      "covers": [
+        "settings.network:default"
+      ],
+      "sha256": "cdaeff105a4cbd8820c6b9ee3146c8ab6975e80c451244d52553127f92c5f59a"
     }
   ],
   "domainInputs": {
-    "domains/context-structural.json": "b8c2f1bbb623f941ecf593e82b48cc32d5efb14ab2adf026cbe328d17f79532c",
+    "domains/context-structural.json": "0a398db83d11c5c42a1e88a1450b4f74b8d08cf4a3ae52e8214d8aa25995d10e",
     "domains/semantic-values.json": "dfbf31649a42e6130cc82be36063f61d9af824f356159563d037fb79c5662503",
     "domains/weather-zero.json": "28fca5ca347bf72bfad5bb9dea6a53fb632b864ac536bebb57968031a6d952fc"
   },

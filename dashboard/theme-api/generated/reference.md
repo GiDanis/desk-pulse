@@ -4,7 +4,7 @@
 
 Generated from the four canonical JSON documents. Do not edit generated files.
 
-API fingerprint: `14f139f20d19c3b093f579741eb0bb7653cbff956a8cc34987df5365b7675448`
+API fingerprint: `c723fe97b5b5032fcc535c427544342770875bf01c6ae373856acd6a84521adc`
 
 This fingerprint is independent from the schema-1 registry fingerprint.
 
@@ -26,6 +26,9 @@ This fingerprint is independent from the schema-1 registry fingerprint.
 | home.clock | PageContext 2 | page | — | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
 | home.day | PageContext 2 | page | — | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
 | home.now | PageContext 2 | page | — | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
+| network.detail | NetworkContext 1 | overlay | networkDetail | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, sources.refresh, network.favourite.toggle, navigation.tab.select |
+| network.devices | NetworkContext 1 | page | — | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, navigation.family.step, navigation.view.step, network.filter.step |
+| network.overview | NetworkContext 1 | page | — | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, navigation.family.step, navigation.view.step, network.filter.step |
 | overlay.commands | CommandsContext 1 | overlay | commands | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
 | overlay.menu | MenuContext 1 | overlay | menu | menu.activate, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select |
 | overlay.summary | SummaryContext 1 | overlay | detail | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
@@ -45,6 +48,7 @@ This fingerprint is independent from the schema-1 registry fingerprint.
 | settings.index | SettingsContext 1 | overlay | settings | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate |
 | settings.integrations | SettingsContext 1 | overlay | integrations | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate |
 | settings.modules | SettingsContext 1 | overlay | modules | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate, settings.adjust |
+| settings.network | NetworkContext 1 | overlay | networkSettings | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, sources.refresh, network.favourite.toggle, network.favourite.move, network.config.reload, network.polling.toggle, network.alias.set |
 | settings.notifications | SettingsContext 1 | overlay | notifications | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate |
 | settings.notifications.categories | SettingsContext 1 | overlay | notificationCategories | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate, settings.adjust |
 | settings.notifications.quiet | SettingsContext 1 | overlay | notificationQuiet | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate, settings.adjust |
@@ -108,6 +112,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | team | TeamData | required / nullable | {} |
 | fantasy | FantasyData | required / nullable | {} |
 | racing | RacingData | required / nullable | {} |
+| network | NetworkData | required / nullable | {} |
 
 Method `requestAction(string, string, legacyMap) → ActionResult`.
 
@@ -499,6 +504,34 @@ Signal `settleMotionRequested()`.
 | rows | SettingRowModel | required / non-null | {} |
 | description | string | required / non-null | {} |
 | feedback | string | required / non-null | {} |
+
+Method `requestAction(string, string, legacyMap) → ActionResult`.
+
+### NetworkContext
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| contentId | string | required / non-null | {} |
+| contextVersion | int | required / non-null | {"const": 1} |
+| surfaceInstanceId | string | required / non-null | {} |
+| appearanceRevision | int | required / non-null | {"minimum": 0} |
+| dataRevision | int | required / non-null | {"minimum": 0} |
+| style | ThemeStyle | required / non-null | {} |
+| lifecycle | SurfaceLifecycle | required / non-null | {} |
+| viewport | Rect | required / non-null | {} |
+| safeArea | Rect | required / non-null | {} |
+| commands | CommandModel | required / non-null | {} |
+| actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
+| source | SourceState | required / non-null | {} |
+| selection | SelectionState | required / non-null | {} |
+| selectedDevice | NetworkDevice | required / nullable | {} |
+| rows | NetworkSettingRowModel | required / non-null | {} |
+| description | string | required / non-null | {} |
+| feedback | string | required / non-null | {} |
+| network | NetworkData | required / non-null | {} |
+| detailRows | NetworkDetailModel | required / non-null | {} |
+| deviceRows | NetworkDeviceModel | required / non-null | {} |
 
 Method `requestAction(string, string, legacyMap) → ActionResult`.
 
@@ -1431,6 +1464,56 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | feedback | string | required / non-null | {} |
 | readOnly | bool | required / non-null | {} |
 
+### NetworkDetail
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| id | string | required / non-null | {} |
+| section | string | required / non-null | {} |
+| title | string | required / non-null | {} |
+| value | string | required / non-null | {} |
+| detail | string | required / non-null | {} |
+
+### NetworkDevice
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| id | string | required / non-null | {} |
+| name | string | required / non-null | {} |
+| originalName | string | required / non-null | {} |
+| kind | string | required / non-null | {} |
+| mac | string | required / non-null | {} |
+| vendor | string | required / non-null | {} |
+| interface | string | required / non-null | {} |
+| primaryAddress | string | required / non-null | {} |
+| connectionText | string | required / non-null | {} |
+| statusText | string | required / non-null | {} |
+| previous | bool | required / non-null | {} |
+| favourite | bool | required / non-null | {} |
+| lastSeen | real | required / nullable | {} |
+| collectedAt | real | required / non-null | {} |
+| details | NetworkDetailModel | required / non-null | {} |
+
+### NetworkData
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| reachableText | string | required / non-null | {} |
+| coverage | string | required / non-null | {} |
+| wanText | string | required / non-null | {} |
+| localText | string | required / non-null | {} |
+| feedback | string | required / non-null | {} |
+| modeText | string | required / non-null | {} |
+| configured | bool | required / non-null | {} |
+| hasInventory | bool | required / non-null | {} |
+| busy | bool | required / non-null | {} |
+| polling | bool | required / non-null | {} |
+| readOnly | bool | required / non-null | {} |
+| countCurrent | bool | required / non-null | {} |
+| knownCount | int | required / non-null | {"minimum": 0} |
+| devices | NetworkDeviceModel | required / non-null | {} |
+| favourites | NetworkDeviceModel | required / non-null | {} |
+
 ## Models
 
 | Model | Row type | Identity |
@@ -1467,6 +1550,9 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | SourceModel | SourceState | sourceId |
 | CasaDeviceModel | CasaDevice | id |
 | CasaMetricModel | CasaMetric | code |
+| NetworkDetailModel | NetworkDetail | id |
+| NetworkDeviceModel | NetworkDevice | id |
+| NetworkSettingRowModel | SettingRow | id |
 
 ## Actions
 
@@ -1512,6 +1598,13 @@ The runtime broker also checks lifecycle, generation and private router availabi
 | casa.favourite.move | required | {"direction": {"type": "int", "enum": [-1, 1]}} |
 | casa.config.reload | required | {} |
 | casa.polling.toggle | required | {} |
+| network.favourite.toggle | required | {} |
+| network.favourite.move | required | {"direction": {"type": "int", "enum": [-1, 1]}} |
+| network.config.reload | required | {} |
+| network.polling.toggle | required | {} |
+| network.alias.set | required | {"alias": {"type": "string", "maxLength": 80}} |
+| network.filter.step | required | {"direction": {"type": "int", "enum": [-1, 1]}} |
+| navigation.tab.select | required | {} |
 
 ## Semantic roles
 

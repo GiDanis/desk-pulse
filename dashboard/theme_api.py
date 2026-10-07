@@ -353,7 +353,7 @@ def normalize_legacy(surface_id, payload, cache=None, *, validate=True):
         values['selection'] = normalize_dto('SelectionState', {**raw, 'selectedId': selected,
             'index': raw.get('index', selected_index), 'count': raw.get('count', len(selection_rows))})
     for name, dto in [('weather', 'WeatherData'), ('account', 'AccountData'), ('nextEvent', 'NextEventData'),
-                       ('sport', 'SportData'), ('team', 'TeamData'), ('fantasy', 'FantasyData'), ('racing', 'RacingData')]:
+                       ('sport', 'SportData'), ('team', 'TeamData'), ('fantasy', 'FantasyData'), ('racing', 'RacingData'), ('network', 'NetworkData')]:
         if name not in values or name in payload:
             continue
         raw = _mapping(model.get(name))
@@ -382,6 +382,16 @@ def normalize_legacy(surface_id, payload, cache=None, *, validate=True):
         selected=str(_mapping(payload.get('selection')).get('selectedId',''))
         device=next((row for row in data.get('devices',[]) if row.get('id')==selected),None)
         values['selectedDevice']=normalize_dto('CasaDevice',device) if device else None
+    if kind == 'NetworkContext':
+        envelope=_mapping(payload.get('networkState',model.get('network')))
+        data=_mapping(envelope.get('data'))
+        values['network']=_cached(cache,'domain:network',data,lambda:normalize_dto('NetworkData',data))
+        values['source']=source_snapshot(envelope,'network')
+        selected=str(_mapping(payload.get('selection')).get('selectedId',''))
+        device=next((row for row in data.get('devices',[]) if row.get('id')==selected),None)
+        values['selectedDevice']=normalize_dto('NetworkDevice',device) if device else None
+        values['deviceRows'] = [normalize_dto('NetworkDevice', row) for row in payload.get('networkDeviceRows', [])]
+        values['detailRows'] = [normalize_dto('NetworkDetail', row) for row in payload.get('networkDetailRows', [])]
     if kind == 'SceneContext':
         actor = payload.get('actor', payload.get('actorState'))
         values['actor'] = normalize_dto('ActorSnapshot', object_snapshot('ActorSnapshot', actor))
@@ -484,7 +494,7 @@ class PublicContextFactory(QObject):
             return []
         kind = surface['context']
         fields = CONTRACT.fields(kind)
-        names = [name for name in ('weather', 'account', 'nextEvent', 'sport', 'team', 'fantasy', 'racing','casa')
+        names = [name for name in ('weather', 'account', 'nextEvent', 'sport', 'team', 'fantasy', 'racing','casa','network')
                  if name in fields]
         dependency = {'SportListContext': 'sport', 'MatchContext': 'sport',
                       'TeamPickerContext': 'sport', 'DriverContext': 'racing'}.get(kind)

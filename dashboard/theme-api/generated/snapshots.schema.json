@@ -4186,6 +4186,225 @@
       ],
       "additionalProperties": false
     },
+    "NetworkDetail": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "section": {
+          "type": "string",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "value": {
+          "type": "string",
+          "readOnly": true
+        },
+        "detail": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "section",
+        "title",
+        "value",
+        "detail"
+      ],
+      "additionalProperties": false
+    },
+    "NetworkDevice": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "originalName": {
+          "type": "string",
+          "readOnly": true
+        },
+        "kind": {
+          "type": "string",
+          "readOnly": true
+        },
+        "mac": {
+          "type": "string",
+          "readOnly": true
+        },
+        "vendor": {
+          "type": "string",
+          "readOnly": true
+        },
+        "interface": {
+          "type": "string",
+          "readOnly": true
+        },
+        "primaryAddress": {
+          "type": "string",
+          "readOnly": true
+        },
+        "connectionText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "statusText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "previous": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "favourite": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "lastSeen": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "collectedAt": {
+          "type": "number",
+          "readOnly": true
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NetworkDetail"
+          },
+          "maxItems": 128,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "originalName",
+        "kind",
+        "mac",
+        "vendor",
+        "interface",
+        "primaryAddress",
+        "connectionText",
+        "statusText",
+        "previous",
+        "favourite",
+        "lastSeen",
+        "collectedAt",
+        "details"
+      ],
+      "additionalProperties": false
+    },
+    "NetworkData": {
+      "type": "object",
+      "properties": {
+        "reachableText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "coverage": {
+          "type": "string",
+          "readOnly": true
+        },
+        "wanText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "localText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "feedback": {
+          "type": "string",
+          "readOnly": true
+        },
+        "modeText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "configured": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "hasInventory": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "busy": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "polling": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "readOnly": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "countCurrent": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "knownCount": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "devices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NetworkDevice"
+          },
+          "maxItems": 256,
+          "readOnly": true
+        },
+        "favourites": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NetworkDevice"
+          },
+          "maxItems": 256,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "reachableText",
+        "coverage",
+        "wanText",
+        "localText",
+        "feedback",
+        "modeText",
+        "configured",
+        "hasInventory",
+        "busy",
+        "polling",
+        "readOnly",
+        "countCurrent",
+        "knownCount",
+        "devices",
+        "favourites"
+      ],
+      "additionalProperties": false
+    },
     "SurfaceContext": {
       "type": "object",
       "properties": {
@@ -4410,6 +4629,17 @@
               "type": "null"
             }
           ]
+        },
+        "network": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NetworkData",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -4432,7 +4662,8 @@
         "sport",
         "team",
         "fantasy",
-        "racing"
+        "racing",
+        "network"
       ],
       "additionalProperties": false
     },
@@ -6264,6 +6495,148 @@
       ],
       "additionalProperties": false
     },
+    "NetworkContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
+        "source": {
+          "$ref": "#/$defs/SourceState",
+          "readOnly": true
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionState",
+          "readOnly": true
+        },
+        "selectedDevice": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NetworkDevice",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SettingRow"
+          },
+          "maxItems": 260,
+          "readOnly": true
+        },
+        "description": {
+          "type": "string",
+          "readOnly": true
+        },
+        "feedback": {
+          "type": "string",
+          "readOnly": true
+        },
+        "network": {
+          "$ref": "#/$defs/NetworkData",
+          "readOnly": true
+        },
+        "detailRows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NetworkDetail"
+          },
+          "maxItems": 128,
+          "readOnly": true
+        },
+        "deviceRows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NetworkDevice"
+          },
+          "maxItems": 256,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "source",
+        "selection",
+        "selectedDevice",
+        "rows",
+        "description",
+        "feedback",
+        "network",
+        "detailRows",
+        "deviceRows"
+      ],
+      "additionalProperties": false
+    },
     "CommandModel": {
       "type": "array",
       "items": {
@@ -6487,6 +6860,27 @@
         "$ref": "#/$defs/CasaMetric"
       },
       "maxItems": 128
+    },
+    "NetworkDetailModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NetworkDetail"
+      },
+      "maxItems": 128
+    },
+    "NetworkDeviceModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NetworkDevice"
+      },
+      "maxItems": 256
+    },
+    "NetworkSettingRowModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/SettingRow"
+      },
+      "maxItems": 260
     }
   },
   "description": "Choose an explicit $defs type. Python validator also checks model identity uniqueness and request allowlists."

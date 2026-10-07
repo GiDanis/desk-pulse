@@ -11,7 +11,8 @@ var canonicalSections = {
         "account",
         "integrations",
         "sources",
-        "casa"
+        "casa",
+        "network"
     ],
     "settings.display": [
         "display.mode",
@@ -77,7 +78,8 @@ var canonicalSections = {
         "module.sport",
         "module.f1",
         "module.motogp",
-        "module.casa"
+        "module.casa",
+        "module.network"
     ],
     "settings.notifications": [
         "notifications.quiet",
@@ -109,7 +111,8 @@ var canonicalSections = {
         "source.sport",
         "source.f1",
         "source.motogp",
-        "source.casa"
+        "source.casa",
+        "source.network"
     ],
     "settings.sport": [
         "sport.favouriteTeam",
@@ -128,10 +131,10 @@ var canonicalSections = {
 var simpleAppearanceIds = ["appearance.palette","appearance.motion","appearance.theme","appearance.textScale",
     "appearance.revision","appearance.apply","appearance.cancel","appearance.import","appearance.export","appearance.advanced"]
 var indexTargets = {appearance:"appearance",system:"display",modules:"modules",notifications:"notifications",
-    accountSettings:"account",integrations:"integrations",sources:"sources",casaSettings:"casa"}
+    accountSettings:"account",integrations:"integrations",sources:"sources",casaSettings:"casa",networkSettings:"network"}
 var integrationTargets = {sportSettings:"integration.sport",f1:"integration.f1",motogp:"integration.motogp"}
 var sourceTargets = {meteo:"source.weather",weather:"source.weather",alerts:"source.alerts",account:"source.account",
-    sport:"source.sport",f1:"source.f1",motogp:"source.motogp",casa:"source.casa"}
+    sport:"source.sport",f1:"source.f1",motogp:"source.motogp",casa:"source.casa",network:"source.network"}
 var notificationTargets = {notificationQuiet:"notifications.quiet",notificationCategories:"notifications.categories"}
 var notificationModes = ["small","large","urgent","badge","inbox","detail"]
 

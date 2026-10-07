@@ -3,7 +3,7 @@
   "module": {
     "uri": "SmartPC.ThemeApi",
     "major": 2,
-    "minor": 2
+    "minor": 3
   },
   "apiState": "implemented",
   "actions": {
@@ -725,6 +725,153 @@
       },
       "result": "ActionResult",
       "authorizesRuntimeDispatch": false
+    },
+    "network.favourite.toggle": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "network.favourite.move": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {
+        "direction": {
+          "type": "int",
+          "enum": [
+            -1,
+            1
+          ]
+        }
+      },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "network.config.reload": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "network.polling.toggle": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "network.alias.set": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {
+        "alias": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "network.filter.step": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {
+        "direction": {
+          "type": "int",
+          "enum": [
+            -1,
+            1
+          ]
+        }
+      },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "navigation.tab.select": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
     }
   },
   "validationScope": "Shape and per-surface allowlist only; A1 broker also checks active/interactive/preview/generation/urgent and backend state.",
@@ -779,6 +926,11 @@
         {
           "id": "casa",
           "legacyPosition": 7,
+          "conditional": false
+        },
+        {
+          "id": "network",
+          "legacyPosition": 8,
           "conditional": false
         }
       ],
@@ -1078,6 +1230,11 @@
           "id": "module.casa",
           "legacyPosition": 6,
           "conditional": true
+        },
+        {
+          "id": "module.network",
+          "legacyPosition": 7,
+          "conditional": true
         }
       ],
       "settings.notifications": [
@@ -1189,6 +1346,11 @@
         {
           "id": "source.casa",
           "legacyPosition": 6,
+          "conditional": true
+        },
+        {
+          "id": "source.network",
+          "legacyPosition": 7,
           "conditional": true
         }
       ],
