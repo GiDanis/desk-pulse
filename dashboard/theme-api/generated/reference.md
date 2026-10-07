@@ -4,7 +4,7 @@
 
 Generated from the four canonical JSON documents. Do not edit generated files.
 
-API fingerprint: `c723fe97b5b5032fcc535c427544342770875bf01c6ae373856acd6a84521adc`
+API fingerprint: `1c6a56515e2f78c3a48c9f794e72a2906d919347dc3ad62d0266e4c770bedeb2`
 
 This fingerprint is independent from the schema-1 registry fingerprint.
 
@@ -28,7 +28,7 @@ This fingerprint is independent from the schema-1 registry fingerprint.
 | home.now | PageContext 2 | page | — | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
 | network.detail | NetworkContext 1 | overlay | networkDetail | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, sources.refresh, network.favourite.toggle, navigation.tab.select |
 | network.devices | NetworkContext 1 | page | — | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, navigation.family.step, navigation.view.step, network.filter.step |
-| network.overview | NetworkContext 1 | page | — | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, navigation.family.step, navigation.view.step, network.filter.step |
+| network.overview | NetworkContext 1 | page | — | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, navigation.family.step, navigation.view.step, network.filter.step, network.metrics.section |
 | overlay.commands | CommandsContext 1 | overlay | commands | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
 | overlay.menu | MenuContext 1 | overlay | menu | menu.activate, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select |
 | overlay.summary | SummaryContext 1 | overlay | detail | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
@@ -65,6 +65,9 @@ This fingerprint is independent from the schema-1 registry fingerprint.
 | sport.team.picker | TeamPickerContext 1 | overlay | sportTeamPicker | details.open, details.refresh, details.scroll, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, tabs.select |
 | weather.forecast | PageContext 2 | page | — | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
 | weather.now | PageContext 2 | page | — | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
+| network.router | NetworkRouterContext 1 | overlay | networkRouter | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, network.metrics.entity, network.metrics.section, network.metrics.refresh, network.metrics.window, network.metrics.metric |
+| network.wifi | NetworkWifiContext 1 | overlay | networkWifi | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, network.metrics.entity, network.metrics.section, network.metrics.refresh, network.metrics.window, network.metrics.metric |
+| network.ports | NetworkPortsContext 1 | overlay | networkPorts | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, network.metrics.entity, network.metrics.section, network.metrics.refresh, network.metrics.window, network.metrics.metric |
 
 ## Contexts
 
@@ -532,6 +535,71 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | network | NetworkData | required / non-null | {} |
 | detailRows | NetworkDetailModel | required / non-null | {} |
 | deviceRows | NetworkDeviceModel | required / non-null | {} |
+| overviewSection | string | required / non-null | {} |
+| tools | NetworkMetricRowModel | required / non-null | {} |
+
+Method `requestAction(string, string, legacyMap) → ActionResult`.
+
+### NetworkRouterContext
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| contentId | string | required / non-null | {} |
+| contextVersion | int | required / non-null | {"const": 1} |
+| surfaceInstanceId | string | required / non-null | {} |
+| appearanceRevision | int | required / non-null | {"minimum": 0} |
+| dataRevision | int | required / non-null | {"minimum": 0} |
+| style | ThemeStyle | required / non-null | {} |
+| lifecycle | SurfaceLifecycle | required / non-null | {} |
+| viewport | Rect | required / non-null | {} |
+| safeArea | Rect | required / non-null | {} |
+| commands | CommandModel | required / non-null | {} |
+| actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
+| metrics | NetworkMetricsView | required / non-null | {} |
+| selection | SelectionState | required / non-null | {} |
+
+Method `requestAction(string, string, legacyMap) → ActionResult`.
+
+### NetworkWifiContext
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| contentId | string | required / non-null | {} |
+| contextVersion | int | required / non-null | {"const": 1} |
+| surfaceInstanceId | string | required / non-null | {} |
+| appearanceRevision | int | required / non-null | {"minimum": 0} |
+| dataRevision | int | required / non-null | {"minimum": 0} |
+| style | ThemeStyle | required / non-null | {} |
+| lifecycle | SurfaceLifecycle | required / non-null | {} |
+| viewport | Rect | required / non-null | {} |
+| safeArea | Rect | required / non-null | {} |
+| commands | CommandModel | required / non-null | {} |
+| actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
+| metrics | NetworkMetricsView | required / non-null | {} |
+| selection | SelectionState | required / non-null | {} |
+
+Method `requestAction(string, string, legacyMap) → ActionResult`.
+
+### NetworkPortsContext
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| contentId | string | required / non-null | {} |
+| contextVersion | int | required / non-null | {"const": 1} |
+| surfaceInstanceId | string | required / non-null | {} |
+| appearanceRevision | int | required / non-null | {"minimum": 0} |
+| dataRevision | int | required / non-null | {"minimum": 0} |
+| style | ThemeStyle | required / non-null | {} |
+| lifecycle | SurfaceLifecycle | required / non-null | {} |
+| viewport | Rect | required / non-null | {} |
+| safeArea | Rect | required / non-null | {} |
+| commands | CommandModel | required / non-null | {} |
+| actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
+| metrics | NetworkMetricsView | required / non-null | {} |
+| selection | SelectionState | required / non-null | {} |
 
 Method `requestAction(string, string, legacyMap) → ActionResult`.
 
@@ -1514,6 +1582,72 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | devices | NetworkDeviceModel | required / non-null | {} |
 | favourites | NetworkDeviceModel | required / non-null | {} |
 
+### NetworkMetricRow
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| id | string | required / non-null | {} |
+| title | string | required / non-null | {} |
+| value | string | required / non-null | {} |
+| detail | string | required / non-null | {} |
+| targetId | string | required / non-null | {} |
+| previous | bool | required / non-null | {} |
+
+### NetworkMetricEntity
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| id | string | required / non-null | {} |
+| name | string | required / non-null | {} |
+
+### NetworkChartPoint
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| id | string | required / non-null | {} |
+| time | real | required / non-null | {} |
+| value | real | required / nullable | {} |
+| breakBefore | bool | required / non-null | {} |
+
+### NetworkChartSeries
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| id | string | required / non-null | {} |
+| label | string | required / non-null | {} |
+| unit | string | required / non-null | {} |
+| points | NetworkChartPointModel | required / non-null | {} |
+| gaps | int | required / non-null | {} |
+
+### NetworkChart
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| start | real | required / nullable | {} |
+| end | real | required / nullable | {} |
+| resolution | real | required / nullable | {} |
+| rawPoints | int | required / non-null | {} |
+| series | NetworkChartSeriesModel | required / non-null | {} |
+| previous | bool | required / non-null | {} |
+| period | string | required / non-null | {} |
+| unit | string | required / non-null | {} |
+| message | string | required / non-null | {} |
+
+### NetworkMetricsView
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| title | string | required / non-null | {} |
+| summary | string | required / non-null | {} |
+| selectedLabel | string | required / non-null | {} |
+| sourceText | string | required / non-null | {} |
+| section | string | required / non-null | {} |
+| busy | bool | required / non-null | {} |
+| hasChart | bool | required / non-null | {} |
+| rows | NetworkMetricRowModel | required / non-null | {} |
+| entities | NetworkMetricEntityModel | required / non-null | {} |
+| chart | NetworkChart | required / non-null | {} |
+
 ## Models
 
 | Model | Row type | Identity |
@@ -1553,6 +1687,10 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | NetworkDetailModel | NetworkDetail | id |
 | NetworkDeviceModel | NetworkDevice | id |
 | NetworkSettingRowModel | SettingRow | id |
+| NetworkMetricRowModel | NetworkMetricRow | id |
+| NetworkMetricEntityModel | NetworkMetricEntity | id |
+| NetworkChartPointModel | NetworkChartPoint | id |
+| NetworkChartSeriesModel | NetworkChartSeries | id |
 
 ## Actions
 
@@ -1605,6 +1743,11 @@ The runtime broker also checks lifecycle, generation and private router availabi
 | network.alias.set | required | {"alias": {"type": "string", "maxLength": 80}} |
 | network.filter.step | required | {"direction": {"type": "int", "enum": [-1, 1]}} |
 | navigation.tab.select | required | {} |
+| network.metrics.entity | required | {} |
+| network.metrics.section | required | {} |
+| network.metrics.refresh | required | {} |
+| network.metrics.window | required | {"direction": {"type": "int", "enum": [-1, 1]}} |
+| network.metrics.metric | required | {"direction": {"type": "int", "enum": [-1, 1]}} |
 
 ## Semantic roles
 

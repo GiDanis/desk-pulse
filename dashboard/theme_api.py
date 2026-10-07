@@ -383,6 +383,8 @@ def normalize_legacy(surface_id, payload, cache=None, *, validate=True):
         device=next((row for row in data.get('devices',[]) if row.get('id')==selected),None)
         values['selectedDevice']=normalize_dto('CasaDevice',device) if device else None
     if kind == 'NetworkContext':
+        values['overviewSection']=str(payload.get('networkOverviewSection','summary'))
+        values['tools']=[normalize_dto('NetworkMetricRow',r) for r in payload.get('networkTools',[])]
         envelope=_mapping(payload.get('networkState',model.get('network')))
         data=_mapping(envelope.get('data'))
         values['network']=_cached(cache,'domain:network',data,lambda:normalize_dto('NetworkData',data))
@@ -392,6 +394,8 @@ def normalize_legacy(surface_id, payload, cache=None, *, validate=True):
         values['selectedDevice']=normalize_dto('NetworkDevice',device) if device else None
         values['deviceRows'] = [normalize_dto('NetworkDevice', row) for row in payload.get('networkDeviceRows', [])]
         values['detailRows'] = [normalize_dto('NetworkDetail', row) for row in payload.get('networkDetailRows', [])]
+    if kind in ('NetworkRouterContext','NetworkWifiContext','NetworkPortsContext'):
+        values['metrics']=normalize_dto('NetworkMetricsView',_mapping(payload.get('networkMetricsView')))
     if kind == 'SceneContext':
         actor = payload.get('actor', payload.get('actorState'))
         values['actor'] = normalize_dto('ActorSnapshot', object_snapshot('ActorSnapshot', actor))

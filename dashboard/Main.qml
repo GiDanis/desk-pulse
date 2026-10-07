@@ -114,7 +114,7 @@ Window {
     readonly property var themeCandidate: themeService ? themeService.candidateAppearance : ({})
     readonly property bool themePreparing: !!themeCandidate.generation
 
-    readonly property var publicRoutes: {"alertDetail": "alerts.detail", "alerts": "alerts.inbox", "info": "device.info", "commands": "overlay.commands", "menu": "overlay.menu", "detail": "overlay.summary", "racingList": "racing.calendar", "racingDriver": "racing.driver.detail", "racingEvent": "racing.event.detail", "racingTiming": "racing.live", "racingSession": "racing.session.detail", "racingTable": "racing.standings", "accountSettings": "settings.account", "appearance": "settings.appearance", "appearanceNotifications": "settings.appearance.notifications", "system": "settings.display", "settings": "settings.index", "integrations": "settings.integrations", "modules": "settings.modules", "notifications": "settings.notifications", "notificationCategories": "settings.notifications.categories", "notificationQuiet": "settings.notifications.quiet", "racingSettings": "settings.racing", "sources": "settings.sources", "sportSettings": "settings.sport", "sportList": "sport.fixtures", "sportDetail": "sport.match.detail", "sportTable": "sport.standings", "sportTeam": "sport.team.detail", "sportTeamPicker": "sport.team.picker", "casaDetail":"casa.detail", "casaSettings":"settings.casa", "networkDetail":"network.detail", "networkSettings":"settings.network"}
+    readonly property var publicRoutes: {"alertDetail": "alerts.detail", "alerts": "alerts.inbox", "info": "device.info", "commands": "overlay.commands", "menu": "overlay.menu", "detail": "overlay.summary", "racingList": "racing.calendar", "racingDriver": "racing.driver.detail", "racingEvent": "racing.event.detail", "racingTiming": "racing.live", "racingSession": "racing.session.detail", "racingTable": "racing.standings", "accountSettings": "settings.account", "appearance": "settings.appearance", "appearanceNotifications": "settings.appearance.notifications", "system": "settings.display", "settings": "settings.index", "integrations": "settings.integrations", "modules": "settings.modules", "notifications": "settings.notifications", "notificationCategories": "settings.notifications.categories", "notificationQuiet": "settings.notifications.quiet", "racingSettings": "settings.racing", "sources": "settings.sources", "sportSettings": "settings.sport", "sportList": "sport.fixtures", "sportDetail": "sport.match.detail", "sportTable": "sport.standings", "sportTeam": "sport.team.detail", "sportTeamPicker": "sport.team.picker", "casaDetail":"casa.detail", "casaSettings":"settings.casa", "networkDetail":"network.detail", "networkSettings":"settings.network", "networkRouter":"network.router", "networkWifi":"network.wifi", "networkPorts":"network.ports"}
     readonly property string overlayContentId: publicRoutes[overlay] || ""
     function restoreInputFocus() { inputOwner.forceActiveFocus() }
     function hasCandidateSurface(surfaceId) {
@@ -229,6 +229,12 @@ Window {
         return rows.map(row => ({id:"key."+row[0],key:row[0],label:row[1],enabled:true,actionId:"",targetId:""}))
     }
     function publicSurfacePayload(surfaceId, dataProjection) {
+        if (["network.router","network.wifi","network.ports"].indexOf(surfaceId)>=0) return {
+            networkMetricsView:networkMetricsView,
+            selection:{selectedId:networkMetricsRows[networkMetricsIndex] ? networkMetricsRows[networkMetricsIndex].id : "", index:networkMetricsIndex,count:networkMetricsRows.length,tabId:networkMetricsSection,anchorId:networkMetricsTabsSelected ? "metrics.tabs" : ""},
+            commands:publicSurfaceCommands(surfaceId),commandHints:[{key:1,label:"HOME"},{key:7,label:"INDIETRO"},{key:9,label:"MENU"}]
+        }
+
         const hints = [{key:1,label:"HOME"},{key:3,label:"AVVISI"},{key:7,label:"INDIETRO"},{key:9,label:"MENU"}]
         // Auxiliary visuals have no provider/selection contract. Avoid coupling
         // their payloads to every domain and settings binding in the dashboard.
@@ -289,8 +295,8 @@ Window {
         const draft=themeService ? themeService.draft || {} : {},status=themeService ? themeService.status : "ready"
         const draftTokens=(draft.overrides || {}).tokens || {}
         const operationStatus=status === "saving" || status === "working" ? "pending" : status === "error" || status === "recovery" ? "failed" : "idle"
-        const selectedId=surfaceId.indexOf("network.") === 0 ? networkSelectedId : surfaceId.indexOf("casa.") === 0 ? casaSelectedId : rows[selected] ? rows[selected].id : surfaceId.indexOf("home.") === 0 || surfaceId.indexOf("weather.") === 0 || surfaceId === "account.usage" ? surfaceId : ""
-        return {rows:rows, networkDeviceRows:surfaceId.indexOf("network.")===0 ? networkRows : [], networkState:surfaceId.indexOf("network.") === 0 || surfaceId === "settings.network" ? network : null, networkDetailRows:surfaceId === "network.detail" ? networkDetailRows : [], casaState:surfaceId.indexOf("casa.") === 0 || surfaceId === "settings.casa" ? casa : null, selectedId:selectedId, selection:{selectedId:selectedId,index:surfaceId === "network.detail" ? networkDetailIndex : surfaceId === "casa.detail" ? casaMetricIndex : rows.length ? selected : -1,count:rows.length,tabId:tabId,
+        const selectedId=surfaceId==="network.overview" && networkOverviewSection==="tools" ? networkTools[networkToolIndex].id : surfaceId.indexOf("network.") === 0 ? networkSelectedId : surfaceId.indexOf("casa.") === 0 ? casaSelectedId : rows[selected] ? rows[selected].id : surfaceId.indexOf("home.") === 0 || surfaceId.indexOf("weather.") === 0 || surfaceId === "account.usage" ? surfaceId : ""
+        return {networkOverviewSection:networkOverviewSection,networkTools:networkTools,rows:rows, networkDeviceRows:surfaceId.indexOf("network.")===0 ? networkRows : [], networkState:surfaceId.indexOf("network.") === 0 || surfaceId === "settings.network" ? network : null, networkDetailRows:surfaceId === "network.detail" ? networkDetailRows : [], casaState:surfaceId.indexOf("casa.") === 0 || surfaceId === "settings.casa" ? casa : null, selectedId:selectedId, selection:{selectedId:selectedId,index:surfaceId === "network.detail" ? networkDetailIndex : surfaceId === "casa.detail" ? casaMetricIndex : rows.length ? selected : -1,count:rows.length,tabId:tabId,
                 anchorId:surfaceId.indexOf("network.")===0 && networkTabsSelected ? "network.tabs" : surfaceId.indexOf("casa.")===0 && casaTabsSelected ? "casa.tabs" : surfaceId === "sport.match.detail" && sportDetailPage === 3 ? String(((fantasyData.teams || [])[fantasyTeamIndex] || {}).id || "") : ""},sectionId:surfaceId,
             families:families, currentFamilyId:familyId, currentViewId:activeContentId, route:overlay,
             navigation:{familyId:familyId,viewId:activeContentId,overlayId:overlayContentId,familyPosition:family+1,familyCount:families.length,
@@ -311,6 +317,8 @@ Window {
             commands:publicSurfaceCommands(surfaceId),commandHints:[{key:1,label:"HOME"},{key:3,label:"AVVISI"},{key:7,label:"INDIETRO"},{key:9,label:"MENU"}]}
     }
     function publicActionOperation(action,target) {
+        if (action === "network.metrics.refresh") return networkData.modeText && networkData.modeText.indexOf("Demo")===0 ? "" : "networkMetricsRefresh"
+        if (action.indexOf("network.metrics.")===0) return ""
         const effective=action === "settings.activate" || action === "settings.adjust" ? target : action
         if ((action === "sources.refresh" && target === "casa") || (action === "settings.activate" && target === "source.casa")) return "casaRefresh"
         if (!networkData.modeText || networkData.modeText.indexOf("Demo") !== 0) { if ((action === "sources.refresh" && target === "network") || (action === "settings.activate" && target === "source.network") || action.indexOf("network.") === 0 && action !== "network.filter.step") return "networkRefresh" }
@@ -411,6 +419,16 @@ Window {
             if (action === "appearance.notificationPreview") { notificationPreviewMode=args.mode; return true }
             return false
         }
+        if (action === "network.metrics.section" && surface === "network.overview") { if (["summary","tools"].indexOf(target)<0) return false; networkOverviewSection=target; return true }
+        if (["network.router","network.wifi","network.ports"].indexOf(surface)>=0) {
+            if (action === "network.metrics.refresh") return dashboardState && dashboardState.refreshNetworkMetrics()
+            if (action === "network.metrics.section") { if (networkMetricsTabs.indexOf(target)<0) return false; networkMetricsSection=target; networkMetricsIndex=0; return true }
+            if (action === "network.metrics.entity" || action === "details.open") return activateNetworkMetricRow(target)
+            if (action === "network.metrics.window") { networkMetricsHours=networkMetricsHours===1 ? 24 : 1; return true }
+            if (action === "network.metrics.metric") { networkMetricsMetric=(networkMetricsMetric+(args.direction || 1)+3)%3; return true }
+            if (action === "selection.select") { const i=networkMetricsRows.findIndex(r=>r.id===target); if (i<0) return false; networkMetricsIndex=i; networkMetricsTabsSelected=false; return true }
+        }
+        if ((surface === "network.overview" || surface === "settings.network") && action === "details.open" && ["network.router","network.wifi","network.ports"].indexOf(target)>=0) { openNetworkMetrics(target); return true }
         if (surface === "network.detail" && action === "navigation.tab.select") { const i=networkTabs.indexOf(target); if (i<0) return false; networkDetailTab=i; networkDetailIndex=0; return true }
         if ((surface.indexOf("network.")===0 || surface === "settings.network") && action.indexOf("network.")===0) {
             if (action === "network.filter.step") { networkFilter=(networkFilter+(args.direction || 1)+networkFilters.length)%networkFilters.length; return true }
@@ -418,7 +436,7 @@ Window {
             return networkSettingsAction(action,target,args.direction || 1)
         }
         if (surface === "settings.network" && action === "details.open") return networkSettingsAction(action,target,1)
-        if (surface.indexOf("network.") === 0 && action === "details.open") { if (!networkRows.some(row => row.id===target)) return false; openNetworkDevice(target); return true }
+        if (surface.indexOf("network.") === 0 && action === "details.open") { if (!(networkData.devices || []).some(row => row.id===target)) return false; openNetworkDevice(target); return true }
         if (surface.indexOf("network.") === 0 && action === "selection.select") { if (!networkRows.some(row => row.id===target)) return false; networkSelectedId=target; return true }
         if (surface === "settings.network" && action === "selection.select") { const i=networkSettingRows.findIndex(row => row.id===target); if (i<0) return false; networkSettingsIndex=i; return true }
         if (surface === "settings.casa" && action.indexOf("casa.") === 0) return casaSettingsAction(action,target,args.direction || 1)
@@ -590,17 +608,58 @@ Window {
     property int networkFilter:0
     property int networkDetailTab:0
     readonly property var networkFilters:["Tutti","Raggiungibili","Preferiti","Dati precedenti"]
+    property string networkOverviewSection:"summary"
+    property int networkToolIndex:0
+    readonly property var networkTools:[
+        {id:"network.router",title:"iliadbox / Internet",value:"APRI",detail:"WAN, fibra, router e storico",targetId:"network.router",previous:false},
+        {id:"network.wifi",title:"Wi-Fi",value:"APRI",detail:"Radio, associazioni e link",targetId:"network.wifi",previous:false},
+        {id:"network.ports",title:"Porte Ethernet",value:"APRI",detail:"Link, host e traffico condiviso",targetId:"network.ports",previous:false}]
+    property string networkMetricsSection:"state"
+    property string networkWifiEntity:""
+    property string networkPortEntity:""
+    property string networkStationId:""
+    property string networkMetricsLanReturnId:""
+    property int networkMetricsHours:1
+    property int networkMetricsMetric:0
+    property int networkMetricsIndex:0
+    property bool networkMetricsTabsSelected:true
+    property int networkMetricsEpoch:0
+    readonly property string networkMetricsRoute:overlay==="networkRouter" ? "router" : overlay==="networkWifi" ? "wifi" : overlay==="networkPorts" ? "ports" : ""
+    readonly property string networkMetricsEntity:networkMetricsRoute==="wifi" ? networkWifiEntity : networkMetricsRoute==="ports" ? networkPortEntity : ""
+    readonly property var networkMetricsTabs:networkMetricsRoute==="router" ? ["state","history"] : networkMetricsRoute==="wifi" ? ["radios","stations","detail"] : ["ports","hosts","history"]
+    readonly property bool networkMetricsConsulted:networkMetricsRoute!=="" && !urgentEvent.id && !themePreparing
+    readonly property var networkMetricsInterest:[networkMetricsConsulted ? networkMetricsRoute : "",networkMetricsEntity,networkMetricsSection,networkMetricsHours,networkMetricsMetric,networkStationId]
+    onNetworkMetricsInterestChanged: if (dashboardState) dashboardState.setNetworkMetricsInterest(networkMetricsInterest[0],networkMetricsInterest[1],networkMetricsInterest[2],networkMetricsInterest[3],networkMetricsInterest[4],networkMetricsInterest[5])
+    readonly property var networkMetricsView: { const epoch=networkMetricsEpoch; return dashboardState ? dashboardState.networkMetricsView(networkMetricsRoute,networkMetricsEntity,networkMetricsSection,networkMetricsHours,networkMetricsMetric,networkStationId) : ({}) }
+    readonly property var networkMetricsRows:networkMetricsView.rows || []
+    onNetworkMetricsRowsChanged: networkMetricsIndex=Math.min(networkMetricsIndex,Math.max(0,networkMetricsRows.length-1))
+    function openNetworkMetrics(target) {
+        const route={"network.router":"networkRouter","network.wifi":"networkWifi","network.ports":"networkPorts"}[target]
+        if (!route) return
+        networkMetricsSection=target==="network.router" ? "state" : target==="network.wifi" ? "radios" : "ports"
+        networkMetricsIndex=0;networkMetricsTabsSelected=true;pushOverlay(route)
+    }
+    function activateNetworkMetricRow(target) {
+        const row=networkMetricsRows.find(r=>r.id===target || r.targetId===target)
+        if (!row || !row.targetId) return false
+        if (row.id==="metrics.refresh") return dashboardState && dashboardState.refreshNetworkMetrics()
+        if (networkMetricsRoute==="wifi" && networkMetricsSection==="radios") { networkWifiEntity=row.targetId; networkMetricsSection="stations" }
+        else if (networkMetricsRoute==="wifi" && networkMetricsSection==="stations") { networkStationId=row.targetId; networkMetricsSection="detail" }
+        else if (networkMetricsRoute==="ports" && networkMetricsSection==="ports") { networkPortEntity=row.targetId; networkMetricsSection="hosts" }
+        else { if (!(networkData.devices || []).some(d=>d.id===row.targetId)) return false; openNetworkDevice(row.targetId);return true }
+        networkMetricsIndex=0;networkMetricsTabsSelected=false;return true
+    }
     readonly property var networkTabs:["identity","addresses","link","observations"]
     readonly property var networkFiltered:(networkData.devices || []).filter(row => networkFilter===0 || networkFilter===1 && !row.previous && row.statusText==="Raggiungibile secondo box" || networkFilter===2 && row.favourite || networkFilter===3 && row.previous)
     readonly property var networkRows: (viewIndex[7] || 0) === 0 ? (networkData.favourites || []).length ? networkData.favourites : (networkData.devices || []).slice(0,4) : networkFiltered
     readonly property var networkSelected: (networkData.devices || []).find(row => row.id === networkSelectedId) || null
     readonly property var networkDetailRows:networkSelected ? (networkSelected.details || []).filter(row => row.section===networkTabs[networkDetailTab]) : []
-    readonly property var networkSettingRows: [
+    readonly property var networkSettingRows: networkTools.map(r=>({id:r.id,title:r.title,detail:r.detail,value:r.value,actionId:"details.open",targetId:r.targetId,control:"action",enabled:true})).concat([
         {id:"network.devices",title:"Dispositivi e preferiti",detail:"Scegli fino a quattro tessere",value:"APRI",actionId:"details.open",targetId:"network.devices",control:"action",enabled:!!networkData.hasInventory},
         {id:"network.polling",title:"Aggiornamenti automatici",detail:networkData.modeText || "Configura il collegamento iliadbox",value:networkData.polling ? "ATTIVI" : "SOSPESI",actionId:"network.polling.toggle",targetId:"network",control:"toggle",enabled:!!networkData.configured && !networkData.busy},
         {id:"network.reload",title:"Rileggi configurazione",detail:"Credenziale privata e identità della iliadbox",value:"RILEGGI",actionId:"network.config.reload",targetId:"network",control:"action",enabled:!networkData.busy},
         {id:"network.source",title:"Dati e aggiornamenti",detail:network.error || "Ultima lettura e richieste del provider",value:"APRI",actionId:"details.open",targetId:"settings.sources",control:"action",enabled:true}
-    ].concat((networkData.devices || []).map(row => ({id:row.id,title:row.name,detail:row.statusText,value:row.favourite ? "PREFERITO "+((networkData.favourites || []).findIndex(d => d.id === row.id)+1) : "AGGIUNGI",actionId:"network.favourite.toggle",targetId:row.id,control:"toggle",enabled:!networkData.busy && (row.favourite || (networkData.favourites || []).length<4)})))
+    ]).concat((networkData.devices || []).map(row => ({id:row.id,title:row.name,detail:row.statusText,value:row.favourite ? "PREFERITO "+((networkData.favourites || []).findIndex(d => d.id === row.id)+1) : "AGGIUNGI",actionId:"network.favourite.toggle",targetId:row.id,control:"toggle",enabled:!networkData.busy && (row.favourite || (networkData.favourites || []).length<4)})))
     function syncNetworkSelection() {
         if (overlay !== "networkDetail" && !networkRows.some(row => row.id === networkSelectedId)) networkSelectedId=networkRows.length ? networkRows[0].id : ""
         networkSettingsIndex=Math.min(networkSettingsIndex,Math.max(0,networkSettingRows.length-1))
@@ -616,8 +675,9 @@ Window {
         if (direction<0 && index===0) { networkTabsSelected=true; return }
         if (networkRows.length) networkSelectedId=networkRows[Math.max(0,Math.min(networkRows.length-1,index+direction))].id
     }
-    function openNetworkDevice(identity) { networkSelectedId=identity; networkDetailIndex=0; networkDetailTab=0; pushOverlay("networkDetail") }
+    function openNetworkDevice(identity) { if (networkMetricsRoute!=="") networkMetricsLanReturnId=networkSelectedId; networkSelectedId=identity; networkDetailIndex=0; networkDetailTab=0; pushOverlay("networkDetail") }
     function networkSettingsAction(action,target,direction) {
+        if (["network.router","network.wifi","network.ports"].indexOf(target)>=0) { openNetworkMetrics(target); return true }
         if (!dashboardState) return false
         if (action === "network.favourite.toggle") return dashboardState.toggleNetworkFavourite(target)
         if (action === "network.favourite.move") return dashboardState.moveNetworkFavourite(target,direction)
@@ -1018,6 +1078,7 @@ Window {
         const stack = overlayStack.slice()
         overlay = stack.length ? stack.pop() : ""
         overlayStack = stack
+        if (previous==="networkDetail" && networkMetricsRoute!=="" && networkMetricsLanReturnId) { networkSelectedId=networkMetricsLanReturnId;networkMetricsLanReturnId="" }
         if (previous === "appearanceNotifications" && overlay === "appearance") optionIndex = 19
         if ((previous === "appearance" || previous === "appearanceNotifications") && overlay !== "appearance" && overlay !== "appearanceNotifications" && themeService && themeService.editing) themeService.cancel()
         if (previous === "racingDriver" && !racingDriverLive && dashboardState) dashboardState.selectRacing(familyId, racingEventId, racingSessionId)
@@ -1144,6 +1205,17 @@ Window {
             if (position === 2) menuIndex = Math.max(0, menuIndex - 1)
             else if (position === 8) menuIndex = Math.min(menuItems.length - 1, menuIndex + 1)
             else if (position === 5) selectMenu()
+            return
+        }
+        if (networkMetricsRoute!=="") {
+            if (networkMetricsSection==="history") {
+                if (position===2 || position===8) networkMetricsHours=networkMetricsHours===1 ? 24 : 1
+                else if (position===5) networkMetricsMetric=(networkMetricsMetric+1)%3
+            } else if (position===2 || position===8) {
+                if (position===2 && networkMetricsIndex===0) networkMetricsTabsSelected=true
+                else { networkMetricsTabsSelected=false;networkMetricsIndex=Math.max(0,Math.min(networkMetricsRows.length-1,networkMetricsIndex+(position===2 ? -1 : 1))) }
+            } else if (position===5) { if (networkMetricsTabsSelected) networkMetricsTabsSelected=false;else if (networkMetricsRows[networkMetricsIndex]) activateNetworkMetricRow(networkMetricsRows[networkMetricsIndex].id) }
+            if (position===4 || position===6) { const i=networkMetricsTabs.indexOf(networkMetricsSection); networkMetricsSection=networkMetricsTabs[(i+(position===4 ? -1 : 1)+networkMetricsTabs.length)%networkMetricsTabs.length];networkMetricsIndex=0 }
             return
         }
         if (overlay === "networkSettings") {
@@ -1319,8 +1391,9 @@ Window {
         if (overlay !== "") return
         if (familyId === "network") {
             if (position === 4 || position === 6) { if (networkTabsSelected) navigateView(position===4 ? -1 : 1); else navigateFamily(position===4 ? -1 : 1) }
+            else if (networkOverviewSection==="tools" && (viewIndex[7] || 0)===0) { if (position===2 || position===8) { if (position===2 && networkToolIndex===0) networkTabsSelected=true;else { networkTabsSelected=false;networkToolIndex=Math.max(0,Math.min(2,networkToolIndex+(position===2 ? -1 : 1))) } } else if (position===5) { if (networkTabsSelected) networkOverviewSection="summary";else openNetworkMetrics(networkTools[networkToolIndex].id) } }
             else if (position === 2 || position === 8) moveNetworkSelection(position===2 ? -1 : 1)
-            else if (position === 5) { if (networkTabsSelected) networkFilter=(networkFilter+1)%networkFilters.length; else if (networkSelectedId) openNetworkDevice(networkSelectedId) }
+            else if (position === 5) { if (networkTabsSelected) { if ((viewIndex[7] || 0)===0) networkOverviewSection=networkOverviewSection==="tools" ? "summary" : "tools";else networkFilter=(networkFilter+1)%networkFilters.length; } else if (networkSelectedId) openNetworkDevice(networkSelectedId) }
             return
         }
         if (familyId === "casa") {
@@ -1422,6 +1495,8 @@ Window {
         pendingPublicActions=kept
     }
     Connections { target: app.dashboardState
+        function onNetworkMetricsChanged() { app.networkMetricsEpoch++ }
+        function onNetworkMetricsRefreshFinished(ok,message) { app.completePublicActions("networkMetricsRefresh",ok,message) }
         function onNetworkRefreshFinished(ok,message) { app.completePublicActions("networkRefresh",ok,message) }
         function onCasaRefreshFinished(ok,message) { app.completePublicActions("casaRefresh",ok,message) }
     }
@@ -1537,7 +1612,7 @@ Window {
     }
     AnimatedLayer { // private observer
         id: genericLayer; opacity: overlayHost.active && overlayHost.currentItem ? 0 : 1; traceRecorder: app.traceRecorder; traceSurfaceId: app.traceRecorder ? app.traceRecorder.surfaceForRoute(app.overlay) : ""
-        anchors.fill: parent; active: app.overlay !== "networkSettings" && app.overlay !== "networkDetail" && app.overlay !== "casaSettings" && app.overlay !== "casaDetail" && !settingsPanel.active && app.overlay !== "info" && app.overlay !== "alerts" && app.overlay !== "alertDetail" && app.overlay !== "" && app.overlay.indexOf("sport") !== 0 && app.overlay.indexOf("racing") !== 0; preempted: !!app.urgentEvent.id
+        anchors.fill: parent; active: app.networkMetricsRoute==="" && app.overlay !== "networkSettings" && app.overlay !== "networkDetail" && app.overlay !== "casaSettings" && app.overlay !== "casaDetail" && !settingsPanel.active && app.overlay !== "info" && app.overlay !== "alerts" && app.overlay !== "alertDetail" && app.overlay !== "" && app.overlay.indexOf("sport") !== 0 && app.overlay.indexOf("racing") !== 0; preempted: !!app.urgentEvent.id
         eventPrefix: "panel"
         DashboardOverlay { style: parent.style; dashboard: app; visible: true; anchors.fill: parent }
     }

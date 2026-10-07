@@ -4405,6 +4405,278 @@
       ],
       "additionalProperties": false
     },
+    "NetworkMetricRow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "value": {
+          "type": "string",
+          "readOnly": true
+        },
+        "detail": {
+          "type": "string",
+          "readOnly": true
+        },
+        "targetId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "previous": {
+          "type": "boolean",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "value",
+        "detail",
+        "targetId",
+        "previous"
+      ],
+      "additionalProperties": false
+    },
+    "NetworkMetricEntity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "NetworkChartPoint": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "time": {
+          "type": "number",
+          "readOnly": true
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "breakBefore": {
+          "type": "boolean",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "time",
+        "value",
+        "breakBefore"
+      ],
+      "additionalProperties": false
+    },
+    "NetworkChartSeries": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "label": {
+          "type": "string",
+          "readOnly": true
+        },
+        "unit": {
+          "type": "string",
+          "readOnly": true
+        },
+        "points": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NetworkChartPoint"
+          },
+          "maxItems": 180,
+          "readOnly": true
+        },
+        "gaps": {
+          "type": "integer",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "unit",
+        "points",
+        "gaps"
+      ],
+      "additionalProperties": false
+    },
+    "NetworkChart": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "end": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "resolution": {
+          "anyOf": [
+            {
+              "type": "number",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rawPoints": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "series": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NetworkChartSeries"
+          },
+          "maxItems": 2,
+          "readOnly": true
+        },
+        "previous": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "period": {
+          "type": "string",
+          "readOnly": true
+        },
+        "unit": {
+          "type": "string",
+          "readOnly": true
+        },
+        "message": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "start",
+        "end",
+        "resolution",
+        "rawPoints",
+        "series",
+        "previous",
+        "period",
+        "unit",
+        "message"
+      ],
+      "additionalProperties": false
+    },
+    "NetworkMetricsView": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "summary": {
+          "type": "string",
+          "readOnly": true
+        },
+        "selectedLabel": {
+          "type": "string",
+          "readOnly": true
+        },
+        "sourceText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "section": {
+          "type": "string",
+          "readOnly": true
+        },
+        "busy": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "hasChart": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NetworkMetricRow"
+          },
+          "maxItems": 256,
+          "readOnly": true
+        },
+        "entities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NetworkMetricEntity"
+          },
+          "maxItems": 16,
+          "readOnly": true
+        },
+        "chart": {
+          "$ref": "#/$defs/NetworkChart",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "title",
+        "summary",
+        "selectedLabel",
+        "sourceText",
+        "section",
+        "busy",
+        "hasChart",
+        "rows",
+        "entities",
+        "chart"
+      ],
+      "additionalProperties": false
+    },
     "SurfaceContext": {
       "type": "object",
       "properties": {
@@ -6611,6 +6883,18 @@
           },
           "maxItems": 256,
           "readOnly": true
+        },
+        "overviewSection": {
+          "type": "string",
+          "readOnly": true
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NetworkMetricRow"
+          },
+          "maxItems": 256,
+          "readOnly": true
         }
       },
       "required": [
@@ -6633,7 +6917,273 @@
         "feedback",
         "network",
         "detailRows",
-        "deviceRows"
+        "deviceRows",
+        "overviewSection",
+        "tools"
+      ],
+      "additionalProperties": false
+    },
+    "NetworkRouterContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
+        "metrics": {
+          "$ref": "#/$defs/NetworkMetricsView",
+          "readOnly": true
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionState",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "metrics",
+        "selection"
+      ],
+      "additionalProperties": false
+    },
+    "NetworkWifiContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
+        "metrics": {
+          "$ref": "#/$defs/NetworkMetricsView",
+          "readOnly": true
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionState",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "metrics",
+        "selection"
+      ],
+      "additionalProperties": false
+    },
+    "NetworkPortsContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
+        "metrics": {
+          "$ref": "#/$defs/NetworkMetricsView",
+          "readOnly": true
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionState",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "metrics",
+        "selection"
       ],
       "additionalProperties": false
     },
@@ -6881,6 +7431,34 @@
         "$ref": "#/$defs/SettingRow"
       },
       "maxItems": 260
+    },
+    "NetworkMetricRowModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NetworkMetricRow"
+      },
+      "maxItems": 256
+    },
+    "NetworkMetricEntityModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NetworkMetricEntity"
+      },
+      "maxItems": 16
+    },
+    "NetworkChartPointModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NetworkChartPoint"
+      },
+      "maxItems": 180
+    },
+    "NetworkChartSeriesModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NetworkChartSeries"
+      },
+      "maxItems": 2
     }
   },
   "description": "Choose an explicit $defs type. Python validator also checks model identity uniqueness and request allowlists."

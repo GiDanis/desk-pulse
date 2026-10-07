@@ -1353,6 +1353,123 @@ Module {
         }
     }
     Component {
+        name: "NetworkMetricRow"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkMetricRow 2.0", "SmartPC.ThemeApi/NetworkMetricRow 2.1", "SmartPC.ThemeApi/NetworkMetricRow 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "title"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "value"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "detail"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "targetId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "previous"
+            type: "bool"
+            isReadonly: true
+        }
+        Signal {
+            name: "idChanged"
+        }
+        Signal {
+            name: "titleChanged"
+        }
+        Signal {
+            name: "valueChanged"
+        }
+        Signal {
+            name: "detailChanged"
+        }
+        Signal {
+            name: "targetIdChanged"
+        }
+        Signal {
+            name: "previousChanged"
+        }
+    }
+    Component {
+        name: "NetworkMetricEntity"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkMetricEntity 2.0", "SmartPC.ThemeApi/NetworkMetricEntity 2.1", "SmartPC.ThemeApi/NetworkMetricEntity 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "name"
+            type: "QString"
+            isReadonly: true
+        }
+        Signal {
+            name: "idChanged"
+        }
+        Signal {
+            name: "nameChanged"
+        }
+    }
+    Component {
+        name: "NetworkChartPoint"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkChartPoint 2.0", "SmartPC.ThemeApi/NetworkChartPoint 2.1", "SmartPC.ThemeApi/NetworkChartPoint 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "time"
+            type: "double"
+            isReadonly: true
+        }
+        Property {
+            name: "value"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "breakBefore"
+            type: "bool"
+            isReadonly: true
+        }
+        Signal {
+            name: "idChanged"
+        }
+        Signal {
+            name: "timeChanged"
+        }
+        Signal {
+            name: "valueChanged"
+        }
+        Signal {
+            name: "breakBeforeChanged"
+        }
+    }
+    Component {
         name: "ShellLayout"
         prototype: "QObject"
         exports: ["SmartPC.ThemeApi/ShellLayout 2.0", "SmartPC.ThemeApi/ShellLayout 2.1", "SmartPC.ThemeApi/ShellLayout 2.2"]
@@ -3334,6 +3451,102 @@ Module {
         }
     }
     Component {
+        name: "NetworkMetricRowModel"
+        prototype: "QAbstractListModel"
+        exports: ["SmartPC.ThemeApi/NetworkMetricRowModel 2.0", "SmartPC.ThemeApi/NetworkMetricRowModel 2.1", "SmartPC.ThemeApi/NetworkMetricRowModel 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "count"
+            type: "int"
+            isReadonly: true
+        }
+        Signal {
+            name: "countChanged"
+        }
+        Method {
+            name: "get"
+            type: "QObject"
+            isPointer: true
+            Parameter {
+                name: "arg0"
+                type: "int"
+            }
+        }
+        Method {
+            name: "indexOf"
+            type: "int"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+        }
+    }
+    Component {
+        name: "NetworkMetricEntityModel"
+        prototype: "QAbstractListModel"
+        exports: ["SmartPC.ThemeApi/NetworkMetricEntityModel 2.0", "SmartPC.ThemeApi/NetworkMetricEntityModel 2.1", "SmartPC.ThemeApi/NetworkMetricEntityModel 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "count"
+            type: "int"
+            isReadonly: true
+        }
+        Signal {
+            name: "countChanged"
+        }
+        Method {
+            name: "get"
+            type: "QObject"
+            isPointer: true
+            Parameter {
+                name: "arg0"
+                type: "int"
+            }
+        }
+        Method {
+            name: "indexOf"
+            type: "int"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+        }
+    }
+    Component {
+        name: "NetworkChartPointModel"
+        prototype: "QAbstractListModel"
+        exports: ["SmartPC.ThemeApi/NetworkChartPointModel 2.0", "SmartPC.ThemeApi/NetworkChartPointModel 2.1", "SmartPC.ThemeApi/NetworkChartPointModel 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "count"
+            type: "int"
+            isReadonly: true
+        }
+        Signal {
+            name: "countChanged"
+        }
+        Method {
+            name: "get"
+            type: "QObject"
+            isPointer: true
+            Parameter {
+                name: "arg0"
+                type: "int"
+            }
+        }
+        Method {
+            name: "indexOf"
+            type: "int"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+        }
+    }
+    Component {
         name: "Family"
         prototype: "QObject"
         exports: ["SmartPC.ThemeApi/Family 2.0", "SmartPC.ThemeApi/Family 2.1", "SmartPC.ThemeApi/Family 2.2"]
@@ -4075,6 +4288,54 @@ Module {
         }
         Signal {
             name: "detailsChanged"
+        }
+    }
+    Component {
+        name: "NetworkChartSeries"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkChartSeries 2.0", "SmartPC.ThemeApi/NetworkChartSeries 2.1", "SmartPC.ThemeApi/NetworkChartSeries 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "label"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "unit"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "points"
+            type: "NetworkChartPointModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "gaps"
+            type: "int"
+            isReadonly: true
+        }
+        Signal {
+            name: "idChanged"
+        }
+        Signal {
+            name: "labelChanged"
+        }
+        Signal {
+            name: "unitChanged"
+        }
+        Signal {
+            name: "pointsChanged"
+        }
+        Signal {
+            name: "gapsChanged"
         }
     }
     Component {
@@ -5367,6 +5628,38 @@ Module {
         }
     }
     Component {
+        name: "NetworkChartSeriesModel"
+        prototype: "QAbstractListModel"
+        exports: ["SmartPC.ThemeApi/NetworkChartSeriesModel 2.0", "SmartPC.ThemeApi/NetworkChartSeriesModel 2.1", "SmartPC.ThemeApi/NetworkChartSeriesModel 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "count"
+            type: "int"
+            isReadonly: true
+        }
+        Signal {
+            name: "countChanged"
+        }
+        Method {
+            name: "get"
+            type: "QObject"
+            isPointer: true
+            Parameter {
+                name: "arg0"
+                type: "int"
+            }
+        }
+        Method {
+            name: "indexOf"
+            type: "int"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+        }
+    }
+    Component {
         name: "MenuContext"
         prototype: "SurfaceContext"
         exports: ["SmartPC.ThemeApi/MenuContext 2.0", "SmartPC.ThemeApi/MenuContext 2.1", "SmartPC.ThemeApi/MenuContext 2.2"]
@@ -6119,6 +6412,86 @@ Module {
         }
     }
     Component {
+        name: "NetworkChart"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkChart 2.0", "SmartPC.ThemeApi/NetworkChart 2.1", "SmartPC.ThemeApi/NetworkChart 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "start"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "end"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "resolution"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "rawPoints"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "series"
+            type: "NetworkChartSeriesModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "previous"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "period"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "unit"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "message"
+            type: "QString"
+            isReadonly: true
+        }
+        Signal {
+            name: "startChanged"
+        }
+        Signal {
+            name: "endChanged"
+        }
+        Signal {
+            name: "resolutionChanged"
+        }
+        Signal {
+            name: "rawPointsChanged"
+        }
+        Signal {
+            name: "seriesChanged"
+        }
+        Signal {
+            name: "previousChanged"
+        }
+        Signal {
+            name: "periodChanged"
+        }
+        Signal {
+            name: "unitChanged"
+        }
+        Signal {
+            name: "messageChanged"
+        }
+    }
+    Component {
         name: "LineupModel"
         prototype: "QAbstractListModel"
         exports: ["SmartPC.ThemeApi/LineupModel 2.0", "SmartPC.ThemeApi/LineupModel 2.1", "SmartPC.ThemeApi/LineupModel 2.2"]
@@ -6791,6 +7164,96 @@ Module {
         }
     }
     Component {
+        name: "NetworkMetricsView"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkMetricsView 2.0", "SmartPC.ThemeApi/NetworkMetricsView 2.1", "SmartPC.ThemeApi/NetworkMetricsView 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "title"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "summary"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "selectedLabel"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "sourceText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "section"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "busy"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "hasChart"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "rows"
+            type: "NetworkMetricRowModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "entities"
+            type: "NetworkMetricEntityModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "chart"
+            type: "NetworkChart"
+            isReadonly: true
+            isPointer: true
+        }
+        Signal {
+            name: "titleChanged"
+        }
+        Signal {
+            name: "summaryChanged"
+        }
+        Signal {
+            name: "selectedLabelChanged"
+        }
+        Signal {
+            name: "sourceTextChanged"
+        }
+        Signal {
+            name: "sectionChanged"
+        }
+        Signal {
+            name: "busyChanged"
+        }
+        Signal {
+            name: "hasChartChanged"
+        }
+        Signal {
+            name: "rowsChanged"
+        }
+        Signal {
+            name: "entitiesChanged"
+        }
+        Signal {
+            name: "chartChanged"
+        }
+    }
+    Component {
         name: "CasaContext"
         prototype: "SurfaceContext"
         exports: ["SmartPC.ThemeApi/CasaContext 2.0", "SmartPC.ThemeApi/CasaContext 2.1", "SmartPC.ThemeApi/CasaContext 2.2"]
@@ -6916,6 +7379,17 @@ Module {
             isReadonly: true
             isPointer: true
         }
+        Property {
+            name: "overviewSection"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "tools"
+            type: "NetworkMetricRowModel"
+            isReadonly: true
+            isPointer: true
+        }
         Signal {
             name: "sourceChanged"
         }
@@ -6942,6 +7416,12 @@ Module {
         }
         Signal {
             name: "deviceRowsChanged"
+        }
+        Signal {
+            name: "overviewSectionChanged"
+        }
+        Signal {
+            name: "toolsChanged"
         }
     }
     Component {
@@ -7038,6 +7518,81 @@ Module {
                 name: "arg0"
                 type: "QString"
             }
+        }
+    }
+    Component {
+        name: "NetworkRouterContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/NetworkRouterContext 2.0", "SmartPC.ThemeApi/NetworkRouterContext 2.1", "SmartPC.ThemeApi/NetworkRouterContext 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "metrics"
+            type: "NetworkMetricsView"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Signal {
+            name: "metricsChanged"
+        }
+        Signal {
+            name: "selectionChanged"
+        }
+    }
+    Component {
+        name: "NetworkWifiContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/NetworkWifiContext 2.0", "SmartPC.ThemeApi/NetworkWifiContext 2.1", "SmartPC.ThemeApi/NetworkWifiContext 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "metrics"
+            type: "NetworkMetricsView"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Signal {
+            name: "metricsChanged"
+        }
+        Signal {
+            name: "selectionChanged"
+        }
+    }
+    Component {
+        name: "NetworkPortsContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/NetworkPortsContext 2.0", "SmartPC.ThemeApi/NetworkPortsContext 2.1", "SmartPC.ThemeApi/NetworkPortsContext 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "metrics"
+            type: "NetworkMetricsView"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Signal {
+            name: "metricsChanged"
+        }
+        Signal {
+            name: "selectionChanged"
         }
     }
     Component {

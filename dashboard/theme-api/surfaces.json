@@ -3,7 +3,7 @@
   "module": {
     "uri": "SmartPC.ThemeApi",
     "major": 2,
-    "minor": 3
+    "minor": 4
   },
   "apiState": "implemented",
   "surfaces": [
@@ -431,7 +431,8 @@
         "details.open",
         "navigation.family.step",
         "navigation.view.step",
-        "network.filter.step"
+        "network.filter.step",
+        "network.metrics.section"
       ],
       "fallback": "base",
       "rendererState": "publicBuiltin",
@@ -1571,6 +1572,102 @@
         "width": 872,
         "height": 455
       }
+    },
+    {
+      "id": "network.router",
+      "context": "NetworkRouterContext",
+      "contextVersion": 1,
+      "hostFamily": "overlay",
+      "legacySource": "Main.qml",
+      "legacyRoute": "networkRouter",
+      "variants": [
+        "default"
+      ],
+      "actions": [
+        "navigation.back",
+        "navigation.home",
+        "navigation.inbox",
+        "navigation.menu",
+        "selection.move",
+        "selection.select",
+        "details.open",
+        "network.metrics.entity",
+        "network.metrics.section",
+        "network.metrics.refresh",
+        "network.metrics.window",
+        "network.metrics.metric"
+      ],
+      "fallback": "base",
+      "rendererState": "publicBuiltin",
+      "layout": {
+        "policy": "legacyFixed",
+        "width": 960,
+        "height": 640
+      }
+    },
+    {
+      "id": "network.wifi",
+      "context": "NetworkWifiContext",
+      "contextVersion": 1,
+      "hostFamily": "overlay",
+      "legacySource": "Main.qml",
+      "legacyRoute": "networkWifi",
+      "variants": [
+        "default"
+      ],
+      "actions": [
+        "navigation.back",
+        "navigation.home",
+        "navigation.inbox",
+        "navigation.menu",
+        "selection.move",
+        "selection.select",
+        "details.open",
+        "network.metrics.entity",
+        "network.metrics.section",
+        "network.metrics.refresh",
+        "network.metrics.window",
+        "network.metrics.metric"
+      ],
+      "fallback": "base",
+      "rendererState": "publicBuiltin",
+      "layout": {
+        "policy": "legacyFixed",
+        "width": 960,
+        "height": 640
+      }
+    },
+    {
+      "id": "network.ports",
+      "context": "NetworkPortsContext",
+      "contextVersion": 1,
+      "hostFamily": "overlay",
+      "legacySource": "Main.qml",
+      "legacyRoute": "networkPorts",
+      "variants": [
+        "default"
+      ],
+      "actions": [
+        "navigation.back",
+        "navigation.home",
+        "navigation.inbox",
+        "navigation.menu",
+        "selection.move",
+        "selection.select",
+        "details.open",
+        "network.metrics.entity",
+        "network.metrics.section",
+        "network.metrics.refresh",
+        "network.metrics.window",
+        "network.metrics.metric"
+      ],
+      "fallback": "base",
+      "rendererState": "publicBuiltin",
+      "layout": {
+        "policy": "legacyFixed",
+        "width": 960,
+        "height": 640
+      }
     }
   ],
   "protectedObjects": [
@@ -1598,6 +1695,16 @@
         "sources",
         "sportSettings",
         "casaSettings"
+      ]
+    },
+    {
+      "file": "Main.qml",
+      "expression": "route",
+      "source": "openNetworkMetrics allowlist",
+      "possibleRoutes": [
+        "networkRouter",
+        "networkWifi",
+        "networkPorts"
       ]
     }
   ],
@@ -2331,6 +2438,24 @@
       {
         "id": "settings.network:default",
         "surfaceId": "settings.network",
+        "variant": "default",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "network.router:default",
+        "surfaceId": "network.router",
+        "variant": "default",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "network.wifi:default",
+        "surfaceId": "network.wifi",
+        "variant": "default",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "network.ports:default",
+        "surfaceId": "network.ports",
         "variant": "default",
         "verification": "requiredNotExecuted"
       }

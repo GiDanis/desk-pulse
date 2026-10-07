@@ -3,7 +3,7 @@
   "module": {
     "uri": "SmartPC.ThemeApi",
     "major": 2,
-    "minor": 3
+    "minor": 4
   },
   "apiState": "implemented",
   "privateHandles": [
@@ -2819,6 +2819,178 @@
           "readOnly": true
         }
       }
+    },
+    "NetworkMetricRow": {
+      "fields": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "value": {
+          "type": "string",
+          "readOnly": true
+        },
+        "detail": {
+          "type": "string",
+          "readOnly": true
+        },
+        "targetId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "previous": {
+          "type": "bool",
+          "readOnly": true
+        }
+      }
+    },
+    "NetworkMetricEntity": {
+      "fields": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "NetworkChartPoint": {
+      "fields": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "time": {
+          "type": "real",
+          "readOnly": true
+        },
+        "value": {
+          "type": "real",
+          "readOnly": true,
+          "nullable": true
+        },
+        "breakBefore": {
+          "type": "bool",
+          "readOnly": true
+        }
+      }
+    },
+    "NetworkChartSeries": {
+      "fields": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "label": {
+          "type": "string",
+          "readOnly": true
+        },
+        "unit": {
+          "type": "string",
+          "readOnly": true
+        },
+        "points": {
+          "type": "NetworkChartPointModel",
+          "readOnly": true
+        },
+        "gaps": {
+          "type": "int",
+          "readOnly": true
+        }
+      }
+    },
+    "NetworkChart": {
+      "fields": {
+        "start": {
+          "type": "real",
+          "readOnly": true,
+          "nullable": true
+        },
+        "end": {
+          "type": "real",
+          "readOnly": true,
+          "nullable": true
+        },
+        "resolution": {
+          "type": "real",
+          "readOnly": true,
+          "nullable": true
+        },
+        "rawPoints": {
+          "type": "int",
+          "readOnly": true
+        },
+        "series": {
+          "type": "NetworkChartSeriesModel",
+          "readOnly": true
+        },
+        "previous": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "period": {
+          "type": "string",
+          "readOnly": true
+        },
+        "unit": {
+          "type": "string",
+          "readOnly": true
+        },
+        "message": {
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "NetworkMetricsView": {
+      "fields": {
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "summary": {
+          "type": "string",
+          "readOnly": true
+        },
+        "selectedLabel": {
+          "type": "string",
+          "readOnly": true
+        },
+        "sourceText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "section": {
+          "type": "string",
+          "readOnly": true
+        },
+        "busy": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "hasChart": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "rows": {
+          "type": "NetworkMetricRowModel",
+          "readOnly": true
+        },
+        "entities": {
+          "type": "NetworkMetricEntityModel",
+          "readOnly": true
+        },
+        "chart": {
+          "type": "NetworkChart",
+          "readOnly": true
+        }
+      }
     }
   },
   "models": {
@@ -3026,6 +3198,26 @@
       "itemType": "SettingRow",
       "identityRole": "id",
       "maxItems": 260
+    },
+    "NetworkMetricRowModel": {
+      "itemType": "NetworkMetricRow",
+      "identityRole": "id",
+      "maxItems": 256
+    },
+    "NetworkMetricEntityModel": {
+      "itemType": "NetworkMetricEntity",
+      "identityRole": "id",
+      "maxItems": 16
+    },
+    "NetworkChartPointModel": {
+      "itemType": "NetworkChartPoint",
+      "identityRole": "id",
+      "maxItems": 180
+    },
+    "NetworkChartSeriesModel": {
+      "itemType": "NetworkChartSeries",
+      "identityRole": "id",
+      "maxItems": 2
     }
   },
   "contexts": {
@@ -3944,6 +4136,86 @@
         },
         "deviceRows": {
           "type": "NetworkDeviceModel",
+          "readOnly": true
+        },
+        "overviewSection": {
+          "type": "string",
+          "readOnly": true
+        },
+        "tools": {
+          "type": "NetworkMetricRowModel",
+          "readOnly": true
+        }
+      },
+      "methods": {
+        "requestAction": {
+          "parameters": [
+            "string",
+            "string",
+            "legacyMap"
+          ],
+          "result": "ActionResult"
+        }
+      }
+    },
+    "NetworkRouterContext": {
+      "version": 1,
+      "extends": "SurfaceContext",
+      "fields": {
+        "metrics": {
+          "type": "NetworkMetricsView",
+          "readOnly": true
+        },
+        "selection": {
+          "type": "SelectionState",
+          "readOnly": true
+        }
+      },
+      "methods": {
+        "requestAction": {
+          "parameters": [
+            "string",
+            "string",
+            "legacyMap"
+          ],
+          "result": "ActionResult"
+        }
+      }
+    },
+    "NetworkWifiContext": {
+      "version": 1,
+      "extends": "SurfaceContext",
+      "fields": {
+        "metrics": {
+          "type": "NetworkMetricsView",
+          "readOnly": true
+        },
+        "selection": {
+          "type": "SelectionState",
+          "readOnly": true
+        }
+      },
+      "methods": {
+        "requestAction": {
+          "parameters": [
+            "string",
+            "string",
+            "legacyMap"
+          ],
+          "result": "ActionResult"
+        }
+      }
+    },
+    "NetworkPortsContext": {
+      "version": 1,
+      "extends": "SurfaceContext",
+      "fields": {
+        "metrics": {
+          "type": "NetworkMetricsView",
+          "readOnly": true
+        },
+        "selection": {
+          "type": "SelectionState",
           "readOnly": true
         }
       },
