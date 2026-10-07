@@ -18,13 +18,14 @@
 </p>
 
 <p align="center">
-  <a href="#-whats-new-in-v066-extensible-theme--motion-engine">What's New in v0.6.6</a> •
+  <a href="#-whats-new-in-v070-smart-home--theme-engine-22">What's New in v0.7.0</a> •
   <a href="#-os-workspaces">Workspaces</a> •
   <a href="#-why-a-dedicated-desk-os">Why Desk OS?</a> •
   <a href="#-architecture">Architecture</a> •
   <a href="#-hardware-bom">Hardware BOM</a> •
   <a href="#-turnkey-installation">Turnkey Installation</a> •
   <a href="#-navigation--controls">Controls</a> •
+  <a href="#-branching--release-strategy">Branching & Tags</a> •
   <a href="#-roadmap">Roadmap</a> •
   <a href="README.it.md">🇮🇹 Italiano</a>
 </p>
@@ -35,40 +36,40 @@
 
 **DeskPulse OS** turns an inexpensive single-board computer ($15–$25 Orange Pi Zero 3W, Raspberry Pi, or Radxa) and a mini desktop monitor (like the 3.5" Hagibis 960×640 IPS screen) into an **appliance-grade ambient desk operating system**.
 
-Instead of treating the board as a desktop computer running a slow browser kiosk, DeskPulse OS boots directly into a native GPU-accelerated QML compositor. It operates 24/7 as your dedicated desk command center for time, weather, AI quota monitoring, live sports, and motorsport telemetry—with near-zero latency and instant tactile controls.
+Instead of treating the board as a desktop computer running a slow browser kiosk, DeskPulse OS boots directly into a native GPU-accelerated QML compositor. It operates 24/7 as your dedicated desk command center for time, weather, smart home automation, AI quota monitoring, live sports, and motorsport telemetry—with near-zero latency and instant tactile controls.
 
 > ⭐ **Star this repository** if you love ambient computing, single-board computers, and distraction-free desk appliances!
 
 ---
 
-## 🎨 What's New in v0.6.6: Extensible Theme & Motion Engine
+## 🏡 What's New in v0.7.0: Smart Home & Theme Engine 2.2
 
-The **v0.6.6** release introduces a revolutionary **Theme, Motion & Presentation Engine** that completely decouples visual design, animations, and typography from the underlying Linux services and data engines:
+DeskPulse OS **v0.7.0** introduces native **Smart Home (Casa / Smart Life)** integration, dramatic **Theme Engine 2.2 performance optimizations** (90.7% faster view transitions), and the reference **Apple Calm 1.2.0** theme pack:
 
-- 🎭 **Semantic Design Tokens & Adaptive Palettes:**
-  - Full design token contract across colors, borders, typographies, and radii—no hardcoded hex values in UI views.
-  - Automatic Day/Night palette switching and specialized high-contrast night modes (e.g. Red Night Mode for dark rooms).
-  - Ships with two battle-tested production themes: **Neo-Retro Base** and **Braun Functional**.
-- 🎬 **Declarative Motion Engine:**
-  - Replaceable transition recipes (`Fade`, `Slide`, `Cut`, `SceneMove`, `Value`) with adaptive frame-pacing.
-  - Motion reduction policy automatically adapts to high-load situations or user accessibility preferences.
-- 🧩 **Pluggable Presentation Layouts:**
-  - Layouts are decoupled from data providers; surfaces can swap presentations dynamically without altering state logic.
-  - Six extensible presentation surfaces for notifications (Small Rail, Large Split, Urgent, Inbox, Detail, Badge).
-- 🛠️ **Offline AI Authoring SDK (`smartpc-theme` CLI):**
-  - Standalone developer CLI for authoring, linting, packaging, and inspecting theme bundles (`init`, `validate`, `preview`, `pack`, `inspect`, `export`).
-  - Strict schema-1 validation with zero runtime dependencies needed during compilation.
-- ⚡ **Zero-Flicker Hot-Reload:**
-  - Switch themes seamlessly in `Menu → Settings → Appearance` without restarting the dashboard or dropping background data feeds.
-- 🛡️ **Verified 24-Hour Continuous Operation Soak Test:**
-  - Documented 24-hour continuous burn-in run on the physical Orange Pi Zero 3W (`os/diagnostics/2026-10-01-24h/`).
-  - Zero memory leaks, thermal equilibrium at ~43°C, and `NRestarts=0` stability.
+- 🏡 **Native Smart Home & Tuya Cloud Integration:**
+  - **Zero External Server Required**: Direct in-process async client for Tuya Cloud without needing Home Assistant, MQTT brokers, or auxiliary daemons.
+  - **4 Smart Hero Tiles & Functional Views**: Glanceable state cards in Base theme and dense functional list in Functional theme, displaying real-time power, sensor values, and connectivity.
+  - **Complete Device Inventory & Detail Telemetry**: Paginated inventory with per-device telemetry, last seen timestamps, signal quality, and customizable favorites in Settings.
+  - **Strict Quota & Budget Ledger**: Persistent request counter, automatic token reuse, exponential backoff, and daily polling allowances preventing Tuya cloud rate-limit exhaustion.
+  - **Offline Resilience & Clear Status Truth**: Disconnected devices explicitly display previous known values with an offline badge—never fabricated zeroes or stale false states.
+- ⚡ **Theme & Motion Engine 2.2 — 90.7% Latency Reduction:**
+  - **Lazy DTO Subscriptions**: View switching latency dropped from **~1138 ms down to ~105 ms p95** by updating only active pages and views.
+  - **Giant Digital Clock View (`home-clock.qml`)**: Glanceable 238px digital clock face with compact weather widget and upcoming alerts.
+  - **Multi-Renderer Shell Caching**: `PageHost` and `OverlayHost` reuse up to 6 cached renderers per surface family with automatic lease invalidation.
+  - **49 Decoupled Presentation Surfaces**: Expanded theme contract covering all core, sports, motorsport, and smart home screens.
+  - **50 Semantic Vector Glyphs**: Offline PNG atlas generator for high-performance embedded rendering without runtime SVG overhead.
+- 🍏 **Apple Calm 1.2.0 Reference Theme Pack:**
+  - Minimalist aesthetic with adaptive Day/Night palettes, custom typography, and dedicated clock presentations (`theme-projects/apple-calm`).
+- 📡 **v0.8 Local Network & Router Architecture Preview:**
+  - Documented non-invasive LAN discovery and Freebox/Iliadbox router API study (`dashboard/design/v08-*`).
+- 🛡️ **Hardened Embedded Linux Reliability:**
+  - Verified reboot persistence, clean systemd `NRestarts=0`, and EGLFS/KMS DRM hardware acceleration on Orange Pi Zero 3W.
 
 ---
 
 ## 📸 OS Workspaces
 
-DeskPulse OS features a seamless 6-workspace horizontal carousel, with deep 2-axis vertical navigation for each workspace:
+DeskPulse OS features a seamless 7-workspace horizontal carousel, with deep 2-axis vertical navigation for each workspace:
 
 | **Ambient Clock & Desk Shell** | **Live Weather & 3-Day Forecast** |
 |:---:|:---:|
@@ -77,6 +78,8 @@ DeskPulse OS features a seamless 6-workspace horizontal carousel, with deep 2-ax
 | ![F1 Grand Prix Weekend](dashboard/design/evidence/v06-motorsport/f1-programme.png) | ![MotoGP Championship](dashboard/design/evidence/v06-motorsport/motogp-standings.png) |
 | **Football Hub & Favourite Team** | **Fantacalcio Lineups & Ratings** |
 | ![Football Hub](dashboard/design/evidence/v06-favourite-team/team-summary.png) | ![Fantacalcio Ratings](dashboard/design/evidence/v06-fantacalcio/fantacalcio-home-starters.png) |
+| **Smart Home Command Deck (Base)** | **Smart Home Devices & Telemetry (Functional)** |
+| ![Casa Overview](theme-projects/apple-calm/evidence/optimization-board-eglfs-day/casa.overview--default.png) | ![Casa Devices](theme-projects/apple-calm/evidence/optimization-board-eglfs-day/casa.devices--default.png) |
 
 ---
 
@@ -102,19 +105,19 @@ DeskPulse OS was engineered from the kernel up as an **always-on appliance**:
 ## 🏗️ Architecture
 
 ```text
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                            DeskPulse OS Shell                               │
-│  [Clock]  •  [Weather]  •  [AI/Codex]  •  [Serie A]  •  [F1]  •  [MotoGP]   │
-├─────────────────────────────────────────────────────────────────────────────┤
-│               Qt 6 Quick / QML Hardware-Accelerated Compositor              │
-│               60 FPS Hardware VSync via PowerVR BXM-4-64 GPU                │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                    Direct DRM/KMS Display Plane (EGLFS)                     │
-│           (Bypasses X11 and Wayland • Instant Linux evdev input)            │
-├─────────────────────────────────────────────────────────────────────────────┤
-│               Hardened Linux 6.6 Kernel with DP-AltMode PLL                 │
-│         MicroSD Wear Protection (zram swap, tmpfs /tmp, 30s commit)         │
-└─────────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                     DeskPulse OS Shell                                      │
+│  [Clock]  •  [Weather]  •  [AI/Codex]  •  [Serie A]  •  [F1]  •  [MotoGP]  •  [Casa / IoT]  │
+├─────────────────────────────────────────────────────────────────────────────────────────────┤
+│                       Qt 6 Quick / QML Hardware-Accelerated Compositor                      │
+│                        60 FPS Hardware VSync via PowerVR BXM-4-64 GPU                       │
+├─────────────────────────────────────────────────────────────────────────────────────────────┤
+│                             Direct DRM/KMS Display Plane (EGLFS)                            │
+│                    (Bypasses X11 and Wayland • Instant Linux evdev input)                   │
+├─────────────────────────────────────────────────────────────────────────────────────────────┤
+│                        Hardened Linux 6.6 Kernel with DP-AltMode PLL                        │
+│                  MicroSD Wear Protection (zram swap, tmpfs /tmp, 30s commit)                │
+└─────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -122,7 +125,7 @@ DeskPulse OS was engineered from the kernel up as an **always-on appliance**:
 ## 🚀 Native Workspaces Overview
 
 ### 1. 🕒 Ambient Home & Desk Clock
-High-contrast typography designed for glanceable reading from desk distance. Dynamic upcoming event card appears automatically when a future calendar event or weather alert is scheduled—no placeholder clutter.
+High-contrast typography designed for glanceable reading from desk distance. Includes the **v0.7 Big Clock view** with 238px digits, weather indicator, and dynamic upcoming event cards.
 
 ### 2. ⛅ Hyper-Local Weather Station
 Live atmospheric conditions, hourly trends, and a 3-day forecast powered by Open-Meteo. Uses an atomic local SQLite/JSON cache with offline-first resilience: if Wi-Fi disconnects, previous valid data remains visible with an explicit offline indicator.
@@ -138,6 +141,9 @@ Full season calendar with local weekend start times, race results, and driver/co
 
 ### 6. 🏍️ MotoGP Paddock Monitor
 Calendar, circuit specifications, Sprint & Grand Prix classifications, and rider championship standings via PulseLive. Includes live timing lite integration for race sessions.
+
+### 7. 🏡 Smart Home (Casa / Smart Life) Command Deck
+Direct in-process integration with Tuya Cloud without extra servers. Displays 4 customizable favorite devices as glanceable hero tiles, full paginated device inventory, signal quality, and telemetry details. Protected by a persistent request budget ledger to prevent cloud rate-limiting.
 
 ---
 
@@ -217,15 +223,29 @@ DeskPulse OS is built for physical tactile feedback using a 3×3 matrix macro ke
 └──────────────┴──────────────┴──────────────┘
 ```
 
-- **Horizontal Carousel (Keys 4 / 6):** Today ↔ Weather ↔ AI/Codex ↔ Serie A ↔ F1 ↔ MotoGP.
-- **Vertical Navigation (Keys 2 / 8):** Navigate deeper into views (e.g. Schedule ↕ Standings ↕ Results).
+- **Horizontal Carousel (Keys 4 / 6):** Today ↔ Weather ↔ AI/Codex ↔ Serie A ↔ F1 ↔ MotoGP ↔ Smart Home (Casa).
+- **Vertical Navigation (Keys 2 / 8):** Navigate deeper into views (e.g. Schedule ↕ Standings ↕ Results or Devices ↕ Details).
 - **Action / Refresh (Key 5):** Open match/GP details, expand standings, or trigger an immediate data refresh.
 - **Quick Jump (Key 7):** Instant return to the primary Home Clock from any depth.
 - **System Menu (Key 9):**
   - **Notifications:** Quiet hours schedule and category-level alert muting.
-  - **Appearance:** Theme (Auto / Day / Night), Brightness (Manual & Circadian schedules).
+  - **Appearance:** Theme (Auto / Day / Night / Red Night), Brightness (Manual & Circadian schedules).
   - **Module Visibility:** Toggle workspaces on or off (persisted across reboots).
+  - **Casa / Smart Life:** Manage favourite devices, inspect quotas and telemetry.
   - **Device Info:** Wi-Fi signal quality (%), CPU temperature, IP, RAM and storage vitals.
+
+---
+
+## 🌿 Branching & Release Strategy
+
+DeskPulse OS follows a structured, enterprise-grade Git branching and tagging workflow:
+
+| Branch / Tag | Purpose & Stability Level |
+| :--- | :--- |
+| `main` | Production-ready development tip; tested on physical hardware before push. |
+| `release/v0.7` | **Current stable release line (v0.7.x)**; receives critical fixes and maintenance patches. |
+| `release/v0.6` | Maintenance branch for previous v0.6.x series. |
+| `v0.7.0`, `v0.6.6`, ... | Immutable annotated Git release tags matching GitHub releases. |
 
 ---
 
@@ -244,13 +264,10 @@ DeskPulse OS includes the verified kernel fix in [`os/kernel-patches/`](os/kerne
 - [x] **v0.4:** Direct EGLFS/KMS compositor, dynamic Home, and Open-Meteo weather.
 - [x] **v0.5:** Persistent event engine, Civil Protection alerts, and unread notification badges.
 - [x] **v0.6:** Serie A Football Hub, Favourite Team HUD, Fantacalcio, F1 & MotoGP with SignalR live timing.
-- [x] **v0.6.1:** **Modular Settings Engine, Live Wi-Fi Monitoring, Fantacalcio Live & 24h Soak Verification.**
-
-Runtime version: **v0.6.6 Theme Engine**, migrated from the v0.6.5 baseline. See the [release MasterPlan](dashboard/design/release-masterplan.md), updated October 2, 2026, for the version/manifest reconciliation, completed checks and remaining live validation.
-
-- [x] **v0.6.6:** **Theme Engine** — Base/Functional, replaceable layouts and motion, editor, personal packs and persistent scenes. [Usage/development](dashboard/design/theme-engine-implementation-guide.md), [verification and limits](dashboard/design/v066-migration-report.md).
-- [ ] **v0.7:** **Smart Home** — Direct Tuya cloud integration; analysis/API probes exist, production polling/UI are pending.
-- [ ] **v0.8:** **Local Network Overview** — Devices and information collected by the board, with optional router data; no agents on client computers.
+- [x] **v0.6.1:** Modular Settings Engine, Live Wi-Fi Monitoring, Fantacalcio Live & 24h Soak Verification.
+- [x] **v0.6.6:** **Theme & Motion Engine** — Base/Functional packs, replaceable layouts and motion, editor, personal packs, and persistent scene host.
+- [x] **v0.7.0:** **Smart Home (Casa / Smart Life) & Theme Engine 2.2** — Direct Tuya cloud integration, 4 hero tiles, full device inventory, detail view, quota ledger, offline resilience, and 90.7% faster view transitions.
+- [ ] **v0.8:** **Local Network Overview** — Devices and telemetry collected by the board and local router (Iliadbox/Freebox); zero agents on LAN clients.
 - [ ] **v0.8.1 (optional):** Verified router metadata and additional Hardware/Cyberdeck profiles.
 - [ ] **v0.9:** Animated companion and Cozy profile.
 - [ ] **v0.10:** Companion memory and validated AI scene planning.
