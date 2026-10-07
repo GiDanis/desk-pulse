@@ -223,7 +223,6 @@ class SupervisorGuiTests(unittest.TestCase):
                   'failure': proof, 'supervisor': result.stderr.strip(), 'restart': restart_proof,
                   'quarantine': True, 'providerHashesPreserved': True}
         if mode == 'readinessLost':
-            health = json.loads(self.lifecycle.health_path.read_text())
             # Capture the failed child record before restart separately below.
             self.assertGreater(proof['guiTicksAfterFault'], 1)
             self.assertFalse(proof['rendererReadyAfterFault'])

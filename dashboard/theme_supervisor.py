@@ -14,7 +14,7 @@ import subprocess
 import sys
 import time
 from theme_core import ThemeError, read_json
-from theme_lifecycle import BASE, LifecycleManager, process_token
+from theme_lifecycle import LifecycleManager, process_token
 
 
 def _stop(process):
@@ -40,7 +40,7 @@ def supervise(command, data_root, *, startup_timeout=30.0, heartbeat_timeout=15.
     lifecycle = LifecycleManager(data_root)
     # An interrupted activation never executes its bundle at the next boot.
     try:
-        recovery = lifecycle.recover('attivazione interrotta prima del riavvio')
+        lifecycle.recover('attivazione interrotta prima del riavvio')
     except (OSError, ThemeError) as error:
         print(json.dumps({'supervisor': 'journalError', 'error': str(error)}), file=sys.stderr, flush=True)
         # Do not launch potentially broken code if the authoritative record cannot

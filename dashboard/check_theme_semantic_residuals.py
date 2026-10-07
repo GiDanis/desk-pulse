@@ -6,8 +6,6 @@ Supplementary cases never inflate the canonical corpus requirement count.
 """
 from copy import deepcopy
 import json
-from pathlib import Path
-import sys
 
 from theme_fixture_support import CORPUS, LegacyHarness, isolate_process
 
@@ -16,7 +14,7 @@ def main():
     private, base = isolate_process()
     harness = None
     try:
-        from PySide6.QtCore import QDate, QDateTime, QTime, QObject
+        from PySide6.QtCore import QDate, QDateTime, QTime
         from weather import normalize_response, WeatherService
         harness = LegacyHarness(base, {'theme': 'base', 'variant': 'day', 'motion': 'off'})
         results = []

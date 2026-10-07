@@ -18,7 +18,10 @@ class ThemeContractTests(unittest.TestCase):
             for variant in ('day','night'):
                 for mode in ('normal','reduced','off'):
                     result=self.catalog.resolve(identifier,variant=variant,motion_mode=mode)
-                    self.assertEqual(set(result['tokens']),set(self.catalog.contract));self.assertEqual(len(result['presentations']),14)
+                    self.assertEqual(set(result['tokens']),set(self.catalog.contract))
+                    required = {content for row in self.catalog.presentations.values() if row.get('fallback')
+                                for content in row['contentIds']}
+                    self.assertEqual(set(result['presentations']), required)
         self.assertNotEqual(self.catalog.resolve('base')['presentations'],self.catalog.resolve('functional')['presentations'])
     def test_zero_and_typo(self):
         self.assertEqual(self.catalog.resolve('base',{'tokens':{'shape.radiusCard':0}})['tokens']['shape.radiusCard'],0)
@@ -89,7 +92,7 @@ class ThemeContractTests(unittest.TestCase):
         old=deepcopy(self.catalog.packs['base']);old['id']='standalone';old['presentations']={key:value for key,value in old['presentations'].items() if not key.startswith('alerts.')}
         self.catalog.packs['standalone']=old;self.catalog.directories['standalone']=self.catalog.directories['base']
         result=self.catalog.resolve('standalone')
-        self.assertEqual(len(result['presentations']),14)
+        self.assertEqual(set(result['presentations']), set(self.catalog.resolve('base')['presentations']))
 
     def test_notification_template_envelope(self):
         self.catalog.resolve('base',{'tokens':{'notifications.large.titleSize':72,'notifications.large.bodySize':44,'typography.textScale':1.1}})

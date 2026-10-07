@@ -17,7 +17,7 @@ from PySide6.QtQml import QQmlComponent, QQmlEngine, QQmlExpression
 import PySide6
 
 from theme_api import (IMPORT_ROOT, PublicContextFactory, bootstrap_theme_api,
-                       normalize_legacy, normalize_dto, runtime_typeinfo, weather_snapshot)
+                       normalize_dto, runtime_typeinfo, weather_snapshot)
 from theme_contexts import CONTRACT, PUBLIC_TYPES, default_snapshot, complete_snapshot
 
 
@@ -486,7 +486,8 @@ Item {
             valid = 'import QtQuick\nimport SmartPC.ThemeApi 2.0\nItem {required property PageContext context; readonly property color surface: context.style.surface; readonly property string timeText: context.clock.timeText; readonly property string motionMode: context.motionPolicy.mode}\n'
             for body, expected in [(valid, 0), (valid.replace('style.surface', 'style.surfaec'), 1)]:
                 source.write_text(body)
-                result = subprocess.run([str(executable), '--ignore-settings', '--unresolved-type', 'error', '-W', '0', '-I', str(IMPORT_ROOT), str(source)], text=True, capture_output=True)
+                # Qt 6.8 supports warning; -W 0 makes every warning fail the gate.
+                result = subprocess.run([str(executable), '--ignore-settings', '--unresolved-type', 'warning', '-W', '0', '-I', str(IMPORT_ROOT), str(source)], text=True, capture_output=True)
                 if expected == 0:
                     self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
                 else:

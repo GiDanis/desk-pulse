@@ -1,5 +1,5 @@
 """Fresh-process persistence, malformed settings recovery and real AccessError rollback."""
-import json,os,subprocess,sys,tempfile
+import os,subprocess,sys,tempfile
 from pathlib import Path
 root=Path(tempfile.mkdtemp(prefix='smartpc-persistence-'));dashboard=Path(__file__).parent
 common="""

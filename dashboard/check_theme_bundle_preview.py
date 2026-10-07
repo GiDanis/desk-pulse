@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Real Qt public-renderer, auxiliary fault and actual bundle-style proofs."""
-from copy import deepcopy
 import json
 from pathlib import Path
 import subprocess

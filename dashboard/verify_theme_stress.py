@@ -1,12 +1,12 @@
 """100 real theme swaps, TTF first use, scene/motion and bounded memory sampling on EGLFS."""
-import argparse,json,os,sys,tempfile,time,shutil
+import argparse,json,os,tempfile,time,shutil
 from pathlib import Path
 parser=argparse.ArgumentParser();parser.add_argument('--directory',type=Path,required=True);parser.add_argument('--swaps',type=int,default=100)
 parser.add_argument('--fonts',choices=('none','three'),default='three')
 args=parser.parse_args();args.directory.mkdir(parents=True,exist_ok=True)
 work=Path(tempfile.mkdtemp(prefix='smartpc-theme-stress-'))
 os.environ['XDG_CONFIG_HOME']=str(work/'config');os.environ['XDG_CACHE_HOME']=str(work/'cache');os.environ['SMARTPC_THEME_STORE']=str(work/'themes')
-from PySide6.QtCore import QObject,QTimer,QUrl,qVersion
+from PySide6.QtCore import QTimer,QUrl,qVersion
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine,QQmlExpression
 from PySide6.QtQuick import QQuickWindow

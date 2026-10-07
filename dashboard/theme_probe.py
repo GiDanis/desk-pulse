@@ -89,7 +89,7 @@ def profile(root,store,service=None):
 def resource_probe(snapshots):
     from PySide6.QtCore import qVersion
     from PySide6.QtGui import QFontDatabase,QFont,QRawFont,QImageReader
-    app=qt_application();registered={};issues=[]
+    _app=qt_application();registered={};issues=[]
     try:
         for snapshot in snapshots:
             variant=snapshot['variant'];replacements={};image_bytes=0

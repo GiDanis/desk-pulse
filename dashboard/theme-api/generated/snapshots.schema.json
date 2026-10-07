@@ -614,6 +614,24 @@
           "type": "integer",
           "minimum": 0,
           "readOnly": true
+        },
+        "scopeId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "scopeLabel": {
+          "type": "string",
+          "readOnly": true
+        },
+        "scopeCount": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "scopePosition": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
         }
       },
       "required": [
@@ -623,7 +641,11 @@
         "familyPosition",
         "familyCount",
         "viewPosition",
-        "viewCount"
+        "viewCount",
+        "scopeId",
+        "scopeLabel",
+        "scopeCount",
+        "scopePosition"
       ],
       "additionalProperties": false
     },
@@ -3917,6 +3939,253 @@
       ],
       "additionalProperties": false
     },
+    "CasaMetric": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "readOnly": true
+        },
+        "label": {
+          "type": "string",
+          "readOnly": true
+        },
+        "type": {
+          "type": "string",
+          "readOnly": true
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": [
+                "string",
+                "boolean",
+                "integer",
+                "number"
+              ],
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "type": "string",
+          "readOnly": true
+        },
+        "quality": {
+          "type": "string",
+          "enum": [
+            "reported",
+            "unverified"
+          ],
+          "readOnly": true
+        },
+        "checkedAt": {
+          "type": "number",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "stale": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "displayText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "previous": {
+          "type": "boolean",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "code",
+        "label",
+        "type",
+        "value",
+        "unit",
+        "quality",
+        "checkedAt",
+        "stale",
+        "displayText",
+        "previous"
+      ],
+      "additionalProperties": false
+    },
+    "CasaDevice": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "category": {
+          "type": "string",
+          "readOnly": true
+        },
+        "model": {
+          "type": "string",
+          "readOnly": true
+        },
+        "productId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "online": {
+          "anyOf": [
+            {
+              "type": "boolean",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "present": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "missingCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "readOnly": true
+        },
+        "favourite": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "availability": {
+          "type": "string",
+          "readOnly": true
+        },
+        "availabilityPrevious": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "previous": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "primaryText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "secondaryText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "iconId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CasaMetric"
+          },
+          "maxItems": 128,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "category",
+        "model",
+        "productId",
+        "online",
+        "present",
+        "missingCount",
+        "favourite",
+        "availability",
+        "availabilityPrevious",
+        "previous",
+        "primaryText",
+        "secondaryText",
+        "iconId",
+        "metrics"
+      ],
+      "additionalProperties": false
+    },
+    "CasaData": {
+      "type": "object",
+      "properties": {
+        "devices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CasaDevice"
+          },
+          "maxItems": 500,
+          "readOnly": true
+        },
+        "favourites": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CasaDevice"
+          },
+          "maxItems": 500,
+          "readOnly": true
+        },
+        "configured": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "busy": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "polling": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "quotaConfigured": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "requests": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "remaining": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "modeText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "feedback": {
+          "type": "string",
+          "readOnly": true
+        },
+        "readOnly": {
+          "type": "boolean",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "devices",
+        "favourites",
+        "configured",
+        "busy",
+        "polling",
+        "quotaConfigured",
+        "requests",
+        "remaining",
+        "modeText",
+        "feedback",
+        "readOnly"
+      ],
+      "additionalProperties": false
+    },
     "SurfaceContext": {
       "type": "object",
       "properties": {
@@ -5871,6 +6140,130 @@
       ],
       "additionalProperties": false
     },
+    "CasaContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
+        "casa": {
+          "$ref": "#/$defs/CasaData",
+          "readOnly": true
+        },
+        "source": {
+          "$ref": "#/$defs/SourceState",
+          "readOnly": true
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionState",
+          "readOnly": true
+        },
+        "selectedDevice": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CasaDevice",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SettingRow"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "description": {
+          "type": "string",
+          "readOnly": true
+        },
+        "feedback": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "casa",
+        "source",
+        "selection",
+        "selectedDevice",
+        "rows",
+        "description",
+        "feedback"
+      ],
+      "additionalProperties": false
+    },
     "CommandModel": {
       "type": "array",
       "items": {
@@ -6080,6 +6473,20 @@
         "$ref": "#/$defs/SourceState"
       },
       "maxItems": 10000
+    },
+    "CasaDeviceModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/CasaDevice"
+      },
+      "maxItems": 500
+    },
+    "CasaMetricModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/CasaMetric"
+      },
+      "maxItems": 128
     }
   },
   "description": "Choose an explicit $defs type. Python validator also checks model identity uniqueness and request allowlists."

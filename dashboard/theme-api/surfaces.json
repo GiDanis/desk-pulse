@@ -3,7 +3,7 @@
   "module": {
     "uri": "SmartPC.ThemeApi",
     "major": 2,
-    "minor": 0
+    "minor": 2
   },
   "apiState": "implemented",
   "surfaces": [
@@ -158,6 +158,92 @@
       }
     },
     {
+      "id": "casa.detail",
+      "context": "CasaContext",
+      "contextVersion": 1,
+      "hostFamily": "overlay",
+      "legacySource": "Main.qml",
+      "legacyRoute": "casaDetail",
+      "variants": [
+        "default"
+      ],
+      "actions": [
+        "navigation.back",
+        "navigation.home",
+        "navigation.inbox",
+        "navigation.menu",
+        "selection.move",
+        "selection.select",
+        "details.open",
+        "sources.refresh"
+      ],
+      "fallback": "base",
+      "rendererState": "publicBuiltin",
+      "layout": {
+        "policy": "legacyFixed",
+        "width": 960,
+        "height": 640
+      }
+    },
+    {
+      "id": "casa.devices",
+      "context": "CasaContext",
+      "contextVersion": 1,
+      "hostFamily": "page",
+      "legacySource": "Main.qml",
+      "legacyRoute": null,
+      "variants": [
+        "default"
+      ],
+      "actions": [
+        "navigation.back",
+        "navigation.home",
+        "navigation.inbox",
+        "navigation.menu",
+        "selection.move",
+        "selection.select",
+        "details.open",
+        "navigation.family.step",
+        "navigation.view.step"
+      ],
+      "fallback": "base",
+      "rendererState": "publicBuiltin",
+      "layout": {
+        "policy": "legacyFixed",
+        "width": 872,
+        "height": 455
+      }
+    },
+    {
+      "id": "casa.overview",
+      "context": "CasaContext",
+      "contextVersion": 1,
+      "hostFamily": "page",
+      "legacySource": "Main.qml",
+      "legacyRoute": null,
+      "variants": [
+        "default"
+      ],
+      "actions": [
+        "navigation.back",
+        "navigation.home",
+        "navigation.inbox",
+        "navigation.menu",
+        "selection.move",
+        "selection.select",
+        "details.open",
+        "navigation.family.step",
+        "navigation.view.step"
+      ],
+      "fallback": "base",
+      "rendererState": "publicBuiltin",
+      "layout": {
+        "policy": "legacyFixed",
+        "width": 872,
+        "height": 455
+      }
+    },
+    {
       "id": "device.info",
       "context": "InfoContext",
       "contextVersion": 1,
@@ -188,6 +274,31 @@
         "policy": "legacyFixed",
         "width": 960,
         "height": 640
+      }
+    },
+    {
+      "id": "home.clock",
+      "context": "PageContext",
+      "contextVersion": 2,
+      "hostFamily": "page",
+      "legacySource": "components/ViewHost.qml",
+      "legacyRoute": null,
+      "variants": [],
+      "actions": [
+        "details.open",
+        "navigation.back",
+        "navigation.family.step",
+        "navigation.home",
+        "navigation.inbox",
+        "navigation.menu",
+        "navigation.view.step"
+      ],
+      "fallback": "base",
+      "rendererState": "legacy",
+      "layout": {
+        "policy": "legacyFixed",
+        "width": 872,
+        "height": 455
       }
     },
     {
@@ -694,6 +805,38 @@
       ],
       "fallback": "base",
       "rendererState": "fixedComponent",
+      "layout": {
+        "policy": "legacyFixed",
+        "width": 960,
+        "height": 640
+      }
+    },
+    {
+      "id": "settings.casa",
+      "context": "CasaContext",
+      "contextVersion": 1,
+      "hostFamily": "overlay",
+      "legacySource": "Main.qml",
+      "legacyRoute": "casaSettings",
+      "variants": [
+        "default"
+      ],
+      "actions": [
+        "navigation.back",
+        "navigation.home",
+        "navigation.inbox",
+        "navigation.menu",
+        "selection.move",
+        "selection.select",
+        "details.open",
+        "sources.refresh",
+        "casa.favourite.toggle",
+        "casa.favourite.move",
+        "casa.config.reload",
+        "casa.polling.toggle"
+      ],
+      "fallback": "base",
+      "rendererState": "publicBuiltin",
       "layout": {
         "policy": "legacyFixed",
         "width": 960,
@@ -1330,7 +1473,8 @@
         "accountSettings",
         "integrations",
         "sources",
-        "sportSettings"
+        "sportSettings",
+        "casaSettings"
       ]
     }
   ],
@@ -1408,15 +1552,27 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "device.info:device",
-        "surfaceId": "device.info",
-        "variant": "device",
+        "id": "casa.detail:default",
+        "surfaceId": "casa.detail",
+        "variant": "default",
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "device.info:resources",
+        "id": "casa.devices:default",
+        "surfaceId": "casa.devices",
+        "variant": "default",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "casa.overview:default",
+        "surfaceId": "casa.overview",
+        "variant": "default",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "device.info:device",
         "surfaceId": "device.info",
-        "variant": "resources",
+        "variant": "device",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1426,9 +1582,21 @@
         "verification": "requiredNotExecuted"
       },
       {
+        "id": "device.info:resources",
+        "surfaceId": "device.info",
+        "variant": "resources",
+        "verification": "requiredNotExecuted"
+      },
+      {
         "id": "device.info:sources",
         "surfaceId": "device.info",
         "variant": "sources",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "home.clock:default",
+        "surfaceId": "home.clock",
+        "variant": "default",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1462,9 +1630,9 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "overlay.menu:settings",
+        "id": "overlay.menu:diagnostics",
         "surfaceId": "overlay.menu",
-        "variant": "settings",
+        "variant": "diagnostics",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1474,21 +1642,21 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "overlay.menu:diagnostics",
+        "id": "overlay.menu:settings",
         "surfaceId": "overlay.menu",
-        "variant": "diagnostics",
-        "verification": "requiredNotExecuted"
-      },
-      {
-        "id": "overlay.summary:oggi",
-        "surfaceId": "overlay.summary",
-        "variant": "oggi",
+        "variant": "settings",
         "verification": "requiredNotExecuted"
       },
       {
         "id": "overlay.summary:meteo",
         "surfaceId": "overlay.summary",
         "variant": "meteo",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "overlay.summary:oggi",
+        "surfaceId": "overlay.summary",
+        "variant": "oggi",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1510,9 +1678,9 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "racing.driver.detail:pitStops",
+        "id": "racing.driver.detail:f1",
         "surfaceId": "racing.driver.detail",
-        "variant": "pitStops",
+        "variant": "f1",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1522,21 +1690,9 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "racing.driver.detail:tyres",
-        "surfaceId": "racing.driver.detail",
-        "variant": "tyres",
-        "verification": "requiredNotExecuted"
-      },
-      {
         "id": "racing.driver.detail:liveTiming",
         "surfaceId": "racing.driver.detail",
         "variant": "liveTiming",
-        "verification": "requiredNotExecuted"
-      },
-      {
-        "id": "racing.driver.detail:f1",
-        "surfaceId": "racing.driver.detail",
-        "variant": "f1",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1546,21 +1702,21 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "racing.event.detail:sessions",
-        "surfaceId": "racing.event.detail",
-        "variant": "sessions",
+        "id": "racing.driver.detail:pitStops",
+        "surfaceId": "racing.driver.detail",
+        "variant": "pitStops",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "racing.driver.detail:tyres",
+        "surfaceId": "racing.driver.detail",
+        "variant": "tyres",
         "verification": "requiredNotExecuted"
       },
       {
         "id": "racing.event.detail:circuit",
         "surfaceId": "racing.event.detail",
         "variant": "circuit",
-        "verification": "requiredNotExecuted"
-      },
-      {
-        "id": "racing.event.detail:summary",
-        "surfaceId": "racing.event.detail",
-        "variant": "summary",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1576,21 +1732,15 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "racing.live:timing",
-        "surfaceId": "racing.live",
-        "variant": "timing",
+        "id": "racing.event.detail:sessions",
+        "surfaceId": "racing.event.detail",
+        "variant": "sessions",
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "racing.live:track",
-        "surfaceId": "racing.live",
-        "variant": "track",
-        "verification": "requiredNotExecuted"
-      },
-      {
-        "id": "racing.live:raceControl",
-        "surfaceId": "racing.live",
-        "variant": "raceControl",
+        "id": "racing.event.detail:summary",
+        "surfaceId": "racing.event.detail",
+        "variant": "summary",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1606,33 +1756,21 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "racing.overview:f1",
-        "surfaceId": "racing.overview",
-        "variant": "f1",
+        "id": "racing.live:raceControl",
+        "surfaceId": "racing.live",
+        "variant": "raceControl",
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "racing.overview:motogp",
-        "surfaceId": "racing.overview",
-        "variant": "motogp",
+        "id": "racing.live:timing",
+        "surfaceId": "racing.live",
+        "variant": "timing",
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "racing.overview:PROGRAMMA",
-        "surfaceId": "racing.overview",
-        "variant": "PROGRAMMA",
-        "verification": "requiredNotExecuted"
-      },
-      {
-        "id": "racing.overview:IN CORSO",
-        "surfaceId": "racing.overview",
-        "variant": "IN CORSO",
-        "verification": "requiredNotExecuted"
-      },
-      {
-        "id": "racing.overview:RISULTATI",
-        "surfaceId": "racing.overview",
-        "variant": "RISULTATI",
+        "id": "racing.live:track",
+        "surfaceId": "racing.live",
+        "variant": "track",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1642,15 +1780,33 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "racing.session.detail:results",
-        "surfaceId": "racing.session.detail",
-        "variant": "results",
+        "id": "racing.overview:IN CORSO",
+        "surfaceId": "racing.overview",
+        "variant": "IN CORSO",
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "racing.session.detail:session",
-        "surfaceId": "racing.session.detail",
-        "variant": "session",
+        "id": "racing.overview:PROGRAMMA",
+        "surfaceId": "racing.overview",
+        "variant": "PROGRAMMA",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "racing.overview:RISULTATI",
+        "surfaceId": "racing.overview",
+        "variant": "RISULTATI",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "racing.overview:f1",
+        "surfaceId": "racing.overview",
+        "variant": "f1",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "racing.overview:motogp",
+        "surfaceId": "racing.overview",
+        "variant": "motogp",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1666,15 +1822,27 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "racing.standings:drivers",
-        "surfaceId": "racing.standings",
-        "variant": "drivers",
+        "id": "racing.session.detail:results",
+        "surfaceId": "racing.session.detail",
+        "variant": "results",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "racing.session.detail:session",
+        "surfaceId": "racing.session.detail",
+        "variant": "session",
         "verification": "requiredNotExecuted"
       },
       {
         "id": "racing.standings:constructors",
         "surfaceId": "racing.standings",
         "variant": "constructors",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "racing.standings:drivers",
+        "surfaceId": "racing.standings",
+        "variant": "drivers",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1708,12 +1876,6 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "scene.main:reduced",
-        "surfaceId": "scene.main",
-        "variant": "reduced",
-        "verification": "requiredNotExecuted"
-      },
-      {
         "id": "scene.main:off",
         "surfaceId": "scene.main",
         "variant": "off",
@@ -1726,8 +1888,20 @@
         "verification": "requiredNotExecuted"
       },
       {
+        "id": "scene.main:reduced",
+        "surfaceId": "scene.main",
+        "variant": "reduced",
+        "verification": "requiredNotExecuted"
+      },
+      {
         "id": "settings.account:default",
         "surfaceId": "settings.account",
+        "variant": "default",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "settings.appearance.notifications:default",
+        "surfaceId": "settings.appearance.notifications",
         "variant": "default",
         "verification": "requiredNotExecuted"
       },
@@ -1738,8 +1912,8 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "settings.appearance.notifications:default",
-        "surfaceId": "settings.appearance.notifications",
+        "id": "settings.casa:default",
+        "surfaceId": "settings.casa",
         "variant": "default",
         "verification": "requiredNotExecuted"
       },
@@ -1768,12 +1942,6 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "settings.notifications:default",
-        "surfaceId": "settings.notifications",
-        "variant": "default",
-        "verification": "requiredNotExecuted"
-      },
-      {
         "id": "settings.notifications.categories:default",
         "surfaceId": "settings.notifications.categories",
         "variant": "default",
@@ -1782,6 +1950,12 @@
       {
         "id": "settings.notifications.quiet:default",
         "surfaceId": "settings.notifications.quiet",
+        "variant": "default",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "settings.notifications:default",
+        "surfaceId": "settings.notifications",
         "variant": "default",
         "verification": "requiredNotExecuted"
       },
@@ -1816,9 +1990,9 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "shell.main:page",
+        "id": "shell.main:night",
         "surfaceId": "shell.main",
-        "variant": "page",
+        "variant": "night",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1828,15 +2002,9 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "shell.main:night",
+        "id": "shell.main:page",
         "surfaceId": "shell.main",
-        "variant": "night",
-        "verification": "requiredNotExecuted"
-      },
-      {
-        "id": "shell.main:urgent",
-        "surfaceId": "shell.main",
-        "variant": "urgent",
+        "variant": "page",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1846,9 +2014,9 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "sport.fixtures:rounds",
-        "surfaceId": "sport.fixtures",
-        "variant": "rounds",
+        "id": "shell.main:urgent",
+        "surfaceId": "shell.main",
+        "variant": "urgent",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1858,21 +2026,9 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "sport.match.detail:summary",
-        "surfaceId": "sport.match.detail",
-        "variant": "summary",
-        "verification": "requiredNotExecuted"
-      },
-      {
-        "id": "sport.match.detail:statistics",
-        "surfaceId": "sport.match.detail",
-        "variant": "statistics",
-        "verification": "requiredNotExecuted"
-      },
-      {
-        "id": "sport.match.detail:lineups",
-        "surfaceId": "sport.match.detail",
-        "variant": "lineups",
+        "id": "sport.fixtures:rounds",
+        "surfaceId": "sport.fixtures",
+        "variant": "rounds",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1882,15 +2038,15 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "sport.match.detail:teamRoute",
+        "id": "sport.match.detail:finished",
         "surfaceId": "sport.match.detail",
-        "variant": "teamRoute",
+        "variant": "finished",
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "sport.match.detail:scheduled",
+        "id": "sport.match.detail:lineups",
         "surfaceId": "sport.match.detail",
-        "variant": "scheduled",
+        "variant": "lineups",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1900,15 +2056,33 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "sport.match.detail:finished",
+        "id": "sport.match.detail:scheduled",
         "surfaceId": "sport.match.detail",
-        "variant": "finished",
+        "variant": "scheduled",
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "sport.overview:PROSSIME",
+        "id": "sport.match.detail:statistics",
+        "surfaceId": "sport.match.detail",
+        "variant": "statistics",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "sport.match.detail:summary",
+        "surfaceId": "sport.match.detail",
+        "variant": "summary",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "sport.match.detail:teamRoute",
+        "surfaceId": "sport.match.detail",
+        "variant": "teamRoute",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "sport.overview:CLASSIFICA",
         "surfaceId": "sport.overview",
-        "variant": "PROSSIME",
+        "variant": "CLASSIFICA",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1918,15 +2092,15 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "sport.overview:RISULTATI",
+        "id": "sport.overview:PROSSIME",
         "surfaceId": "sport.overview",
-        "variant": "RISULTATI",
+        "variant": "PROSSIME",
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "sport.overview:CLASSIFICA",
+        "id": "sport.overview:RISULTATI",
         "surfaceId": "sport.overview",
-        "variant": "CLASSIFICA",
+        "variant": "RISULTATI",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1942,9 +2116,45 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "sport.team:summary",
-        "surfaceId": "sport.team",
-        "variant": "summary",
+        "id": "sport.team.detail:SerieAOnly",
+        "surfaceId": "sport.team.detail",
+        "variant": "SerieAOnly",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "sport.team.detail:fixtures",
+        "surfaceId": "sport.team.detail",
+        "variant": "fixtures",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "sport.team.detail:info",
+        "surfaceId": "sport.team.detail",
+        "variant": "info",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "sport.team.detail:results",
+        "surfaceId": "sport.team.detail",
+        "variant": "results",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "sport.team.detail:squad",
+        "surfaceId": "sport.team.detail",
+        "variant": "squad",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "sport.team.picker:none",
+        "surfaceId": "sport.team.picker",
+        "variant": "none",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "sport.team.picker:selected",
+        "surfaceId": "sport.team.picker",
+        "variant": "selected",
         "verification": "requiredNotExecuted"
       },
       {
@@ -1960,45 +2170,9 @@
         "verification": "requiredNotExecuted"
       },
       {
-        "id": "sport.team.detail:fixtures",
-        "surfaceId": "sport.team.detail",
-        "variant": "fixtures",
-        "verification": "requiredNotExecuted"
-      },
-      {
-        "id": "sport.team.detail:results",
-        "surfaceId": "sport.team.detail",
-        "variant": "results",
-        "verification": "requiredNotExecuted"
-      },
-      {
-        "id": "sport.team.detail:info",
-        "surfaceId": "sport.team.detail",
-        "variant": "info",
-        "verification": "requiredNotExecuted"
-      },
-      {
-        "id": "sport.team.detail:squad",
-        "surfaceId": "sport.team.detail",
-        "variant": "squad",
-        "verification": "requiredNotExecuted"
-      },
-      {
-        "id": "sport.team.detail:SerieAOnly",
-        "surfaceId": "sport.team.detail",
-        "variant": "SerieAOnly",
-        "verification": "requiredNotExecuted"
-      },
-      {
-        "id": "sport.team.picker:none",
-        "surfaceId": "sport.team.picker",
-        "variant": "none",
-        "verification": "requiredNotExecuted"
-      },
-      {
-        "id": "sport.team.picker:selected",
-        "surfaceId": "sport.team.picker",
-        "variant": "selected",
+        "id": "sport.team:summary",
+        "surfaceId": "sport.team",
+        "variant": "summary",
         "verification": "requiredNotExecuted"
       },
       {

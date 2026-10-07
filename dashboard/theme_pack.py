@@ -105,7 +105,6 @@ def main():
 
 
 def authoring_command(args):
-    import sys
     from theme_authoring import check_project,read_profile,write_kit
     from theme_core import ROOT
     from theme_probe import store_path

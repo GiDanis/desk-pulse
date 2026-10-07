@@ -8,9 +8,9 @@ import time
 
 from theme_fixture_support import isolate_process
 private,base=isolate_process()
-from PySide6.QtCore import QObject,QUrl,QSettings,qInstallMessageHandler,QCoreApplication,QEvent,Qt
+from PySide6.QtCore import QObject,QUrl,qInstallMessageHandler,QCoreApplication,QEvent,Qt
 from PySide6.QtGui import QGuiApplication,QWindow,QKeyEvent
-from PySide6.QtQml import QQmlApplicationEngine,QQmlExpression
+from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickWindow
 import shiboken6
 from account import AccountService
@@ -20,7 +20,6 @@ from system_info import SystemInfo
 from weather import WeatherService
 from theme_core import ROOT
 from theme_bundle import BundleManager
-from theme_runtime import preflight
 from theme_test_support import wait_ready,wait_save,as_value
 
 parser=argparse.ArgumentParser();parser.add_argument('--output',type=Path);parser.add_argument('--capture-dir',type=Path);args=parser.parse_args()

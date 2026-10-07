@@ -1,6 +1,5 @@
 """Storage optimizations preserve raw records, privacy and frozen ownership."""
 import json
-import sys
 import threading
 import unittest
 from theme_trace import TraceRecorder, TracePayloadError, _metadata

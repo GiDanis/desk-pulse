@@ -1,9 +1,7 @@
 """Authoring bridge failures, provenance and atomic/idempotent inbox staging."""
-from copy import deepcopy
 from pathlib import Path
 import hashlib
 import json
-import os
 import subprocess
 import sys
 import tempfile
@@ -33,7 +31,10 @@ class AuthoringTests(unittest.TestCase):
         self.assertEqual(result['verification']['boardRuntime'],'notVerified')
         self.assertEqual(result['verification']['qtResources'],'notVerified')
         self.assertEqual(len(result['coverage']),2)
-        self.assertTrue(all(len(row['presentations'])==14 for row in result['coverage']))
+        catalog = ThemeCatalog()
+        expected = {content for row in catalog.presentations.values() if row.get('fallback')
+                    for content in row['contentIds']}
+        self.assertTrue(all(set(row['presentations']) == expected for row in result['coverage']))
     def test_aggregate_token_and_unknown_field_errors(self):
         self.pack['tokens']={'color.typo':'#123456','shape.radiusRow':25,'typography.textScale':True}
         self.pack['imaginedEngine']=True;self.write()

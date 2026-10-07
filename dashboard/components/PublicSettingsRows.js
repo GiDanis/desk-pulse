@@ -10,7 +10,8 @@ var canonicalSections = {
         "notifications",
         "account",
         "integrations",
-        "sources"
+        "sources",
+        "casa"
     ],
     "settings.display": [
         "display.mode",
@@ -75,7 +76,8 @@ var canonicalSections = {
         "module.account",
         "module.sport",
         "module.f1",
-        "module.motogp"
+        "module.motogp",
+        "module.casa"
     ],
     "settings.notifications": [
         "notifications.quiet",
@@ -106,7 +108,8 @@ var canonicalSections = {
         "source.account",
         "source.sport",
         "source.f1",
-        "source.motogp"
+        "source.motogp",
+        "source.casa"
     ],
     "settings.sport": [
         "sport.favouriteTeam",
@@ -125,10 +128,10 @@ var canonicalSections = {
 var simpleAppearanceIds = ["appearance.palette","appearance.motion","appearance.theme","appearance.textScale",
     "appearance.revision","appearance.apply","appearance.cancel","appearance.import","appearance.export","appearance.advanced"]
 var indexTargets = {appearance:"appearance",system:"display",modules:"modules",notifications:"notifications",
-    accountSettings:"account",integrations:"integrations",sources:"sources"}
+    accountSettings:"account",integrations:"integrations",sources:"sources",casaSettings:"casa"}
 var integrationTargets = {sportSettings:"integration.sport",f1:"integration.f1",motogp:"integration.motogp"}
 var sourceTargets = {meteo:"source.weather",weather:"source.weather",alerts:"source.alerts",account:"source.account",
-    sport:"source.sport",f1:"source.f1",motogp:"source.motogp"}
+    sport:"source.sport",f1:"source.f1",motogp:"source.motogp",casa:"source.casa"}
 var notificationTargets = {notificationQuiet:"notifications.quiet",notificationCategories:"notifications.categories"}
 var notificationModes = ["small","large","urgent","badge","inbox","detail"]
 
@@ -153,7 +156,7 @@ function identity(surface,row,index,options) {
     if (surface === "settings.integrations") return integrationTargets[row.target] || ""
     if (surface === "settings.sources") return sourceTargets[row.target] || ""
     if (surface === "settings.notifications") return notificationTargets[row.target] || ""
-    if (surface === "settings.appearance" && !options.advancedAppearance) return simpleAppearanceIds[index] || ""
+    if (surface === "settings.appearance" && !options.advancedAppearance) return row.id || simpleAppearanceIds[index] || ""
     if (surface === "settings.appearance" && index === 20) return "appearance.simple"
     if (surface === "settings.racing") {
         var suffix=["season","showOnHome","source"][index]

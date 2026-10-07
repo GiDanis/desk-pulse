@@ -93,6 +93,15 @@ ViewHost {
     }
     onPreemptedChanged: if (preempted) settleMotion()
     onCurrentItemChanged: { motion.settle(); enter(); if (context) context.ready = true }
+    // Public contexts stay read-only. An external detail renderer reports its
+    // measured scroll extent on its root; the host owns the private input.
+    Binding {
+        target: host.context
+        property: "scrollMaximum"
+        when: !!host.context && !!host.currentItem && typeof host.currentItem.scrollMaximum === "number"
+        value: host.currentItem ? Math.max(0,host.currentItem.scrollMaximum || 0) : 0
+        restoreMode: Binding.RestoreBindingOrValue
+    }
     Connections {
         target: host
         function onAppearanceChanged() { if (host.enteredRevision !== host.appearance.revision) host.settleMotion() }

@@ -9,7 +9,7 @@ from pathlib import Path
 parser=argparse.ArgumentParser();parser.add_argument('--directory',type=Path,required=True);parser.add_argument('--prepare',action='store_true');args=parser.parse_args()
 args.directory.mkdir(parents=True,exist_ok=True)
 os.environ['XDG_CONFIG_HOME']=str(args.directory/'config');os.environ['XDG_CACHE_HOME']=str(args.directory/'cache');os.environ['XDG_DATA_HOME']=str(args.directory/'data');os.environ['SMARTPC_THEME_STORE']=str(args.directory/'themes')
-from PySide6.QtCore import QObject,QSettings,QTimer,QUrl,Signal,QStandardPaths,QThreadPool
+from PySide6.QtCore import QObject,QTimer,QUrl,Signal,QStandardPaths,QThreadPool
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickWindow

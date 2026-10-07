@@ -10,7 +10,7 @@ import sys
 import tempfile
 import unittest
 
-from theme_bundle import (ROOT, DEFAULT_SHELL_LAYOUT, BundleManager, ThemeError,
+from theme_bundle import (ROOT, BundleManager, ThemeError,
                           build_bundle, register_catalog, revision_key, validate_layout, validate_project)
 from theme_core import ThemeCatalog
 

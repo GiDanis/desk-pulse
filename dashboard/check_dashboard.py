@@ -55,7 +55,7 @@ def main() -> None:
     assert content is not None
     screens = {
         name: window.findChild(QObject, name)
-        for name in ("homeNow", "homeDay", "weatherNow", "weatherForecast", "accountPanel")
+        for name in ("homeNow", "homeClock", "homeDay", "weatherNow", "weatherForecast", "accountPanel")
     }
     assert all(screens.values()), "a QML host is missing"
     wait_ready(application,window)
@@ -89,17 +89,21 @@ def main() -> None:
     assert window.property("family") == 1
     assert visible_screen() == "weatherNow"
     press(8, True)
-    assert window.property("viewIndex").toVariant() == [0, 1, 0, 0, 0, 0]
+    assert window.property("viewIndex").toVariant() == [0, 1, 0, 0, 0, 0, 0]
     assert visible_screen() == "weatherForecast"
     press(4, True)
     assert window.property("family") == 0
     assert visible_screen() == "homeNow"
     press(8, True)
+    assert visible_screen() == "homeClock"
+    press(8, True)
     assert visible_screen() == "homeDay"
+    press(2, True)
+    assert visible_screen() == "homeClock"
     press(2, True)
     assert visible_screen() == "homeNow"
     press(6, True)
-    assert window.property("viewIndex").toVariant() == [0, 1, 0, 0, 0, 0]
+    assert window.property("viewIndex").toVariant() == [0, 1, 0, 0, 0, 0, 0]
     press(5)
     press(9)
     press(3)
@@ -290,7 +294,11 @@ def main() -> None:
     assert events.eventState["inbox"][0]["priority"] == 1
     assert window.property("unreadAlertCount") == 1 and unread_badge.isVisible()
     press(8)
+    assert visible_screen() == "homeClock" and unread_badge.isVisible()
+    press(8)
     assert visible_screen() == "homeDay" and unread_badge.isVisible()
+    press(2)
+    assert visible_screen() == "homeClock"
     press(2)
     account_snapshot["data"]["windows"][0]["usedPercent"] = 96
     events.ingest_account(account_snapshot, 80, 95)
@@ -320,7 +328,7 @@ def main() -> None:
         stamp = time.time()
         responses = bulletin_fixture(stamp)
         with patch("weather_alerts._read", side_effect=lambda url, _: responses[url]):
-            snapshot = BulletinProvider(cache_path).refresh(stamp)
+            BulletinProvider(cache_path).refresh(stamp)
         cached_service = EventService(path=Path(directory) / "events.sqlite3", auto_refresh=False)
         assert cached_service.eventState["sourceFromCache"]
         assert cached_service.eventState["sourceCheckedAt"] == stamp

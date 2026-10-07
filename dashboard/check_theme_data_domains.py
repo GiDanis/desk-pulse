@@ -1,5 +1,4 @@
 """Explicit PageContext subscriptions preserve flexibility without unused trees."""
-from copy import deepcopy
 import json
 from pathlib import Path
 import shutil

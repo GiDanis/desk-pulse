@@ -10,7 +10,6 @@ import argparse
 from copy import deepcopy
 import hashlib
 import json
-import os
 from pathlib import Path
 import re
 import shutil
@@ -120,7 +119,8 @@ def validate(project, *, lint=False, qmllint=None, runtime=False, qt_python=None
         with tempfile.TemporaryDirectory(prefix='smartpc-theme-preflight-') as directory:
             result = subprocess.run([qt_python or sys.executable, str(ROOT / 'theme_bundle_preview.py'),
                                      str(Path(project).resolve()), '--output', directory, '--matrix'],
-                                    capture_output=True, text=True, timeout=120)
+                                    capture_output=True, text=True,
+                                    timeout=max(120,min(600,12*len(report['manifest']['coverage']['surfaces']))))
             try:
                 preview = json.loads(result.stdout)
             except json.JSONDecodeError:
@@ -285,10 +285,10 @@ def main(argv=None):
                 report = {'reportVersion': 1, 'operation': 'transfer', 'status': 'transferred', 'archiveSha256': digest, 'destination': destination, 'applied': False, 'verification': {'remoteSha256': 'verified', 'deviceImport': 'notVerified'}}
     except (OSError, ValueError, TypeError, ImportError, KeyError, subprocess.TimeoutExpired) as error:
         detail = {'phase': 'operation'}
-        if hasattr(error, 'path'):
+        if getattr(error, 'path', None):
             detail.update(path=error.path, pointer='/' + error.path.replace('.', '/'), phase='validation')
         report = {'reportVersion': 1, 'operation': args.command, 'status': 'invalid',
-                  'issues': [issue('bundle.validation' if hasattr(error, 'path') else 'tool.failed', str(error), **detail)]}
+                  'issues': [issue('bundle.validation' if getattr(error, 'path', None) else 'tool.failed', str(error), **detail)]}
     if args.format == 'json':
         print(json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False))
     else:

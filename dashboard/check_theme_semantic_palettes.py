@@ -11,11 +11,10 @@ def main():
     private, base = isolate_process()
     harness = None
     try:
-        from theme_core import ROOT, ThemeError, contrast
+        from theme_core import ROOT, contrast
         from theme_bundle import BundleManager
         from theme_runtime import preflight
         from theme_semantics import graph
-        from PySide6.QtCore import QObject
         harness = LegacyHarness(base, {'theme':'base','variant':'day','motion':'off'})
         project = base/'palette-project'; shutil.copytree(ROOT/'examples/bundles/studio-ambient',project)
         file = project/'theme.json'; pack=json.loads(file.read_text())

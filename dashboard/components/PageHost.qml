@@ -9,4 +9,13 @@ ViewHost {
     width: pageArea.width
     height: pageArea.height
     clip: controller.hasExternalSurface(contentId)
+    renderActive: active || controller.presentedPageContentId === contentId
+    function publishDestination() {
+        if (active && currentReady && readiness === "ready" && typeof controller.presentPage === "function")
+            Qt.callLater(function() { controller.presentPage(hostPage) })
+    }
+    id: hostPage
+    onCurrentReadyChanged: publishDestination()
+    onReadinessChanged: publishDestination()
+    onLoadedRevisionChanged: publishDestination()
 }

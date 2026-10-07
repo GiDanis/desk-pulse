@@ -7,7 +7,7 @@ os.environ.setdefault('QT_QPA_PLATFORM','offscreen');os.environ.setdefault('QT_Q
 from pathlib import Path
 import time
 from unittest.mock import patch
-from PySide6.QtCore import QObject, QTimer, QUrl, Qt, QEvent, QCoreApplication, qInstallMessageHandler
+from PySide6.QtCore import QObject, QUrl, Qt, QEvent, QCoreApplication, qInstallMessageHandler
 from PySide6.QtGui import QGuiApplication, QKeyEvent
 from PySide6.QtQml import QQmlApplicationEngine, QQmlExpression
 from PySide6.QtQuick import QQuickWindow

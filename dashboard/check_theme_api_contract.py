@@ -49,9 +49,9 @@ class ContractTests(unittest.TestCase):
 
     def test_coverage_and_not_runtime_availability(self):
         c = self.contract
-        self.assertEqual(len(c.surfaces), 44)
-        self.assertEqual(c.check_source_coverage()['routes'], 30)
-        self.assertEqual(c.check_source_coverage()['registeredContents'], 14)
+        self.assertEqual(len(c.surfaces), 49)
+        self.assertEqual(c.check_source_coverage()['routes'], 32)
+        self.assertEqual(c.check_source_coverage()['registeredContents'], 19)
         self.assertFalse(c.metadata()['runtimeModuleVerified'])
         self.assertEqual(c.metadata()['availability'], 'contractOnly')
 
@@ -70,10 +70,10 @@ class ContractTests(unittest.TestCase):
         root = self.clone()
         for name in DOCUMENTS:
             path = root / 'theme-api' / name
-            data = json.loads(path.read_text()); data['module']['minor'] = 1
+            data = json.loads(path.read_text()); data['module']['minor'] += 1
             path.write_text(json.dumps(data))
         contract = ThemeApiContract(root)
-        self.assertEqual(contract.metadata()['module']['minor'], 1)
+        self.assertEqual(contract.metadata()['module']['minor'], self.contract.surfaces_document['module']['minor'] + 1)
         self.assertNotEqual(contract.fingerprint, self.contract.fingerprint)
 
     def test_descriptor_typo_rejected(self):
@@ -184,7 +184,7 @@ class ContractTests(unittest.TestCase):
         root = self.clone()
         with (root / 'Main.qml').open('a') as f:
             f.write("\n// pushOverlay('fake')\n/* overlay === 'fake' */\nproperty string explanation: \"pushOverlay('fake')\"\n")
-        self.assertEqual(ThemeApiContract(root).check_source_coverage()['routes'], 30)
+        self.assertEqual(ThemeApiContract(root).check_source_coverage()['routes'], 32)
 
     def test_unknown_dynamic_route_requires_inventory(self):
         root = self.clone()

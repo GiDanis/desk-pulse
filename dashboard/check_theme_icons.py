@@ -7,7 +7,6 @@ os.environ.setdefault('QT_QPA_PLATFORM','offscreen');os.environ.setdefault('QT_Q
 from PySide6.QtCore import QObject,QUrl,QEventLoop,QTimer
 from PySide6.QtGui import QGuiApplication,QImage,QColor
 from PySide6.QtQml import QQmlApplicationEngine,QQmlExpression
-from theme_core import ThemeCatalog
 from theme_service import ThemeService
 from theme_pack import import_pack
 

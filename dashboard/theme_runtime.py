@@ -41,10 +41,13 @@ def preflight(payload, manifest, registry):
         env=dict(os.environ,QT_QPA_PLATFORM='offscreen')
         command=[sys.executable,str(Path(__file__).with_name('theme_bundle_preview.py')),str(payload),'--output',str(Path(temporary)/'preview'),'--matrix']
         try:
-            result=subprocess.run(command,capture_output=True,text=True,env=env,timeout=90)
+            # The matrix exercises every covered surface 18 times. A complete
+            # theme must not hit the five-surface starter's fixed time budget.
+            timeout=max(90,min(600,12*len(manifest['coverage']['surfaces'])))
+            result=subprocess.run(command,capture_output=True,text=True,env=env,timeout=timeout)
             report=json.loads(result.stdout)
             if result.returncode or report.get('status')!='passed':
-                return {'status':'failed','error':'Preflight Qt fallito','diagnostics':report}
+                return {'status':'failed','error':'Preflight Qt fallito','diagnostics':report,'stderr':result.stderr[-6000:]}
             return {'status':'passed','qt':qVersion(),'backend':'offscreen','scope':'isolatedPublicRenderers',
                     'renderers':len(report.get('renderers',[])),'boardEglfs':'notVerified'}
         except (OSError,ValueError,subprocess.TimeoutExpired) as error:

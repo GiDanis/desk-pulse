@@ -1,3 +1,4 @@
+import "components/PublicSettingsRows.js" as PublicSettingsRows
 import QtQuick
 import "themes"
 import "components"
@@ -14,6 +15,7 @@ Item {
         {title: "Notifiche", detail: "Fascia silenzio e avvisi sullo schermo", target: "notifications"},
         {title: "Account ChatGPT", detail: "Soglie di utilizzo e avvisi", target: "accountSettings"},
         {title: "Sport", detail: "Squadra, stagioni e riepiloghi Home", target: "integrations"},
+        {title:"Casa / Smart Life",detail:"Dispositivi scelti e aggiornamenti",target:"casaSettings"},
         {title: "Dati e aggiornamenti", detail: "Stato delle fonti e aggiornamento manuale", target: "sources"}
     ].filter(row => row.target !== "integrations" || dashboard.dashboardState &&
         (dashboard.dashboardState.sportAvailable || dashboard.dashboardState.racingAvailable.length))
@@ -28,9 +30,11 @@ Item {
         {title: "Meteo", detail: sourceDetail(dashboard.weather), target: "meteo", value: "AGGIORNA"},
         {title: "Protezione Civile", detail: dashboard.events.sourceStatus || "In attesa", target: "alerts", value: "CONTROLLA"},
         {title: "Account ChatGPT", detail: "Sincronizzato dal PC · " + sourceDetail(dashboard.account), target: "account", value: "RILEGGI CACHE"}
-    ].concat(backend && backend.sportAvailable ? [{title: "Serie A", detail: sourceDetail(dashboard.sport), target: "sport", value: "AGGIORNA"}] : [])
+    ]
+        .concat(backend && backend.sportAvailable ? [{title: "Serie A", detail: sourceDetail(dashboard.sport), target: "sport", value: "AGGIORNA"}] : [])
         .concat(backend && backend.racingAvailable.indexOf("f1") >= 0 ? [{title: "Formula 1", detail: sourceDetail(dashboard.racingStates.f1), target: "f1", value: "AGGIORNA"}] : [])
-        .concat(backend && backend.racingAvailable.indexOf("motogp") >= 0 ? [{title: "MotoGP", detail: sourceDetail(dashboard.racingStates.motogp), target: "motogp", value: "AGGIORNA"}] : []) : []
+        .concat(backend && backend.racingAvailable.indexOf("motogp") >= 0 ? [{title: "MotoGP", detail: sourceDetail(dashboard.racingStates.motogp), target: "motogp", value: "AGGIORNA"}] : [])
+        .concat(backend ? [{title:"Casa / Smart Life",detail:sourceDetail(dashboard.casa)+" · "+(dashboard.casaData.modeText || "Da configurare"),target:"casa",value:"AGGIORNA",enabled:!!dashboard.casaData.configured && !dashboard.casaData.busy}] : []) : []
     function sourceDetail(value) {
         if (!value) return "Non disponibile"
         const names = {active: "Aggiornato", updating: "Aggiornamento…", offline: "Offline · dati salvati", stale: "Dati salvati", error: "Errore", unavailable: "Non disponibile"}
@@ -85,7 +89,7 @@ Item {
         {title:"Importa temi",value:"IMPORTA",detail:"Pacchetti locali ricevuti dal PC"},
         {title:"Esporta tema",value:"ESPORTA",detail:"Pacchetto completo per un altro dispositivo"},
         {title:"Personalizzazione avanzata",value:"APRI",detail:"Editor di compatibilità · la composizione si crea nel tema"}
-    ] : []
+    ].map((row,index) => Object.assign({},row,{id:PublicSettingsRows.simpleAppearanceIds[index]})).filter(row => row.id !== "appearance.revision" || catalogTheme.retention !== "latest") : []
     readonly property var advancedAppearanceRows: themeService ? [
         {title: "Palette", value: ({auto:"AUTOMATICA",day:"GIORNO",night:"NOTTE"})[themeService.draft.paletteMode || "auto"], detail: supportsAdjustment("paletteMode") ? "Bozza · segue gli orari di Luminosità in automatico" : "Palette gestita dal tema",enabled:supportsAdjustment("paletteMode")},
         {title: "Movimento", value: ({normal:"NORMALE",reduced:"RIDOTTO",off:"DISATTIVO"})[themeService.draft.motionMode], detail: "Transizioni e scena rispettano la stessa policy"},
@@ -186,16 +190,17 @@ Item {
         if (!service || service.status === "saving" || service.status === "working") return
         if (!service.editing) service.beginEdit()
         let accepted=true
-        if (selected === 0) accepted=service.setSection("paletteMode",cycle(["auto","day","night"],service.draft.paletteMode || "auto",direction))
-        else if (selected === 1) accepted=service.setSection("motionMode",cycle(["normal","reduced","off"],service.draft.motionMode,direction))
-        else if (selected === 2) accepted=service.selectDraft(cycle(service.themes.map(t => t.id),service.draft.themeId,direction))
-        else if (selected === 3) accepted=service.setToken("typography.textScale",Math.max(.85,Math.min(1.1,Math.round((root.style.textScale+direction*.05)*100)/100)))
-        else if (selected === 4) accepted=service.stepRevision(direction)
-        else if (selected === 5) accepted=service.apply()
-        else if (selected === 6) service.cancel()
-        else if (selected === 7 || selected === 8) accepted=service.transferPack(selected === 7 ? "import" : "export")
-        else if (selected === 9) { advancedAppearance=true; dashboard.optionIndex=0 }
-        feedback=service.lastError || (!accepted ? "Operazione non disponibile" : selected === 5 ? "Salvataggio in corso…" : "Anteprima · Applica e salva per conservarla")
+        const actionIndex=PublicSettingsRows.simpleAppearanceIds.indexOf((simpleAppearanceRows[selected] || {}).id)
+        if (actionIndex === 0) accepted=service.setSection("paletteMode",cycle(["auto","day","night"],service.draft.paletteMode || "auto",direction))
+        else if (actionIndex === 1) accepted=service.setSection("motionMode",cycle(["normal","reduced","off"],service.draft.motionMode,direction))
+        else if (actionIndex === 2) accepted=service.selectDraft(cycle(service.themes.map(t => t.id),service.draft.themeId,direction))
+        else if (actionIndex === 3) accepted=service.setToken("typography.textScale",Math.max(.85,Math.min(1.1,Math.round((root.style.textScale+direction*.05)*100)/100)))
+        else if (actionIndex === 4) accepted=service.stepRevision(direction)
+        else if (actionIndex === 5) accepted=service.apply()
+        else if (actionIndex === 6) service.cancel()
+        else if (actionIndex === 7 || actionIndex === 8) accepted=service.transferPack(actionIndex === 7 ? "import" : "export")
+        else if (actionIndex === 9) { advancedAppearance=true; dashboard.optionIndex=0 }
+        feedback=service.lastError || (!accepted ? "Operazione non disponibile" : actionIndex === 5 ? "Salvataggio in corso…" : "Anteprima · Applica e salva per conservarla")
     }
     function editAppearance(direction) {
         const service = themeService

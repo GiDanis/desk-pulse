@@ -29,7 +29,7 @@ class BridgeTests(unittest.TestCase):
         return request
 
     def test_no_visual_change_does_not_wait_or_force_frame(self):
-        with self.trace.operation('setToken') as request:
+        with self.trace.operation('setToken'):
             self.service._revision += 1
             self.trace.published(self.service._revision)
         row = self.trace.report()['requests'][0]

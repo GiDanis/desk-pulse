@@ -37,7 +37,7 @@ DEMO_WEATHER = {
 MIN_BRIGHTNESS = 20
 MAX_BRIGHTNESS = 100
 BRIGHTNESS_STEP = 5
-TOGGLEABLE_MODULES = ("meteo", "account", "sport", "f1", "motogp")
+TOGGLEABLE_MODULES = ("meteo", "account", "sport", "f1", "motogp", "casa")
 
 
 def _account_threshold(name: str, default: int) -> int:
@@ -68,13 +68,15 @@ class DashboardState(QObject):
     accountChanged = Signal()
     sportChanged = Signal()
     racingChanged = Signal()
+    casaChanged = Signal()
+    casaRefreshFinished = Signal(bool, str)
     systemChanged = Signal()
     settingsChanged = Signal()
     accountThresholdsChanged = Signal()
     eventChanged = Signal()
 
     def __init__(self, weather: QObject, system: QObject, account: QObject,
-                 events: EventService | None = None, demo: bool = False, sport: QObject | None = None, racing=None, trace=None) -> None:
+                 events: EventService | None = None, demo: bool = False, sport: QObject | None = None, racing=None, trace=None, casa=None) -> None:
         super().__init__()
         self._weather = weather
         self._system = system
@@ -82,6 +84,11 @@ class DashboardState(QObject):
         self._events = events
         self._sport = sport
         self._racing = racing or {}
+        self._casa = casa
+        if casa is not None:
+            casa.changed.connect(self.casaChanged)
+            casa.changed.connect(self.settingsChanged)
+            casa.refreshFinished.connect(self.casaRefreshFinished)
         self._account_warning_percent = _account_threshold("SMARTPC_ACCOUNT_WARNING_PERCENT", 80)
         self._account_critical_percent = max(
             self._account_warning_percent,
@@ -175,6 +182,8 @@ class DashboardState(QObject):
     def refreshSource(self, source: str) -> bool:
         """Manual refresh keeps provider guards and adds a 30-second cooldown."""
         now = time.monotonic()
+        if source == 'casa':
+            return bool(self._casa and self._casa.refresh())
         if self._demo or now - self._last_source_refresh.get(source, -60) < 30:
             return False
         action = {
@@ -192,6 +201,35 @@ class DashboardState(QObject):
             action()
             return True
         return False
+
+    @Property('QVariantMap', notify=casaChanged)
+    def casaState(self):
+        return self._casa.moduleState if self._casa else module_state(status='unavailable',source='Tuya / Smart Life')
+
+    @Property(bool, notify=casaChanged)
+    def casaAvailable(self):
+        data=self.casaState['data']
+        return bool(data.get('configured') and data.get('favourites'))
+
+    @Slot(bool)
+    def setCasaVisible(self,visible):
+        if self._casa: self._casa.setVisible(visible)
+
+    @Slot(str,result=bool)
+    def toggleCasaFavourite(self,identity):
+        return bool(self._casa and self._casa.toggleFavourite(identity))
+
+    @Slot(str,int,result=bool)
+    def moveCasaFavourite(self,identity,direction):
+        return bool(self._casa and self._casa.moveFavourite(identity,direction))
+
+    @Slot(result=bool)
+    def reloadCasaConfig(self):
+        return bool(self._casa and self._casa.reloadConfig())
+
+    @Slot(result=bool)
+    def toggleCasaPolling(self):
+        return bool(self._casa and self._casa.togglePolling())
 
     @Property("QVariantMap", notify=accountChanged)
     def accountState(self) -> dict[str, Any]:
@@ -336,7 +374,7 @@ class DashboardState(QObject):
     @Property("QVariantList", notify=settingsChanged)
     def visibleModules(self) -> list[str]:
         return ["oggi"] + [module_id for module_id in TOGGLEABLE_MODULES
-                           if self._module_visible[module_id] and (module_id != "sport" or self._sport is not None) and (module_id not in ("f1","motogp") or module_id in self._racing)]
+                           if self._module_visible[module_id] and (module_id != "sport" or self._sport is not None) and (module_id not in ("f1","motogp") or module_id in self._racing) and (module_id != "casa" or self.casaAvailable)]
 
     @Slot(str)
     def toggleModuleVisibility(self, module_id: str) -> None:

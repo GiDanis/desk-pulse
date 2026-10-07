@@ -1,7 +1,6 @@
 """OpenSSH/SFTP transport for the schema-1 authoring bridge."""
 from pathlib import Path
 import json
-import os
 import re
 import shlex
 import shutil

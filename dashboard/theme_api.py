@@ -16,9 +16,7 @@ from PySide6.QtGui import QColor
 from PySide6.QtQml import QQmlEngine, QJSValue
 
 from theme_api_contract import ContractError
-from theme_contexts import (CONTRACT, PUBLIC_TYPES, ReadOnlySnapshot,
-                            complete_snapshot, complete_field, default_snapshot, default_value,
-                            snapshot_equal)
+from theme_contexts import (CONTRACT, PUBLIC_TYPES, complete_snapshot, complete_field, default_snapshot, snapshot_equal)
 
 IMPORT_ROOT = Path(__file__).parent / 'qml'
 
@@ -26,7 +24,7 @@ IMPORT_ROOT = Path(__file__).parent / 'qml'
 def bootstrap_theme_api(engine):
     """Shared app/preview/test bootstrap; registration occurs in dependency order."""
     engine.addImportPath(str(IMPORT_ROOT))
-    return {'uri': 'SmartPC.ThemeApi', 'major': 2, 'minor': 0,
+    return {'uri': 'SmartPC.ThemeApi', 'major': 2, 'minor': CONTRACT.surfaces_document['module']['minor'],
             'apiFingerprint': CONTRACT.fingerprint, 'runtimeModuleVerified': True}
 
 
@@ -113,6 +111,7 @@ ALIASES = {
     'NextEventData': {'startsAt': 'start', 'whenText': 'when', 'category': 'type'},
     'SportData': {'matches': 'fixtures', 'liveVerified': 'activeLiveVerified'},
     'TeamData': {'identity': 'team'},
+    'Standing': {'name': 'team', 'entityId': 'teamId'},
     'RacingLiveData': {'rows': 'timing', 'messages': 'raceControl'},
     'AccountWindow': {'label': 'name', 'windowDurationMinutes': 'durationMins', 'resetsAt': 'resetAt'},
     'Family': {'label': 'name'}, 'Tab': {'label': 'name'},
@@ -161,7 +160,7 @@ def normalize_dto(type_name, raw, *, identity='', source=None):
             for i, row in enumerate(value):
                 row = row if isinstance(row, dict) else {'id': str(row), 'name': str(row), 'label': str(row),
                                                          'text': str(row), 'enabled': True}
-                row_identity = row.get(model['identityRole'], row.get('canonicalMatchId', row.get('providerId', '')))
+                row_identity = row.get(model['identityRole'], row.get('canonicalMatchId', row.get('teamId', row.get('providerId', ''))))
                 # A stable domain ID is preferred. Fixed row indexes are used
                 # only for provider records lacking any identifier (statistics,
                 # lineups), scoped under their owning domain record.
@@ -202,6 +201,11 @@ def normalize_dto(type_name, raw, *, identity='', source=None):
             values['rawStatus'] = str(reason.get('short', ''))
     if type_name == 'TeamData' and not isinstance(raw.get('identity', raw.get('team')), dict):
         values['identity'] = normalize_dto('TeamIdentity', raw)
+    if type_name == 'Standing':
+        if not values['id']:
+            values['id'] = str(raw.get('teamId', raw.get('id', '')))
+        if not values['entityId']:
+            values['entityId'] = str(raw.get('teamId', raw.get('id', '')))
     if type_name == 'SportData':
         values['favouriteTeamId'] = str(raw.get('favouriteTeamId', raw.get('favourite', '')))
         if isinstance(raw.get('rounds'), list):
@@ -370,6 +374,14 @@ def normalize_legacy(surface_id, payload, cache=None, *, validate=True):
         if 'commands' not in payload:
             values['commands'] = [normalize_dto('Command', hint, identity=f'key:{hint.get("key", i+1)}')
                                   for i, hint in enumerate(payload.get('commandHints', [])) if isinstance(hint, dict)]
+    if kind == 'CasaContext':
+        envelope=_mapping(payload.get('casaState',model.get('casa')))
+        data=_mapping(envelope.get('data'))
+        values['casa']=_cached(cache,'domain:casa',data,lambda:normalize_dto('CasaData',data))
+        values['source']=source_snapshot(envelope,'casa')
+        selected=str(_mapping(payload.get('selection')).get('selectedId',''))
+        device=next((row for row in data.get('devices',[]) if row.get('id')==selected),None)
+        values['selectedDevice']=normalize_dto('CasaDevice',device) if device else None
     if kind == 'SceneContext':
         actor = payload.get('actor', payload.get('actorState'))
         values['actor'] = normalize_dto('ActorSnapshot', object_snapshot('ActorSnapshot', actor))
@@ -378,10 +390,31 @@ def normalize_legacy(surface_id, payload, cache=None, *, validate=True):
     if kind == 'SportListContext' and 'sport' in model:
         envelope = _mapping(model['sport'])
         data = _mapping(envelope.get('data', envelope))
-        sport = normalize_dto('SportData', data, source=source_snapshot(envelope, 'sport'))
-        for name in ('source', 'matches', 'standings', 'rounds', 'favouriteTeamId'):
-            if name not in payload:
-                values[name] = sport[name]
+        sport_source = source_snapshot(envelope, 'sport')
+        values['source'] = sport_source
+        # A standings route must not reconstruct every match in the season.
+        # Cache each public model independently of keyboard selection/clock.
+        for name, dto, records in (
+            ('standings', 'Standing', data.get('standings', [])),
+            ('matches', 'MatchData', payload.get('rows', data.get('fixtures', [])) if surface_id == 'sport.fixtures' else []),
+            ('rounds', 'Round', data.get('rounds', []))):
+            if name in payload:
+                continue
+            records = records if isinstance(records, list) else []
+            source_key = sport_source if dto == 'MatchData' else None
+            def build_rows(rows=records, item_type=dto):
+                result = []
+                for i, raw_row in enumerate(rows):
+                    row = raw_row if isinstance(raw_row, dict) else {'id':str(raw_row), 'label':str(raw_row)}
+                    identity = str(row.get('id') or row.get('canonicalMatchId') or row.get('teamId') or f'{surface_id}:{name}:{i}')
+                    result.append(normalize_dto(item_type, row, identity=identity, source=sport_source))
+                return result
+            values[name] = _cached(cache, 'sport-list:' + name, (records, source_key), build_rows)
+        if not values['rounds']:
+            values['rounds'] = [normalize_dto('Round', {'id':key, 'label':key})
+                               for key in sorted({str(row.get('round', '')) for row in data.get('fixtures', []) if row.get('round')})]
+        if 'favouriteTeamId' not in payload:
+            values['favouriteTeamId'] = str(data.get('favouriteTeamId', data.get('favourite', '')))
     if kind in ('RacingContext', 'DriverContext'):
         racing_envelope = _mapping(model.get('racing'))
         racing_data = _mapping(racing_envelope.get('data', racing_envelope))
@@ -408,7 +441,7 @@ def normalize_legacy(surface_id, payload, cache=None, *, validate=True):
     if kind == 'TeamPickerContext' and 'teams' not in payload:
         envelope = _mapping(model.get('sport'))
         data = _mapping(envelope.get('data', envelope))
-        values['teams'] = [normalize_dto('TeamIdentity', row) for row in data.get('teams', [])]
+        values['teams'] = [normalize_dto('TeamIdentity', row) for row in payload.get('teamPickerRows', data.get('teams', []))]
         values['savedTeamId'] = str(data.get('favourite', ''))
     if kind == 'ShellContext':
         for row in values['families']:
@@ -451,7 +484,7 @@ class PublicContextFactory(QObject):
             return []
         kind = surface['context']
         fields = CONTRACT.fields(kind)
-        names = [name for name in ('weather', 'account', 'nextEvent', 'sport', 'team', 'fantasy', 'racing')
+        names = [name for name in ('weather', 'account', 'nextEvent', 'sport', 'team', 'fantasy', 'racing','casa')
                  if name in fields]
         dependency = {'SportListContext': 'sport', 'MatchContext': 'sport',
                       'TeamPickerContext': 'sport', 'DriverContext': 'racing'}.get(kind)
@@ -701,8 +734,8 @@ def runtime_typeinfo():
         meta = cls.staticMetaObject
         lines += ['    Component {', '        name: ' + quote(name),
                   '        prototype: ' + quote('QAbstractListModel' if name in CONTRACT.models else 'QObject' if meta.superClass().className() == 'ReadOnlySnapshot' else meta.superClass().className()),
-                  '        exports: [' + quote('SmartPC.ThemeApi/' + name + ' 2.0') + ']',
-                  '        exportMetaObjectRevisions: [512]', '        isCreatable: false']
+                  '        exports: [' + quote('SmartPC.ThemeApi/' + name + ' 2.0') + ', ' + quote('SmartPC.ThemeApi/' + name + ' 2.1') + ', ' + quote('SmartPC.ThemeApi/' + name + ' 2.2') + ']',
+                  '        exportMetaObjectRevisions: [512, 513, 514]', '        isCreatable: false']
         offset = meta.superClass().propertyOffset() if name in CONTRACT.models else meta.propertyOffset()
         for i in range(offset, meta.propertyCount()):
             prop = meta.property(i)

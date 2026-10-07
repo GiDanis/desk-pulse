@@ -3,7 +3,7 @@
   "module": {
     "uri": "SmartPC.ThemeApi",
     "major": 2,
-    "minor": 0
+    "minor": 2
   },
   "apiState": "implemented",
   "privateHandles": [
@@ -437,6 +437,24 @@
           "readOnly": true
         },
         "viewCount": {
+          "type": "int",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "scopeId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "scopeLabel": {
+          "type": "string",
+          "readOnly": true
+        },
+        "scopeCount": {
+          "type": "int",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "scopePosition": {
           "type": "int",
           "minimum": 0,
           "readOnly": true
@@ -2478,6 +2496,175 @@
           "required": false
         }
       }
+    },
+    "CasaMetric": {
+      "fields": {
+        "code": {
+          "type": "string",
+          "readOnly": true
+        },
+        "label": {
+          "type": "string",
+          "readOnly": true
+        },
+        "type": {
+          "type": "string",
+          "readOnly": true
+        },
+        "value": {
+          "type": "scalar",
+          "readOnly": true,
+          "nullable": true
+        },
+        "unit": {
+          "type": "string",
+          "readOnly": true
+        },
+        "quality": {
+          "type": "string",
+          "readOnly": true,
+          "enum": [
+            "reported",
+            "unverified"
+          ]
+        },
+        "checkedAt": {
+          "type": "real",
+          "readOnly": true,
+          "minimum": 0
+        },
+        "stale": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "displayText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "previous": {
+          "type": "bool",
+          "readOnly": true
+        }
+      }
+    },
+    "CasaDevice": {
+      "fields": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "category": {
+          "type": "string",
+          "readOnly": true
+        },
+        "model": {
+          "type": "string",
+          "readOnly": true
+        },
+        "productId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "online": {
+          "type": "bool",
+          "readOnly": true,
+          "nullable": true
+        },
+        "present": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "missingCount": {
+          "type": "int",
+          "readOnly": true,
+          "minimum": 0,
+          "maximum": 2
+        },
+        "favourite": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "availability": {
+          "type": "string",
+          "readOnly": true
+        },
+        "availabilityPrevious": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "previous": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "primaryText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "secondaryText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "iconId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "metrics": {
+          "type": "CasaMetricModel",
+          "readOnly": true
+        }
+      }
+    },
+    "CasaData": {
+      "fields": {
+        "devices": {
+          "type": "CasaDeviceModel",
+          "readOnly": true
+        },
+        "favourites": {
+          "type": "CasaDeviceModel",
+          "readOnly": true
+        },
+        "configured": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "busy": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "polling": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "quotaConfigured": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "requests": {
+          "type": "int",
+          "readOnly": true
+        },
+        "remaining": {
+          "type": "int",
+          "readOnly": true
+        },
+        "modeText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "feedback": {
+          "type": "string",
+          "readOnly": true
+        },
+        "readOnly": {
+          "type": "bool",
+          "readOnly": true
+        }
+      }
     }
   },
   "models": {
@@ -2660,6 +2847,16 @@
       "identityRole": "sourceId",
       "updates": "diffByIdentity",
       "maxItems": 10000
+    },
+    "CasaDeviceModel": {
+      "itemType": "CasaDevice",
+      "identityRole": "id",
+      "maxItems": 500
+    },
+    "CasaMetricModel": {
+      "itemType": "CasaMetric",
+      "identityRole": "code",
+      "maxItems": 128
     }
   },
   "contexts": {
@@ -3486,6 +3683,51 @@
       "signals": {
         "settleMotionRequested": {
           "parameters": []
+        }
+      }
+    },
+    "CasaContext": {
+      "version": 1,
+      "extends": "SurfaceContext",
+      "fields": {
+        "casa": {
+          "type": "CasaData",
+          "readOnly": true
+        },
+        "source": {
+          "type": "SourceState",
+          "readOnly": true
+        },
+        "selection": {
+          "type": "SelectionState",
+          "readOnly": true
+        },
+        "selectedDevice": {
+          "type": "CasaDevice",
+          "readOnly": true,
+          "nullable": true
+        },
+        "rows": {
+          "type": "SettingRowModel",
+          "readOnly": true
+        },
+        "description": {
+          "type": "string",
+          "readOnly": true
+        },
+        "feedback": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "methods": {
+        "requestAction": {
+          "parameters": [
+            "string",
+            "string",
+            "legacyMap"
+          ],
+          "result": "ActionResult"
         }
       }
     }

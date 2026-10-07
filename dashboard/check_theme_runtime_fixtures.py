@@ -128,7 +128,7 @@ def main():
         private,base=isolate_process()
         # Existing suites own offline/fake-transport transitions; keep DNS/socket denial.
         os.environ.pop('SMARTPC_SPORT_OFFLINE',None);os.environ.pop('SMARTPC_RACING_OFFLINE',None)
-        import runpy,socket
+        import runpy
         from unittest.mock import patch
         network=[]
         def denied(*a,**kw):network.append('denied');raise RuntimeError('A0.4 regression network denied')
@@ -144,7 +144,7 @@ def main():
         try:report=child(json.loads(args.child),cases)
         except Exception as error:report={'status':'failed','error':str(error),'traceback':traceback.format_exc(),'profile':json.loads(args.child)}
         print(json.dumps(report,ensure_ascii=False));return 0 if report['status']=='passed' else 1
-    report={'reportVersion':1,'corpusVersion':catalog['corpusVersion'],'apiFingerprint':contract.fingerprint,'status':'passed','requiredScenarios':108,'selectedScenarios':len(cases),'requiredSurfaces':44,'requiredFamilies':16,'tracks':{},'publicApiBinding':{'status':'deferredA1','reason':'Legacy-only lane; real runtime API import and adapter binding are verified separately; no fabricated complete variant-binding PASS'},'scope':'Isolated synthetic legacy UI and contract data; no live provider or physical keypad proof, no GPU time/performance claim.'}
+    report={'reportVersion':1,'corpusVersion':catalog['corpusVersion'],'apiFingerprint':contract.fingerprint,'status':'passed','requiredScenarios':len(contract.documents['surfaces.json']['fixtureRequirements']['requiredCases']),'selectedScenarios':len(cases),'requiredSurfaces':len(contract.surfaces),'requiredFamilies':len(catalog['families']),'tracks':{},'publicApiBinding':{'status':'deferredA1','reason':'Legacy-only lane; real runtime API import and adapter binding are verified separately; no fabricated complete variant-binding PASS'},'scope':'Isolated synthetic legacy UI and contract data; no live provider or physical keypad proof, no GPU time/performance claim.'}
     if args.track in ('all','contractData'):report['tracks']['contractData']=contract_lane(cases,contract)
     if args.track in ('all','legacyUi'):
         if not (CORPUS/'renderers/CanvasScene.qml').is_file():

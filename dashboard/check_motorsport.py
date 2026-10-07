@@ -101,7 +101,8 @@ class Checks(unittest.TestCase):
 
     def test_extra_failure_keeps_results_and_openf1_budget(self):
         data = snapshot("f1")
-        event = present(data, time.time())["lastEvent"]
+        # Exercise the recorded result, independent of later real-world races.
+        event = next(event for event in data["events"] if event["round"] == "15")
         session = next(s for s in event["sessions"] if s["kind"] == "RAC")
         before = deepcopy(session["results"])
 

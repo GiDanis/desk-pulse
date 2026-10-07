@@ -7,7 +7,7 @@ from fantacalcio import FantacalcioService
 
 class ProviderInvalidationTests(unittest.TestCase):
     def test_clear_is_idempotent_and_still_stops_timer(self):
-        app = QCoreApplication.instance() or QCoreApplication([])
+        _app = QCoreApplication.instance() or QCoreApplication([])
         with tempfile.TemporaryDirectory() as directory:
             service = FantacalcioService(directory, auto_refresh=False)
             changes = []

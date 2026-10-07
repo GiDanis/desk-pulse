@@ -31,6 +31,7 @@ Item {
         if (!appearance || appearance.motionMode === "off") { if (traceRecorder) traceMotion("motion.off"); return }
         const spec = appearance.motion[eventId]
         if (!spec) { if (traceRecorder) traceMotion("motion.missingSpec"); return }
+        if (spec.recipe === "builtin.cut") { if (traceRecorder) traceMotion("motion.cut"); return }
         const registry = appearance.motionRegistry[spec.recipe]
         if (!registry) { if (traceRecorder) traceMotion("motion.missingRecipe"); return }
         if (resourceService && registry.rendererIdentity) resourceLease=resourceService.acquireRevision(registry.rendererIdentity)

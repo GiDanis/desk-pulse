@@ -76,8 +76,8 @@ def verify():
                 checks.append('actualMatchIdentityAndNullableScores')
             if surface_id in ('sport.overview', 'sport.fixtures'):
                 matches = context.sport.matches if surface_id == 'sport.overview' else context.matches
-                assert matches.count == len(harness.value('sportData')['fixtures'])
-                assert matches.get(0).id == actual_id
+                expected_rows = harness.value('sportData')['fixtures'] if surface_id == 'sport.overview' else harness.value('sportRows')
+                assert [matches.get(i).id for i in range(matches.count)] == [row['canonicalMatchId'] for row in expected_rows]
                 checks.append('actualFootballFixtureModel')
             if surface_id in ('racing.event.detail', 'racing.session.detail'):
                 assert context.event.id == event['id']

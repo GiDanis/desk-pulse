@@ -18,11 +18,10 @@ import stat
 import tempfile
 import time
 import unicodedata
-import uuid
 import zipfile
 
 from theme_core import ROOT, ID, ThemeCatalog, ThemeError, read_json
-from theme_resources import ResourceRef, ResourceResolver, canonical_file, relative_path
+from theme_resources import ResourceResolver, canonical_file, relative_path
 
 MAX_FILES = 256
 MAX_FILE_BYTES = 8 * 1024 * 1024
@@ -43,7 +42,7 @@ NON_VISUAL_CODE_SUFFIXES = {
 }
 REGISTRY_FIELDS = {'registryVersion', 'presentations', 'recipes', 'iconRenderers', 'sceneRenderers', 'iconSets'}
 MANIFEST_FIELDS = {'bundleFormat', 'id', 'version', 'name', 'engineApi', 'contextApis', 'targetProfile',
-                   'qtMinimum', 'qtModules', 'coverage', 'adjustments', 'trust', 'resources', 'extendedTokens', 'layout'}
+                   'qtMinimum', 'qtModules', 'coverage', 'adjustments', 'trust', 'resources', 'extendedTokens', 'layout', 'retention'}
 CONTEXT_APIS = {'page': 2, 'notification': 1, 'shell': 1, 'overlay': 1, 'scene': 1, 'icon': 1, 'motion': 1}
 RESOURCE_TYPES = {'qml', 'js', 'font', 'image', 'data', 'license', 'preview'}
 DEFAULT_SHELL_LAYOUT = {
@@ -256,6 +255,18 @@ def verify_integrity(root):
     return digest, inventory
 
 
+def effective_manifest(value, surfaces):
+    """Runtime-only Base fallback for the four additive Casa surfaces."""
+    result=deepcopy(value)
+    coverage=result['coverage']
+    known=set(coverage['surfaces']) | set(coverage['fallbacks'])
+    casa={'casa.overview','casa.devices','casa.detail','settings.casa'}
+    if set(surfaces)-known == casa:
+        coverage['fallbacks']=sorted(set(coverage['fallbacks']) | casa)
+        coverage['mode']='partial'
+    return result
+
+
 def _manifest(value, root, profile=None):
     require(isinstance(value, dict) and not set(value) - MANIFEST_FIELDS, 'bundle.json', 'campo sconosciuto')
     for key in ('bundleFormat', 'id', 'version', 'name', 'engineApi', 'contextApis', 'targetProfile',
@@ -269,6 +280,7 @@ def _manifest(value, root, profile=None):
     semver(value['version'])
     require(isinstance(value['name'], str) and 1 <= len(value['name']) <= 80, 'bundle.name', 'nome richiesto')
     require(value['trust'] == 'author-code', 'bundle.trust', 'modello codice visuale autore richiesto')
+    require(value.get('retention', 'all') in ('all', 'latest'), 'bundle.retention', 'politica revisioni non valida')
     require(value['targetProfile'] == 'a733-960x640-eglfs', 'targetProfile', 'profilo non supportato')
     minimum = semver(value['qtMinimum'])
     require(minimum >= (6, 8, 2), 'qtMinimum', 'API bundle richiede Qt 6.8.2 o superiore')
@@ -294,6 +306,9 @@ def _manifest(value, root, profile=None):
         require(isinstance(values, list) and all(isinstance(s, str) for s in values)
                 and len(values) == len(set(values)) and set(values) <= surfaces, 'coverage.' + field, 'superfici non valide')
     own, fallback = set(coverage['surfaces']), set(coverage['fallbacks'])
+    # Validate additive coverage without changing the immutable author payload.
+    coverage=effective_manifest(value,surfaces)['coverage']
+    fallback=set(coverage['fallbacks'])
     require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
     require(coverage['mode'] != 'complete' or not fallback, 'coverage', 'copertura completa non ammette fallback')
     if 'layout' in value:
@@ -332,8 +347,11 @@ def _registry(registry, manifest, inventory, app_root):
                 and identifier not in seen, 'registry.id', 'ID duplicato o fuori namespace')
         seen.add(identifier)
         require(isinstance(row, dict), 'registry.' + identifier, 'descrittore richiesto')
-        allowed = {'id', 'file', 'apiVersion', 'contextApi', 'name', 'contentIds', 'events', 'parameters', 'sceneMode', 'footprint', 'respectsOccupiedRegions', 'dataDomains'}
+        allowed = {'id', 'file', 'apiVersion', 'contextApi', 'name', 'contentIds', 'events', 'parameters', 'sceneMode', 'footprint', 'respectsOccupiedRegions', 'dataDomains', 'dataProjection'}
         require(not set(row) - allowed, 'registry.' + identifier, 'campo sconosciuto')
+        if 'dataProjection' in row:
+            require(family == 'presentations' and row.get('contextApi') == 'page2' and row['dataProjection'] in ('full','route'),
+                    'registry.' + identifier + '.dataProjection', 'proiezione dati non valida')
         if 'dataDomains' in row:
             domains = row['dataDomains']
             require(family == 'presentations' and row.get('contextApi') == 'page2',
@@ -564,7 +582,8 @@ def validate_project(project, app_root=ROOT, profile=None, *, check_integrity=Fa
 
 def register_catalog(catalog, revision):
     """Register one immutable revision; caller chooses explicitly which is active."""
-    manifest, registry = revision['manifest'], revision['registry']
+    surfaces={row['id'] for row in read_json(catalog.root/'theme-api/surfaces.json')['surfaces']}
+    manifest, registry = effective_manifest(revision['manifest'],surfaces), revision['registry']
     payload = Path(revision['payload']).resolve()
     key = revision_key(revision)
     files = revision.get('files') or _inventory(payload)
@@ -573,6 +592,7 @@ def register_catalog(catalog, revision):
         result['id'] = identifier
         result['sourceRoot'] = str(payload)
         result['sourceUrl'] = canonical_file(payload, definition['file']).as_uri()
+        if 'dataProjection' in definition: result['dataProjection'] = definition['dataProjection']
         result['rendererIdentity'] = {'origin': 'bundle', 'id': identifier, 'context': definition.get('contextApi', ''),
                                       'revision': key, 'resource': definition['file'], 'digest': revision['digest'],
                                       'resourceDigest': files[definition['file']]['sha256']}

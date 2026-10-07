@@ -192,7 +192,6 @@ def main():
     assert not any(m['isLive'] for m in restarted.moduleState['data']['fixtures'])
     # Multiple simultaneous fixtures appear, with more than three on page two.
     window.setProperty('sportView', 'PROSSIME')
-    original_snapshot = data
     from copy import deepcopy
     simultaneous = deepcopy(data)
     future = [m for m in simultaneous['fixtures'] if m['status'] == 'scheduled'][:4]

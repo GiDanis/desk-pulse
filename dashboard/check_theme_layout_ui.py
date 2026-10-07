@@ -8,7 +8,7 @@ import time
 
 from theme_fixture_support import isolate_process
 private,base=isolate_process()
-from PySide6.QtCore import QObject,QUrl,QSettings,qInstallMessageHandler,QCoreApplication,QEvent,Qt
+from PySide6.QtCore import QObject,QUrl,qInstallMessageHandler,QCoreApplication,QEvent,Qt
 from PySide6.QtGui import QGuiApplication,QWindow,QKeyEvent
 from PySide6.QtQml import QQmlApplicationEngine,QQmlExpression
 from PySide6.QtQuick import QQuickWindow

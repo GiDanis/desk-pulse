@@ -3,7 +3,7 @@
   "module": {
     "uri": "SmartPC.ThemeApi",
     "major": 2,
-    "minor": 0
+    "minor": 2
   },
   "apiState": "implemented",
   "actions": {
@@ -645,6 +645,86 @@
       "result": "ActionResult",
       "authorizesRuntimeDispatch": false,
       "targetKind": "menuRowId"
+    },
+    "casa.favourite.toggle": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "casa.favourite.move": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {
+        "direction": {
+          "type": "int",
+          "enum": [
+            -1,
+            1
+          ]
+        }
+      },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "casa.config.reload": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "casa.polling.toggle": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
     }
   },
   "validationScope": "Shape and per-surface allowlist only; A1 broker also checks active/interactive/preview/generation/urgent and backend state.",
@@ -694,6 +774,11 @@
         {
           "id": "sources",
           "legacyPosition": 6,
+          "conditional": false
+        },
+        {
+          "id": "casa",
+          "legacyPosition": 7,
           "conditional": false
         }
       ],
@@ -988,6 +1073,11 @@
           "id": "module.motogp",
           "legacyPosition": 5,
           "conditional": true
+        },
+        {
+          "id": "module.casa",
+          "legacyPosition": 6,
+          "conditional": true
         }
       ],
       "settings.notifications": [
@@ -1094,6 +1184,11 @@
         {
           "id": "source.motogp",
           "legacyPosition": 5,
+          "conditional": true
+        },
+        {
+          "id": "source.casa",
+          "legacyPosition": 6,
           "conditional": true
         }
       ],

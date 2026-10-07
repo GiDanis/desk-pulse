@@ -4,7 +4,7 @@
 
 Generated from the four canonical JSON documents. Do not edit generated files.
 
-API fingerprint: `905a4b23c4c180a16ef541260c281ca6d430b3679c7066599a0f2b1f3d77f2a8`
+API fingerprint: `14f139f20d19c3b093f579741eb0bb7653cbff956a8cc34987df5365b7675448`
 
 This fingerprint is independent from the schema-1 registry fingerprint.
 
@@ -19,7 +19,11 @@ This fingerprint is independent from the schema-1 registry fingerprint.
 | alerts.detail | NotificationContext 1 | notification | alertDetail | back, home, scrollDetails |
 | alerts.inbox | NotificationContext 1 | notification | alerts | back, home, moveSelection, openDetails, selectEvent |
 | alerts.urgent | NotificationContext 1 | notification | — | dismiss, home, openDetails |
+| casa.detail | CasaContext 1 | overlay | casaDetail | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, sources.refresh |
+| casa.devices | CasaContext 1 | page | — | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, navigation.family.step, navigation.view.step |
+| casa.overview | CasaContext 1 | page | — | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, navigation.family.step, navigation.view.step |
 | device.info | InfoContext 1 | overlay | info | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, sources.refresh, tabs.select |
+| home.clock | PageContext 2 | page | — | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
 | home.day | PageContext 2 | page | — | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
 | home.now | PageContext 2 | page | — | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
 | overlay.commands | CommandsContext 1 | overlay | commands | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
@@ -36,6 +40,7 @@ This fingerprint is independent from the schema-1 registry fingerprint.
 | settings.account | SettingsContext 1 | overlay | accountSettings | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate, settings.adjust |
 | settings.appearance | SettingsContext 1 | overlay | appearance | appearance.apply, appearance.cancel, appearance.export, appearance.import, appearance.notificationPreview, appearance.preview, appearance.reload, appearance.reset, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate, settings.adjust |
 | settings.appearance.notifications | SettingsContext 1 | overlay | appearanceNotifications | appearance.apply, appearance.cancel, appearance.export, appearance.import, appearance.notificationPreview, appearance.preview, appearance.reload, appearance.reset, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate, settings.adjust |
+| settings.casa | CasaContext 1 | overlay | casaSettings | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, sources.refresh, casa.favourite.toggle, casa.favourite.move, casa.config.reload, casa.polling.toggle |
 | settings.display | SettingsContext 1 | overlay | system | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate, settings.adjust |
 | settings.index | SettingsContext 1 | overlay | settings | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate |
 | settings.integrations | SettingsContext 1 | overlay | integrations | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate |
@@ -471,6 +476,32 @@ Method `formatStamp(scalar) → string`.
 
 Signal `settleMotionRequested()`.
 
+### CasaContext
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| contentId | string | required / non-null | {} |
+| contextVersion | int | required / non-null | {"const": 1} |
+| surfaceInstanceId | string | required / non-null | {} |
+| appearanceRevision | int | required / non-null | {"minimum": 0} |
+| dataRevision | int | required / non-null | {"minimum": 0} |
+| style | ThemeStyle | required / non-null | {} |
+| lifecycle | SurfaceLifecycle | required / non-null | {} |
+| viewport | Rect | required / non-null | {} |
+| safeArea | Rect | required / non-null | {} |
+| commands | CommandModel | required / non-null | {} |
+| actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
+| casa | CasaData | required / non-null | {} |
+| source | SourceState | required / non-null | {} |
+| selection | SelectionState | required / non-null | {} |
+| selectedDevice | CasaDevice | required / nullable | {} |
+| rows | SettingRowModel | required / non-null | {} |
+| description | string | required / non-null | {} |
+| feedback | string | required / non-null | {} |
+
+Method `requestAction(string, string, legacyMap) → ActionResult`.
+
 ## DTOs
 
 ### Point
@@ -621,6 +652,10 @@ Signal `settleMotionRequested()`.
 | familyCount | int | required / non-null | {"minimum": 0} |
 | viewPosition | int | required / non-null | {"minimum": 0} |
 | viewCount | int | required / non-null | {"minimum": 0} |
+| scopeId | string | required / non-null | {} |
+| scopeLabel | string | required / non-null | {} |
+| scopeCount | int | required / non-null | {"minimum": 0} |
+| scopePosition | int | required / non-null | {"minimum": 0} |
 
 ### ShellLayout
 
@@ -1344,6 +1379,58 @@ Signal `settleMotionRequested()`.
 | warningIndicator | color | optional / non-null | {} |
 | criticalIndicator | color | optional / non-null | {} |
 
+### CasaMetric
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| code | string | required / non-null | {} |
+| label | string | required / non-null | {} |
+| type | string | required / non-null | {} |
+| value | scalar | required / nullable | {} |
+| unit | string | required / non-null | {} |
+| quality | string | required / non-null | {"enum": ["reported", "unverified"]} |
+| checkedAt | real | required / non-null | {"minimum": 0} |
+| stale | bool | required / non-null | {} |
+| displayText | string | required / non-null | {} |
+| previous | bool | required / non-null | {} |
+
+### CasaDevice
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| id | string | required / non-null | {} |
+| name | string | required / non-null | {} |
+| category | string | required / non-null | {} |
+| model | string | required / non-null | {} |
+| productId | string | required / non-null | {} |
+| online | bool | required / nullable | {} |
+| present | bool | required / non-null | {} |
+| missingCount | int | required / non-null | {"minimum": 0, "maximum": 2} |
+| favourite | bool | required / non-null | {} |
+| availability | string | required / non-null | {} |
+| availabilityPrevious | bool | required / non-null | {} |
+| previous | bool | required / non-null | {} |
+| primaryText | string | required / non-null | {} |
+| secondaryText | string | required / non-null | {} |
+| iconId | string | required / non-null | {} |
+| metrics | CasaMetricModel | required / non-null | {} |
+
+### CasaData
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| devices | CasaDeviceModel | required / non-null | {} |
+| favourites | CasaDeviceModel | required / non-null | {} |
+| configured | bool | required / non-null | {} |
+| busy | bool | required / non-null | {} |
+| polling | bool | required / non-null | {} |
+| quotaConfigured | bool | required / non-null | {} |
+| requests | int | required / non-null | {} |
+| remaining | int | required / non-null | {} |
+| modeText | string | required / non-null | {} |
+| feedback | string | required / non-null | {} |
+| readOnly | bool | required / non-null | {} |
+
 ## Models
 
 | Model | Row type | Identity |
@@ -1378,6 +1465,8 @@ Signal `settleMotionRequested()`.
 | RaceMessageModel | RaceMessage | id |
 | NotificationEventModel | NotificationEvent | id |
 | SourceModel | SourceState | sourceId |
+| CasaDeviceModel | CasaDevice | id |
+| CasaMetricModel | CasaMetric | code |
 
 ## Actions
 
@@ -1419,6 +1508,10 @@ The runtime broker also checks lifecycle, generation and private router availabi
 | back | optional | {} |
 | home | optional | {} |
 | menu.activate | required | {} |
+| casa.favourite.toggle | required | {} |
+| casa.favourite.move | required | {"direction": {"type": "int", "enum": [-1, 1]}} |
+| casa.config.reload | required | {} |
+| casa.polling.toggle | required | {} |
 
 ## Semantic roles
 

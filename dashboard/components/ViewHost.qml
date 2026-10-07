@@ -65,6 +65,8 @@ Item {
     property bool renderActive: active
     property bool exiting: false
     property bool animateSwap: true
+    property int cacheLimit: 0
+    property var retainedLoaders: []
     property bool interactive: active
     property Component contextFactory: Component {
         PresentationContext {
@@ -82,13 +84,29 @@ Item {
     property int generation: 0
     property string loadedPresentationId: ""
     property string loadedRendererKey: ""
-    function rendererKey(snapshot, identifier) {
+    function rendererKey(snapshot, identifier, surface) {
         const row = snapshot.presentationRegistry[identifier]
-        return row ? row.rendererKey || "app:"+row.file : ""
+        return row ? (row.rendererKey || "app:"+row.file)+":"+(surface || contentId) : ""
+    }
+    function clearRetained() {
+        const loaders = retainedLoaders
+        retainedLoaders = []
+        for (const loader of loaders) loader.destroy()
+    }
+    function retainOrDestroy(loader) {
+        if (!cacheLimit || loader.rendererKey !== rendererKey(appearance,loader.presentationId,loader.surfaceId)) {
+            loader.destroy(); return
+        }
+        loader.stagedAppearance = appearance
+        loader.useLiveStyle = false
+        const loaders = retainedLoaders.concat([loader])
+        while (loaders.length > cacheLimit) loaders.shift().destroy()
+        retainedLoaders = loaders
     }
     function restoreInput() { if (controller && typeof controller.restoreInputFocus === "function") controller.restoreInputFocus() }
     property var pendingLoader: null
     property var currentLoader: null
+    readonly property string currentSurfaceId: currentLoader ? currentLoader.surfaceId : ""
     property var context: null
     width: 872; height: 455
     visible: renderActive || exiting
@@ -108,7 +126,19 @@ Item {
         else if (pendingLoader) { generation += 1; pendingLoader.destroy(); pendingLoader = null; readiness = currentItem ? "ready" : "idle" }
     }
     onInteractiveChanged: if (context) context.interactive = interactive
-    onAppearanceChanged: if (active) prepare(appearance,0)
+    onAppearanceChanged: {
+        const loaders = retainedLoaders.filter(loader => {
+            if (loader.rendererKey === rendererKey(appearance,loader.presentationId,loader.surfaceId)) return true
+            loader.destroy(); return false
+        })
+        retainedLoaders = loaders
+        if (!active && currentLoader && currentLoader.rendererKey !== rendererKey(appearance,currentLoader.presentationId,currentLoader.surfaceId)) {
+            const obsolete = currentLoader
+            currentLoader = null; currentItem = null; context = null; readiness = "idle"
+            obsolete.destroy()
+        }
+        if (active) prepare(appearance,0)
+    }
     onContentIdChanged: if (active) prepare(appearance,0)
     onCandidateSnapshotChanged: {
             const candidate = candidateSnapshot
@@ -140,7 +170,7 @@ Item {
         if (old) {
             old.presentationContext.active = false; old.presentationContext.interactive = false
             if (old.item && typeof old.item.settleMotion === "function") old.item.settleMotion()
-            old.destroy()
+            retainOrDestroy(old)
         }
         pendingLoader = null; loadedPresentationId = candidate.presentationId; loadedRendererKey = candidate.rendererKey
         restoreInput()
@@ -162,6 +192,29 @@ Item {
         if (currentItem && loadedRendererKey === rendererKey(snapshot,identifier)) { loadedRevision = snapshot.revision; readiness = "ready"; if (traceRecorder) traceEvent("host.reuse",{targetRevision:snapshot.revision,serviceGeneration:serviceGeneration}); return }
         generation += 1
         if (pendingLoader) { pendingLoader.destroy(); pendingLoader = null }
+        if (!serviceGeneration) {
+            const key = rendererKey(snapshot,identifier)
+            const cachedIndex = retainedLoaders.findIndex(loader => loader.rendererKey === key)
+            if (cachedIndex >= 0) {
+                const loaders = retainedLoaders.slice()
+                const cached = loaders.splice(cachedIndex,1)[0]
+                retainedLoaders = loaders
+                pendingLoader = cached
+                cached.requestGeneration = generation
+                cached.requestedRevision = snapshot.revision
+                cached.serviceGeneration = 0
+                cached.acknowledged = true
+                cached.useLiveStyle = true
+                cached.presentationContext.active = renderActive
+                cached.presentationContext.interactive = interactive
+                readiness = "loading"
+                cached.publicAdapter.flushRefresh()
+                cached.acknowledged = false
+                if (traceRecorder) traceEvent("host.cache.reuse",{targetRevision:snapshot.revision})
+                cached.ready()
+                return
+            }
+        }
         const descriptor = snapshot.presentationRegistry[identifier]
         if (!descriptor) {
             readiness = currentItem ? "ready" : "error"; lastError = "Presentazione non registrata: " + identifier
@@ -170,8 +223,10 @@ Item {
         }
         readiness = "loading"; lastError = ""
         const next = slot.createObject(host, {requestGeneration: generation, presentationId: identifier, requestedRevision: snapshot.revision,
+            surfaceId: contentId,
             serviceGeneration: serviceGeneration, stagedAppearance: snapshot,
             rendererKey: rendererKey(snapshot,identifier), usePublicApi: descriptor.apiVersion === 2,
+            dataProjection: descriptor.dataProjection || "full",
             dataDomains: descriptor.dataDomains === undefined ? null : descriptor.dataDomains})
         pendingLoader = next
         if (service && descriptor.rendererIdentity) {
@@ -192,18 +247,20 @@ Item {
             property int requestGeneration: 0
             property int serviceGeneration: 0
             property string presentationId: ""
+            property string surfaceId: ""
             property string rendererKey: ""
             property bool usePublicApi: false
             property var dataDomains: null
+            property string dataProjection: "full"
             property string resourceLease: ""
             Component.onDestruction: if (resourceLease && host.service) host.service.releaseRevision(resourceLease)
             property alias publicAdapter: publicAdapter
-            PublicContextAdapter { id: publicAdapter; publicEnabled: candidate.usePublicApi; selectedModelDomains: candidate.dataDomains; factory: host.service ? host.service.apiFactory : null; legacy: candidate.presentationContext; surfaceId: host.contentId }
+            PublicContextAdapter { id: publicAdapter; publicEnabled: candidate.usePublicApi; selectedModelDomains: candidate.dataDomains; dataProjection:candidate.dataProjection; factory: host.service ? host.service.apiFactory : null; legacy: candidate.presentationContext; surfaceId: candidate.surfaceId }
             property int requestedRevision: 0
             property var stagedAppearance: null
             property bool useLiveStyle: false
             property StyleFacade stagedStyle: StyleFacade { appearance: candidate.stagedAppearance }
-            property var presentationContext: host.contextFactory.createObject(candidate)
+            property var presentationContext: host.contextFactory.createObject(candidate, {contentId:candidate.surfaceId})
             Binding { target: candidate.presentationContext; property: "style"; value: candidate.useLiveStyle ? host.style : candidate.stagedStyle }
             active: false; asynchronous: true
             visible: host.currentLoader === candidate
@@ -235,7 +292,11 @@ Item {
                 const live = host.currentLoader === candidate
                 if (live && host.service) host.service.recoverVisual(host.contentId,message)
                 destroy()
-                if (failedGeneration) host.service.reportCandidate(failedGeneration,host.contentId,false,message)
+                if (failedGeneration) {
+                    Qt.callLater(function() {
+                        if (host.service) host.service.reportCandidate(failedGeneration, host.contentId, false, message)
+                    })
+                }
                 else if (!host.currentItem && host.service) host.service.recoverVisual(host.contentId,message)
             }
             Connections {

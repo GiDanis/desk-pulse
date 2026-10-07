@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Portable declared opaque visual payloads without native executables or decoders."""
-from copy import deepcopy
 import hashlib
 import json
 import os
@@ -10,8 +9,7 @@ import tempfile
 import unittest
 import zipfile
 
-from theme_bundle import (ROOT, MAX_FILE_BYTES, MAX_MANIFEST_BYTES, MAX_PAYLOAD_BYTES,
-                          BundleManager, ThemeError, _extract_archive, build_bundle,
+from theme_bundle import (ROOT, MAX_FILE_BYTES, MAX_MANIFEST_BYTES, BundleManager, ThemeError, _extract_archive, build_bundle,
                           validate_project)
 
 

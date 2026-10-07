@@ -290,6 +290,10 @@ def _build_types():
             # subclass directly to Property would erase it to QObject*.
             qmlRegisterUncreatableType(cls, 'SmartPC.ThemeApi', 2, 0, name,
                                        'Owned by SmartPC; obtain this object from the renderer context')
+            qmlRegisterUncreatableType(cls, 'SmartPC.ThemeApi', 2, 1, name,
+                                       'Owned by SmartPC; obtain this object from the renderer context')
+            qmlRegisterUncreatableType(cls, 'SmartPC.ThemeApi', 2, 2, name,
+                                       'Owned by SmartPC; obtain this object from the renderer context')
 
 
 _build_types()

@@ -8,7 +8,6 @@ from copy import deepcopy
 import json
 import hashlib
 from pathlib import Path
-import time
 
 from PySide6.QtCore import QObject, Property, QMetaObject, Q_RETURN_ARG, QTimer, Qt, Slot
 from PySide6.QtQml import QJSValue

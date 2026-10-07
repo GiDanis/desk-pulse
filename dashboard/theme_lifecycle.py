@@ -314,6 +314,38 @@ class LifecycleManager:
                 removed.append(selection(revision))
             return {'removed': removed, 'protected': sorted(protected)}
 
+    def finalize_latest(self, identity):
+        """After GUI verification, use Base recovery and keep one active bundle.
+
+        Candidates and live renderer leases remain protected. A caller retries
+        after a retained renderer releases its old resources.
+        """
+        identity = selection(identity)
+        require(identity != BASE, 'retention', 'revisione distribuita richiesta')
+        with manager_lock(self.root):
+            state = self.read()
+            require(state['active'] == identity and state['pending'] is None,
+                    'retention', 'attivazione non conclusa')
+            self.bundle_manager.verify_revision(identity)
+            state['previous'] = deepcopy(BASE)
+            prefix = identity['id'] + '@'
+            active_key = selection_key(identity)
+            state['adaptations']['perRevision'] = {key:value for key,value in state['adaptations']['perRevision'].items()
+                if not key.startswith(prefix) or key == active_key}
+            atomic_json(self.path, state)
+            protected = self.protected_revisions(clear_dead=True)
+            removed, retained = [], []
+            for revision in self.bundle_manager.list_revisions(include_quarantined=True):
+                if revision['id'] != identity['id'] or revision['key'] == active_key:
+                    continue
+                if revision['key'] in protected:
+                    retained.append(selection(revision)); continue
+                shutil.rmtree(revision['path'])
+                sync_directory(Path(revision['path']).parent)
+                (self.root/'theme-quarantine'/(revision['digest']+'.json')).unlink(missing_ok=True)
+                removed.append(selection(revision))
+            return {'active':identity, 'removed':removed, 'retained':retained, 'recovery':deepcopy(BASE)}
+
     def heartbeat(self, *, ready=True, generation=None):
         """Invoke from a discrete GUI timer, never from a worker/render thread."""
         state = self.read()

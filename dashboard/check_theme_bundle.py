@@ -1,7 +1,5 @@
 """Adversarial pure tests for portable bundle identity and revision recovery."""
 from __future__ import annotations
-from copy import deepcopy
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -13,10 +11,10 @@ import tempfile
 import unittest
 import zipfile
 
-from theme_bundle import (ROOT, BundleManager, ThemeError, atomic_json, build_bundle,
-                          canonical_bytes, revision_key, validate_project)
-from theme_lifecycle import BASE, LifecycleManager, selection_key
-from theme_resources import ResourceRef, ResourceResolver
+from theme_bundle import (ROOT, BundleManager, ThemeError, build_bundle,
+                          validate_project)
+from theme_lifecycle import BASE, LifecycleManager
+from theme_resources import ResourceRef
 
 
 class BundleTests(unittest.TestCase):

@@ -16,6 +16,7 @@ PRIVATE, BASE = isolate_process()
 from PySide6.QtCore import QSettings, QThreadPool
 from PySide6.QtGui import QGuiApplication
 from theme_core import ROOT
+from theme_api_contract import ThemeApiContract
 from theme_service import ThemeService
 
 APP = None if '--main-proof' in sys.argv else QGuiApplication([])
@@ -63,7 +64,8 @@ class AdjustmentTests(unittest.TestCase):
         self.assertTrue(s.setSection('motionMode','reduced'),'Reduced remains global policy')
         self.assertTrue(s.setToken('shape.radiusCard',7),'compatibility editor remains available')
         metadata=s.selectedTheme
-        self.assertEqual((metadata['coverageMode'],metadata['ownCount'],metadata['fallbackCount']),('partial',5,39))
+        fallback_count = len(ThemeApiContract().surfaces) - 5
+        self.assertEqual((metadata['coverageMode'],metadata['ownCount'],metadata['fallbackCount']),('partial',5,fallback_count))
         self.assertEqual(metadata['adjustments'],['motionMode'])
         self.assertIn('Parziale',metadata['coverageSummary'])
         with patch.object(s.bundles,'verify_revision',side_effect=AssertionError('QML getter must not read files')):
@@ -116,13 +118,14 @@ def main_proof():
         (project/'bundle.json').write_text(json.dumps(manifest))
         revision=s.bundles.import_bundle(project,preflight=lambda *_:{'status':'passed','testOnly':True})
         assert s.reloadCatalog();s.beginEdit();assert s.selectDraft(revision['id']),s.lastError
-        harness.pump(500)
+        harness.wait_ready()
         assert not s.candidateAppearance,s.lastError
         harness.root.setProperty('overlay','appearance');harness.pump(60)
         settings=harness.root.findChild(QObject,'settingsPanel')
         rows=as_value(settings.property('simpleAppearanceRows'))
         assert rows[0]['enabled'] is False and rows[3]['enabled'] is False,rows
-        assert 'Parziale' in rows[2]['detail'] and '5 propri' in rows[2]['detail'] and '39 Base' in rows[2]['detail'],rows[2]
+        fallback_count = len(ThemeApiContract().surfaces) - 5
+        assert 'Parziale' in rows[2]['detail'] and '5 propri' in rows[2]['detail'] and f'{fallback_count} Base' in rows[2]['detail'],rows[2]
         assert rows[1].get('enabled',True),'global motion policy must remain available'
         payload=harness.expression('publicSurfacePayload("settings.appearance")')
         by_id={row['id']:row for row in payload['rows']}

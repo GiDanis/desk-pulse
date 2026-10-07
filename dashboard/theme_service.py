@@ -8,7 +8,7 @@ from pathlib import Path
 
 from PySide6.QtCore import QObject, Property, QRunnable, QSettings, QStandardPaths, QThreadPool, QTimer, Signal, Slot
 from PySide6.QtGui import QFontDatabase, QGuiApplication, QImageReader
-from theme_core import ThemeCatalog, ThemeError
+from theme_core import ThemeError
 from theme_runtime import make_catalog, preflight
 from theme_bundle import BundleManager, atomic_json
 from theme_lifecycle import LifecycleManager, BASE, selection_key
@@ -150,6 +150,7 @@ class ThemeService(QObject):
     def __init__(self, parent=None, *, store=None, root=None, trace=None):
         super().__init__(parent)
         self._trace=trace; self._save_trace_request=None; self._save_frame_deadline=None
+        self._latest_verified_ticks=0; self._latest_health_key=""; self._latest_compacted_key=""; self._latest_cleanup_scheduled=False
         location = store or os.environ.get('SMARTPC_THEME_STORE') or str(Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation))/'themes')
         self.store = Path(location)
         self._root = Path(root) if root else Path(__file__).parent
@@ -248,6 +249,48 @@ class ThemeService(QObject):
             self.frameStateChanged.emit()
             self.editorChanged.emit()
         self.lifecycle.heartbeat(ready=self._gui_ready)
+        health_key=selection_key(self._committed.get('bundleRevision',BASE))
+        if health_key != self._latest_health_key:
+            self._latest_health_key=health_key; self._latest_verified_ticks=0
+        if coherent and self._gui_ready and not self.editing and self._status == 'ready':
+            self._latest_verified_ticks += 1
+            if self._latest_verified_ticks >= 3: self._schedule_latest_cleanup()
+        else:
+            self._latest_verified_ticks = 0
+
+    def _schedule_latest_cleanup(self):
+        pin=self._committed.get('bundleRevision')
+        if not pin or self._latest_cleanup_scheduled or self._latest_verified_ticks < 3:
+            return
+        if selection_key(pin) == self._latest_compacted_key or self._bundle_metadata(self._committed).get('retention') != 'latest':
+            return
+        self._latest_cleanup_scheduled=True
+        QTimer.singleShot(0,self._compact_latest)
+
+    def _compact_latest(self):
+        self._latest_cleanup_scheduled=False
+        pin=self._committed.get('bundleRevision')
+        if not pin or self.editing or not self._gui_ready or self._status != 'ready': return
+        try:
+            report=self.lifecycle.finalize_latest(pin)
+            # Recovery settings must not point to a payload which was removed.
+            base={**deepcopy(self._committed),'themeId':'base','overrides':{}}
+            base.pop('bundleRevision',None)
+            atomic_json(self.store.parent/'theme-previous-configuration.json',base)
+            self.catalog=make_catalog(self.store,self._root,selected=pin,trace=self._trace)
+            prefix=pin['id']+'@'
+            active_key=selection_key(pin)
+            self._profiles={key:value for key,value in self._profiles.items() if not key.startswith(prefix) or key == active_key}
+            settings=QSettings('SmartPC','Dashboard')
+            settings.setValue('appearance/themeOverrides',json.dumps(self._profiles,ensure_ascii=False,sort_keys=True))
+            settings.sync()
+            if not report['retained']: self._latest_compacted_key=selection_key(pin)
+            self.editorChanged.emit()
+        except (ThemeError,OSError,ValueError):
+            # Cleanup never withdraws a valid active renderer; retry on a later
+            # heartbeat/lease release, under the lifecycle manager lock.
+            return
+
 
     def _cancel_activation(self):
         if self._activation:
@@ -311,6 +354,7 @@ class ThemeService(QObject):
         if token in self._leases:
             FontRegistry.update('host:'+token,set(),trace=self._trace)
             self.lifecycle.release(token); self._leases.pop(token,None)
+            self._schedule_latest_cleanup()
 
     @trace_span("service.data")
     def _data(self, configuration, variant):
@@ -388,7 +432,7 @@ class ThemeService(QObject):
         summary=('Completo · '+str(own)+' visuali propri') if mode=='complete' else ('Parziale · '+str(own)+' propri · '+str(fallback)+' Base') if mode=='partial' else 'Visuali distribuiti con la dashboard'
         return {'id':identifier,'name':pack['name'],'version':(configuration.get('bundleRevision') or {}).get('version',pack['version']),
                 'coverageMode':mode,'ownCount':own,'fallbackCount':fallback,'coverageSummary':summary,
-                'adjustments':self._adjustments(configuration)}
+                'adjustments':self._adjustments(configuration),'retention':metadata.get('retention','all')}
 
     @trace_span("service.validateConfig")
     def _validate_config(self, configuration):

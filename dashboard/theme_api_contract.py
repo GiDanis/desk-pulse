@@ -408,7 +408,7 @@ class ThemeApiContract:
         self.require(observed_routes == expected_routes, 'routes', 'route non coperte/obsolete: ' + str(sorted(observed_routes ^ expected_routes)), 'api.coverage.routes')
         registry = read_document(self.root / 'presentations/registry.json')
         registered = {cid for row in registry['presentations'] for cid in row['contentIds']}
-        expected_hosted = {s['id'] for s in self.surfaces.values() if s['hostFamily'] in ('page', 'notification')}
+        expected_hosted = {s['id'] for s in self.surfaces.values() if s['hostFamily'] in ('page', 'notification') or s.get('rendererState') == 'publicBuiltin'}
         self.require(registered == expected_hosted, 'contentIds', 'content ID del registry non coperti/obsoleti: ' + str(sorted(registered ^ expected_hosted)), 'api.coverage.registry')
         self.require(not observed_contents - set(self.surfaces), 'contentIds', 'content ID QML non coperti: ' + str(sorted(observed_contents - set(self.surfaces))), 'api.coverage.contents')
         return {'routes': len(observed_routes), 'registeredContents': len(registered), 'dynamicDispatches': len(dynamic),

@@ -16,9 +16,8 @@ from theme_fixture_support import isolate_process,LegacyHarness
 def verify():
     private,base=isolate_process();harness=None
     try:
-        from PySide6.QtCore import QObject,QCoreApplication,QEvent
+        from PySide6.QtCore import QObject
         from theme_contexts import CONTRACT
-        from theme_test_support import as_value
         harness=LegacyHarness(base,{'theme':'base','variant':'day','motion':'off'})
         factory=harness.service.apiFactory
         contexts=[];issues=[];factory.diagnostic.connect(lambda code,message:issues.append((code,message)))
@@ -48,7 +47,7 @@ def verify():
         # Documented IDs must work even when display labels and legacy targets
         # differ, and no renderer receives a private controller/model.
         index=context('settings.index')
-        assert ids(index)==['appearance','display','modules','notifications','account','integrations','sources']
+        assert ids(index)==['appearance','display','modules','notifications','account','integrations','casa','sources']
         assert all(index.rows.get(i).enabled for i in range(index.rows.count))
         assert request(index,'settings.activate','display').status=='completed'
         assert harness.value('overlay')=='system'

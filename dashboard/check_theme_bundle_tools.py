@@ -1,5 +1,4 @@
 """AI SDK boundary proofs: standalone use, diagnostics, packaging and coverage."""
-from copy import deepcopy
 import json
 from pathlib import Path
 import subprocess
@@ -27,7 +26,7 @@ class ToolTests(unittest.TestCase):
         owned = set(report['manifest']['coverage']['surfaces'])
         fallback = set(report['manifest']['coverage']['fallbacks'])
         self.assertEqual(len(owned), 5)
-        self.assertEqual(len(fallback), 39)
+        self.assertEqual(len(fallback), 44)
         self.assertFalse(owned & fallback)
         for row in report['registry']['presentations']:
             self.assertTrue(row['id'].startswith('test.newtheme.'))
