@@ -83,7 +83,7 @@ def verify(profile,capture=None):
         assert h.value('overlay')=='networkDetail';grab('detail')
         for i in range(4):h.expression('activateKey(6)');h.expression('activateKey(8)');h.pump(50)
         h.expression('back()');h.expression('pushOverlay("networkSettings")');h.pump(180);grab('settings')
-        h.expression('activateKey(8)');h.expression('activateKey(5)');assert not h.network.moduleState['data']['polling']
+        h.expression('networkSettingsIndex=networkSettingRows.findIndex(r=>r.id==="network.polling")');h.expression('activateKey(5)');assert not h.network.moduleState['data']['polling']
         h.expression('back()');h.root.setProperty('networkFilter',2);h.pump(50);grab('devices')
         # No favourites must not hide Rete; empty filter remains navigable.
         h.network._snapshot['preferences']['favourites']=[];h.network.changed.emit();h.pump(80)

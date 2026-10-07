@@ -12,7 +12,7 @@ Item {
     CasaLabel { visualStyle:root.context.style;y:63;width:parent.width;font.pixelSize:visualStyle.font24;text:root.networkInfo.reachableText+" raggiungibili secondo box · "+root.networkInfo.knownCount+" identità note" }
     CasaLabel { visualStyle:root.context.style;y:98;width:parent.width;font.pixelSize:visualStyle.font18;color:visualStyle.textSecondary;text:root.networkInfo.wanText+" · "+root.networkInfo.localText }
     Repeater {
-        model:Math.min(4,root.rows.count)
+        model:root.context.overviewSection==="tools" ? 0 : Math.min(4,root.rows.count)
         delegate:Rectangle {
             required property int index
             readonly property var device:root.rows.get(index)
@@ -30,5 +30,22 @@ Item {
             MouseArea { anchors.fill:parent;enabled:root.context.lifecycle.interactive;onClicked:root.context.requestAction("details.open",parent.device.id,{}) }
         }
     }
-    CasaLabel { visualStyle:root.context.style;anchors.bottom:parent.bottom;width:parent.width;font.pixelSize:visualStyle.font18;color:visualStyle.textSecondary;text:root.networkInfo.favourites.count ? "Preferiti · consultazione · 5 DETTAGLIO" : "Prime identità note · scegli i preferiti in Impostazioni / Rete" }
+    Repeater {
+        model:root.context.overviewSection==="tools" ? root.context.tools.count : 0
+        delegate:Rectangle {
+            required property int index
+            readonly property var row:root.context.tools.get(index)
+            y:138+index*86;width:parent.width;height:76;radius:root.context.style.radiusCard
+            color:root.context.selection.selectedId===row.id && root.context.selection.anchorId!=="network.tabs" ? root.context.style.surfaceFocused : root.context.style.surface
+            CasaLabel { visualStyle:root.context.style;x:18;y:8;width:parent.width-36;font.pixelSize:visualStyle.font25;text:parent.row.title }
+            CasaLabel { visualStyle:root.context.style;x:18;y:44;width:parent.width-36;font.pixelSize:visualStyle.font18;color:visualStyle.textSecondary;text:parent.row.detail }
+            MouseArea { anchors.fill:parent;enabled:root.context.lifecycle.interactive;onClicked:root.context.requestAction("details.open",parent.row.targetId,{}) }
+        }
+    }
+    CasaLabel {
+        visualStyle:root.context.style;anchors.bottom:parent.bottom;width:parent.width
+        font.pixelSize:visualStyle.font18;color:visualStyle.textSecondary
+        text:root.context.overviewSection==="tools" ? "RIEPILOGO · 5 APRI L’APPROFONDIMENTO SELEZIONATO" : root.context.selection.anchorId==="network.tabs" ? "5 APPROFONDIMENTI · 4/6 VISTA" : "APPROFONDIMENTI · seleziona l’intestazione e premi 5"
+        MouseArea { anchors.fill:parent;enabled:root.context.lifecycle.interactive;onClicked:root.context.requestAction("network.metrics.section",root.context.overviewSection==="tools" ? "summary" : "tools",{}) }
+    }
 }

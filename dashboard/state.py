@@ -69,6 +69,8 @@ class DashboardState(QObject):
     sportChanged = Signal()
     racingChanged = Signal()
     networkChanged = Signal()
+    networkMetricsChanged = Signal()
+    networkMetricsRefreshFinished = Signal(bool,str)
     networkRefreshFinished = Signal(bool, str)
     casaChanged = Signal()
     casaRefreshFinished = Signal(bool, str)
@@ -93,6 +95,8 @@ class DashboardState(QObject):
             network.changed.connect(self.networkChanged)
             network.changed.connect(self.modulesChanged)
             network.refreshFinished.connect(self.networkRefreshFinished)
+            network.metricsChanged.connect(self.networkMetricsChanged)
+            network.metricsRefreshFinished.connect(self.networkMetricsRefreshFinished)
         self._casa = casa
         if casa is not None:
             casa.changed.connect(self.casaChanged)
@@ -254,6 +258,18 @@ class DashboardState(QObject):
     @Slot(bool)
     def setNetworkVisible(self,visible):
         if self._network: self._network.setVisible(visible)
+
+    @Slot(str,str,str,int,int,str)
+    def setNetworkMetricsInterest(self,route,entity,section,hours,metric,station):
+        if self._network:self._network.setMetricsInterest(route,entity,section,hours,metric,station)
+
+    @Slot(str,str,str,int,int,str,result='QVariantMap')
+    def networkMetricsView(self,route,entity,section,hours,metric,station):
+        return self._network.metricsView(route,entity,section,hours,metric,station) if self._network else {}
+
+    @Slot(result=bool)
+    def refreshNetworkMetrics(self):
+        return bool(self._network and self._network.refreshMetrics())
 
     @Slot(str,result=bool)
     def toggleNetworkFavourite(self,identity):

@@ -18,7 +18,8 @@ MAX_BODY = 4 * 1024 * 1024
 
 
 class NetworkError(Exception):
-    def __init__(self, kind, message):
+    def __init__(self, kind, message, code=""):
+        self.code = code
         super().__init__(message)
         self.kind = kind
 
@@ -66,6 +67,7 @@ class IliadboxClient:
         self.base = None
         self.permissions = {}
         self.requests = 0
+        self._renewals = 0
         self.deadline = float('inf')
         self.context = ssl.create_default_context(cafile=str(CA_FILE))
         # Legacy vendor CA lacks AKI under Python >=3.13's strict profile.
@@ -120,10 +122,11 @@ class IliadboxClient:
         if not data['success']:
             code = data.get('error_code')
             kind = 'auth' if code in ('auth_required', 'invalid_token', 'pending_token', 'insufficient_rights', 'apps_denied') else 'api'
-            raise NetworkError(kind, 'Autorizzazione iliadbox assente o revocata.' if kind == 'auth' else 'Lettura iliadbox non disponibile.')
+            raise NetworkError(kind, 'Autorizzazione iliadbox assente o revocata.' if kind == 'auth' else 'Lettura iliadbox non disponibile.', code if code in ('auth_required','invalid_token','pending_token','insufficient_rights','apps_denied') else '')
         return data.get('result')
 
-    def open(self):
+    def open(self, *, renewal=False):
+        if not renewal:self._renewals=0
         meta = self.transport('GET', '/api_version', None, None, 2.5)
         self.requests += 1
         if not isinstance(meta, dict) or meta.get('uid') != self.config['router_uid']:
@@ -147,7 +150,22 @@ class IliadboxClient:
         self.permissions = {k: v for k, v in permissions.items() if isinstance(k, str) and type(v) is bool}
 
     def get(self, path):
-        return self.request('GET', self.base + path)
+        try:
+            return self.request('GET', self.base + path)
+        except NetworkError as e:
+            if e.code == 'insufficient_rights':
+                raise NetworkError('permission', 'Permesso assente per questa fonte.', e.code) from None
+            if e.code != 'auth_required' or self._renewals>=1:
+                raise
+            self._renewals+=1
+            self.close()
+            self.open(renewal=True)
+            try:
+                return self.request('GET', self.base + path)
+            except NetworkError as second:
+                if second.code=='insufficient_rights':
+                    raise NetworkError('permission','Permesso assente per questa fonte.',second.code) from None
+                raise
 
     def close(self):
         if self.token:
