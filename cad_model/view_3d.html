@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartPC Case - Visualizzatore 3D Interattivo</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #1a1a1e; color: #f0f0f5; overflow: hidden; }
+        #canvas-container { width: 100vw; height: 100vh; display: block; }
+        #ui-overlay {
+            position: absolute; top: 18px; left: 18px; z-index: 10;
+            background: rgba(28, 28, 34, 0.88); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 14px;
+            padding: 18px 22px; max-width: 380px; box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+        }
+        h1 { font-size: 1.15rem; font-weight: 700; margin-bottom: 6px; color: #fff; display: flex; align-items: center; gap: 8px; }
+        p.subtitle { font-size: 0.82rem; color: #a0a0b0; line-height: 1.4; margin-bottom: 16px; }
+        .control-group { margin-bottom: 12px; }
+        label { display: block; font-size: 0.76rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #8a8a9a; margin-bottom: 6px; }
+        select, button {
+            width: 100%; padding: 10px 12px; font-size: 0.88rem; font-weight: 500;
+            background: #282832; color: #fff; border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px; cursor: pointer; transition: all 0.2s;
+        }
+        select:hover, button:hover { background: #323240; border-color: rgba(255,255,255,0.3); }
+        .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+        .badge { display: inline-block; padding: 2px 8px; background: #0073aa; color: #fff; border-radius: 99px; font-size: 0.72rem; font-weight: 600; }
+        #instructions {
+            position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+            background: rgba(20, 20, 25, 0.75); backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 30px;
+            padding: 8px 18px; font-size: 0.8rem; color: #bbb; pointer-events: none;
+        }
+        #loading {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 1rem; font-weight: 600; color: #fff; background: rgba(0,0,0,0.7);
+            padding: 14px 24px; border-radius: 10px; display: none; z-index: 100;
+        }
+    </style>
+    <!-- Three.js + STLLoader + OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+    <div id="ui-overlay">
+        <h1>SmartPC Case <span class="badge">99x72x25 mm</span></h1>
+        <p class="subtitle">Visualizzatore 3D interattivo per OrangePi Zero 3W + Hagibis 3.5" Dock</p>
+
+        <div class="control-group">
+            <label for="modelSelect">Seleziona Modello 3D:</label>
+            <select id="modelSelect">
+                <option value="smartpc_base_style1_deluxe.stl">✨ Stile 1 Deluxe: SE/30 Studio Edition (Super Dettagliato)</option>
+                <option value="smartpc_base_style1_classic.stl">⭐ Stile 1 Classic: Mac SE Pieno (Top 1 Selezionato)</option>
+                <option value="both_deluxe">Assieme Completo Deluxe (Base Deluxe + Coperchio)</option>
+                <option value="both_style1">Assieme Completo Classic (Base Classic + Coperchio)</option>
+                <option value="smartpc_lid.stl">Coperchio Superiore (Stacking Tray)</option>
+                <option value="smartpc_base_style2_quadra.stl">Stile 2: Mac Quadra Workstation</option>
+                <option value="smartpc_base_style3_cyber.stl">Stile 3: Cyber-Retro Terminal</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label for="colorSelect">Finitura / Colore Plastica:</label>
+            <select id="colorSelect">
+                <option value="#E2D8C6">Macintosh Beige Vintage (Iconico)</option>
+                <option value="#F2F2F2">Bianco Puro / Apple Snow White</option>
+                <option value="#3A3A40">Grigio Scuro / Space Gray</option>
+                <option value="#1F1F24">Nero Opaco / Stealth</option>
+                <option value="#4A90E2">Blu Trasparente / Bondi Blue iMac</option>
+            </select>
+        </div>
+
+        <div class="btn-row">
+            <button id="toggleWireframe">Wireframe: OFF</button>
+            <button id="resetView">Reset Vista</button>
+        </div>
+    </div>
+
+    <div id="instructions">🖱️ Tasto sinistro: Ruota | Rotellina: Zoom | Tasto destro: Sposta</div>
+    <div id="loading">Caricamento modello 3D in corso...</div>
+    <div id="canvas-container"></div>
+
+    <script>
+        const container = document.getElementById('canvas-container');
+        const loadingEl = document.getElementById('loading');
+        
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x18181c);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+        camera.position.set(130, 100, 140);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.target.set(0, 10, 0);
+
+        // Lighting setup
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+        scene.add(ambientLight);
+
+        const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.85);
+        dirLight1.position.set(120, 180, 100);
+        dirLight1.castShadow = true;
+        scene.add(dirLight1);
+
+        const dirLight2 = new THREE.DirectionalLight(0x90a0b0, 0.4);
+        dirLight2.position.set(-100, -50, -100);
+        scene.add(dirLight2);
+
+        // Ground grid
+        const grid = new THREE.GridHelper(200, 20, 0x353545, 0x22222a);
+        grid.position.y = -0.5;
+        scene.add(grid);
+
+        let currentMeshes = [];
+        let isWireframe = false;
+        let currentColor = 0xE2D8C6;
+
+        const loader = new THREE.STLLoader();
+
+        function createMaterial(colorHex) {
+            return new THREE.MeshStandardMaterial({
+                color: colorHex,
+                roughness: 0.35,
+                metalness: 0.05,
+                wireframe: isWireframe
+            });
+        }
+
+        function clearMeshes() {
+            currentMeshes.forEach(mesh => scene.remove(mesh));
+            currentMeshes = [];
+        }
+
+        function loadSTL(path, callback) {
+            loadingEl.style.display = 'block';
+            loader.load(path, geometry => {
+                geometry.center();
+                geometry.computeVertexNormals();
+                const mat = createMaterial(currentColor);
+                const mesh = new THREE.Mesh(geometry, mat);
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+                mesh.rotation.x = -Math.PI / 2; // Flat orientation
+                callback(mesh);
+                loadingEl.style.display = 'none';
+            }, undefined, err => {
+                console.error(err);
+                loadingEl.innerText = "Errore nel caricamento del file STL.";
+            });
+        }
+
+        function updateScene() {
+            clearMeshes();
+            const sel = document.getElementById('modelSelect').value;
+
+            if (sel === 'both_style1') {
+                loadSTL('smartpc_base_style1_classic.stl', baseMesh => {
+                    baseMesh.position.y = 8.75;
+                    scene.add(baseMesh);
+                    currentMeshes.push(baseMesh);
+
+                    loadSTL('smartpc_lid.stl', lidMesh => {
+                        lidMesh.position.y = 17.5 + 3.75 + 8;
+                        scene.add(lidMesh);
+                        currentMeshes.push(lidMesh);
+                    });
+                });
+            } else if (sel === 'both_deluxe') {
+                loadSTL('smartpc_base_style1_deluxe.stl', baseMesh => {
+                    baseMesh.position.y = 8.75;
+                    scene.add(baseMesh);
+                    currentMeshes.push(baseMesh);
+
+                    loadSTL('smartpc_lid.stl', lidMesh => {
+                        lidMesh.position.y = 17.5 + 3.75 + 8;
+                        scene.add(lidMesh);
+                        currentMeshes.push(lidMesh);
+                    });
+                });
+            } else {
+                loadSTL(sel, mesh => {
+                    mesh.position.y = 10;
+                    scene.add(mesh);
+                    currentMeshes.push(mesh);
+                });
+            }
+        }
+
+        document.getElementById('modelSelect').addEventListener('change', updateScene);
+        document.getElementById('colorSelect').addEventListener('change', e => {
+            currentColor = parseInt(e.target.value.replace('#', '0x'));
+            currentMeshes.forEach(m => m.material.color.setHex(currentColor));
+        });
+
+        document.getElementById('toggleWireframe').addEventListener('click', e => {
+            isWireframe = !isWireframe;
+            e.target.innerText = `Wireframe: ${isWireframe ? 'ON' : 'OFF'}`;
+            currentMeshes.forEach(m => m.material.wireframe = isWireframe);
+        });
+
+        document.getElementById('resetView').addEventListener('click', () => {
+            camera.position.set(130, 100, 140);
+            controls.target.set(0, 10, 0);
+        });
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // Initial load
+        updateScene();
+        animate();
+    </script>
+</body>
+</html>
