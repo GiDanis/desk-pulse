@@ -1,5 +1,7 @@
 # v0.7 Casa · prova delle API Tuya
 
+> Aggiornamento 6 ottobre: il modulo è implementato nella candidata v0.7.0-rc.1. [Consegna e verifiche attuali](v07-implementation-report.md), [uso e quota](v07-casa-operations.md). Il testo sotto conserva l’analisi e le evidenze antecedenti.
+
 **1 ottobre 2026.** Percorso scelto: API cloud Tuya. Implementati `tuya_core.py`, client di sola lettura senza dipendenze aggiuntive, e `tuya_probe.py`, prova manuale. Token/rinnovo, inventario di 16 dispositivi e specifiche/stati di quattro dispositivi verificati sul cloud reale. Corretto l'UID dell'account e la firma dei cursori con caratteri speciali. [Risultati e prove ancora necessarie](v07-tuya-live-analysis.md). Schermata Casa, preferiti, scheduling e riconnessione automatica dopo un'interruzione di rete restano da integrare. Nessun comando ai dispositivi.
 
 ## Collegamento iniziale

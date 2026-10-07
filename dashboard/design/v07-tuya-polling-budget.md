@@ -1,6 +1,10 @@
 # v0.7 Casa · proposta di polling entro la quota Trial
 
+> Aggiornamento 6 ottobre: il modulo è implementato nella candidata v0.7.0-rc.1. [Consegna e verifiche attuali](v07-implementation-report.md), [uso e quota](v07-casa-operations.md). Il testo sotto conserva l’analisi e le evidenze antecedenti.
+
 **1 ottobre 2026. Stato: proposta, scheduling non implementato.** La prova API resta manuale. Non usare il probe periodicamente come provider: riacquisisce il token e rilegge le specifiche a ogni avvio.
+
+**Ricontrollo 6 ottobre:** risposta cumulativa e parametri pagina ancora funzionanti; [evidenze](evidence/v07-readiness-2026-10-06/README.md). La [revisione prima dell'implementazione](v07-implementation-readiness.md) precisa contatore prima dell'invio, persistenza attraverso reboot/clock, esito asincrono del refresh e budget per pagine aggiuntive. Polling continuativo subordinato a quota assegnata, consumo e scadenza della console; 26.000 non viene assunto come saldo disponibile.
 
 ## Dato verificato per ridurre le chiamate
 

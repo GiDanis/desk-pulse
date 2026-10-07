@@ -1,10 +1,14 @@
 # SmartPC · v0.7 Casa · proposta semplificata con cloud Tuya diretto
 
+> Aggiornamento 6 ottobre: il modulo è implementato nella candidata v0.7.0-rc.1. [Consegna e verifiche attuali](v07-implementation-report.md), [uso e quota](v07-casa-operations.md). Il testo sotto conserva l’analisi e le evidenze antecedenti.
+
+**Revisione di preparazione, 6 ottobre 2026:** [pronti a iniziare provider/UI, con condizioni di attivazione e rilascio](v07-implementation-readiness.md). Ricontrollati 22 test e accesso cumulativo reale in 8 GET. Baseline attuale v0.6.6 con Theme Engine; le evidenze del 1 ottobre sotto restano storiche. Polling e schermata Casa non sono ancora integrati.
+
 **Revisione:** 1 ottobre 2026. **Decisione approvata:** procedere con API cloud Tuya dirette. **Stato:** client di lettura e probe implementati; token/rinnovo, inventario di 16 dispositivi, protocolli e letture su quattro dispositivi verificati sul cloud reale. UID e firma dei cursori corretti; 22 controlli offline superati su PC e board. Schermata Casa, collaudo fisico e provider periodico ancora da sviluppare. [Configurazione](v07-tuya-api-setup.md), [analisi reale](v07-tuya-live-analysis.md).
 
 ## Decisione di lavoro
 
-**Collocazione nel piano del 2 ottobre:** v0.7 ancora in analisi e prototipo della sorgente, dopo il Theme Engine v0.6.6 proposto. Il [MasterPlan dei rilasci](release-masterplan.md) descrive implementazione periodica, budget, UI e prove fisiche necessari al rilascio. L'esistenza del probe non equivale a Casa integrata.
+**Collocazione nel piano corrente:** v0.7 ancora in analisi e prototipo della sorgente, dopo il Theme Engine v0.6.6 ora implementato e distribuito. Il [MasterPlan dei rilasci](release-masterplan.md) descrive implementazione periodica, budget, UI e prove fisiche necessari al rilascio. L'esistenza del probe non equivale a Casa integrata.
 
 Sviluppare un piccolo provider Python che collega SmartPC direttamente al cloud Tuya. Home Assistant rimane un'alternativa. Il risultato di prodotto resta quello del MasterPlan: poche tessere leggibili, ultimi stati riconoscibili, riconnessione automatica e nessuna falsa conferma. Il primo passo implementato è la prova OpenAPI senza dipendenze aggiuntive.
 

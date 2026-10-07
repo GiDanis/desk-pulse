@@ -216,6 +216,46 @@ class CloudClient:
             cursors.add(cursor)
         raise TuyaError('invalid', 'Paginazione Tuya oltre il limite della prova.')
 
+    def smart_inventory(self, page_size: int = 50) -> list[dict]:
+        """Smart Home batch adapter. Never publish incomplete page-number scans.
+
+        Data-point payloads stay in RAM; callers must normalize using specs
+        before persistence. Unsupported structured/raw values are discarded.
+        """
+        if type(page_size) is not int or not 1 <= page_size <= 100:
+            raise TuyaError('config', 'Dimensione pagina Tuya non valida.')
+        rows, seen = [], set()
+        for page in range(1, MAX_DEVICES // page_size + 2):
+            result = self._get('/v1.0/users/' + self.config.uid + '/devices',
+                               {'page_no': page, 'page_size': page_size})
+            if not isinstance(result, list) or len(result) > page_size:
+                raise TuyaError('invalid', 'Pagina Smart Home non valida.')
+            for raw in result:
+                device = normalize_device(raw)
+                if device['id'] in seen or len(seen) >= MAX_DEVICES:
+                    raise TuyaError('invalid', 'Inventario Smart Home duplicato o oltre il limite.')
+                seen.add(device['id'])
+                states, codes = [], set()
+                supplied = raw.get('status')
+                if supplied is not None:
+                    if not isinstance(supplied, list) or len(supplied) > 128:
+                        raise TuyaError('invalid', 'Stati Smart Home non validi.')
+                    for item in supplied:
+                        if (not isinstance(item, dict) or not isinstance(item.get('code'), str)
+                                or not CODE.fullmatch(item['code']) or item['code'] in codes):
+                            raise TuyaError('invalid', 'Codici Smart Home incompleti o duplicati.')
+                        codes.add(item['code'])
+                        value = item.get('value')
+                        if not (type(value) is bool or _finite(value) or isinstance(value, str)):
+                            value = None
+                        if isinstance(value, str):
+                            value = _text(value, 512)
+                        states.append({'code': item['code'], 'value': value})
+                rows.append({**device, 'reportedStates': states})
+            if len(result) < page_size:
+                return rows
+        raise TuyaError('invalid', 'Paginazione Smart Home oltre il limite.')
+
     def device_data(self, device_id: str) -> list[dict]:
         if not isinstance(device_id, str) or not ID.fullmatch(device_id):
             raise TuyaError('config', 'Identificativo dispositivo non valido.')
@@ -309,6 +349,9 @@ def atomic_json(path: Path, value: dict):
             json.dump(value, stream, ensure_ascii=False, allow_nan=False, indent=2)
             stream.write('\n'); stream.flush(); os.fsync(stream.fileno())
         os.replace(temporary, path)
+        directory = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+        try: os.fsync(directory)
+        finally: os.close(directory)
     finally:
         if temporary is not None:
             temporary.unlink(missing_ok=True)
