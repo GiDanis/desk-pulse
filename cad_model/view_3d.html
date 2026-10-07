@@ -10,32 +10,51 @@
         #canvas-container { width: 100vw; height: 100vh; display: block; }
         #ui-overlay {
             position: absolute; top: 18px; left: 18px; z-index: 10;
-            background: rgba(28, 28, 34, 0.88); backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 14px;
-            padding: 18px 22px; max-width: 380px; box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+            background: rgba(28, 28, 34, 0.92); backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 14px;
+            padding: 18px 22px; max-width: 420px; box-shadow: 0 16px 40px rgba(0,0,0,0.6);
         }
-        h1 { font-size: 1.15rem; font-weight: 700; margin-bottom: 6px; color: #fff; display: flex; align-items: center; gap: 8px; }
-        p.subtitle { font-size: 0.82rem; color: #a0a0b0; line-height: 1.4; margin-bottom: 16px; }
+        h1 { font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; color: #fff; display: flex; align-items: center; gap: 8px; }
+        p.subtitle { font-size: 0.8rem; color: #a0a0b0; line-height: 1.35; margin-bottom: 14px; }
         .control-group { margin-bottom: 12px; }
-        label { display: block; font-size: 0.76rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #8a8a9a; margin-bottom: 6px; }
+        label { display: block; font-size: 0.74rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #8a8a9a; margin-bottom: 6px; }
         select, button {
-            width: 100%; padding: 10px 12px; font-size: 0.88rem; font-weight: 500;
-            background: #282832; color: #fff; border: 1px solid rgba(255,255,255,0.15);
+            width: 100%; padding: 10px 12px; font-size: 0.86rem; font-weight: 500;
+            background: #282832; color: #fff; border: 1px solid rgba(255,255,255,0.18);
             border-radius: 8px; cursor: pointer; transition: all 0.2s;
         }
-        select:hover, button:hover { background: #323240; border-color: rgba(255,255,255,0.3); }
+        select:hover, button:hover { background: #323242; border-color: rgba(255,255,255,0.35); }
         .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-        .badge { display: inline-block; padding: 2px 8px; background: #0073aa; color: #fff; border-radius: 99px; font-size: 0.72rem; font-weight: 600; }
+        .btn-upload {
+            background: #1f3b58; border-color: #3b82f6; margin-top: 10px;
+        }
+        .btn-upload:hover { background: #2563eb; }
+        .badge { display: inline-block; padding: 2px 8px; background: #0073aa; color: #fff; border-radius: 99px; font-size: 0.7rem; font-weight: 600; }
         #instructions {
             position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
-            background: rgba(20, 20, 25, 0.75); backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 30px;
-            padding: 8px 18px; font-size: 0.8rem; color: #bbb; pointer-events: none;
+            background: rgba(20, 20, 25, 0.85); backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.12); border-radius: 30px;
+            padding: 8px 20px; font-size: 0.8rem; color: #ccc; pointer-events: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
         #loading {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: 1rem; font-weight: 600; color: #fff; background: rgba(0,0,0,0.7);
-            padding: 14px 24px; border-radius: 10px; display: none; z-index: 100;
+            font-size: 0.95rem; font-weight: 600; color: #fff; background: rgba(0,0,0,0.85);
+            padding: 16px 28px; border-radius: 12px; display: none; z-index: 100;
+            border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center; max-width: 400px; line-height: 1.5;
+        }
+        #cors-banner {
+            display: none; background: #3b2208; border: 1px solid #d97706; color: #fef3c7;
+            padding: 10px 14px; border-radius: 8px; font-size: 0.78rem; line-height: 1.45;
+            margin-bottom: 14px;
+        }
+        #cors-banner a { color: #60a5fa; font-weight: 600; text-decoration: underline; }
+        #drop-zone {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(30, 64, 175, 0.75); border: 4px dashed #60a5fa;
+            z-index: 999; display: none; align-items: center; justify-content: center;
+            font-size: 1.8rem; font-weight: 700; color: #fff; pointer-events: none;
         }
     </style>
     <!-- Three.js + STLLoader + OrbitControls -->
@@ -44,20 +63,27 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 </head>
 <body>
+    <div id="drop-zone">📂 Trascina qui il file STL da visualizzare</div>
+
     <div id="ui-overlay">
-        <h1>SmartPC Case <span class="badge">99x72x25 mm</span></h1>
-        <p class="subtitle">Visualizzatore 3D interattivo per OrangePi Zero 3W + Hagibis 3.5" Dock</p>
+        <h1>SmartPC Case <span class="badge">104x77 mm (Inclinato 6°)</span></h1>
+        <p class="subtitle">Visualizzatore 3D interattivo per OrangePi Zero 3W + Dock Hagibis</p>
+
+        <div id="cors-banner">
+            ⚠️ <strong>Blocco sicurezza browser (CORS su file://):</strong><br>
+            Per visualizzare i modelli istantaneamente dal menu:<br>
+            👉 <a id="serverLink" href="http://localhost:8088/cad_model/view_3d.html">Apri tramite server locale: http://localhost:8088</a><br>
+            <em>Oppure usa il pulsante in basso per caricare qualsiasi STL dal computer.</em>
+        </div>
 
         <div class="control-group">
             <label for="modelSelect">Seleziona Modello 3D:</label>
             <select id="modelSelect">
-                <option value="smartpc_base_style1_deluxe.stl">✨ Stile 1 Deluxe: SE/30 Studio Edition (Super Dettagliato)</option>
-                <option value="smartpc_base_style1_classic.stl">⭐ Stile 1 Classic: Mac SE Pieno (Top 1 Selezionato)</option>
-                <option value="both_deluxe">Assieme Completo Deluxe (Base Deluxe + Coperchio)</option>
-                <option value="both_style1">Assieme Completo Classic (Base Classic + Coperchio)</option>
-                <option value="smartpc_lid.stl">Coperchio Superiore (Stacking Tray)</option>
-                <option value="smartpc_base_style2_quadra.stl">Stile 2: Mac Quadra Workstation</option>
-                <option value="smartpc_base_style3_cyber.stl">Stile 3: Cyber-Retro Terminal</option>
+                <option value="both_classic">⭐ ASSIEME COMPLETO: Base Classic + Coperchio Inclinato 6°</option>
+                <option value="both_deluxe">🎨 ASSIEME COMPLETO: Base Deluxe + Coperchio Inclinato 6°</option>
+                <option value="smartpc_lid_incline6deg.stl">📐 Coperchio Inclinato 6° con Incastro Hagibis (Intero)</option>
+                <option value="smartpc_base_style1_classic.stl">🏛️ Base Stile 1 Classic (Top 1 Clean)</option>
+                <option value="smartpc_base_style1_deluxe.stl">✨ Base Stile 1 Deluxe (SE/30 Studio)</option>
             </select>
         </div>
 
@@ -72,20 +98,30 @@
             </select>
         </div>
 
+        <input type="file" id="filePicker" accept=".stl" style="display: none;">
+        <button id="uploadBtn" class="btn-upload">📂 Seleziona file STL dal tuo PC...</button>
+
         <div class="btn-row">
             <button id="toggleWireframe">Wireframe: OFF</button>
             <button id="resetView">Reset Vista</button>
         </div>
     </div>
 
-    <div id="instructions">🖱️ Tasto sinistro: Ruota | Rotellina: Zoom | Tasto destro: Sposta</div>
-    <div id="loading">Caricamento modello 3D in corso...</div>
+    <div id="instructions">🖱️ Sinistro: Ruota | Rotellina: Zoom | Destro: Sposta | Trascina un file STL per aprirlo</div>
+    <div id="loading">Caricamento in corso...</div>
     <div id="canvas-container"></div>
 
     <script>
         const container = document.getElementById('canvas-container');
         const loadingEl = document.getElementById('loading');
-        
+        const corsBanner = document.getElementById('cors-banner');
+        const dropZone = document.getElementById('drop-zone');
+
+        // Check if opened via file:// protocol
+        if (window.location.protocol === 'file:') {
+            corsBanner.style.display = 'block';
+        }
+
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x18181c);
 
@@ -104,21 +140,26 @@
         controls.dampingFactor = 0.05;
         controls.target.set(0, 10, 0);
 
-        // Lighting setup
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+        // Studio lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
         scene.add(ambientLight);
 
-        const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.85);
-        dirLight1.position.set(120, 180, 100);
+        const dirLight1 = new THREE.DirectionalLight(0xfff5e6, 0.9);
+        dirLight1.position.set(120, 160, 100);
         dirLight1.castShadow = true;
+        dirLight1.shadow.mapSize.width = 2048;
+        dirLight1.shadow.mapSize.height = 2048;
         scene.add(dirLight1);
 
-        const dirLight2 = new THREE.DirectionalLight(0x90a0b0, 0.4);
-        dirLight2.position.set(-100, -50, -100);
+        const dirLight2 = new THREE.DirectionalLight(0xb0c4de, 0.45);
+        dirLight2.position.set(-100, 80, -100);
         scene.add(dirLight2);
 
-        // Ground grid
-        const grid = new THREE.GridHelper(200, 20, 0x353545, 0x22222a);
+        const fillLight = new THREE.DirectionalLight(0xffffff, 0.35);
+        fillLight.position.set(0, -60, 80);
+        scene.add(fillLight);
+
+        const grid = new THREE.GridHelper(220, 22, 0x353545, 0x22222a);
         grid.position.y = -0.5;
         scene.add(grid);
 
@@ -142,36 +183,60 @@
             currentMeshes = [];
         }
 
+        function createMeshFromGeometry(geometry, color) {
+            geometry.center();
+            geometry.computeVertexNormals();
+            const mat = createMaterial(color || currentColor);
+            const mesh = new THREE.Mesh(geometry, mat);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            mesh.rotation.x = -Math.PI / 2;
+            return mesh;
+        }
+
         function loadSTL(path, callback) {
             loadingEl.style.display = 'block';
+            loadingEl.innerText = "Caricamento STL: " + path + "...";
             loader.load(path, geometry => {
-                geometry.center();
-                geometry.computeVertexNormals();
-                const mat = createMaterial(currentColor);
-                const mesh = new THREE.Mesh(geometry, mat);
-                mesh.castShadow = true;
-                mesh.receiveShadow = true;
-                mesh.rotation.x = -Math.PI / 2; // Flat orientation
+                const mesh = createMeshFromGeometry(geometry);
                 callback(mesh);
                 loadingEl.style.display = 'none';
             }, undefined, err => {
                 console.error(err);
-                loadingEl.innerText = "Errore nel caricamento del file STL.";
+                loadingEl.style.display = 'block';
+                loadingEl.innerHTML = `⚠️ <strong>Impossibile caricare il file via protocollo file://</strong><br><br>
+                I browser bloccano il caricamento dei file esterni da disco per sicurezza.<br><br>
+                👉 <a href="http://localhost:8088/cad_model/view_3d.html" style="color:#60a5fa; text-decoration:underline; font-weight:bold;">Clicca qui per aprire via server locale (http://localhost:8088)</a><br><br>
+                oppure usa il pulsante <em>'Seleziona file STL dal tuo PC'</em> sulla sinistra.`;
             });
+        }
+
+        function parseAndDisplayBuffer(buffer, name) {
+            try {
+                clearMeshes();
+                const geometry = loader.parse(buffer);
+                const mesh = createMeshFromGeometry(geometry);
+                mesh.position.y = 10;
+                scene.add(mesh);
+                currentMeshes.push(mesh);
+                loadingEl.style.display = 'none';
+            } catch (e) {
+                alert("Errore nell'interpretare il file STL: " + e.message);
+            }
         }
 
         function updateScene() {
             clearMeshes();
             const sel = document.getElementById('modelSelect').value;
 
-            if (sel === 'both_style1') {
+            if (sel === 'both_classic') {
                 loadSTL('smartpc_base_style1_classic.stl', baseMesh => {
                     baseMesh.position.y = 8.75;
                     scene.add(baseMesh);
                     currentMeshes.push(baseMesh);
 
-                    loadSTL('smartpc_lid.stl', lidMesh => {
-                        lidMesh.position.y = 17.5 + 3.75 + 8;
+                    loadSTL('smartpc_lid_incline6deg.stl', lidMesh => {
+                        lidMesh.position.y = 24.3;
                         scene.add(lidMesh);
                         currentMeshes.push(lidMesh);
                     });
@@ -182,8 +247,8 @@
                     scene.add(baseMesh);
                     currentMeshes.push(baseMesh);
 
-                    loadSTL('smartpc_lid.stl', lidMesh => {
-                        lidMesh.position.y = 17.5 + 3.75 + 8;
+                    loadSTL('smartpc_lid_incline6deg.stl', lidMesh => {
+                        lidMesh.position.y = 24.3;
                         scene.add(lidMesh);
                         currentMeshes.push(lidMesh);
                     });
@@ -196,6 +261,38 @@
                 });
             }
         }
+
+        // File picker handler
+        const filePicker = document.getElementById('filePicker');
+        document.getElementById('uploadBtn').addEventListener('click', () => filePicker.click());
+        filePicker.addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => parseAndDisplayBuffer(ev.target.result, file.name);
+            reader.readAsArrayBuffer(file);
+        });
+
+        // Drag & Drop handlers
+        window.addEventListener('dragover', e => {
+            e.preventDefault();
+            dropZone.style.display = 'flex';
+        });
+        window.addEventListener('dragleave', e => {
+            if (e.clientX <= 0 || e.clientY <= 0) {
+                dropZone.style.display = 'none';
+            }
+        });
+        window.addEventListener('drop', e => {
+            e.preventDefault();
+            dropZone.style.display = 'none';
+            if (e.dataTransfer.files.length > 0) {
+                const file = e.dataTransfer.files[0];
+                const reader = new FileReader();
+                reader.onload = ev => parseAndDisplayBuffer(ev.target.result, file.name);
+                reader.readAsArrayBuffer(file);
+            }
+        });
 
         document.getElementById('modelSelect').addEventListener('change', updateScene);
         document.getElementById('colorSelect').addEventListener('change', e => {
@@ -226,7 +323,6 @@
             renderer.render(scene, camera);
         }
 
-        // Initial load
         updateScene();
         animate();
     </script>
