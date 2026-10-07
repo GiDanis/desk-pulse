@@ -3,6 +3,8 @@
 **Revisione 2.18 · 7 ottobre 2026 · Europe/Rome**
 **Baseline funzionale: v0.6.6 Theme Engine. Ultima consegna installata documentata: core 0.7.0-rc.3, Theme API 2.2, Apple Calm 1.2.0. Prossima implementazione pianificata: v0.8 Rete locale.**
 
+**Allineamento in corso nel checkout:** durante questa revisione `version.py` è passato a **0.7.0** e i README hanno adottato l'etichetta stabile. I report fisici/distributivi consultati restano quelli rc.1/rc.2/rc.3: l'etichetta locale non prova da sola una nuova installazione o la chiusura di quota/collaudi Casa. Prima di N0 acquisire manifest e resoconto della eventuale consegna 0.7.0, oppure dichiarare esplicitamente i gate accettati/rimandati. Nessun file runtime viene modificato da questo aggiornamento.
+
 Questo documento aggiorna il piano della chat **Dashboard Orange Pi MasterPlan** dopo la lettura delle chat di versione, comprese **Dashboard Orange Pi v0.6.6**, **Dashboard Orange Pi v0.7**, **Dashboard Orange Pi 0.7.0-rc.2**, **Dashboard Orange Pi Theme** e **Dashboard Orange Pi v0.8**, dei sorgenti e dei resoconti locali. È il riferimento per sequenza, perimetro e criteri di uscita delle prossime versioni. I resoconti dei rilasci conservano le evidenze delle singole prove.
 
 La v0.6.6 è implementata e distribuita sulla board; [resoconto di migrazione e prove](v066-migration-report.md). Casa è stata consegnata come rc.1 e revisionata in rc.2: [implementazione](v07-implementation-report.md), [manutenzione](v07-maintenance-report.md). La successiva [consegna Apple Calm del 6 ottobre](../../theme-projects/apple-calm/CONSEGNA.md) documenta core **0.7.0-rc.3** e contratto **2.2** installati, con vero reboot verificato. Versione core, versione del contratto e versione del tema hanno identità distinte. Casa conserva i propri gate: rc.3 non equivale alla v0.7 finale.
@@ -39,7 +41,7 @@ Il cambio completo del tema può mostrare una schermata di caricamento: è un'az
 | v0.5 · Eventi | Rilasciata | Priorità, scadenza, deduplicazione, SQLite, banner piccoli/grandi, urgenti, cache bollettino e badge non letti. |
 | v0.6 → v0.6.1 · Sport | Rilasciata, con collaudi live aperti | Serie A, squadra preferita, calendario/coppe/rosa, dettaglio partita, Fantacalcio pubblicato e adapter live; F1/MotoGP con programma, classifiche, sessioni e dettagli. |
 | Impostazioni / Informazioni | Revisione installata | Aspetto, Luminosità, Moduli, Notifiche, Account, Sport, Dati e aggiornamenti; Info autonoma con dispositivo, risorse, rete e dati. |
-| v0.7 · Casa | Candidata; ultimo core consegnato 0.7.0-rc.3 | Provider, preferiti, inventario e dettagli integrati; letture board reali, polling implementato ma disattivato senza quota effettiva. Collaudo fisico aperto. |
+| v0.7 · Casa | Checkout 0.7.0; ultima installazione provata nel report rc.3 | Provider, preferiti, inventario e dettagli integrati; letture board reali. I report di candidata mantengono polling senza policy effettiva disattivato e gate fisici aperti; stato finale 0.7.0 da riconciliare. |
 | v0.6.6 · Theme Engine | Implementato e distribuito | Base/Functional, facade tipizzata, registry visuali, motion/scene, editor e pacchetti personali; sei visuali Avvisi sostituibili con ruoli locali. |
 | Apple Calm 1.2.0 / Theme API 2.2 | Installazione e reboot documentati il 6 ottobre | Tema profondo, Oggi → Orologio, pallini, icone distinte, correzione nomi classifica e ottimizzazione dei contesti/rendering. |
 | v0.8 · Rete locale | Analisi pronta, nessun runtime Rete | Token e letture iliadbox verificati dal PC; copertura e accesso dalla Orange Pi da provare. |
@@ -67,7 +69,7 @@ Fonti: [README dashboard](../README.md), [rilascio Serie A](v06-sport-release.md
 | Versione | Risultato per l'utente | Dipendenza principale | Stato |
 | --- | --- | --- | --- |
 | **v0.6.6 · Theme Engine** | Due temi completi, visualizzazioni e animazioni personalizzabili, cambio a caldo e scene estensibili. | Baseline v0.6.5 fissata e inventario delle schermate. | Implementata e distribuita; evidenze nel resoconto v0.6.6. |
-| **v0.7 · Casa / Smart Life** | Stati dei dispositivi scelti, provenienza e disponibilità chiare. | Theme Engine; prova fisica e sostenibilità Tuya. | Candidata installata; gate quota e prove fisiche aperti. |
+| **v0.7 · Casa / Smart Life** | Stati dei dispositivi scelti, provenienza e disponibilità chiare. | Theme Engine; prova fisica e sostenibilità Tuya. | Implementata; checkout 0.7.0, report installati rc.1–rc.3. Riconciliare la promozione e i gate. |
 | **Apple Calm 1.2.0 / core rc.3** | Tema completo, Orologio, pallini e navigazione ottimizzata. | Theme API 2.2, renderer e recovery. | Installata e verificata; versione tema distinta dal core. |
 | **v0.8 · Rete locale** | Inventario, preferiti, dettaglio e collegamenti Wi-Fi/porta qualificati. | N0 sulla board; adapter iliadbox e compatibilità Theme. | Analisi pronta; prossima implementazione N0–N5. |
 | **v0.8.1 · Rete estesa** | iliadbox/Internet, Wi-Fi, Porte, storico e grafici. | v0.8 verificata; unità, direzioni, freschezza e reset dei contatori. | Analisi pronta; si implementa dopo la base. |
@@ -329,6 +331,7 @@ Nessuna nuova funzione entra come pagina vuota. Un modulo configurato continua a
 | --- | --- | --- |
 | Casa: quota/consumo/scadenza | Valori effettivi e polling controllato. | Uso continuativo e accettazione v0.7 finale; non l'analisi o N0 Rete. |
 | Casa: dispositivi/rete | Cambi reali, latenza, hub/rete assenti, cold start offline e gestione account. | Accettazione finale Casa; non cancellare la candidata manuale già consegnata. |
+| Identità della release | Checkout/README 0.7.0 rispetto ai report installati rc.3; manifest e accettazione finale da riconciliare. | Baseline N0 riproducibile; nessuna promozione dedotta dalla sola modifica di una stringa. |
 | Rete: accesso/copertura | N0 dalla Orange Pi, discrepanza 54/39, stati di presenza e permessi/trust. | Scelta delle sorgenti e promessa dei campi v0.8. |
 | Rete: temi | Fallback additivo, bundle precedenti, quattro superfici e kit AI. | Consegna v0.8, insieme al provider/UI. |
 | Metriche v0.8.1 | Direzioni, segnale, MLO, storico e reset sulla board. | Etichette/grafici della release estesa. |

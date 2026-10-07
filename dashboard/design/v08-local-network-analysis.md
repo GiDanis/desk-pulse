@@ -1,6 +1,6 @@
 # v0.8 · Rete locale — studio di implementazione e adattamento alla dashboard
 
-**7 ottobre 2026 · Europe/Rome · revisione 1.3 · analisi, nessuna implementazione.**
+**7 ottobre 2026 · Europe/Rome · revisione 1.4 · analisi, nessuna implementazione.**
 
 Riferimento: [MasterPlan](release-masterplan.md), fasi N0–N5. La prima revisione ha usato sorgenti, resoconti Casa e documentazione pubblica senza interrogare la LAN. Su indicazione successiva dell'utente, la revisione 1.3 include [documentazione, token e verifiche API iliadbox](v08-iliadbox-api-study.md) e la [mappa completa capacità/viste/permessi](v08-router-capabilities-and-views.md): catalogo di 44 moduli, token autorizzato, inventario, Wi-Fi, porte, WAN/fibra, sensori, storico e sottoscrizione eventi dal PC di sviluppo. Nessuna discovery dei client, prova dalla Orange Pi, installazione o modifica al runtime. Esempi, intervalli e limiti seguenti sono proposte da validare.
 
@@ -16,8 +16,8 @@ Non installiamo agent sui computer. CPU/RAM/GPU dei client, processi, velocità 
 
 | Elemento letto | Riscontro attuale | Conseguenza per Rete |
 | --- | --- | --- |
-| MasterPlan revisione 2.17 e [manutenzione Casa](v07-maintenance-report.md) | Baseline stabile v0.6.6; candidata installata documentata v0.7.0-rc.2. | Conservare gate Casa e Theme già aperti; questo studio non certifica la board attuale. |
-| `version.py` nel checkout | `0.7.0-rc.3`. | In N0 fissare manifest, versione installata e modifiche da includere. Non dedurre l'installazione dalla versione locale. |
+| [MasterPlan revisione 2.18](release-masterplan.md), [manutenzione Casa](v07-maintenance-report.md) e [consegna Apple Calm](../../theme-projects/apple-calm/CONSEGNA.md) | Theme Engine consegnato; ultimo report di installazione core 0.7.0-rc.3 / Theme API 2.2 / Apple Calm 1.2.0, con reboot verificato il 6 ottobre. | rc.2 è una consegna storica. Conservare gate Casa/Theme fisici e riconciliare la promozione 0.7.0; questo studio non è un nuovo controllo dal vivo. |
+| `version.py` nel checkout | `0.7.0`, modificato durante l'aggiornamento del MasterPlan; i report di distribuzione consultati arrivano a rc.3. | In N0 riconciliare manifest/versione installata e modifiche da includere. La stringa locale o il README da soli non provano installazione/chiusura dei gate. |
 | `theme-api/contexts.json` | Modulo pubblico major 2, minor 2; renderer Casa importano ancora 2.1. | Progettare l'estensione sul contratto corrente 2.2; assegnare una nuova minor soltanto al momento della modifica effettiva. |
 | `app.py`, `casa.py`, `casa_core.py` | Servizi Python, acquisizione asincrona, scheduler, cache e chiusura esplicita. | Riutilizzare il modello architetturale; Rete ha fonti e identità differenti e non deve dipendere dal provider Tuya. |
 | `module_state.py` | Envelope `active/updating/stale/offline/error/unavailable`, origine, data e errore. | Conservare l'envelope e aggiungere qualità/copertura per fonte e riscontri per dispositivo. |
