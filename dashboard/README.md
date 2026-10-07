@@ -2,7 +2,7 @@
 
 Dashboard Qt Quick per Orange Pi Zero 3W e display Hagibis 960×640 a 60 Hz. La v0.6.6 applica la [specifica UX](design/ux-navigation-v2.md): un dato dominante per vista, Home dinamica, due assi di navigazione, tasti coerenti e avvisi condivisi. La board usa Orange Pi Debian 13, Qt 6, EGLFS/KMS e GPU PowerVR.
 
-**Versione installata: v0.8.0 Rete locale / LAN Hub · 7 ottobre 2026.** Inventario router iliadbox/Freebox da board, quattro preferiti, filtri, dettaglio IPv4/IPv6, collegamenti Wi-Fi/porta qualificati e Theme API 2.3 (53 superfici). [Uso e credenziali](design/v08-network-operations.md), [prove e limiti](design/v08-implementation-report.md). Baseline Casa v0.7.0 e Theme Engine v0.6.6 / 2.2 conservati.
+**Versione installata: v0.8.1 · 8 ottobre 2026.** Rete locale con approfondimenti iliadbox/Internet, radio/stazioni Wi-Fi, porte Ethernet e storico RRD 1 h/24 h; Theme API 2.4 (56 superfici). Base/Functional e fallback Apple Calm verificati in EGLFS, con preferenze conservate e reboot. [Uso](design/v081-network-operations.md), [E0–E4, prove e residui](design/v081-implementation-report.md).
 
 ## Esperienza
 
@@ -24,7 +24,7 @@ La mini tastiera USB `413d:553a` è letta da `keypad.py`, che traduce le scorcia
 
 ## Stato dei moduli
 
-La **v0.8.0 Rete locale** aggiunge inventario iliadbox, quattro preferiti, filtri, dettaglio IPv4/IPv6 e collegamenti Wi-Fi/porta qualificati. Acquisizione asincrona, cache privata e polling ogni cinque minuti; nessun comando ai dispositivi. [Uso e credenziali](design/v08-network-operations.md), [prove della consegna](design/v08-implementation-report.md). La v0.8.1 e le notifiche Rete restano successive.
+La **v0.8.0 Rete locale** aggiunge inventario iliadbox, quattro preferiti, filtri, dettaglio IPv4/IPv6 e collegamenti Wi-Fi/porta qualificati. Acquisizione asincrona, cache privata e polling ogni cinque minuti; nessun comando ai dispositivi. [Uso e credenziali](design/v08-network-operations.md), [prove della consegna](design/v08-implementation-report.md). La v0.8.1 aggiunge router, Wi-Fi, porte e storico nella stessa famiglia; le notifiche Rete restano separate.
 
 La **v0.7.0 Casa è implementata e integrata**, con provider Tuya nello stesso processo Qt e acquisizione asincrona. Quattro preferiti modificabili, inventario completo, dettaglio con qualità/ora, cache privata e indicazioni esplicite di offline e dati precedenti. [Uso e quota](design/v07-casa-operations.md), [prove e limiti](design/v07-implementation-report.md). Il polling continuativo è supportato con ledger persistente e controllo della quota; il collegamento permette consultazione in tempo reale e aggiornamenti manuali. Nessun comando ai dispositivi.
 

@@ -55,9 +55,9 @@ Un carosello a 8 spazi di lavoro fluidi, navigabili in orizzontale e verticale:
 
 DeskPulse è una vera appliance completa di hardware e chassis! Il repository include i modelli CAD (`SmartPC_3D_Print_Package/` e [`cad_model/`](cad_model/)) realizzati in OpenSCAD:
 
-| **Stile Classic (Retro Macintosh)** | **Stile Quadra (Minimalista)** | **Stile Cyber (Tattico a Feritoie)** |
+| **Stile Classic Retro** | **Stile Deluxe (Feritoie di Raffreddamento)** | **Vista Esplosa & Coperchio Inclinato 6°** |
 |:---:|:---:|:---:|
-| ![Classic](cad_model/style1_mac_classic.png) | ![Quadra](cad_model/style2_quadra.png) | ![Cyber](cad_model/style3_cyber_retro.png) |
+| ![Classic Dock](cad_model/preview_classic_dock.png) | ![Deluxe Dock](cad_model/preview_deluxe_dock.png) | ![Vista Esplosa](cad_model/preview_exploded.png) |
 
 - **Incastro Perfetto**: Creato per Orange Pi Zero 3W e schermo Hagibis 3.5" USB-C con guide interne per i cavi.
 - **Raffreddamento a Camino**: Compatibile con dissipatori in alluminio fino a 40×40mm.
@@ -153,7 +153,7 @@ DeskPulse OS segue una struttura rigorosa di rami Git e tag semantici:
 | `release/v0.8` | **Ramo di manutenzione stabile corrente (serie v0.8.x)**; accoglie fix critici. |
 | `release/v0.7` | Ramo di manutenzione per la precedente serie v0.7.x. |
 | `release/v0.6` | Ramo di manutenzione per la serie v0.6.x legacy. |
-| `v0.8.0`, `v0.7.0`, ... | Tag annotati immutabili coincidenti con le release ufficiali su GitHub. |
+| `v0.8.1`, `v0.8.0`, `v0.7.0`, ... | Tag annotati immutabili coincidenti con le release ufficiali su GitHub. |
 
 ---
 
@@ -166,7 +166,7 @@ DeskPulse OS segue una struttura rigorosa di rami Git e tag semantici:
 - [x] **v0.6.6:** **Theme Engine** — Base/Functional, layout e animazioni sostituibili, editor, pacchetti personali e scene persistenti.
 - [x] **v0.7.0:** **Casa / Smart Life & Theme Engine 2.2** — Integrazione Tuya diretta, 4 tessere preferite, inventario, telemetria di dettaglio, ledger delle quote, resilienza offline e riduzione del 90.7% della latenza.
 - [x] **v0.8.0:** **Rete locale (LAN Hub) & Case 3D Stampabile** — Integrazione router Freebox/Iliadbox, discovery di 39+ host, 4 tessere preferite, telemetria IPv4/IPv6, Theme API 2.3 (53 superfici) e modelli CAD STL/OpenSCAD del case.
-- [ ] **v0.8.1 (facoltativa):** Metadati router verificati e profili Hardware/Cyberdeck aggiuntivi.
+- [x] **v0.8.1:** **Metriche Router, Storico RRD & Case 3D Perfezionato** — Viste Iliadbox/Internet, Wi-Fi e porte Ethernet con metriche qualificate e grafici storici RRD 1h/24h; Theme API 2.4 (56 superfici); coperchio con inclinazione ergonomica a 6° e feritoie convettive. [Report di consegna](dashboard/design/v081-implementation-report.md).
 - [ ] **v0.9:** Compagno animato e profilo Cozy.
 - [ ] **v0.10:** Memoria del compagno e scene AI validate.
 - [ ] **v1.0:** Stabilità integrata, installazione, aggiornamento e recupero.

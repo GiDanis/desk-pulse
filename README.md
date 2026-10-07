@@ -43,9 +43,31 @@ Instead of treating the board as a desktop computer running a slow browser kiosk
 
 ---
 
-## 🌐 What's New in v0.8.0: Local Network Monitor & 3D Printable Enclosure
+**v0.8.1 is released and verified on hardware:** read-only Internet/router, Wi-Fi and Ethernet views, qualified metrics, 1h/24h RRD history, Theme API 2.4 (56 surfaces), ergonomic 6° inclined 3D printed enclosure, and preserved Apple Calm/preferences across cold reboot. [Delivery and evidence](dashboard/design/v081-implementation-report.md) · [Usage](dashboard/design/v081-network-operations.md).
 
-DeskPulse OS **v0.8.0** introduces a native **Local Network & Router Command Deck (LAN Hub)**, complete **Theme Engine 2.3** integration (53 surfaces), and a turnkey **3D Printable Retro-Futuristic Desk Enclosure**:
+## 🚀 What's New in v0.8.1: Router Metrics, RRD History & Refined 3D Enclosure
+
+DeskPulse OS **v0.8.1** expands network capabilities and physical enclosure ergonomics:
+
+- 📊 **Network Metrics & RRD History Hub:**
+  - **3 Dedicated Views**: Iliadbox/Internet WAN status, Wi-Fi radio/stations breakdown, and Ethernet switch port metrics.
+  - **1h & 24h RRD History**: Real-time canvas history charts for bandwidth throughput, optical SFP power, router temperature, and fan RPM without external dependencies.
+  - **Granular Wi-Fi Station Metrics**: Signal levels, Rx/Tx traffic counters, negotiated bitrates, and active band frequencies.
+  - **Isolated SQLite Metrics Cache**: Dedicated transactional storage keeping metrics independent from device inventory.
+- 🎨 **Theme Engine 2.4 (56 Surfaces & 21 Contexts):**
+  - Expanded surface contract to 56 surfaces (`network.router`, `network.wifi`, `network.ports`).
+  - Native Base & Functional presentations, with automatic styled fallback for Apple Calm 1.2.0.
+  - Bundled Theme AI Kit 2.4 (`smartpc-theme-ai-kit-v081.zip`).
+- 🖨️ **Refined 3D Printable Enclosure (Ergonomic 6° Lid):**
+  - Upgraded rear snap-fit lid with a 6-degree ergonomic incline for optimal desktop glanceability.
+  - Deluxe chassis variant featuring convective air louvers and internal thermal chimney.
+  - Interactive 3D Web Viewer (`cad_model/view_3d.html`) with drag-and-drop STL loading and studio lighting.
+
+---
+
+## 🌐 Recap of v0.8.0: Local Network Monitor & 3D Printable Enclosure
+
+DeskPulse OS **v0.8.0** introduced the core **Local Network & Router Command Deck (LAN Hub)** and initial 3D enclosure models:
 
 - 🌐 **Native Local Network & Router Command Deck (LAN Hub):**
   - **Zero PC Agents Required**: Direct in-process asynchronous client for Freebox / Iliadbox router OS without installing agents or software on computers across the network.
@@ -90,9 +112,9 @@ DeskPulse OS features a seamless 8-workspace horizontal carousel, with deep 2-ax
 
 DeskPulse is not just software—it's a complete hardware appliance! The repository includes turnkey 3D print models (`SmartPC_3D_Print_Package/` and [`cad_model/`](cad_model/)) designed in OpenSCAD:
 
-| **Classic Style (Macintosh Retro)** | **Quadra Style (Modern Minimalist)** | **Cyber Style (Tactical Slats)** |
+| **Classic Retro Dock** | **Deluxe Dock (Cooling Louvers)** | **Exploded Assembly & Ergonomic 6° Lid** |
 |:---:|:---:|:---:|
-| ![Classic](cad_model/style1_mac_classic.png) | ![Quadra](cad_model/style2_quadra.png) | ![Cyber](cad_model/style3_cyber_retro.png) |
+| ![Classic Dock](cad_model/preview_classic_dock.png) | ![Deluxe Dock](cad_model/preview_deluxe_dock.png) | ![Exploded View](cad_model/preview_exploded.png) |
 
 - **Precision Fit**: Custom-modeled for Orange Pi Zero 3W + Hagibis 3.5" USB-C display with exact board mounting posts and internal cable routing channels.
 - **Cooling Optimized**: Designed to accommodate 38×38mm / 40×40mm aluminum heatsinks with thermal chimney airflow vents.
@@ -290,7 +312,7 @@ DeskPulse OS includes the verified kernel fix in [`os/kernel-patches/`](os/kerne
 - [x] **v0.6.6:** **Theme & Motion Engine** — Base/Functional packs, replaceable layouts and motion, editor, personal packs, and persistent scene host.
 - [x] **v0.7.0:** **Smart Home (Casa / Smart Life) & Theme Engine 2.2** — Direct Tuya cloud integration, 4 hero tiles, full device inventory, detail view, quota ledger, offline resilience, and 90.7% faster view transitions.
 - [x] **v0.8.0:** **Local Network (LAN Hub) & 3D Print Enclosure** — Freebox/Iliadbox router discovery, 39+ host inventory, 4 favorite tiles, IPv4/IPv6 telemetry, Theme API 2.3 (53 surfaces), and turnkey 3D printable desk enclosure CAD package.
-- [ ] **v0.8.1 (optional):** Verified router metadata and additional Hardware/Cyberdeck profiles.
+- [x] **v0.8.1:** **Network Metrics, RRD History & Refined 3D Enclosure** — Iliadbox/Internet, Wi-Fi and Ethernet views with qualified metrics and 1h/24h RRD history graphs; Theme API 2.4 (56 surfaces); 6° inclined ergonomic lid and convective cooling louvers. [Delivery report](dashboard/design/v081-implementation-report.md).
 - [ ] **v0.9:** Animated companion and Cozy profile.
 - [ ] **v0.10:** Companion memory and validated AI scene planning.
 - [ ] **v1.0:** Integrated reliability, installation, upgrades and recovery.
