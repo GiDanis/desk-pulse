@@ -1,0 +1,27 @@
+Sport: Rete Sport disabilitata per verifica offline; cache=True
+Rete locale [transport]: Synthetic unavailable
+Rete locale [storage]: Synthetic disk failure
+Rete locale [auth]: Synthetic revoked
+
+{"status": "passed", "profile": {"theme": "base", "variant": "day", "motion": "off"}, "qt": "6.8.2", "checks": ["providerUpdatesDoNotReloadTheme", "singleFlight", "preferencesAndAliasesSurviveRestart", "cacheNeverCurrentAtColdStart", "failureRetainsPrevious", "unwritableCacheNoConfirmation", "boundedBackoffAndAuthHalt", "manualRecovery", "pausedPollingStillAges", "durablePreferencesOffGuiThread", "fourTypedSurfaces", "keypadFocusAndTabs", "filtersNoEmptyModule", "detailSections", "favouriteControls", "manyHostsLongNames"], "warnings": []}
+
+{"status": "passed", "profile": {"theme": "functional", "variant": "night", "motion": "off"}, "qt": "6.8.2", "checks": ["providerUpdatesDoNotReloadTheme", "singleFlight", "preferencesAndAliasesSurviveRestart", "cacheNeverCurrentAtColdStart", "failureRetainsPrevious", "unwritableCacheNoConfirmation", "boundedBackoffAndAuthHalt", "manualRecovery", "pausedPollingStillAges", "durablePreferencesOffGuiThread", "fourTypedSurfaces", "keypadFocusAndTabs", "filtersNoEmptyModule", "detailSections", "favouriteControls", "manyHostsLongNames"], "warnings": []}
+
+Sport: Rete Sport disabilitata per verifica offline; cache=True
+Rete locale [transport]: Synthetic unavailable
+Rete locale [storage]: Synthetic disk failure
+Rete locale [auth]: Synthetic revoked
+
+Traceback (most recent call last):
+  File "/var/lib/smartpc-dashboard/v08-staging/v08-apple-network.py", line 12, in <module>
+    h=LegacyHarness(base,{'theme':'studio.applecalm','variant':'day','motion':'off'})
+  File "/var/lib/smartpc-dashboard/v08-staging/smartpc-v08-diagnostic/theme_fixture_support.py", line 150, in __init__
+    self.wait_ready();self.pump(180)
+    ~~~~~~~~~~~~~~~^^
+  File "/var/lib/smartpc-dashboard/v08-staging/smartpc-v08-diagnostic/theme_fixture_support.py", line 188, in wait_ready
+    wait_ready(self.app,self.root,timeout=5)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/lib/smartpc-dashboard/v08-staging/smartpc-v08-diagnostic/theme_test_support.py", line 15, in wait_ready
+    assert not errors,errors
+           ^^^^^^^^^^
+AssertionError: ['Presentazione non registrata: undefined']
