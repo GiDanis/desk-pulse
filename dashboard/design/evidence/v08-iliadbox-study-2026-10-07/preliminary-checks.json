@@ -1,0 +1,57 @@
+{
+  "reportVersion": 1,
+  "date": "2026-10-07",
+  "timezone": "Europe/Rome",
+  "scope": "Developer documentation and bounded read-only API checks from development PC; not Orange Pi runtime proof",
+  "router": "192.168.1.254",
+  "documentation": {
+    "url": "http://192.168.1.254/doc/index.html",
+    "availableAsGuest": true,
+    "apiVersionDeclared": "15.0",
+    "loginFormRequiresUsername": false,
+    "webLoginVerified": true
+  },
+  "checks": [
+    {
+      "method": "GET",
+      "path": "/api_version",
+      "httpStatus": 200,
+      "apiVersion": "15.0",
+      "apiBaseUrl": "/api/",
+      "boxModel": "ibxgw8-r1",
+      "boxModelName": "iliadbox (r1)",
+      "deviceName": "iliadbox Server",
+      "httpsAvailable": true,
+      "httpsPort": 12320
+    },
+    {
+      "method": "GET",
+      "path": "/api/v15/login/",
+      "authenticated": false,
+      "httpStatus": 200,
+      "success": true,
+      "loggedIn": false,
+      "challengePresent": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v15/lan/browser/interfaces/",
+      "authenticated": false,
+      "httpStatus": 403,
+      "success": false,
+      "errorCode": "auth_required"
+    }
+  ],
+  "notVerified": [
+    "Authenticated LAN inventory",
+    "LAN prefix, client count and discovery coverage",
+    "Access from Orange Pi",
+    "TLS trust and hostname verification",
+    "Presence transitions, Wi-Fi metrics and WebSocket events"
+  ],
+  "applicationAuthorizationCreated": false,
+  "clientDiscoveryPerformed": false,
+  "routerConfigurationChanged": false,
+  "dashboardRuntimeChanged": false,
+  "secretsStoredInReport": false
+}

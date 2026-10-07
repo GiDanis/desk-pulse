@@ -1,0 +1,244 @@
+diff --git a/dashboard/Main.qml b/dashboard/Main.qml
+index 763ce57..c009c76 100644
+--- a/dashboard/Main.qml
++++ b/dashboard/Main.qml
+@@ -160,6 +160,18 @@ Window {
+             {id:"key.8",key:8,actionId:"selection.move",targetId:"",label:"GIÙ / VISTA",enabled:true},
+             {id:"key.9",key:9,actionId:"navigation.menu",targetId:"",label:"MENU",enabled:true}]
+     }
++    function publicSurfaceCommands(surfaceId) {
++        const page = surfaceId.indexOf("home.") === 0 || surfaceId.indexOf("weather.") === 0 || surfaceId === "sport.overview" || surfaceId === "sport.team" || surfaceId === "racing.overview" || surfaceId === "shell.main"
++        const settings = surfaceId.indexOf("settings.") === 0
++        const rows = surfaceId === "account.usage" ? [[2,"SCORRI"],[8,"SCORRI"],[1,"HOME"],[3,"AVVISI"],[9,"MENU"]] :
++            page ? [[2,"VISTA"],[8,"VISTA"],[4,"ARGOMENTO"],[6,"ARGOMENTO"],[5,"DETTAGLI"],[1,"HOME"],[3,"AVVISI"],[9,"MENU"]] :
++            surfaceId === "overlay.commands" ? [[5,"CHIUDI GUIDA"],[7,"INDIETRO"],[1,"HOME"]] :
++            surfaceId === "overlay.summary" ? [[7,"INDIETRO"],[1,"HOME"]] :
++            surfaceId === "overlay.menu" || surfaceId === "sport.team.picker" ? [[2,"SELEZIONA"],[8,"SELEZIONA"],[5,"APRI"],[7,"INDIETRO"],[1,"HOME"]] :
++            settings ? [[2,"SELEZIONA"],[8,"SELEZIONA"],[4,"REGOLA"],[6,"REGOLA"],[5,"CAMBIA"],[7,"INDIETRO"],[1,"HOME"]] :
++            [[2,"SCORRI"],[8,"SCORRI"],[4,"SCHEDE"],[6,"SCHEDE"],[5,surfaceId === "sport.match.detail" ? sportDetailPage === 3 ? "SQUADRA" : "AGGIORNA" : "APRI"],[7,"INDIETRO"],[1,"HOME"]]
++        return rows.map(row => ({id:"key."+row[0],key:row[0],label:row[1],enabled:true,actionId:"",targetId:""}))
++    }
+     function publicSurfacePayload(surfaceId) {
+         const hints = [{key:1,label:"HOME"},{key:3,label:"AVVISI"},{key:7,label:"INDIETRO"},{key:9,label:"MENU"}]
+         // Auxiliary visuals have no provider/selection contract. Avoid coupling
+@@ -184,17 +196,20 @@ Window {
+         else if (surfaceId === "device.info") { rows=deviceInfo.rows; selected=infoIndex; tabs=deviceInfo.tabs; tabId=tabs[infoPage] || "" }
+         else if (surfaceId === "sport.team.picker") { rows=teamPickerRows; selected=teamPickerIndex }
+         else if (surfaceId === "sport.team.detail") { rows=teamRows; selected=teamIndex; tabs=["PARTITE","RISULTATI","INFO","ROSA"]; tabId=tabs[teamTab] }
+-        else if (surfaceId === "sport.match.detail") { rows=sportDetailPage === 3 ? fantasyRows : sportMatch.events || []; selected=sportDetailPage === 3 ? fantasyPlayerIndex : sportDetailOffset; tabs=sportDetailTabs; tabId=tabs[sportDetailPage] }
++        else if (surfaceId === "sport.match.detail") { rows=sportDetailPage === 3 ? fantasyRows : sportDetailPage === 1 ? sportMatch.stats || [] : sportDetailPage === 2 ? ((sportMatch.lineups || []).reduce((a,l) => (l.players || []).length > a.length ? l.players : a, [])) : sportMatch.events || []; selected=sportDetailPage === 3 ? fantasyPlayerIndex : sportDetailOffset; tabs=sportDetailTabs; tabId=tabs[sportDetailPage] }
++        else if (surfaceId === "account.usage") { rows=accountWindows; selected=accountIndex }
+         else if (surfaceId.indexOf("sport.") === 0) {
+             rows=sportRows; selected=sportIndex
++            if (surfaceId === "sport.overview") tabId=sportView
+             if (surfaceId === "sport.fixtures" || surfaceId === "sport.standings") { tabs=["sport.fixtures","sport.standings"]; tabId=surfaceId }
+         } else if (surfaceId.indexOf("racing.") === 0) {
+             tabs=racingOverlay.tabs
++            if (surfaceId === "racing.overview") tabId=racingView
+             if (surfaceId === "racing.session.detail") { rows=racingDetailPage === 0 ? racingSession.results || [] : racingInfoRows; selected=racingDetailPage === 0 ? racingResultIndex : racingInfoIndex; tabId=tabs[racingDetailPage] || "" }
+             else if (surfaceId === "racing.driver.detail") { rows=racingDriverRows; selected=racingDriverIndex; tabId=tabs[racingDriverPage] || "" }
+             else if (surfaceId === "racing.event.detail") { rows=racingEventPage === 0 ? racingRows : racingInfoRows; selected=racingEventPage === 0 ? racingIndex : racingInfoIndex; tabId=tabs[racingEventPage] || "" }
+             else if (surfaceId === "racing.live") { rows=racingTimingPage === 0 ? (racingData.live || {}).rows || [] : racingInfoRows; selected=racingTimingPage === 0 ? racingIndex : racingInfoIndex; tabId=tabs[racingTimingPage] || "" }
+-            else { rows=racingOverlay.rows; selected=racingIndex; tabId=tabs[racingStandingTab] || "" }
++            else { rows=racingOverlay.rows; selected=racingIndex; if (surfaceId !== "racing.overview") tabId=tabs[racingStandingTab] || "" }
+         }
+         if (surfaceId.indexOf("settings.") === 0) rows=PublicSettingsRows.canonicalize(surfaceId,rows,{families:allFamilies,visibleModules:visibleModules,
+             racingKind:racingSettingsKind,advancedAppearance:settingsPanel.advancedAppearance,backend:dashboardState,
+@@ -208,7 +223,8 @@ Window {
+         const draftTokens=(draft.overrides || {}).tokens || {}
+         const operationStatus=status === "saving" || status === "working" ? "pending" : status === "error" || status === "recovery" ? "failed" : "idle"
+         const selectedId=rows[selected] ? rows[selected].id : surfaceId.indexOf("home.") === 0 || surfaceId.indexOf("weather.") === 0 || surfaceId === "account.usage" ? surfaceId : ""
+-        return {rows:rows, selectedId:selectedId, selection:{selectedId:selectedId,index:rows.length ? selected : -1,count:rows.length,tabId:tabId},sectionId:surfaceId,
++        return {rows:rows, selectedId:selectedId, selection:{selectedId:selectedId,index:rows.length ? selected : -1,count:rows.length,tabId:tabId,
++                anchorId:surfaceId === "sport.match.detail" && sportDetailPage === 3 ? String(((fantasyData.teams || [])[fantasyTeamIndex] || {}).id || "") : ""},sectionId:surfaceId,
+             families:families, currentFamilyId:familyId, currentViewId:activeContentId, route:overlay,
+             navigation:{familyId:familyId,viewId:activeContentId,overlayId:overlayContentId,familyPosition:family+1,familyCount:families.length,
+                 viewPosition:(isRacing ? currentFamily.views.indexOf(racingView) : familyId === "sport" ? sportViews.indexOf(sportView) : (viewIndex[currentFamily.slot] || 0))+1,viewCount:currentFamily.views.length},
+@@ -219,13 +235,13 @@ Window {
+             draft:themeService ? {editing:themeService.editing,themeId:draft.themeId,paletteMode:draft.paletteMode || "auto",
+                 motionMode:draft.motionMode,textScale:draftTokens["typography.textScale"] === undefined ? style.textScale : draftTokens["typography.textScale"],readyToApply:themeService.readyToApply,status:status,error:themeService.lastError} : null,
+             operation:{requestId:"",status:operationStatus,errorCode:operationStatus === "failed" ? "appearance.operation.failed" : "",message:themeService ? themeService.lastError : ""},
+-            sportMatch:surfaceId === "sport.match.detail" ? sportMatch : null, teamData:surfaceId === "sport.team.detail" ? teamData : null, fantasyState:surfaceId === "sport.match.detail" ? fantasyState : null,
++            sportMatch:surfaceId === "sport.match.detail" ? sportMatch : null, teamData:surfaceId === "sport.team.detail" ? Object.assign({},teamData,{info:publicRows(teamInfoRows),recordText:teamRecordText()}) : null, fantasyState:surfaceId === "sport.match.detail" ? fantasyState : null,
+             racingEvent:surfaceId.indexOf("racing.") === 0 ? racingEvent : null,racingSession:surfaceId.indexOf("racing.") === 0 ? racingSession : null,racingDriver:surfaceId === "racing.driver.detail" ? racingDriver : null,kind:familyId,live:surfaceId === "racing.driver.detail" ? racingDriverLive : false,
+             detailOperation:{requestId:"",status:(surfaceId.indexOf("racing.") === 0 ? racingData.detailLoading : sportData.detailLoading) ? "pending" : "idle",errorCode:"",message:""},
+-            teamPickerRows:surfaceId === "sport.team.picker" ? teamPickerRows : [], calendarScope:surfaceId === "sport.team.detail" ? teamData.calendarScope || "" : "", serieAOnly:surfaceId === "sport.team.detail" ? teamSerieAOnly : false,
++            teamPickerRows:surfaceId === "sport.team.picker" ? publicRows(teamPickerRows) : [], calendarScope:surfaceId === "sport.team.detail" ? teamData.calendarScope || "" : "", serieAOnly:surfaceId === "sport.team.detail" ? teamSerieAOnly : false,
+             selectedRoundId:String(sportRound), favouriteTeamId:sportData.favouriteTeamId || "",
+             savedTeamId:sportData.favouriteTeamId || "", origin:sportTeamDetail ? "team" : "sport",
+-            commandHints:[{key:1,label:"HOME"},{key:3,label:"AVVISI"},{key:7,label:"INDIETRO"},{key:9,label:"MENU"}]}
++            commands:publicSurfaceCommands(surfaceId),commandHints:[{key:1,label:"HOME"},{key:3,label:"AVVISI"},{key:7,label:"INDIETRO"},{key:9,label:"MENU"}]}
+     }
+     function publicActionOperation(action,target) {
+         const effective=action === "settings.activate" || action === "settings.adjust" ? target : action
+@@ -1075,7 +1091,7 @@ Window {
+                 sportDetailOffset = 0
+             } else if (position === 2) sportDetailOffset = Math.max(0, sportDetailOffset - 1)
+             else if (position === 8) {
+-                const count = sportDetailPage === 0 ? (sportMatch.events || []).length : 0
++                const count = sportDetailPage === 0 ? (sportMatch.events || []).length : sportDetailPage === 1 ? (sportMatch.stats || []).length : sportDetailPage === 2 ? (sportMatch.lineups || []).reduce((n,l) => Math.max(n,(l.players || []).length),0) : 0
+                 sportDetailOffset = Math.min(Math.max(0, count - 4), sportDetailOffset + 1)
+             } else if (position === 5) { if (sportTeamDetail) dashboardState.selectTeamMatch(sportMatchId); else dashboardState.selectSportMatch(sportMatchId) }
+             return
+@@ -1134,7 +1150,10 @@ Window {
+         }
+     }
+     onOverlayChanged: {
+-        if (themeService) themeService.setPreparedContents(notificationContents.concat(["shell.main"]).concat(overlayContentId ? [overlayContentId] : []))
++        // Read the new route directly: the derived overlayContentId can still
++        // name the closing overlay while this change handler is executing.
++        const preparedOverlay = publicRoutes[overlay] || ""
++        if (themeService) themeService.setPreparedContents(notificationContents.concat(["shell.main"]).concat(preparedOverlay ? [preparedOverlay] : []))
+         if (traceRecorder) traceRecorder.traceEvent("navigation.overlay",{route:overlay,surfaceId:traceRecorder.surfaceForRoute(overlay)})
+         if (dashboardState) { updateBannerAvailability(); dashboardState.setSystemInfoVisible(overlay === "info") }
+     }
+@@ -1151,7 +1170,15 @@ Window {
+         for (const host of contentLayer.children) if (host.active && (!host.currentReady || host.readiness !== "ready" || host.loadedRevision !== themeService.revision)) return false
+         return !sceneHost.sceneEnabled || sceneHost.currentReady && sceneHost.readiness === "ready"
+     }
+-    Timer { interval: 1000; running: !!app.themeService; repeat: true; onTriggered: app.themeService.heartbeat(app.currentThemeRenderCoherent()) }
++    Timer {
++        interval: 1000; running: !!app.themeService; repeat: true
++        onTriggered: {
++            app.themeService.heartbeat(app.currentThemeRenderCoherent())
++            // A DTO can settle without changing any visible value. Recovering
++            // readiness still requires a real submitted frame on an idle HUD.
++            if (app.themeService.needsFrameAcknowledgement) app.update()
++        }
++    }
+     property var pendingPublicActions: []
+     function completePublicActions(operation,ok,error) {
+         const kept=[]
+diff --git a/dashboard/check_theme_api_adapters.py b/dashboard/check_theme_api_adapters.py
+index 6f4bd55..3f5ce06 100644
+--- a/dashboard/check_theme_api_adapters.py
++++ b/dashboard/check_theme_api_adapters.py
+@@ -76,8 +76,8 @@ def verify():
+                 checks.append('actualMatchIdentityAndNullableScores')
+             if surface_id in ('sport.overview', 'sport.fixtures'):
+                 matches = context.sport.matches if surface_id == 'sport.overview' else context.matches
+-                assert matches.count == len(harness.value('sportData')['fixtures'])
+-                assert matches.get(0).id == actual_id
++                expected_rows = harness.value('sportData')['fixtures'] if surface_id == 'sport.overview' else harness.value('sportRows')
++                assert [matches.get(i).id for i in range(matches.count)] == [row['canonicalMatchId'] for row in expected_rows]
+                 checks.append('actualFootballFixtureModel')
+             if surface_id in ('racing.event.detail', 'racing.session.detail'):
+                 assert context.event.id == event['id']
+diff --git a/dashboard/components/NotificationHost.qml b/dashboard/components/NotificationHost.qml
+index f648535..544480d 100644
+--- a/dashboard/components/NotificationHost.qml
++++ b/dashboard/components/NotificationHost.qml
+@@ -93,6 +93,15 @@ ViewHost {
+     }
+     onPreemptedChanged: if (preempted) settleMotion()
+     onCurrentItemChanged: { motion.settle(); enter(); if (context) context.ready = true }
++    // Public contexts stay read-only. An external detail renderer reports its
++    // measured scroll extent on its root; the host owns the private input.
++    Binding {
++        target: host.context
++        property: "scrollMaximum"
++        when: !!host.context && !!host.currentItem && typeof host.currentItem.scrollMaximum === "number"
++        value: host.currentItem ? Math.max(0,host.currentItem.scrollMaximum || 0) : 0
++        restoreMode: Binding.RestoreBindingOrValue
++    }
+     Connections {
+         target: host
+         function onAppearanceChanged() { if (host.enteredRevision !== host.appearance.revision) host.settleMotion() }
+diff --git a/dashboard/design/release-masterplan.md b/dashboard/design/release-masterplan.md
+index fc60134..7bca7e9 100644
+--- a/dashboard/design/release-masterplan.md
++++ b/dashboard/design/release-masterplan.md
+@@ -125,6 +125,8 @@ Riferimenti: [specifica di costruzione](theme-engine-construction-spec.md), [mig
+ 
+ ## 5. v0.7 — Casa / Smart Life tramite Tuya
+ 
++**Revisione di preparazione del 6 ottobre:** [verifica e sequenza C0–C5](v07-implementation-readiness.md). Accesso cumulativo/paginazione ricontrollati e 22 test locali superati; pronti a iniziare lo sviluppo. Attivazione continuativa subordinata a quota/scadenza reali; accettazione dopo collaudi fisici e board. Nessun provider/UI Casa integrato da questa revisione.
++
+ ### Risultato
+ 
+ Casa entra nel carosello quando esiste una configurazione utile. La panoramica mostra al massimo quattro dispositivi scelti; elenco e dettaglio permettono di consultarne altri. Per ogni elemento si distinguono **stato riportato**, **disponibilità dichiarata dal cloud**, **ora della lettura** e **dato salvato**. Una lampada offline con stato `on` mostra l'ultimo stato riportato, non una conferma di accensione attuale.
+diff --git a/dashboard/design/v07-tuya-direct-plan.md b/dashboard/design/v07-tuya-direct-plan.md
+index 625b6cf..d696478 100644
+--- a/dashboard/design/v07-tuya-direct-plan.md
++++ b/dashboard/design/v07-tuya-direct-plan.md
+@@ -1,10 +1,12 @@
+ # SmartPC · v0.7 Casa · proposta semplificata con cloud Tuya diretto
+ 
++**Revisione di preparazione, 6 ottobre 2026:** [pronti a iniziare provider/UI, con condizioni di attivazione e rilascio](v07-implementation-readiness.md). Ricontrollati 22 test e accesso cumulativo reale in 8 GET. Baseline attuale v0.6.6 con Theme Engine; le evidenze del 1 ottobre sotto restano storiche. Polling e schermata Casa non sono ancora integrati.
++
+ **Revisione:** 1 ottobre 2026. **Decisione approvata:** procedere con API cloud Tuya dirette. **Stato:** client di lettura e probe implementati; token/rinnovo, inventario di 16 dispositivi, protocolli e letture su quattro dispositivi verificati sul cloud reale. UID e firma dei cursori corretti; 22 controlli offline superati su PC e board. Schermata Casa, collaudo fisico e provider periodico ancora da sviluppare. [Configurazione](v07-tuya-api-setup.md), [analisi reale](v07-tuya-live-analysis.md).
+ 
+ ## Decisione di lavoro
+ 
+-**Collocazione nel piano del 2 ottobre:** v0.7 ancora in analisi e prototipo della sorgente, dopo il Theme Engine v0.6.6 proposto. Il [MasterPlan dei rilasci](release-masterplan.md) descrive implementazione periodica, budget, UI e prove fisiche necessari al rilascio. L'esistenza del probe non equivale a Casa integrata.
++**Collocazione nel piano corrente:** v0.7 ancora in analisi e prototipo della sorgente, dopo il Theme Engine v0.6.6 ora implementato e distribuito. Il [MasterPlan dei rilasci](release-masterplan.md) descrive implementazione periodica, budget, UI e prove fisiche necessari al rilascio. L'esistenza del probe non equivale a Casa integrata.
+ 
+ Sviluppare un piccolo provider Python che collega SmartPC direttamente al cloud Tuya. Home Assistant rimane un'alternativa. Il risultato di prodotto resta quello del MasterPlan: poche tessere leggibili, ultimi stati riconoscibili, riconnessione automatica e nessuna falsa conferma. Il primo passo implementato è la prova OpenAPI senza dipendenze aggiuntive.
+ 
+diff --git a/dashboard/design/v07-tuya-polling-budget.md b/dashboard/design/v07-tuya-polling-budget.md
+index 5ffb926..905b189 100644
+--- a/dashboard/design/v07-tuya-polling-budget.md
++++ b/dashboard/design/v07-tuya-polling-budget.md
+@@ -2,6 +2,8 @@
+ 
+ **1 ottobre 2026. Stato: proposta, scheduling non implementato.** La prova API resta manuale. Non usare il probe periodicamente come provider: riacquisisce il token e rilegge le specifiche a ogni avvio.
+ 
++**Ricontrollo 6 ottobre:** risposta cumulativa e parametri pagina ancora funzionanti; [evidenze](evidence/v07-readiness-2026-10-06/README.md). La [revisione prima dell'implementazione](v07-implementation-readiness.md) precisa contatore prima dell'invio, persistenza attraverso reboot/clock, esito asincrono del refresh e budget per pagine aggiuntive. Polling continuativo subordinato a quota assegnata, consumo e scadenza della console; 26.000 non viene assunto come saldo disponibile.
++
+ ## Dato verificato per ridurre le chiamate
+ 
+ Provata sul cloud reale `GET /v1.0/users/{uid}/devices?page_no=1&page_size=50`: 16 dispositivi, tutti con disponibilità booleana; 10 con un elenco di stati, 83 campi complessivi. Sensore movimento, temperatura/umidità, presa e le due lampade hanno stati nella risposta. Sei dispositivi non espongono un elenco di stati: non vanno trasformati in spenti o zeri. Due richieste per questa verifica, inclusa l'autenticazione iniziale.
+diff --git a/dashboard/theme_api.py b/dashboard/theme_api.py
+index 4d35837..1dc45c9 100644
+--- a/dashboard/theme_api.py
++++ b/dashboard/theme_api.py
+@@ -382,6 +382,10 @@ def normalize_legacy(surface_id, payload, cache=None, *, validate=True):
+         for name in ('source', 'matches', 'standings', 'rounds', 'favouriteTeamId'):
+             if name not in payload:
+                 values[name] = sport[name]
++        # The route publishes its filtered, ordered rows. Using the whole
++        # season here would disagree with the app's keyboard selection.
++        if surface_id == 'sport.fixtures' and 'rows' in payload:
++            values['matches'] = [normalize_dto('MatchData', row, source=sport['source']) for row in payload['rows']]
+     if kind in ('RacingContext', 'DriverContext'):
+         racing_envelope = _mapping(model.get('racing'))
+         racing_data = _mapping(racing_envelope.get('data', racing_envelope))
+@@ -408,7 +412,7 @@ def normalize_legacy(surface_id, payload, cache=None, *, validate=True):
+     if kind == 'TeamPickerContext' and 'teams' not in payload:
+         envelope = _mapping(model.get('sport'))
+         data = _mapping(envelope.get('data', envelope))
+-        values['teams'] = [normalize_dto('TeamIdentity', row) for row in data.get('teams', [])]
++        values['teams'] = [normalize_dto('TeamIdentity', row) for row in payload.get('teamPickerRows', data.get('teams', []))]
+         values['savedTeamId'] = str(data.get('favourite', ''))
+     if kind == 'ShellContext':
+         for row in values['families']:
+diff --git a/dashboard/theme_bundle_tools.py b/dashboard/theme_bundle_tools.py
+index 38df249..322f1e2 100644
+--- a/dashboard/theme_bundle_tools.py
++++ b/dashboard/theme_bundle_tools.py
+@@ -120,7 +120,8 @@ def validate(project, *, lint=False, qmllint=None, runtime=False, qt_python=None
+         with tempfile.TemporaryDirectory(prefix='smartpc-theme-preflight-') as directory:
+             result = subprocess.run([qt_python or sys.executable, str(ROOT / 'theme_bundle_preview.py'),
+                                      str(Path(project).resolve()), '--output', directory, '--matrix'],
+-                                    capture_output=True, text=True, timeout=120)
++                                    capture_output=True, text=True,
++                                    timeout=max(120,min(600,12*len(report['manifest']['coverage']['surfaces']))))
+             try:
+                 preview = json.loads(result.stdout)
+             except json.JSONDecodeError:
+diff --git a/dashboard/theme_runtime.py b/dashboard/theme_runtime.py
+index 5f0f791..5693c11 100644
+--- a/dashboard/theme_runtime.py
++++ b/dashboard/theme_runtime.py
+@@ -41,7 +41,10 @@ def preflight(payload, manifest, registry):
+         env=dict(os.environ,QT_QPA_PLATFORM='offscreen')
+         command=[sys.executable,str(Path(__file__).with_name('theme_bundle_preview.py')),str(payload),'--output',str(Path(temporary)/'preview'),'--matrix']
+         try:
+-            result=subprocess.run(command,capture_output=True,text=True,env=env,timeout=90)
++            # The matrix exercises every covered surface 18 times. A complete
++            # theme must not hit the five-surface starter's fixed time budget.
++            timeout=max(90,min(600,12*len(manifest['coverage']['surfaces'])))
++            result=subprocess.run(command,capture_output=True,text=True,env=env,timeout=timeout)
+             report=json.loads(result.stdout)
+             if result.returncode or report.get('status')!='passed':
+                 return {'status':'failed','error':'Preflight Qt fallito','diagnostics':report}

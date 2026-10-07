@@ -1,0 +1,46 @@
+test_budget_charged_before_failed_network_and_no_grant_on_clock_rollback (__main__.CasaChecks.test_budget_charged_before_failed_network_and_no_grant_on_clock_rollback) ... ok
+test_corrupt_or_unwritable_counter_stops_requests (__main__.CasaChecks.test_corrupt_or_unwritable_counter_stops_requests) ... ok
+test_daily_boost_limit_persisted_and_reads_are_side_effect_free (__main__.CasaChecks.test_daily_boost_limit_persisted_and_reads_are_side_effect_free) ... ok
+test_duplicate_and_malformed_page_are_rejected (__main__.CasaChecks.test_duplicate_and_malformed_page_are_rejected) ... ok
+test_effective_budget_reserve_period_and_expiry (__main__.CasaChecks.test_effective_budget_reserve_period_and_expiry) ... ok
+test_false_zero_scaling_and_bounds (__main__.CasaChecks.test_false_zero_scaling_and_bounds) ... ok
+test_independent_concurrent_writers_never_lose_counted_requests (__main__.CasaChecks.test_independent_concurrent_writers_never_lose_counted_requests) ... ok
+test_malformed_nested_cache_is_discarded (__main__.CasaChecks.test_malformed_nested_cache_is_discarded) ... 
+  test_malformed_nested_cache_is_discarded (__main__.CasaChecks.test_malformed_nested_cache_is_discarded) (field='observedCodes', value='switch_led') ... FAIL
+test_manual_budget_survives_restart_and_has_no_auto_polling (__main__.CasaChecks.test_manual_budget_survives_restart_and_has_no_auto_polling) ... ok
+test_missing_metric_retains_old_stamp_and_old_quality (__main__.CasaChecks.test_missing_metric_retains_old_stamp_and_old_quality) ... ok
+test_offline_and_cached_online_are_never_current (__main__.CasaChecks.test_offline_and_cached_online_are_never_current) ... ok
+test_page_number_scan_full_page_requires_terminal_page (__main__.CasaChecks.test_page_number_scan_full_page_requires_terminal_page) ... ok
+test_persistence_allowlist_and_account_isolation (__main__.CasaChecks.test_persistence_allowlist_and_account_isolation) ... ok
+test_policy_never_assumes_nominal_free_quota (__main__.CasaChecks.test_policy_never_assumes_nominal_free_quota) ... ok
+test_previous_secondary_metric_is_visible_in_summary (__main__.CasaChecks.test_previous_secondary_metric_is_visible_in_summary) ... FAIL
+test_removed_non_favourite_clears_and_empty_stays_empty_after_restart (__main__.CasaChecks.test_removed_non_favourite_clears_and_empty_stays_empty_after_restart) ... ok
+test_rename_and_product_change_use_identity (__main__.CasaChecks.test_rename_and_product_change_use_identity) ... ok
+test_second_page_error_never_commits_partial_cache (__main__.CasaChecks.test_second_page_error_never_commits_partial_cache) ... ok
+test_specs_reused_and_new_unknown_code_is_not_fetched_forever (__main__.CasaChecks.test_specs_reused_and_new_unknown_code_is_not_fetched_forever) ... ok
+test_two_missing_scans_keep_favourite_tombstone (__main__.CasaChecks.test_two_missing_scans_keep_favourite_tombstone) ... ok
+test_unknown_schema_never_turns_value_into_false (__main__.CasaChecks.test_unknown_schema_never_turns_value_into_false) ... ok
+
+======================================================================
+FAIL: test_malformed_nested_cache_is_discarded (__main__.CasaChecks.test_malformed_nested_cache_is_discarded) (field='observedCodes', value='switch_led')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_casa.py", line 199, in test_malformed_nested_cache_is_discarded
+    self.assertEqual(load_snapshot(path, client.scope), empty_snapshot(client.scope))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'ver[95 chars]At': 1000000, 'devices': [{'id': 'lamp', 'name[597 chars]True} != {'ver[95 chars]At': 0, 'devices': [], 'specifications': {}, '[54 chars]True}
+Diff is 1915 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_previous_secondary_metric_is_visible_in_summary (__main__.CasaChecks.test_previous_secondary_metric_is_visible_in_summary)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_casa.py", line 211, in test_previous_secondary_metric_is_visible_in_summary
+    self.assertTrue(summary['previous'])
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.027s
+
+FAILED (failures=2)

@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle_acceptance.py", line 330, in <module>
+    checks = test_notifications(revision) if ARGS.case=='notifications' else test_overlay(revision) if ARGS.case=='overlay' else test_scene(revision)
+                                                                             ~~~~~~~~~~~~^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle_acceptance.py", line 297, in test_overlay
+    until(lambda:overlay.property('loadedPresentationId')=='studio.ambient.menu')
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle_acceptance.py", line 60, in until
+    raise AssertionError({'error':SERVICE.lastError, 'status':SERVICE.status, 'candidate':SERVICE.candidateAppearance,
+                          'activeTheme':SERVICE.activeThemeId, 'messages':MESSAGES})
+AssertionError: {'error': 'Timeout caricamento studio.ambient.home', 'status': 'ready', 'candidate': {}, 'activeTheme': 'base', 'messages': []}

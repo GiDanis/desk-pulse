@@ -1,0 +1,43 @@
+F.F.
+======================================================================
+FAIL: test_disallowed_controls_cannot_modify_bundle_and_inherited_scale_removed (__main__.AdjustmentTests.test_disallowed_controls_cannot_modify_bundle_and_inherited_scale_removed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_adjustments.py", line 66, in test_disallowed_controls_cannot_modify_bundle_and_inherited_scale_removed
+    self.assertEqual((metadata['coverageMode'],metadata['ownCount'],metadata['fallbackCount']),('partial',5,39))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: ('partial', 5, 43) != ('partial', 5, 39)
+
+First differing element 2:
+43
+39
+
+- ('partial', 5, 43)
+?                -
+
++ ('partial', 5, 39)
+?                 +
+
+
+======================================================================
+FAIL: test_real_main_rows_report_disallowed_controls_and_partial_coverage (__main__.AdjustmentTests.test_real_main_rows_report_disallowed_controls_and_partial_coverage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_adjustments.py", line 103, in test_real_main_rows_report_disallowed_controls_and_partial_coverage
+    self.assertEqual(child.returncode,0,child.stdout+child.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Sport: Rete Sport disabilitata per verifica offline; cache=True
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_adjustments.py", line 142, in <module>
+    if '--main-proof' in sys.argv: main_proof()
+                                   ~~~~~~~~~~^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_adjustments.py", line 120, in main_proof
+    assert not s.candidateAppearance,s.lastError
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 2.586s
+
+FAILED (failures=2)

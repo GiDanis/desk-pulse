@@ -1,22 +1,29 @@
 # DeskPulse / SmartPC — MasterPlan dei rilasci
 
-**Revisione 2.15 · 6 ottobre 2026 · Europe/Rome**
-**Baseline corrente: v0.6.6 Theme Engine. Prossima milestone: v0.7 Casa/Smart Life.**
+**Revisione 2.18 · 7 ottobre 2026 · Europe/Rome**
+**Baseline funzionale: v0.6.6 Theme Engine. Ultima consegna installata documentata: core 0.7.0-rc.3, Theme API 2.2, Apple Calm 1.2.0. Prossima implementazione pianificata: v0.8 Rete locale.**
 
-Questo documento aggiorna il piano della chat **Dashboard Orange Pi MasterPlan** dopo la lettura delle chat **Dashboard Orange Pi v0.1**, **v0.2**, **v0.3**, **v0.4**, **v0.5**, **v0.6**, **v0.6.5**, **v0.7** e **Dashboard Orange Pi Theme**, dei sorgenti e dei resoconti locali. È il riferimento per sequenza, perimetro e criteri di uscita delle prossime versioni. I resoconti dei rilasci conservano le evidenze delle singole prove.
+Questo documento aggiorna il piano della chat **Dashboard Orange Pi MasterPlan** dopo la lettura delle chat di versione, comprese **Dashboard Orange Pi v0.6.6**, **Dashboard Orange Pi v0.7**, **Dashboard Orange Pi 0.7.0-rc.2**, **Dashboard Orange Pi Theme** e **Dashboard Orange Pi v0.8**, dei sorgenti e dei resoconti locali. È il riferimento per sequenza, perimetro e criteri di uscita delle prossime versioni. I resoconti dei rilasci conservano le evidenze delle singole prove.
 
-La v0.6.6 è implementata e distribuita sulla board; [resoconto di migrazione e prove](v066-migration-report.md). Le milestone successive restano pianificate. Le etichette future indicano milestone di prodotto; non assegnano tag Git e non dichiarano funzioni implementate. Non vengono attribuiti retroattivamente numeri v0.6.x a interventi che i resoconti chiamano soltanto v0.6.
+La v0.6.6 è implementata e distribuita sulla board; [resoconto di migrazione e prove](v066-migration-report.md). Casa è stata consegnata come rc.1 e revisionata in rc.2: [implementazione](v07-implementation-report.md), [manutenzione](v07-maintenance-report.md). La successiva [consegna Apple Calm del 6 ottobre](../../theme-projects/apple-calm/CONSEGNA.md) documenta core **0.7.0-rc.3** e contratto **2.2** installati, con vero reboot verificato. Versione core, versione del contratto e versione del tema hanno identità distinte. Casa conserva i propri gate: rc.3 non equivale alla v0.7 finale.
+
+**Stato dello studio:** analisi v0.8 e v0.8.1 completate il 7 ottobre, con API iliadbox provate dal PC; provider/UI Rete non implementati. Questa revisione consulta chat, sorgenti ed evidenze salvate: non esegue un nuovo accesso alla board, interrogazioni al router o deployment. N0 riconcilierà manifest e stato effettivo prima della prossima modifica. Le etichette future non assegnano tag Git; le modifiche di lavoro preesistenti vengono preservate.
 
 La lacuna rilevata dal [check del 3 ottobre sulle notifiche](theme-engine-notification-spec.md) è stata chiusa: sei composizioni indipendenti, ruoli locali, editor/preview, animazioni e testi lunghi scorrevoli. Implementazione e installazione sono nel [resoconto dedicato](theme-engine-notification-migration-report.md), con prove di stato/rollback e limiti prestazionali misurati. Il contratto è disponibile per i moduli successivi.
 
-**Obiettivo finale: creazione profonda dei temi tramite AI, bundle importabile e scelta dalle impostazioni con pochi adattamenti.** A1–A6 sono ora implementati: modulo pubblico `SmartPC.ThemeApi 2.0`, copertura delle 44 superfici, nuovi renderer e risorse nel pacchetto, revisioni immutabili, journal/rollback, supervisore esterno, kit AI autonomo e impostazioni semplificate. Il runtime completo e il kit AI sono consegnati; installazione con backup e vero reboot verificati: [implementazione ed evidenze](theme-engine-a1-a6-implementation-report.md), [piano](theme-engine-ai-execution-plan.md), [specifica e gate](theme-engine-ai-authoring-spec.md). Le prove e i residui della baseline `d643cfb` restano nel [resoconto storico A0](theme-engine-a03-a04-implementation-report.md). La decisione aggiornata consente attesa con caricamento per il cambio occasionale e maggiore uso di RAM/CPU sul dispositivo dedicato. I budget diagnostici 1 ms / 8 MiB restano informativi; si riducono gli stress ripetuti e si conserva la distinzione fra risultati misurati e soglie raggiunte. Risposta dei comandi, notifiche, recupero e stabilità restano essenziali. Questa consegna non assegna una nuova versione/tag e distingue codice, installazione e accettazione fisica completa.
+**Temi profondi tramite AI: infrastruttura consegnata e primo tema completo installato.** A1–A6 hanno introdotto `SmartPC.ThemeApi 2.0`, 44 superfici, renderer/asset nei bundle, revisioni immutabili, journal/rollback, supervisore e kit autonomo. Casa ha esteso il contratto a 2.1; Orologio e gli aggiornamenti successivi a 2.2, mantenendo gli import precedenti. Apple Calm 1.2.0 dimostra il percorso su un tema reale; non certifica tutti i concept o qualunque bundle futuro. [Engine ed evidenze](theme-engine-a1-a6-implementation-report.md), [piano AI](theme-engine-ai-execution-plan.md), [consegna Apple Calm](../../theme-projects/apple-calm/CONSEGNA.md).
+
+Il cambio completo del tema può mostrare una schermata di caricamento: è un'azione occasionale. La navigazione ordinaria deve restare pronta e fluida. RAM/CPU sono misure diagnostiche sul dispositivo dedicato, senza ripristinare i vecchi limiti come blocchi alla consegna; mantenere comunque controlli di crescita, risposta dei comandi e recovery. Evitare stress storici ripetuti senza un rischio nuovo. Le prove fisiche/prolungate ancora aperte restano distinte dalla consegna software.
 
 ## 1. Decisioni aggiornate
 
 - **v0.6.5 è la baseline precedente alla migrazione**, comprendente Sport e le successive revisioni di codice, impostazioni e Informazioni documentate nelle chat.
-- **v0.7 resta analisi e prova tecnica della sorgente**: esistono client/probe Tuya e verifiche API reali; non sono ancora un modulo Casa attivo, con provider periodico e schermata.
+- **v0.7 è una candidata implementata**: provider e schermate Casa presenti, API lette dalla board, polling continuativo subordinato alla quota effettiva; collaudi fisici ancora aperti.
 - **v0.8 diventa Rete locale**: panoramica dei dispositivi e delle informazioni osservabili dalla Orange Pi o ottenibili dal router. Acquisizione eseguita sulla board; nessun agent da installare sui computer della rete.
 - **Theme Engine prima di Casa e Rete**, come v0.6.6 implementata. Primo rilascio con Base e Functional completi; gli altri profili arrivano dopo la verifica delle schermate.
+- **Apple Calm 1.2.0 è un tema consegnato**, con vista Orologio, navigazione a pallini e ottimizzazioni del core. Il suo numero non sostituisce quello della dashboard.
+- **v0.8 poi v0.8.1, una alla volta:** inventario e dettagli prima; viste iliadbox/Internet, Wi-Fi, Porte e grafici dopo la base verificata. Le analisi sono pronte, le prove dalla board restano parte dell'implementazione.
+- **Rete fa parte del contratto Theme:** provider unico, superfici tipizzate, Base/Functional completi, compatibilità Apple Calm e bundle precedenti tramite fallback. Aggiornare SDK/kit AI insieme alla release.
 - Il modulo Account ChatGPT già rilasciato conserva il suo processo di sincronizzazione sul PC: la nuova v0.8 non introduce agent per telemetria hardware.
 - **Spotify/Media non ha una versione assegnata** nel piano attivo: le vecchie righe dei README vengono sostituite dalla sequenza corrente.
 - Cane e Memoria/AI restano v0.9 e v0.10; NPU e modelli locali appartengono alle esplorazioni successive.
@@ -32,9 +39,20 @@ La lacuna rilevata dal [check del 3 ottobre sulle notifiche](theme-engine-notifi
 | v0.5 · Eventi | Rilasciata | Priorità, scadenza, deduplicazione, SQLite, banner piccoli/grandi, urgenti, cache bollettino e badge non letti. |
 | v0.6 → v0.6.1 · Sport | Rilasciata, con collaudi live aperti | Serie A, squadra preferita, calendario/coppe/rosa, dettaglio partita, Fantacalcio pubblicato e adapter live; F1/MotoGP con programma, classifiche, sessioni e dettagli. |
 | Impostazioni / Informazioni | Revisione installata | Aspetto, Luminosità, Moduli, Notifiche, Account, Sport, Dati e aggiornamenti; Info autonoma con dispositivo, risorse, rete e dati. |
-| v0.7 · Casa | Analisi + prototipo API | Token/rinnovo, inventario Tuya di 16 dispositivi e letture reali di quattro dispositivi verificati; polling/UI non integrati. |
+| v0.7 · Casa | Candidata; ultimo core consegnato 0.7.0-rc.3 | Provider, preferiti, inventario e dettagli integrati; letture board reali, polling implementato ma disattivato senza quota effettiva. Collaudo fisico aperto. |
 | v0.6.6 · Theme Engine | Implementato e distribuito | Base/Functional, facade tipizzata, registry visuali, motion/scene, editor e pacchetti personali; sei visuali Avvisi sostituibili con ruoli locali. |
-| v0.8 · Rete locale | Nuovo perimetro pianificato | Sorgenti e copertura da provare sulla rete reale. |
+| Apple Calm 1.2.0 / Theme API 2.2 | Installazione e reboot documentati il 6 ottobre | Tema profondo, Oggi → Orologio, pallini, icone distinte, correzione nomi classifica e ottimizzazione dei contesti/rendering. |
+| v0.8 · Rete locale | Analisi pronta, nessun runtime Rete | Token e letture iliadbox verificati dal PC; copertura e accesso dalla Orange Pi da provare. |
+| v0.8.1 · Approfondimenti rete | Analisi pronta, implementazione successiva | Viste router/Internet, Wi-Fi, Porte e storico definite; semantica di alcune metriche da qualificare. |
+
+### Consegne recenti e attribuzione
+
+| Consegna | Risultato documentato | Ciò che non conclude |
+| --- | --- | --- |
+| Theme Engine A1–A6 | Runtime, kit AI e vero reboot; preferenze/eventi preservati. | Tastierino fisico, power-cut e uso prolungato. |
+| Casa 0.7.0-rc.1 · 6 ottobre | 16 dispositivi, quattro preferiti, letture cloud dalla board, cache e reboot. | Quota reale, cambi fisici e avvio con rete fisicamente assente. |
+| Manutenzione 0.7.0-rc.2 · 6 ottobre | Salvataggi fuori dalla GUI, fix scheduler/cache/lifecycle; 64 controlli PC e 21 board, nessuna nuova lettura Tuya. | Nuova misura GPU/FPS o collaudo fisico Casa. |
+| Core 0.7.0-rc.3 + Apple Calm 1.2.0 · 6 ottobre | Distribuzione di 457 file verificati, 38 preferenze personali conservate, 183 scenari Main sul display senza warning QML, reboot reale. | Certificazione ottica/input fisico, 60 fps garantiti o chiusura dei gate Casa. |
 
 **Limiti da mantenere visibili:** calcio, F1, MotoGP e voti Fantacalcio devono ancora essere osservati durante eventi realmente attivi. I gate Live e gol non si abilitano in base al solo parsing di campioni. Storico, cache e navigazione già rilasciati non attendono quei collaudi.
 
@@ -49,9 +67,10 @@ Fonti: [README dashboard](../README.md), [rilascio Serie A](v06-sport-release.md
 | Versione | Risultato per l'utente | Dipendenza principale | Stato |
 | --- | --- | --- | --- |
 | **v0.6.6 · Theme Engine** | Due temi completi, visualizzazioni e animazioni personalizzabili, cambio a caldo e scene estensibili. | Baseline v0.6.5 fissata e inventario delle schermate. | Implementata e distribuita; evidenze nel resoconto v0.6.6. |
-| **v0.7 · Casa / Smart Life** | Stati dei dispositivi scelti, provenienza e disponibilità chiare. | Theme Engine; prova fisica e sostenibilità Tuya. | Analisi/probe, nessun rilascio di prodotto. |
-| **v0.8 · Rete locale** | Inventario osservato, preferiti, dettagli e stato della LAN. | Componenti comuni; prova discovery sulla rete reale. | Pianificata. |
-| **v0.8.1 · Rete estesa e profili aggiuntivi** | Dati router verificati e temi Hardware/Cyberdeck, se utili. | Rete base stabile; router compatibile; prove dei nuovi profili. | Facoltativa, non blocca il cane. |
+| **v0.7 · Casa / Smart Life** | Stati dei dispositivi scelti, provenienza e disponibilità chiare. | Theme Engine; prova fisica e sostenibilità Tuya. | Candidata installata; gate quota e prove fisiche aperti. |
+| **Apple Calm 1.2.0 / core rc.3** | Tema completo, Orologio, pallini e navigazione ottimizzata. | Theme API 2.2, renderer e recovery. | Installata e verificata; versione tema distinta dal core. |
+| **v0.8 · Rete locale** | Inventario, preferiti, dettaglio e collegamenti Wi-Fi/porta qualificati. | N0 sulla board; adapter iliadbox e compatibilità Theme. | Analisi pronta; prossima implementazione N0–N5. |
+| **v0.8.1 · Rete estesa** | iliadbox/Internet, Wi-Fi, Porte, storico e grafici. | v0.8 verificata; unità, direzioni, freschezza e reset dei contatori. | Analisi pronta; si implementa dopo la base. |
 | **v0.9 · Compagno** | Cane animato con scene preparate e reazioni ai moduli. | Temi, eventi e asset misurati sulla board. | Pianificata. |
 | **v0.10 · Memoria e scene AI** | Preferenze e storia del compagno; scene proposte tramite comandi validati. | Compagno deterministico funzionante. | Pianificata. |
 | **v1.0 · Versione stabile** | Configurazione, aggiornamento, recupero e uso continuativo documentati. | Moduli scelti e verifiche integrate. | Obiettivo. |
@@ -60,18 +79,23 @@ Fonti: [README dashboard](../README.md), [rilascio Serie A](v06-sport-release.md
 flowchart LR
   A["v0.6.5 · baseline"] --> B["v0.6.6 · Theme Engine"]
   B --> C["v0.7 · Casa Tuya"]
-  C --> D["v0.8 · Rete locale"]
-  D --> E["v0.9 · Compagno"]
+  C --> P["core rc.3 / Apple Calm 1.2.0 · consegnati"]
+  P --> D["v0.8 · Rete locale · analisi pronta"]
+  D --> H["v0.8.1 · Router / Wi-Fi / Porte"]
+  H --> E["v0.9 · Compagno"]
   E --> F["v0.10 · Memoria / AI"]
   F --> G["v1.0 · Stabilità"]
-  D -.-> H["v0.8.1 · Router / altri temi, facoltativa"]
 ```
 
 I collaudi live Sport seguono le occasioni reali di partita/sessione in un percorso separato. Un provider passa il proprio gate quando ha evidenze sufficienti; gli altri mantengono lo stato da collaudare. Non si crea una dipendenza artificiale fra una gara futura e il Theme Engine.
 
+La sequenza è di lavoro, non richiede di dichiarare v0.7 finale prima di iniziare N0 Rete. Le prove Casa procedono quando quota/dispositivi sono disponibili. I profili Hardware/Cyberdeck hanno un percorso autonomo: non sono una condizione per v0.8.1 o per il cane. Un eventuale cambio di priorità non riduce i criteri di uscita delle singole versioni.
+
 ## 4. v0.6.6 — Theme Engine
 
-### Perché adesso
+**Stato al 7 ottobre:** consegnata e distribuita. Le fasi seguenti conservano il percorso storico; non sono una nuova lista di lavoro da ricominciare. Il contratto corrente è 2.2 e la qualifica di ogni nuovo bundle segue la sua matrice di verifica.
+
+### Motivazione originaria
 
 Le schermate Sport sono ormai numerose e le impostazioni sono state separate in componenti. Casa e Rete aggiungeranno tessere, elenchi, dettagli e stati. Centralizzare ora la presentazione evita di migrare una seconda volta quei componenti. Il cane potrà poi usare il medesimo ambiente grafico.
 
@@ -108,7 +132,7 @@ L'[inventario in sola lettura](evidence/v066-theme-analysis/README.md) ha confro
 | T4 · Cambio e persistenza | Editor bozza/anteprima, pacchetti, estensioni, import/export, apply/recovery. | Dati/focus conservati anche sostituendo il visuale; persistenza e reboot provati; un terzo tema si aggiunge senza switch. |
 | T5 · Rilascio | Confronto prestazioni, regressioni dei moduli, catture EGLFS, manifest e backup. | Perimetro verificato e procedura di ritorno alla baseline documentata. |
 
-**Punto da chiarire in T0:** `Main.qml.activateKey` al momento gestisce 1 come Home e 7 come Indietro; alcune guide e il README mostrano 1 Indietro e 7 Home, secondo il riscontro nella chat v0.6. Il nuovo motore non deve decidere la mappa sulla base di un mockup: verificare le posizioni fisiche e fissare un riferimento unico prima della migrazione. Questa revisione documentale non modifica i tasti.
+**Comandi correnti:** il routing Main e la guida dashboard riportano **1 Home / 7 Indietro**. Le vecchie etichette opposte sono storiche e vanno corrette nei riepiloghi. La verifica del tastierino fisico resta distinta dalle sequenze simulate e non viene dichiarata completata da questa revisione.
 
 ### Correzioni alla prima specifica tecnica
 
@@ -123,7 +147,19 @@ L'[inventario in sola lettura](evidence/v066-theme-analysis/README.md) ha confro
 
 Riferimenti: [specifica di costruzione](theme-engine-construction-spec.md), [migrazione UX/temi](ux-theme-adaptation-plan.md), [analisi visiva](themes-and-ux-analysis.md), [singleton Qt](https://doc.qt.io/qt-6/qml-singleton.html), [prestazioni Qt Quick](https://doc.qt.io/qt-6/qtquick-performance.html).
 
+### Apple Calm 1.2.0 — risultato acquisito
+
+- Palette bianco/grafite con accento blu, 48 renderer propri e fallback Base solo per `scene.main`.
+- Legende permanenti inferiori rimosse in questo tema; guida nel menu Comandi. Argomenti a pallini in alto, viste/schede sul margine destro, overlay ordinari inclusi; gli urgenti mantengono priorità.
+- Oggi ora comprende **Ora / Orologio / Giornata**. Orologio dà maggiore spazio alle cifre, con meteo compatto ed evento solo quando esiste.
+- Classifica con nomi/ID corretti, 50 glifi semantici e icone distinte per Casa/F1/MotoGP. Contesti pubblici limitati ai dati necessari, cache dei renderer e readiness coerente.
+- Una sola revisione Apple Calm distribuita (`retention: latest`), recupero permanente Base e backup corrente. Non applicare questa policy retroattivamente agli altri temi.
+
+Nel confronto EGLFS con cache/percorsi uguali, il p95 software dei cambi a caldo passa da **1138,5 a 105,6 ms**; massimo a caldo 141,9 ms, primo ingresso massimo 325,2 ms. Il target 100 ms è mancato di circa 6 ms: mantenere quel limite. Le misure sono azione software → frame coerente, non latenza ottica, tempo GPU o promessa di 60 fps. Le nuove schermate Rete devono evitare ricostruzioni inutili e invalidazioni dei contesti nascosti; verificare la navigazione con un carico rappresentativo senza ripetere tutta la storia degli stress. [Rapporto e prove](../../theme-projects/apple-calm/CONSEGNA.md).
+
 ## 5. v0.7 — Casa / Smart Life tramite Tuya
+
+**Stato al 7 ottobre:** provider e UI consegnati in rc.1, manutenzione rc.2, core aggiornato a rc.3 dalla consegna Apple Calm. L'[analisi C0–C5](v07-implementation-readiness.md) è la preparazione storica; i risultati effettivi sono nel [report di implementazione](v07-implementation-report.md) e nel [report di manutenzione](v07-maintenance-report.md). Il prossimo lavoro Casa è la chiusura dei gate, non riscrivere provider e schermate.
 
 ### Risultato
 
@@ -131,13 +167,16 @@ Casa entra nel carosello quando esiste una configurazione utile. La panoramica m
 
 Il collegamento scelto è OpenAPI Tuya diretto. Home Assistant resta un'alternativa da riesaminare se questo percorso non risulta sostenibile. L'inventario già letto comprende Wi-Fi e dispositivi dietro hub; l'assenza di IP di un sensore Zigbee non lo esclude dal modulo Casa.
 
-### Fasi eseguibili
+### Consegnato e attività per uscire dalla candidata
 
-1. **Chiudere la prova reale:** scegliere tre/quattro dispositivi, confrontare con Smart Life e pulsante fisico, misurare latenza e comportamento con dispositivo disalimentato. Verificare quota, allocazione e scadenza nella console.
-2. **Provider periodico:** adapter della risposta Smart Home cumulativa, paginazione e normalizzazione; token riutilizzato; specifiche in cache. Non lanciare il probe manuale a ogni ciclo.
-3. **Economia chiamate:** proposta iniziale ogni cinque minuti, un minuto durante consultazione con tetto giornaliero e budget persistente; autenticazione, retry e aggiornamenti manuali partecipano allo stesso budget. Il margine e gli intervalli si dimensionano sulla quota effettiva.
-4. **Integrazione UI:** tessere, elenco, dettaglio e impostazioni costruiti con Theme Engine. Aggiunte/rinomine/rimozioni si riconciliano all'aggiornamento; conservare focus per identità.
-5. **Recupero:** token scaduto, servizio sospeso, WAN assente, cache corrotta/non scrivibile, reboot senza rete; nessuno stato mancante diventa zero o spento.
+| Area | Consegnato | Passo ancora necessario |
+| --- | --- | --- |
+| Provider | Worker, inventario cumulativo/paginazione, token riutilizzato, specifiche e cache private. | Confronto app/dispositivo/display e misura dei ritardi reali. |
+| Economia chiamate | Ledger persistente, lock, margine 20%, scheduler 5 minuti / 1 minuto con accelerazione fino a 2 ore/giorno. | Quota, consumo condiviso e scadenza reali; attivazione controllata. Polling automatico ancora disattivato senza policy effettiva. |
+| UI | Quattro preferiti modificabili/ordinabili, inventario, dettagli, impostazioni, Base/Functional e Apple Calm. | Casi fisici dei preferiti, aggiunta/rinomina/rimozione reali. |
+| Recovery | Errori, cache/worker e budget provati con trasporti simulati; reboot reale con rete disponibile. | Spegnimento dispositivo/hub, perdita/ripristino rete, avvio fisicamente senza rete, revoca/rinnovo autorizzazione. |
+
+Consultazione manuale disponibile da **Dati e aggiornamenti → Casa**. Il refresh è confermato dopo acquisizione completa e salvataggio riuscito; la rc.2 ha spostato flush/fsync nel worker. La presenza di scheduler/test non attesta che i gate fisici siano superati.
 
 Il contatore locale delle chiamate è una stima del nostro consumo, non il saldo globale del progetto Tuya. La policy 1/5 minuti produce una schermata informativa: non si promettono eventi di movimento istantanei. Quote e prezzi riportati nei vecchi studi richiedono conferma della console al momento dell'integrazione.
 
@@ -147,26 +186,30 @@ Riferimenti: [piano Tuya diretto](v07-tuya-direct-plan.md), [prove reali](v07-tu
 
 ## 6. v0.8 — Rete locale, senza agent sui dispositivi
 
+**Analisi pronta per l'implementazione, 7 ottobre:** [architettura dashboard](v08-local-network-analysis.md), [token/contratto LAN](v08-iliadbox-api-study.md), [capacità/viste/permessi](v08-router-capabilities-and-views.md). Catalogati 44 moduli e 339 definizioni HTTP, non 339 capacità operative garantite. Verificati dal PC token/sessioni, inventario, Wi-Fi, porte, WAN/fibra, sensori, RRD e sottoscrizione eventi LAN con `settings=false`. Il token attuale basta alle letture provate; uno nuovo separa autorizzazioni, non concede automaticamente privilegi. Fonte iliadbox primaria se confermata dalla board; discovery locale soltanto per lacune misurate. N0–N5 restano lavoro da eseguire; nessun provider/UI Rete installato.
+
 ### Risultato
 
 Una famiglia **Rete** mostra la LAN osservata dalla Orange Pi: dispositivi rilevati di recente, preferiti e dettagli disponibili. La pagina Informazioni → Rete continua a descrivere la board; la nuova famiglia offre la panoramica della rete domestica.
 
-La prima versione funziona nella LAN raggiungibile senza dipendere da servizi sui PC. Un adapter del router, se compatibile, può aggiungere un inventario e metadati migliori. La configurazione comunicata dall'utente il 2 ottobre è **iliadbox Wi-Fi 7, gateway 192.168.1.254, rete unica**. È il riferimento per N0; maschera/prefisso, IPv6, isolamento e disponibilità delle API restano da verificare durante lo sviluppo. L'indirizzo del gateway non permette di presumere da solo una subnet /24. Nessuna scansione o interrogazione del router è stata eseguita per questo piano.
+La configurazione è **iliadbox Wi-Fi 7, gateway 192.168.1.254, rete unica**. Il 7 ottobre, dal PC, sono stati verificati documentazione locale e API **15.0**, token autorizzato fisicamente dall'utente e due sessioni successive con la stessa credenziale. Il provider futuro usa app_token/sessioni, senza password amministrativa per il polling. Preferire un'autorizzazione riconoscibile per il kiosk e ridurre i permessi non utilizzati; il riuso della stessa app resta una scelta da provare dalla board. Credenziali fuori dal repository e dai contesti pubblici, trust TLS circoscritto e identità router verificata.
+
+Lo snapshot contiene **39 record host**, 13 raggiungibili nella prima lettura e 14 in quella ampliata; il contatore dell'interfaccia indica **54**. Nessuno di questi valori diventa automaticamente «tutti i dispositivi accesi». Guest con `result=null` è fonte indisponibile. La configurazione DHCP dichiara maschera 255.255.255.0: prefisso/interfacce/IPv6 della board e copertura restano da verificare in N0. [Token/API](evidence/v08-iliadbox-study-2026-10-07/token-verification.json), [capacità reali](v08-router-capabilities-and-views.md). Nessuna scansione dei client è stata eseguita nello studio.
 
 ### Quali informazioni possiamo mostrare
 
 | Informazione | Sorgente prevista | Come viene presentata |
 | --- | --- | --- |
-| IPv4 e IPv6 osservati | Discovery e informazioni locali/router | Indirizzi correnti con fonte e ora; IPv6 solo entro la copertura verificata. |
+| IPv4 e IPv6 riportati/osservati | Inventario iliadbox e fonti locali | Qualità e tempi per indirizzo; un indirizzo raggiungibile non rende correnti tutti gli altri. |
 | Nome / alias | DNS, mDNS, router, nome assegnato dall'utente | Nome ottenuto e alias persistente distinti. |
 | MAC | ARP/ND locale o router | Se disponibile; non è un'identità permanente garantita. |
 | Produttore probabile | Prefisso MAC e database locale | Indicazione stimata; un indirizzo privato può renderla assente o errata. |
 | Tipo/modello e servizi | Annunci mDNS/DNS-SD o metadati router | Indizio/provenienza dichiarati; nessun modello inventato dal solo nome. |
-| Presenza e ultimo riscontro | Discovery recente o associazione riportata dal router | «Rilevato ora», «ultimo riscontro», «stato non verificato». Mancata risposta non equivale a spento. |
+| Presenza e ultimo riscontro | Stato/tempi iliadbox o risposta diretta qualificata | «Raggiungibile secondo router», «osservato dalla board», «ultimo riscontro» distinti. Nessuna risposta non equivale a spento. |
 | Primo/ultimo rilevamento | Registro locale | Storia delle osservazioni, non ore certe di accensione. |
 | Risposta/latency LAN | Sonda puntuale, dove accettata | Ritardo della risposta alla board; non velocità Internet. |
-| Wi-Fi/cavo, AP, banda, segnale, link | Adapter router/AP, se esposti | Solo per router compatibile; il segnale della board non rappresenta gli altri client. |
-| Traffico per dispositivo | Contatori router, se esposti | Estensione v0.8.1; nessuna deduzione dalla sola scansione LAN. |
+| Wi-Fi/porta e associazione AP/banda | Join inventario, stazioni e MAC switch iliadbox | Collegamenti verificati dal PC; conferma sulla board e tempo del join. Un host può essere dietro uno switch della stessa porta. |
+| Segnale, link e traffico | Stazioni Wi-Fi, porte e WAN | Approfondimenti v0.8.1. Wi-Fi per stazione, Ethernet aggregato per porta, WAN totale; livelli non sommabili né attribuibili a ogni host. |
 | CPU, GPU, RAM, app aperte | Non ricavabili dalla normale discovery | Fuori dal perimetro Rete; nessun agent da installare. |
 
 ARP/Neighbor Discovery operano sulla rete locale; firewall, isolamento e proxy ARP possono influenzare il risultato. Il discovery `-sn` di Nmap evita la successiva scansione porte e richiede di scegliere tecnica/privilegi appropriati alla LAN. [Documentazione Nmap](https://nmap.org/book/man-host-discovery.html).
@@ -175,25 +218,37 @@ Avahi consente di utilizzare gli annunci mDNS/DNS-SD per host e servizi che li p
 
 ### Schermate e comandi
 
-- **Panoramica:** LAN/gateway della board, numero di dispositivi rilevati recentemente, ultimo ciclo e stato della sorgente. WAN e LAN sono stati distinti.
-- **Dispositivi:** elenco con tre/quattro righe grandi, alias, indirizzo e stato del riscontro; filtri per preferiti, recenti e non identificati.
-- **Preferiti:** pochi dispositivi scelti da controllare, con contesto utile e ultimo riscontro.
-- **Dettaglio:** identità osservate, sorgenti, indirizzi, servizi pubblicati, storia essenziale; campi router soltanto se disponibili.
+- **Panoramica — `network.overview`:** LAN/fonte/ora, record e raggiungibilità qualificati, fino a quattro preferiti; breve stato Internet secondo box se disponibile. Copertura spiega conteggi discordanti.
+- **Dispositivi — `network.devices`:** elenco con poche righe leggibili, nome/alias, collegamento e riscontro; filtri tutti/preferiti/raggiungibili secondo box/precedenti. Numero di righe da confrontare sul display con ciascun tema.
+- **Dettaglio — `network.detail`:** Identità, Indirizzi, Collegamento e Riscontri; sorgenti e tempi, AP/banda o porta solo con join valido. Ritorno alla stessa riga/filtro/offset.
+- **Impostazioni — `settings.network`:** fonte, stato autorizzazione, sospensione acquisizione, preferiti/alias e storia. Refresh nel punto comune Dati e aggiornamenti. Preferiti nella panoramica e nel filtro, senza una vista vuota obbligatoria.
 
-4/6 cambia famiglia nelle panoramiche; 2/8 scorre viste o righe nel contesto attivo; 5 apre il dispositivo. Indietro conserva alias/identità selezionata anche se cambia IP. Aggiornamenti manuali nel punto centrale **Dati e aggiornamenti**; impostazioni specifiche in **Rete locale**; categorie nuove in **Notifiche → Avvisi sullo schermo**. Le etichette numeriche Home/Indietro vengono dal riferimento chiarito in T0.
+Sul focus pagina, 4/6 cambia famiglia; nelle righe 2/8 seleziona e 5 apre. Dalla prima riga, Su entra nella selezione delle viste e 4/6 cambia scheda; nel dettaglio 4/6 cambia sezione. **1 Home / 7 Indietro**; il ritorno conserva ID/filtro/offset anche dopo un aggiornamento. Footer e pallini seguono il tema e il contesto attivo, senza imporre le legende permanenti ad Apple Calm. Moduli visibili, Dati e aggiornamenti e Notifiche riusano i punti comuni. Nessun widget Rete permanente sulla Home nella prima uscita.
+
+### Temi e kit AI: parte della consegna
+
+Il provider è unico per tutti i temi. Esporre `NetworkContext`, dominio `network`, modelli/azioni tipizzati e quattro superfici attraverso Theme API; assegnare la nuova minor durante l'implementazione effettiva, senza cambiare ora la versione del contratto. Nessun renderer fa I/O, gestisce token o avvia sonde.
+
+- **Base e Functional:** copertura completa giorno/notte e Normal/Reduced/Off.
+- **Apple Calm 1.2.0 e bundle precedenti:** fallback Base esplicito per le nuove superfici, con layout/focus/stile compatibili; un renderer Rete dedicato può arrivare in una revisione del tema.
+- **Compatibilità:** estendere il fallback additivo oltre il delta Casa attuale. Non alterare zip/hash/manifest immutabili; provare bundle 2.0, 2.1 e 2.2 e mantenere errori per omissioni non riconosciute.
+- **SDK/kit AI:** contratti sorgente e generatori, reference/qmltypes, registry, fixture, esempi e pacchetto autonomo aggiornati nella stessa consegna.
+
+Ogni tema supportato deve poter usare Rete; non richiede un nuovo backend o quattro renderer personalizzati per ciascuno. La grafica personalizzata è una possibilità del contratto, mentre la copertura funzionale è un criterio di uscita.
 
 ### Fasi eseguibili
 
 | Fase | Lavoro | Criterio per proseguire |
 | --- | --- | --- |
-| N0 · Rete reale | Partire dall'iliadbox Wi-Fi 7 a 192.168.1.254, rete unica; verificare prefisso LAN, IPv6, isolamento e interfacce disponibili. Confrontare lista router e discovery sulla Orange Pi. | Elenco delle fonti, copertura e limiti misurati. |
-| N1 · Provider | ARP/ND e nomi/servizi disponibili; eventuale helper di discovery limitato. Lavoro in background, timeout e un ciclo per volta. | Funziona sulla board senza agent sui client; non blocca navigazione o uscita. |
+| N0a · Baseline | Riconciliare core rc.3/Theme API 2.2/tema installati con manifest e modifiche locali; interfacce/prefissi/IPv6 e unità effettiva. | Baseline riproducibile e differenze attribuite. |
+| N0b · Sorgenti reali | Sessione/TLS iliadbox dalla board, permessi, inventario e join; confronto con dispositivi acceso/sonno/scollegato e discrepanza 54/39. Discovery aggiuntiva solo per lacune. | Copertura e fonti utili misurate; scelta motivata su necessità del helper. |
+| N1 · Provider | Adapter iliadbox con sessione/permessi, inventario e join Wi-Fi/porta; informazioni locali e fallback ARP/ND/mDNS per lacune misurate. Lavoro in background, timeout e un ciclo per volta. | Funziona sulla board senza agent sui client; non blocca navigazione o uscita. |
 | N2 · Identità e storia | Alias, preferiti, fonti e timestamp persistenti. IP variabile, MAC privato, risposte parziali e cambio LAN gestiti. | Nessuna fusione certa di dispositivi da dati ambigui; cache mai presentata come presenza attuale. |
-| N3 · Schermate | Panoramica, elenco e dettaglio con i componenti Theme; primo risultato anche se alcuni metadati mancano. | Due profili, focus stabile, numero significativo di dispositivi e nomi lunghi leggibili. |
+| N3 · Schermate e Theme | Quattro superfici, NetworkContext, impostazioni/fonti, fallback versionato e kit AI. | Base/Functional completi, Apple Calm/bundle precedenti compatibili; focus stabile, nomi lunghi/IPv6, zero warning inattesi. |
 | N4 · Eventi | Nuovo dispositivo osservato e preferito non rilevato, solo se abilitati. Baseline iniziale silenziosa e conferme su più cicli. | Nessuna raffica al primo avvio, al ritorno della rete o per un solo timeout. |
 | N5 · Rilascio | Cicli e risorse misurati, recovery, copertura dichiarata e guida configurazione. | Distinzione verificata fra dispositivo assente, discovery guasta e rete board scollegata. |
 
-Prima policy candidata: un ciclo completo ogni cinque minuti, aggiornamento mirato dei preferiti ogni uno/due minuti solo se utile e sostenibile; refresh manuale con cooldown. Cache e storia ricevono una durata configurata; proposta iniziale 30 giorni per le osservazioni aggregate. Questi valori sono da confermare in N0/N1, non costituiscono polling già implementato.
+Prima policy candidata: riconciliazione completa ogni cinque minuti, refresh manuale con cooldown di 30 secondi e un solo ciclo alla volta. WebSocket come accelerazione soltanto dopo prova di eventi/reconnect, sempre con riconciliazione HTTP; l'handshake accettato non dimostra una transizione reale di presenza. Fonti AP/porte/config più lente; nessuna scansione completa ogni minuto per aprire una vista. Proposta di 30 giorni per osservazioni aggregate, con durata distinta di alias/preferiti. Valori da confermare in N0/N1, non polling già implementato.
 
 Se servono pacchetti raw, limitare i privilegi al helper necessario; il kiosk mantiene il suo utente di servizio. Subnet e massimo numero di indirizzi sono espliciti; timeout, concorrenza e durata totale hanno limiti. IPv6 usa osservazioni ND, multicast e fonti router: non si enumera un intero prefisso /64. Nessun ciclo di analisi globale delle porte necessario alla prima panoramica.
 
@@ -201,11 +256,25 @@ Un lease DHCP conservato prova un'assegnazione, non una connessione attuale. La 
 
 **Uscita v0.8:** confronto con un inventario reale, prove di dispositivi accesi/in sospensione/scollegati, MAC/IP variabili, perdita e ritorno della LAN, reboot e aggiornamento fallito; focus e dati precedenti coerenti; ripresa senza falsi nuovi dispositivi. Campi e copertura realmente ottenuti sono documentati; le prove non certificano la visibilità di reti isolate.
 
-## 7. v0.8.1 — Estensione facoltativa
+## 7. v0.8.1 — iliadbox / Internet, Wi-Fi e Porte
 
-Un adapter del router può aggiungere tipo di collegamento, segnale, AP/banda e contatori traffico, soltanto dopo verifica di API e disponibilità sul modello reale. Ogni metrica ha unità, origine, timestamp e semantica espliciti; riavvio/azzeramento dei contatori non genera traffico negativo.
+**Analisi pronta; implementazione dopo v0.8 verificata.** Lo [studio del 7 ottobre](v08-router-capabilities-and-views.md) conferma dal PC sorgenti WAN/fibra, radio/stazioni, porte, sensori/ventola e GET RRD con il token attuale. Queste capacità diventano approfondimenti nella stessa famiglia Rete, senza aggiungere una famiglia per ogni API.
 
-La stessa milestone può distribuire Hardware e Cyberdeck come profili aggiuntivi già costruiti sul contratto Theme. Serve una matrice di schermate anche per Casa e Rete; non si introduce una seconda navigazione. Se router o temi richiedono attività indipendenti, si rilasciano separatamente quando pronti: questa milestone non è una dipendenza della v0.9.
+| Superficie proposta | Contenuto e grafica | Limiti da mantenere |
+| --- | --- | --- |
+| `network.router` · iliadbox / Internet | Firmware/uptime, WAN/fibra, traffico down/up, potenza ottica, sensori/ventola; Stato/Storico con un grafico alla volta. | Capacità di banda riportata ≠ speed test. Sensori router distinti da Orange Pi e dai PC. |
+| `network.wifi` · Wi-Fi | Radio, canale/larghezza, associazioni, stazione/link/segnale; occupazione canale solo con freschezza qualificata. | Due radio 2,4/5 GHz osservate, nessuna 6 GHz dimostrata. MLO configurato non prova un client su più link. Nessuna scansione attiva/restart/WPS automatici. |
+| `network.ports` · Porte | Link/velocità, host visti dalla porta, contatori e serie; selezione porta → host → dettaglio. | Tre porte osservate, una a 2,5 Gbit/s. Traffico condiviso per porta, non consumo individuale di ciascun host. |
+
+### Fasi e criteri di uscita
+
+1. **E0 · Verificare le metriche:** unità/direzioni RX/TX, segnale radio, sentinel, timestamp, join MLO/roaming, velocità reali e campi sensori sul modello effettivo. Segnale raw in dB senza percentuali/dBm inventati fino a qualifica.
+2. **E1 · Adapter e storico:** GET RRD con finestre limitate, risoluzione effettiva e punti ridotti prima di QML. Null resta buco; reboot/reset/scope nuovo produce baseline, non delta negativo. Traffico WAN, Wi-Fi per stazione e porta sono livelli distinti; niente consumo mensile per host senza dati raccolti.
+3. **E2 · Acquisizione visibile:** config lenta, campioni rapidi soltanto nel dettaglio attivo, frequenza candidata 5–10 secondi da misurare. Pausa delle richieste aggiuntive quando la vista è nascosta; niente callback o invalidazioni inutili.
+4. **E3 · UI e Theme:** tre superfici additive, DTO filtrati, Base/Functional, compatibilità Apple Calm e bundle precedenti, fixture e kit AI aggiornati. Le viste mostrano un approfondimento/grafico per volta a 960×640.
+5. **E4 · Consegna:** direzioni/assenze/reset provati, recovery e carico misurati, navigazione ordinaria verificata e manifest/backup. Campi non disponibili non diventano zeri o tessere vuote.
+
+**Uscita v0.8.1:** sorgenti dalla board confermate, semantica delle metriche documentata, storico valido con buchi/reset, temi compatibili, nessuna regressione dell'inventario v0.8. Le 44 famiglie API catalogate non entrano tutte nel polling: storage, media, telefonia, VPN/comandi e domotica box restano opportunità separate senza versione assegnata. Hardware/Cyberdeck possono essere sviluppati indipendentemente, con una propria qualifica visiva; non sono una condizione di questa release.
 
 ## 8. v0.9 — Compagno animato
 
@@ -245,4 +314,25 @@ Riferimenti: [rapporto operativo del 1 ottobre](../../os/diagnostics/2026-10-01-
 
 Nessuna nuova funzione entra come pagina vuota. Un modulo configurato continua a essere consultabile offline; nasconderlo dal carosello non equivale a disattivare il suo provider. Eventuali controlli di acquisizione, visibilità e notifiche hanno significati espliciti.
 
-**Prossimo lavoro concreto:** concludere il collaudo A6 e decidere l'accettazione dei gate residui nel [resoconto A1–A6](theme-engine-a1-a6-implementation-report.md), prima di riusare il contratto pubblico in v0.7 Casa/Smart Life. I bundle con composizioni nuove sono implementati; il completamento fisico/prestazionale e la qualifica dei cinque concept rimangono decisioni fondate sulle evidenze. Casa resta la prossima milestone di prodotto. Nessuna nuova versione/tag è assegnata implicitamente. La consegna iniziale T0–T5 è nel [resoconto originario](v066-migration-report.md), e la prima migrazione degli Avvisi nel [resoconto notifiche](theme-engine-notification-migration-report.md).
+## 12. Ordine operativo da seguire adesso
+
+1. **Partenza v0.8 — N0a/N0b:** partire dall'ultima consegna documentata core rc.3 / Theme API 2.2 / Apple Calm 1.2.0; riconciliare runtime/manifest e provare dalla Orange Pi token/TLS, inventario e collegamenti iliadbox. Nessuna ripartenza da una presunta rc.2 perché un README è rimasto indietro.
+2. **v0.8 — N1/N2:** provider, persistenza, identità, freschezza/copertura e preferiti. Eventi WebSocket facoltativi dopo prova reale; discovery/helper solo se necessari alle lacune.
+3. **v0.8 — N3/N5:** quattro superfici, compatibilità dei temi e SDK, prove mirate, candidata e distribuzione. N4 notifiche dopo copertura/identità affidabili; non deve bloccare la prima consultazione utile.
+4. **v0.8.1 — E0/E4:** metriche qualificate, storico e tre approfondimenti; una release alla volta.
+5. **In parallelo alle occasioni reali:** chiudere quota/collaudi Casa e gate live Sport. Per Theme conservare i residui fisici/prolungati documentati; non ricominciare A1–A6 o stress storici già conclusi.
+6. **Poi v0.9/v0.10:** compagno e memoria/AI, sulla base grafica già consegnata. Nessun nuovo tag o versione runtime viene assegnato da questo aggiornamento del piano.
+
+### Gate aperti e loro effetto
+
+| Gate | Stato / evidenza mancante | Cosa condiziona |
+| --- | --- | --- |
+| Casa: quota/consumo/scadenza | Valori effettivi e polling controllato. | Uso continuativo e accettazione v0.7 finale; non l'analisi o N0 Rete. |
+| Casa: dispositivi/rete | Cambi reali, latenza, hub/rete assenti, cold start offline e gestione account. | Accettazione finale Casa; non cancellare la candidata manuale già consegnata. |
+| Rete: accesso/copertura | N0 dalla Orange Pi, discrepanza 54/39, stati di presenza e permessi/trust. | Scelta delle sorgenti e promessa dei campi v0.8. |
+| Rete: temi | Fallback additivo, bundle precedenti, quattro superfici e kit AI. | Consegna v0.8, insieme al provider/UI. |
+| Metriche v0.8.1 | Direzioni, segnale, MLO, storico e reset sulla board. | Etichette/grafici della release estesa. |
+| Sport live | Partite/sessioni effettivamente attive e feed voti. | Singolo badge/gate live e notifiche gol. |
+| Theme fisico/prolungato | Tastierino reale, power-cut e uso continuativo; verifiche ottiche dove necessarie. | Qualifica fisica e stabilità finale; evitare nuovi risultati PASS senza prove. |
+
+Fonti recenti: [Casa iniziale](v07-implementation-report.md), [manutenzione](v07-maintenance-report.md), [Apple Calm e rc.3](../../theme-projects/apple-calm/CONSEGNA.md), [architettura Rete](v08-local-network-analysis.md), [token](v08-iliadbox-api-study.md), [capacità/viste](v08-router-capabilities-and-views.md). I resoconti storici mantengono versione, esiti e limiti del momento in cui furono prodotti.

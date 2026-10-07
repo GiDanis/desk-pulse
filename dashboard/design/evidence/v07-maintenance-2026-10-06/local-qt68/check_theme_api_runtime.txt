@@ -1,0 +1,134 @@
+...............F...............
+======================================================================
+FAIL: test_lint_typo_rejected_with_real_qmllint (__main__.PublicApiTests.test_lint_typo_rejected_with_real_qmllint)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_api_runtime.py", line 491, in test_lint_typo_rejected_with_real_qmllint
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 255 != 0 : Usage: /tmp/smartpc-maintenance-qt68/lib/python3.12/site-packages/PySide6/qmllint [options] files
+QML syntax verifier and analyzer
+
+All warnings can be set to three levels:
+    disable - Fully disables the warning.
+    info - Displays the warning but does not influence the return code.
+    warning - Displays the warning and leads to a non-zero exit code if encountered.
+
+
+Options:
+  -h, --help                             Displays help on commandline options.
+  --help-all                             Displays help, including generic Qt
+                                         options.
+  -v, --version                          Displays version information.
+  -s, --silent                           Don't output syntax errors
+  --json <file>                          Write output as JSON to file (or use
+                                         the special filename '-'  to write to
+                                         stdout)
+  --write-defaults                       Writes defaults settings to
+                                         .qmllint.ini and exits (Warning: This
+                                         will overwrite any existing settings
+                                         and comments!)
+  --ignore-settings                      Ignores all settings files and only
+                                         takes command line options into
+                                         consideration
+  -M, --module                           Lint modules instead of files
+  --resource <resource>                  Look for related files in the given
+                                         resource file
+  -I, --qmldirs <directory>              Look for QML modules in specified
+                                         directory
+  -E                                     Use the QML_IMPORT_PATH environment
+                                         variable to look for QML Modules
+  --bare                                 Do not include default import
+                                         directories or the current directory.
+                                         This may be used to run qmllint on a
+                                         project using a different Qt version.
+  -i, --qmltypes <qmldirs>               Import the specified qmldir files. By
+                                         default, the qmldir file found in the
+                                         current directory is used if present.
+                                         If no qmldir file is found,but qmltypes
+                                         files are, those are imported instead.
+                                         When this option is set, you have to
+                                         explicitly add the qmldir or any
+                                         qmltypes files in the current directory
+                                         if you want it to be used. Importing
+                                         qmltypes files without their
+                                         corresponding qmldir file is
+                                         inadvisable.
+  -f, --fix                              Automatically apply fix suggestions
+  --dry-run                              Only print out the contents of the
+                                         file after fix suggestions without
+                                         applying them
+  --list-plugins                         List all available plugins
+  -D, --disable-plugins <plugins>        List of qmllint plugins to disable
+                                         (all to disable all plugins)
+  -P, --plugin-paths <directory>         Look for qmllint plugins in specified
+                                         directory
+  -W, --max-warnings <count>             Exit with an error code if more than
+                                         "count" manywarnings are found by
+                                         qmllint. By default or if "count" is
+                                         -1, warnings do not cause qmllint to
+                                         return with an error exit code.
+  --required <level>                     Warn about required properties
+                                         (default: warning)
+  --alias-cycle <level>                  Warn about alias cycles (default:
+                                         warning)
+  --unresolved-alias <level>             Warn about unresolved aliases
+                                         (default: warning)
+  --import <level>                       Warn about failing imports and
+                                         deprecated qmltypes (default: warning)
+  --with <level>                         Warn about with statements as they can
+                                         cause false positives when checking for
+                                         unqualified access (default: warning)
+  --inheritance-cycle <level>            Warn about inheritance cycles
+                                         (default: warning)
+  --deprecated <level>                   Warn about deprecated properties and
+                                         types (default: warning)
+  --signal-handler-parameters <level>    Warn about bad signal handler
+                                         parameters (default: warning)
+  --missing-type <level>                 Warn about missing types (default:
+                                         warning)
+  --unresolved-type <level>              Warn about unresolved types (default:
+                                         warning)
+  --restricted-type <level>              Warn about restricted types (default:
+                                         warning)
+  --prefixed-import-type <level>         Warn about prefixed import types
+                                         (default: warning)
+  --incompatible-type <level>            Warn about missing types (default:
+                                         warning)
+  --missing-property <level>             Warn about missing properties
+                                         (default: warning)
+  --non-list-property <level>            Warn about non-list properties
+                                         (default: warning)
+  --read-only-property <level>           Warn about writing to read-only
+                                         properties (default: warning)
+  --duplicate-property-binding <level>   Warn about duplicate property bindings
+                                         (default: warning)
+  --duplicated-name <level>              Warn about duplicated property/signal
+                                         names (default: warning)
+  --unqualified <level>                  Warn about unqualified identifiers and
+                                         how to fix them (default: warning)
+  --unused-imports <level>               Warn about unused imports (default:
+                                         info)
+  --multiline-strings <level>            Warn about multiline strings (default:
+                                         info)
+  --var-used-before-declaration <level>  Warn if a variable is used before
+                                         declaration (default: warning)
+  --invalid-lint-directive <level>       Warn if an invalid qmllint comment is
+                                         found (default: warning)
+  --use-proper-function <level>          Warn if var is used for storing
+                                         functions (default: warning)
+  --access-singleton-via-object <level>  Warn if a singleton is accessed via an
+                                         object (default: warning)
+  --top-level-component <level>          Fail when a top level Component are
+                                         encountered (default: warning)
+  --uncreatable-type <level>             Warn if uncreatable types are created
+                                         (default: warning)
+
+Arguments:
+  files                                  list of qml or js files to verify
+Invalid logging level "error" provided for "unresolved-type" (allowed are: disable, info, warning)
+
+
+----------------------------------------------------------------------
+Ran 31 tests in 0.161s
+
+FAILED (failures=1)

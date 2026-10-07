@@ -1,0 +1,864 @@
+{
+  "date": "2026-10-07",
+  "collectedAtUtc": "2026-10-07T13:39:56.437905+00:00",
+  "scope": "Authenticated bounded read-only capability checks from development PC; router model specific; no device probes, mutations or private service contents",
+  "apiVersion": "15.0",
+  "permissions": {
+    "parental": false,
+    "tv": true,
+    "explorer": true,
+    "contacts": true,
+    "wdo": false,
+    "camera": false,
+    "profile": false,
+    "player": false,
+    "settings": false,
+    "calls": true,
+    "home": false,
+    "pvr": true,
+    "vm": true,
+    "downloader": true
+  },
+  "reads": [
+    {
+      "path": "/system/",
+      "status": "success",
+      "schema": {
+        "type": "object",
+        "fields": {
+          "mac": "str",
+          "usb3_enable": "bool",
+          "board_name": "str",
+          "model_info": "dict",
+          "fans": "list",
+          "sensors": "list",
+          "user_storage_powered": "bool",
+          "disk_status": "str",
+          "uptime": "str",
+          "uptime_val": "int",
+          "user_main_storage": "str",
+          "box_authenticated": "bool",
+          "serial": "str",
+          "firmware_version": "str"
+        }
+      },
+      "elapsedMs": 37.24,
+      "modelCapabilities": {
+        "has_standby": true,
+        "has_lcd_orientation": true,
+        "has_separate_internal_storage": true,
+        "has_status_led": true,
+        "has_wop": true,
+        "has_usb3_enable": true
+      },
+      "summary": {
+        "firmware_version": "4.9.18.2",
+        "uptime_val": 11550225,
+        "disk_status": "active"
+      },
+      "sensorCount": 2,
+      "fanCount": 1
+    },
+    {
+      "path": "/connection/",
+      "status": "success",
+      "schema": {
+        "type": "object",
+        "fields": {
+          "type": "str",
+          "rate_down": "int",
+          "bytes_up": "int",
+          "ipv4_port_range": "list",
+          "rate_up": "int",
+          "bandwidth_up": "int",
+          "ipv6": "str",
+          "bandwidth_down": "int",
+          "media": "str",
+          "state": "str",
+          "bytes_down": "int",
+          "ipv4": "str"
+        }
+      },
+      "elapsedMs": 15.12,
+      "summary": {
+        "state": "up",
+        "media": "ftth",
+        "type": "ethernet",
+        "rate_up": 23686,
+        "rate_down": 157214,
+        "bandwidth_up": 900000000,
+        "bandwidth_down": 5000000000
+      }
+    },
+    {
+      "path": "/connection/ftth/",
+      "status": "success",
+      "schema": {
+        "type": "object",
+        "fields": {
+          "sfp_has_power_report": "bool",
+          "sfp_has_signal": "bool",
+          "sfp_model": "str",
+          "link_type": "str",
+          "sfp_pwr_rx": "int",
+          "sfp_vendor": "str",
+          "sfp_pwr_tx": "int",
+          "has_sfp": "bool",
+          "link": "bool",
+          "sfp_alim_ok": "bool",
+          "sfp_serial": "str",
+          "sfp_present": "bool"
+        }
+      },
+      "elapsedMs": 9.37,
+      "summary": {
+        "sfp_present": true,
+        "sfp_alim_ok": true,
+        "sfp_has_signal": true,
+        "link": true,
+        "sfp_pwr_tx": 287,
+        "sfp_pwr_rx": -1838
+      }
+    },
+    {
+      "path": "/connection/ipv6/config/",
+      "status": "success",
+      "schema": {
+        "type": "object",
+        "fields": {
+          "ipv6_enabled": "bool",
+          "ipv6_prefix_firewall": "bool",
+          "ipv6ll": "str",
+          "delegations": "list",
+          "ipv6_firewall": "bool"
+        }
+      },
+      "elapsedMs": 11.49
+    },
+    {
+      "path": "/lan/config/",
+      "status": "success",
+      "schema": {
+        "type": "object",
+        "fields": {
+          "name_dns": "str",
+          "name": "str",
+          "name_mdns": "str",
+          "mode": "str",
+          "name_netbios": "str",
+          "ip": "str"
+        }
+      },
+      "elapsedMs": 12.65
+    },
+    {
+      "path": "/lan/browser/interfaces/",
+      "status": "success",
+      "schema": {
+        "type": "array",
+        "count": 2,
+        "itemFields": [
+          "host_count",
+          "name"
+        ]
+      },
+      "elapsedMs": 8.74
+    },
+    {
+      "path": "/lan/browser/pub/",
+      "status": "success",
+      "schema": {
+        "type": "array",
+        "count": 39,
+        "itemFields": [
+          "access_point",
+          "active",
+          "default_name",
+          "first_activity",
+          "host_type",
+          "id",
+          "info",
+          "interface",
+          "l2ident",
+          "l3connectivities",
+          "last_activity",
+          "last_time_reachable",
+          "names",
+          "persistent",
+          "primary_name",
+          "primary_name_manual",
+          "reachable",
+          "vendor_name"
+        ]
+      },
+      "elapsedMs": 63.32,
+      "summary": {
+        "recordCount": 39,
+        "active": 14,
+        "reachable": 14,
+        "persistent": 1,
+        "l3AddressCount": 222,
+        "withAccessPoint": 14,
+        "accessPointTypes": [
+          "NoneType",
+          "dict"
+        ]
+      },
+      "joins": {
+        "wifiStationEntries": 11,
+        "wifiWithHostIdInInventory": 11,
+        "wifiMacMatchesLanL2Id": 11,
+        "switchMacEntryCount": 4,
+        "switchEntriesMatchingLanL2Id": 4
+      }
+    },
+    {
+      "path": "/lan/browser/types/",
+      "status": "success",
+      "schema": {
+        "type": "array",
+        "count": 20,
+        "itemFields": [
+          "category",
+          "icon",
+          "name",
+          "type"
+        ]
+      },
+      "elapsedMs": 11.1
+    },
+    {
+      "path": "/dhcp/config/",
+      "status": "success",
+      "schema": {
+        "type": "object",
+        "fields": {
+          "enabled": "bool",
+          "sticky_assign": "bool",
+          "boot_server": "str",
+          "netmask": "str",
+          "always_broadcast": "bool",
+          "dns": "list",
+          "ignore_out_of_range_hint": "bool",
+          "ip_range_end": "str",
+          "gateway": "str",
+          "options": "dict",
+          "boot_file": "str",
+          "ip_range_start": "str"
+        }
+      },
+      "elapsedMs": 11.49,
+      "summary": {
+        "enabled": true,
+        "netmask": "255.255.255.0"
+      }
+    },
+    {
+      "path": "/dhcp/dynamic_lease/",
+      "status": "success",
+      "schema": {
+        "type": "array",
+        "count": 19,
+        "itemFields": [
+          "assign_time",
+          "host",
+          "hostname",
+          "ip",
+          "is_static",
+          "lease_remaining",
+          "mac",
+          "refresh_time"
+        ]
+      },
+      "elapsedMs": 50.83
+    },
+    {
+      "path": "/dhcp/static_lease/",
+      "status": "success",
+      "schema": {
+        "type": "array",
+        "count": 1,
+        "itemFields": [
+          "comment",
+          "host",
+          "hostname",
+          "id",
+          "ip",
+          "mac",
+          "options"
+        ]
+      },
+      "elapsedMs": 14.74
+    },
+    {
+      "path": "/dhcpv6/config/",
+      "status": "success",
+      "schema": {
+        "type": "object",
+        "fields": {
+          "enabled": "bool",
+          "use_custom_dns": "bool",
+          "dns": "dict"
+        }
+      },
+      "elapsedMs": 10.41,
+      "summary": {
+        "enabled": false
+      }
+    },
+    {
+      "path": "/wifi/state/",
+      "status": "success",
+      "schema": {
+        "type": "object",
+        "fields": {
+          "state": "str",
+          "power_saving_capability": "str",
+          "expected_phys": "list"
+        }
+      },
+      "elapsedMs": 17.8,
+      "summary": {
+        "state": "enabled"
+      }
+    },
+    {
+      "path": "/wifi/ap/",
+      "status": "success",
+      "schema": {
+        "type": "array",
+        "count": 2,
+        "itemFields": [
+          "capabilities",
+          "config",
+          "id",
+          "name",
+          "status"
+        ]
+      },
+      "elapsedMs": 19.01
+    },
+    {
+      "path": "/wifi/bss/",
+      "status": "success",
+      "schema": {
+        "type": "array",
+        "count": 2,
+        "itemFields": [
+          "bss_params",
+          "config",
+          "disable_wep",
+          "id",
+          "phy_id",
+          "shared_bss_params",
+          "status",
+          "use_shared_params"
+        ]
+      },
+      "elapsedMs": 14.93,
+      "bssSummary": [
+        {
+          "statusFields": [
+            "authorized_sta_count",
+            "band",
+            "custom_key_ssid",
+            "is_main_bss",
+            "partners",
+            "sta_count",
+            "state"
+          ],
+          "state": "active",
+          "stationCount": 5,
+          "configFields": [
+            "eapol_version",
+            "enabled",
+            "encryption",
+            "gcmp256",
+            "hide_ssid",
+            "key",
+            "ssid",
+            "use_default_config",
+            "wps_enabled",
+            "wps_uuid"
+          ],
+          "idShape": "str"
+        },
+        {
+          "statusFields": [
+            "authorized_sta_count",
+            "band",
+            "custom_key_ssid",
+            "is_main_bss",
+            "partners",
+            "sta_count",
+            "state"
+          ],
+          "state": "active",
+          "stationCount": 6,
+          "configFields": [
+            "eapol_version",
+            "enabled",
+            "encryption",
+            "gcmp256",
+            "hide_ssid",
+            "key",
+            "ssid",
+            "use_default_config",
+            "wps_enabled",
+            "wps_uuid"
+          ],
+          "idShape": "str"
+        }
+      ]
+    },
+    {
+      "path": "/switch/status/",
+      "status": "success",
+      "schema": {
+        "type": "array",
+        "count": 3,
+        "itemFields": [
+          "duplex",
+          "id",
+          "link",
+          "mac_list",
+          "mode",
+          "name",
+          "rrd_id",
+          "speed"
+        ]
+      },
+      "elapsedMs": 13.67
+    },
+    {
+      "path": "/standby/status",
+      "status": "success",
+      "schema": {
+        "type": "object",
+        "fields": {
+          "use_planning": "bool",
+          "planning_mode": "str",
+          "available_planning_modes": "list",
+          "next_change": "int"
+        }
+      },
+      "elapsedMs": 11.76,
+      "summary": {
+        "use_planning": false,
+        "planning_mode": "suspend",
+        "available_planning_modes": [
+          "wifi_off",
+          "suspend"
+        ]
+      }
+    },
+    {
+      "path": "/update/",
+      "status": "success",
+      "schema": {
+        "type": "object",
+        "fields": {
+          "state": "str"
+        }
+      },
+      "elapsedMs": 16.08,
+      "summary": {
+        "state": "up_to_date"
+      }
+    },
+    {
+      "path": "/freeplug/",
+      "status": "failed",
+      "error": "API 500: internal_error",
+      "elapsedMs": 27.19
+    },
+    {
+      "path": "/storage/disk/",
+      "status": "success",
+      "schema": {
+        "type": "NoneType"
+      },
+      "elapsedMs": 14.02
+    },
+    {
+      "path": "/storage/partition/",
+      "status": "success",
+      "schema": {
+        "type": "NoneType"
+      },
+      "elapsedMs": 9.64
+    },
+    {
+      "path": "/wifi/ap/0/stations/",
+      "status": "success",
+      "schema": {
+        "type": "array",
+        "count": 6,
+        "itemFields": [
+          "access_type",
+          "bssid",
+          "conn_duration",
+          "custom_key_id",
+          "flags",
+          "host",
+          "hostname",
+          "id",
+          "inactive",
+          "last_rx",
+          "last_tx",
+          "mac",
+          "pairwise_cipher",
+          "rx_bytes",
+          "rx_rate",
+          "signal",
+          "state",
+          "tx_bytes",
+          "tx_rate",
+          "wpa_alg"
+        ]
+      },
+      "elapsedMs": 27.8,
+      "apSummary": {
+        "state": "active",
+        "channel_width": "20",
+        "primary_channel": 6
+      },
+      "apCapabilityFields": [
+        "2d4g",
+        "5g",
+        "60g",
+        "6g"
+      ],
+      "stationSummary": {
+        "count": 6,
+        "withLanHost": 6,
+        "withSignal": 6,
+        "signalRangeRawDb": [
+          -82,
+          -52
+        ],
+        "stationStates": [
+          "authenticated"
+        ],
+        "flagFields": [
+          "2d4g",
+          "5g",
+          "6g",
+          "authorized",
+          "eht",
+          "he",
+          "ht",
+          "legacy",
+          "vht"
+        ]
+      }
+    },
+    {
+      "path": "/wifi/ap/1/stations/",
+      "status": "success",
+      "schema": {
+        "type": "array",
+        "count": 5,
+        "itemFields": [
+          "access_type",
+          "bssid",
+          "conn_duration",
+          "custom_key_id",
+          "flags",
+          "host",
+          "hostname",
+          "id",
+          "inactive",
+          "last_rx",
+          "last_tx",
+          "mac",
+          "pairwise_cipher",
+          "rx_bytes",
+          "rx_rate",
+          "signal",
+          "state",
+          "tx_bytes",
+          "tx_rate",
+          "wpa_alg"
+        ]
+      },
+      "elapsedMs": 27.33,
+      "apSummary": {
+        "state": "active",
+        "channel_width": "160",
+        "primary_channel": 48
+      },
+      "apCapabilityFields": [
+        "2d4g",
+        "5g",
+        "60g",
+        "6g"
+      ],
+      "stationSummary": {
+        "count": 5,
+        "withLanHost": 5,
+        "withSignal": 5,
+        "signalRangeRawDb": [
+          -84,
+          -64
+        ],
+        "stationStates": [
+          "authenticated"
+        ],
+        "flagFields": [
+          "2d4g",
+          "5g",
+          "6g",
+          "authorized",
+          "eht",
+          "he",
+          "ht",
+          "legacy",
+          "vht"
+        ]
+      }
+    },
+    {
+      "path": "/wifi/bss/{bssid}/mlo/config",
+      "status": "success",
+      "schema": {
+        "type": "object",
+        "fields": {
+          "partners": "list"
+        }
+      },
+      "elapsedMs": 13.76
+    },
+    {
+      "path": "/switch/port/3/stats",
+      "status": "success",
+      "schema": {
+        "type": "object",
+        "fields": {
+          "rx_discard_packets": "int",
+          "rx_bad_bytes": "int",
+          "tx_bytes": "int",
+          "rx_bytes_rate": "int",
+          "tx_packets": "int",
+          "tx_collisions": "int",
+          "rx_jabber_packets": "int",
+          "rx_multicast_packets": "int",
+          "tx_multicast_packets": "int",
+          "tx_late": "int",
+          "rx_fragments_packets": "int",
+          "rx_packets_rate": "int",
+          "rx_err_packets": "int",
+          "tx_packets_rate": "int",
+          "rx_filtered_packets": "int",
+          "rx_unicast_packets": "int",
+          "tx_filtered_packets": "int",
+          "tx_multiple": "int",
+          "tx_fcs": "int",
+          "tx_single": "int",
+          "rx_pause": "int",
+          "tx_pause": "int",
+          "rx_good_packets": "int",
+          "rx_broadcast_packets": "int",
+          "tx_bytes_rate": "int",
+          "rx_good_bytes": "int",
+          "rx_oversize_packets": "int",
+          "tx_unicast_packets": "int",
+          "tx_broadcast_packets": "int",
+          "rx_fcs_packets": "int",
+          "tx_excessive": "int",
+          "tx_deferred": "int",
+          "rx_undersize_packets": "int"
+        }
+      },
+      "elapsedMs": 9.33,
+      "portSummary": {
+        "id": 3,
+        "link": "up",
+        "duplex": "full",
+        "speed": "2500",
+        "mode": "2500BaseT-FD",
+        "macEntryCount": 3
+      }
+    },
+    {
+      "path": "/switch/port/1/stats",
+      "status": "success",
+      "schema": {
+        "type": "object",
+        "fields": {
+          "rx_discard_packets": "int",
+          "rx_bad_bytes": "int",
+          "tx_bytes": "int",
+          "rx_bytes_rate": "int",
+          "tx_packets": "int",
+          "tx_collisions": "int",
+          "rx_jabber_packets": "int",
+          "rx_multicast_packets": "int",
+          "tx_multicast_packets": "int",
+          "tx_late": "int",
+          "rx_fragments_packets": "int",
+          "rx_packets_rate": "int",
+          "rx_err_packets": "int",
+          "tx_packets_rate": "int",
+          "rx_filtered_packets": "int",
+          "rx_unicast_packets": "int",
+          "tx_filtered_packets": "int",
+          "tx_multiple": "int",
+          "tx_fcs": "int",
+          "tx_single": "int",
+          "rx_pause": "int",
+          "tx_pause": "int",
+          "rx_good_packets": "int",
+          "rx_broadcast_packets": "int",
+          "tx_bytes_rate": "int",
+          "rx_good_bytes": "int",
+          "rx_oversize_packets": "int",
+          "tx_unicast_packets": "int",
+          "tx_broadcast_packets": "int",
+          "rx_fcs_packets": "int",
+          "tx_excessive": "int",
+          "tx_deferred": "int",
+          "rx_undersize_packets": "int"
+        }
+      },
+      "elapsedMs": 10.18,
+      "portSummary": {
+        "id": 1,
+        "link": "down",
+        "duplex": "half",
+        "speed": "10",
+        "mode": "10BaseT-HD",
+        "macEntryCount": 0
+      }
+    },
+    {
+      "path": "/switch/port/2/stats",
+      "status": "success",
+      "schema": {
+        "type": "object",
+        "fields": {
+          "rx_discard_packets": "int",
+          "rx_bad_bytes": "int",
+          "tx_bytes": "int",
+          "rx_bytes_rate": "int",
+          "tx_packets": "int",
+          "tx_collisions": "int",
+          "rx_jabber_packets": "int",
+          "rx_multicast_packets": "int",
+          "tx_multicast_packets": "int",
+          "tx_late": "int",
+          "rx_fragments_packets": "int",
+          "rx_packets_rate": "int",
+          "rx_err_packets": "int",
+          "tx_packets_rate": "int",
+          "rx_filtered_packets": "int",
+          "rx_unicast_packets": "int",
+          "tx_filtered_packets": "int",
+          "tx_multiple": "int",
+          "tx_fcs": "int",
+          "tx_single": "int",
+          "rx_pause": "int",
+          "tx_pause": "int",
+          "rx_good_packets": "int",
+          "rx_broadcast_packets": "int",
+          "tx_bytes_rate": "int",
+          "rx_good_bytes": "int",
+          "rx_oversize_packets": "int",
+          "tx_unicast_packets": "int",
+          "tx_broadcast_packets": "int",
+          "rx_fcs_packets": "int",
+          "tx_excessive": "int",
+          "tx_deferred": "int",
+          "rx_undersize_packets": "int"
+        }
+      },
+      "elapsedMs": 8.33,
+      "portSummary": {
+        "id": 2,
+        "link": "up",
+        "duplex": "full",
+        "speed": "100",
+        "mode": "100BaseTX-FD",
+        "macEntryCount": 1
+      }
+    },
+    {
+      "path": "/rrd/?db=net&date_start=1791376796&date_end=1791380396",
+      "status": "success",
+      "schema": {
+        "type": "object",
+        "fields": {
+          "date_start": "int",
+          "data": "list",
+          "date_end": "int"
+        }
+      },
+      "elapsedMs": 17.98,
+      "historySummary": {
+        "pointCount": 360,
+        "pointFields": [
+          "bw_down",
+          "bw_up",
+          "rate_down",
+          "rate_up",
+          "time"
+        ],
+        "dateStart": 1791376790,
+        "dateEnd": 1791380392
+      }
+    },
+    {
+      "path": "/lan/browser/pub/{hostid}/",
+      "status": "success",
+      "schema": {
+        "type": "object",
+        "fields": {
+          "l2ident": "dict",
+          "active": "bool",
+          "persistent": "bool",
+          "names": "list",
+          "vendor_name": "str",
+          "host_type": "str",
+          "interface": "str",
+          "info": "dict",
+          "id": "str",
+          "last_time_reachable": "int",
+          "primary_name_manual": "bool",
+          "l3connectivities": "list",
+          "access_point": "dict",
+          "default_name": "str",
+          "first_activity": "int",
+          "reachable": "bool",
+          "last_activity": "int",
+          "primary_name": "str"
+        }
+      },
+      "elapsedMs": 14.93
+    },
+    {
+      "path": "/lan/browser/interfaces/",
+      "status": "success",
+      "schema": {
+        "type": "array",
+        "count": 2,
+        "itemFields": [
+          "host_count",
+          "name"
+        ]
+      },
+      "elapsedMs": 10.16
+    }
+  ],
+  "readCount": 30,
+  "sessionClosed": true,
+  "credentialsPersistedInReport": false,
+  "notPerformed": [
+    "New app token or permissions changes",
+    "Private calls/contacts/files/media contents",
+    "Active Wi-Fi scan or diagnostic run",
+    "Router/client configuration changes",
+    "Orange Pi deployment",
+    "Physical presence transitions",
+    "WebSocket live event validation"
+  ]
+}
