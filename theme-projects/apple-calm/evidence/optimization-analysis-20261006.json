@@ -1,0 +1,111 @@
+{
+  "analysisDate": "2026-10-06",
+  "recordedAt": "2026-10-06T19:56:37.207581+02:00",
+  "scope": "Read-only analysis; no application changes, theme activation, provider requests, service restart or deletion",
+  "board": {
+    "runtimeVersion": "0.7.0-rc.2",
+    "service": "smartpc-dashboard.service",
+    "activeState": "active",
+    "subState": "running",
+    "nRestarts": 0,
+    "mainPidAtRead": 20758,
+    "serviceMemoryBytesAtRead": 356614144
+  },
+  "theme": {
+    "active": {
+      "id": "studio.applecalm",
+      "version": "1.1.0",
+      "digest": "43344f7fe1264be9fc075c5852abc75bbffa3f493fde744cb9a9548a19c5a123"
+    },
+    "previous": {
+      "id": "studio.applecalm",
+      "version": "1.0.0"
+    },
+    "pending": null,
+    "installedPayloadFiles": 59,
+    "installedPayloadBytes": 1120613,
+    "coveredSurfaces": 43,
+    "notCoveredInCurrentRuntime": [
+      "casa.overview",
+      "casa.devices",
+      "casa.detail",
+      "settings.casa"
+    ]
+  },
+  "verifiedMatchingLocalAndInstalledSourceSha256": {
+    "Main.qml": "68b08edeaba6c13ad9042626e858ec5be9f494692c259210f2085a558c783e32",
+    "theme_api.py": "c15e395904226956964d7c7d49660ba083c9ce737d36ff9ef7a2677aed30b230",
+    "theme_lifecycle.py": "07146cf66f3c65284915efc24b9dce0f0b15d31cb17c88280c0a358b420d40d0",
+    "theme_bundle.py": "dd50b83fe70dc8c0b8c4b02f20d6be2f546e4594820fb80c5e76cbf6a9d48646"
+  },
+  "standings": {
+    "sourceCache": "/var/cache/smartpc-dashboard/SmartPC/SmartPC/sport.json",
+    "fixturesCount": 380,
+    "standingsCount": 20,
+    "rowsWithTeam": 20,
+    "rowsWithNameBeforeNormalization": 0,
+    "rowsWithNameAfterNormalization": 0,
+    "syntheticInput": {
+      "teamId": "inter",
+      "team": "Inter",
+      "position": 1,
+      "points": 16
+    },
+    "syntheticSportDataOutput": {
+      "id": "SportData:standings:0",
+      "entityId": "",
+      "name": ""
+    }
+  },
+  "isolatedBoardMeasurementsMs": {
+    "normalizeSportData": [
+      233.8,
+      225.68,
+      227.14
+    ],
+    "normalizeLegacySportStandings": [
+      238.89,
+      233.01,
+      232.87
+    ],
+    "normalizeLegacySportOverview": [
+      245.61,
+      5.26,
+      5.18
+    ],
+    "payloadReadAndSha256Only": [
+      3.45,
+      2.83,
+      2.58
+    ]
+  },
+  "measurementMethod": {
+    "process": "Separate Python process using installed runtime modules",
+    "providerData": "Existing cache only",
+    "iterations": 3,
+    "normalizationCache": "Preserved across three normalize_legacy calls for each surface",
+    "normalizeLegacyValidation": false,
+    "payload": "Minimal adapter payload, fixed weather-independent clockText and incrementing epoch, default style",
+    "exclusions": [
+      "Full live GUI transition",
+      "QML-to-Python conversion",
+      "QObject publication",
+      "QML loader creation",
+      "rendering and presentation",
+      "Lease fsync timing",
+      "Optical input-to-pixel latency"
+    ],
+    "fullTransitionPerformanceMeasured": false
+  },
+  "previousEvidence": {
+    "report": "theme-projects/apple-calm/evidence/hud-board-eglfs-night/report.json",
+    "canonicalCases": 130,
+    "performance": "notVerified",
+    "limitations": [
+      "No rendered standings-name assertions",
+      "Dot checks for main families/views; no coverage of all full-screen overlay visibility",
+      "Pre-Casa coverage"
+    ]
+  },
+  "analysisReportSha256": "c6f403795b9d72592e3012cae919defbaa493e62a8a375864ed85fdbef2df16b"
+}
