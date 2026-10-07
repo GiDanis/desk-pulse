@@ -18,8 +18,9 @@
 </p>
 
 <p align="center">
-  <a href="#-whats-new-in-v070-smart-home--theme-engine-22">What's New in v0.7.0</a> •
+  <a href="#-whats-new-in-v080-local-network-monitor--3d-printable-enclosure">What's New in v0.8.0</a> •
   <a href="#-os-workspaces">Workspaces</a> •
+  <a href="#-3d-printable-retro-desk-enclosure">3D Enclosure</a> •
   <a href="#-why-a-dedicated-desk-os">Why Desk OS?</a> •
   <a href="#-architecture">Architecture</a> •
   <a href="#-hardware-bom">Hardware BOM</a> •
@@ -36,40 +37,42 @@
 
 **DeskPulse OS** turns an inexpensive single-board computer ($15–$25 Orange Pi Zero 3W, Raspberry Pi, or Radxa) and a mini desktop monitor (like the 3.5" Hagibis 960×640 IPS screen) into an **appliance-grade ambient desk operating system**.
 
-Instead of treating the board as a desktop computer running a slow browser kiosk, DeskPulse OS boots directly into a native GPU-accelerated QML compositor. It operates 24/7 as your dedicated desk command center for time, weather, smart home automation, AI quota monitoring, live sports, and motorsport telemetry—with near-zero latency and instant tactile controls.
+Instead of treating the board as a desktop computer running a slow browser kiosk, DeskPulse OS boots directly into a native GPU-accelerated QML compositor. It operates 24/7 as your dedicated desk command center for time, weather, smart home automation, local network monitoring, AI quota monitoring, live sports, and motorsport telemetry—with near-zero latency and instant tactile controls.
 
-> ⭐ **Star this repository** if you love ambient computing, single-board computers, and distraction-free desk appliances!
+> ⭐ **Star this repository** if you love ambient computing, single-board computers, 3D printing, and distraction-free desk appliances!
 
 ---
 
-## 🏡 What's New in v0.7.0: Smart Home & Theme Engine 2.2
+## 🌐 What's New in v0.8.0: Local Network Monitor & 3D Printable Enclosure
 
-DeskPulse OS **v0.7.0** introduces native **Smart Home (Casa / Smart Life)** integration, dramatic **Theme Engine 2.2 performance optimizations** (90.7% faster view transitions), and the reference **Apple Calm 1.2.0** theme pack:
+DeskPulse OS **v0.8.0** introduces a native **Local Network & Router Command Deck (LAN Hub)**, complete **Theme Engine 2.3** integration (53 surfaces), and a turnkey **3D Printable Retro-Futuristic Desk Enclosure**:
 
-- 🏡 **Native Smart Home & Tuya Cloud Integration:**
-  - **Zero External Server Required**: Direct in-process async client for Tuya Cloud without needing Home Assistant, MQTT brokers, or auxiliary daemons.
-  - **4 Smart Hero Tiles & Functional Views**: Glanceable state cards in Base theme and dense functional list in Functional theme, displaying real-time power, sensor values, and connectivity.
-  - **Complete Device Inventory & Detail Telemetry**: Paginated inventory with per-device telemetry, last seen timestamps, signal quality, and customizable favorites in Settings.
-  - **Strict Quota & Budget Ledger**: Persistent request counter, automatic token reuse, exponential backoff, and daily polling allowances preventing Tuya cloud rate-limit exhaustion.
-  - **Offline Resilience & Clear Status Truth**: Disconnected devices explicitly display previous known values with an offline badge—never fabricated zeroes or stale false states.
-- ⚡ **Theme & Motion Engine 2.2 — 90.7% Latency Reduction:**
-  - **Lazy DTO Subscriptions**: View switching latency dropped from **~1138 ms down to ~105 ms p95** by updating only active pages and views.
-  - **Giant Digital Clock View (`home-clock.qml`)**: Glanceable 238px digital clock face with compact weather widget and upcoming alerts.
-  - **Multi-Renderer Shell Caching**: `PageHost` and `OverlayHost` reuse up to 6 cached renderers per surface family with automatic lease invalidation.
-  - **49 Decoupled Presentation Surfaces**: Expanded theme contract covering all core, sports, motorsport, and smart home screens.
-  - **50 Semantic Vector Glyphs**: Offline PNG atlas generator for high-performance embedded rendering without runtime SVG overhead.
-- 🍏 **Apple Calm 1.2.0 Reference Theme Pack:**
-  - Minimalist aesthetic with adaptive Day/Night palettes, custom typography, and dedicated clock presentations (`theme-projects/apple-calm`).
-- 📡 **v0.8 Local Network & Router Architecture Preview:**
-  - Documented non-invasive LAN discovery and Freebox/Iliadbox router API study (`dashboard/design/v08-*`).
-- 🛡️ **Hardened Embedded Linux Reliability:**
-  - Verified reboot persistence, clean systemd `NRestarts=0`, and EGLFS/KMS DRM hardware acceleration on Orange Pi Zero 3W.
+- 🌐 **Native Local Network & Router Command Deck (LAN Hub):**
+  - **Zero PC Agents Required**: Direct in-process asynchronous client for Freebox / Iliadbox router OS without installing agents or software on computers across the network.
+  - **Comprehensive Device Discovery**: Discovers all active and past network hosts with IPv4/IPv6 addresses, MAC vendors, Wi-Fi bands, Ethernet ports, and connection timestamps.
+  - **4 Customizable Favorite Device Tiles**: Fast glanceable status for your desktop workstation, NAS, printer, or server in Base (tile) or Functional (row) presentations.
+  - **Multi-Category Filtering**: Instant filtering by *All*, *Reachable*, *Favorites*, and *Previous/Stale* hosts.
+  - **Transactional SQLite Storage**: Private on-disk database with 30-day retention and 256-device safe bounds; offline cache preserves data during network resets.
+  - **Non-Invasive Read-Only Operation**: Never alters router firewall, DNS, or DHCP configuration.
+- 🎨 **Theme Engine 2.3 (53 Surfaces & 18 Contexts):**
+  - 4 new presentation surfaces (`network.overview`, `network.devices`, `network.detail`, `settings.network`).
+  - Seamless additive fallback to Base styling for third-party bundles (Apple Calm 1.2.0 fully compatible).
+  - First-time theme loading tolerance expanded to 8s for cold starts.
+- 🖨️ **Turnkey 3D Printable Retro-Futuristic Desk Enclosure:**
+  - Complete 3D CAD design package included (`SmartPC_3D_Print_Package/`, `cad_model/`) with OpenSCAD source and precision STL models.
+  - **3 Distinct Styles**:
+    - **Classic**: Retro-computing silhouette reminiscent of classic 80s/90s desktop displays.
+    - **Quadra**: Clean, minimalist architectural housing.
+    - **Cyber**: Angled cyberpunk tactical styling with side carry scoops and cooling slats.
+  - Tailored precisely for Orange Pi Zero 3W + Hagibis 3.5" USB-C screen, featuring internal port routing and snap-fit rear lid.
+- 🛡️ **Verified Hardware Stability & Clean Reboot:**
+  - Validated on physical Orange Pi Zero 3W with real LAN discovery, 0 crashes, and `NRestarts=0` systemd persistence.
 
 ---
 
 ## 📸 OS Workspaces
 
-DeskPulse OS features a seamless 7-workspace horizontal carousel, with deep 2-axis vertical navigation for each workspace:
+DeskPulse OS features a seamless 8-workspace horizontal carousel, with deep 2-axis vertical navigation for each workspace:
 
 | **Ambient Clock & Desk Shell** | **Live Weather & 3-Day Forecast** |
 |:---:|:---:|
@@ -80,6 +83,20 @@ DeskPulse OS features a seamless 7-workspace horizontal carousel, with deep 2-ax
 | ![Football Hub](dashboard/design/evidence/v06-favourite-team/team-summary.png) | ![Fantacalcio Ratings](dashboard/design/evidence/v06-fantacalcio/fantacalcio-home-starters.png) |
 | **Smart Home Command Deck (Base)** | **Smart Home Devices & Telemetry (Functional)** |
 | ![Casa Overview](theme-projects/apple-calm/evidence/optimization-board-eglfs-day/casa.overview--default.png) | ![Casa Devices](theme-projects/apple-calm/evidence/optimization-board-eglfs-day/casa.devices--default.png) |
+
+---
+
+## 🖨️ 3D Printable Retro Desk Enclosure
+
+DeskPulse is not just software—it's a complete hardware appliance! The repository includes turnkey 3D print models (`SmartPC_3D_Print_Package/` and [`cad_model/`](cad_model/)) designed in OpenSCAD:
+
+| **Classic Style (Macintosh Retro)** | **Quadra Style (Modern Minimalist)** | **Cyber Style (Tactical Slats)** |
+|:---:|:---:|:---:|
+| ![Classic](cad_model/style1_mac_classic.png) | ![Quadra](cad_model/style2_quadra.png) | ![Cyber](cad_model/style3_cyber_retro.png) |
+
+- **Precision Fit**: Custom-modeled for Orange Pi Zero 3W + Hagibis 3.5" USB-C display with exact board mounting posts and internal cable routing channels.
+- **Cooling Optimized**: Designed to accommodate 38×38mm / 40×40mm aluminum heatsinks with thermal chimney airflow vents.
+- **Ready to Print**: STL files sliced and verified for standard 0.4mm nozzle FDM printers in PLA, PETG, or ABS with zero supports needed on the main shell. See [`SmartPC_3D_Print_Package/ISTRUZIONI_DI_STAMPA.txt`](SmartPC_3D_Print_Package/ISTRUZIONI_DI_STAMPA.txt).
 
 ---
 
@@ -105,19 +122,19 @@ DeskPulse OS was engineered from the kernel up as an **always-on appliance**:
 ## 🏗️ Architecture
 
 ```text
-┌─────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                     DeskPulse OS Shell                                      │
-│  [Clock]  •  [Weather]  •  [AI/Codex]  •  [Serie A]  •  [F1]  •  [MotoGP]  •  [Casa / IoT]  │
-├─────────────────────────────────────────────────────────────────────────────────────────────┤
-│                       Qt 6 Quick / QML Hardware-Accelerated Compositor                      │
-│                        60 FPS Hardware VSync via PowerVR BXM-4-64 GPU                       │
-├─────────────────────────────────────────────────────────────────────────────────────────────┤
-│                             Direct DRM/KMS Display Plane (EGLFS)                            │
-│                    (Bypasses X11 and Wayland • Instant Linux evdev input)                   │
-├─────────────────────────────────────────────────────────────────────────────────────────────┤
-│                        Hardened Linux 6.6 Kernel with DP-AltMode PLL                        │
-│                  MicroSD Wear Protection (zram swap, tmpfs /tmp, 30s commit)                │
-└─────────────────────────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                             DeskPulse OS Shell                                              │
+│  [Clock] • [Weather] • [AI/Codex] • [Serie A] • [F1] • [MotoGP] • [Smart Home] • [Local Network / LAN Hub]  │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                              Qt 6 Quick / QML Hardware-Accelerated Compositor                               │
+│                               60 FPS Hardware VSync via PowerVR BXM-4-64 GPU                                │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                    Direct DRM/KMS Display Plane (EGLFS)                                     │
+│                            (Bypasses X11 and Wayland • Instant Linux evdev input)                           │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                Hardened Linux 6.6 Kernel with DP-AltMode PLL                                │
+│                         MicroSD Wear Protection (zram swap, tmpfs /tmp, 30s commit)                         │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -125,7 +142,7 @@ DeskPulse OS was engineered from the kernel up as an **always-on appliance**:
 ## 🚀 Native Workspaces Overview
 
 ### 1. 🕒 Ambient Home & Desk Clock
-High-contrast typography designed for glanceable reading from desk distance. Includes the **v0.7 Big Clock view** with 238px digits, weather indicator, and dynamic upcoming event cards.
+High-contrast typography designed for glanceable reading from desk distance. Includes the **Big Clock view** with 238px digits, weather indicator, and dynamic upcoming event cards.
 
 ### 2. ⛅ Hyper-Local Weather Station
 Live atmospheric conditions, hourly trends, and a 3-day forecast powered by Open-Meteo. Uses an atomic local SQLite/JSON cache with offline-first resilience: if Wi-Fi disconnects, previous valid data remains visible with an explicit offline indicator.
@@ -144,6 +161,9 @@ Calendar, circuit specifications, Sprint & Grand Prix classifications, and rider
 
 ### 7. 🏡 Smart Home (Casa / Smart Life) Command Deck
 Direct in-process integration with Tuya Cloud without extra servers. Displays 4 customizable favorite devices as glanceable hero tiles, full paginated device inventory, signal quality, and telemetry details. Protected by a persistent request budget ledger to prevent cloud rate-limiting.
+
+### 8. 🌐 Local Network & Router Command Deck (LAN Hub)
+Direct in-process integration with Freebox / Iliadbox router OS without requiring agents on computers. Discovers all network hosts with IPv4/IPv6 addresses, MAC vendors, Wi-Fi bands, and Ethernet port mappings. Supports 4 quick-glance favorite devices, multi-category filters, and private transactional SQLite persistence.
 
 ---
 
@@ -223,7 +243,7 @@ DeskPulse OS is built for physical tactile feedback using a 3×3 matrix macro ke
 └──────────────┴──────────────┴──────────────┘
 ```
 
-- **Horizontal Carousel (Keys 4 / 6):** Today ↔ Weather ↔ AI/Codex ↔ Serie A ↔ F1 ↔ MotoGP ↔ Smart Home (Casa).
+- **Horizontal Carousel (Keys 4 / 6):** Today ↔ Weather ↔ AI/Codex ↔ Serie A ↔ F1 ↔ MotoGP ↔ Smart Home (Casa) ↔ Local Network (Rete).
 - **Vertical Navigation (Keys 2 / 8):** Navigate deeper into views (e.g. Schedule ↕ Standings ↕ Results or Devices ↕ Details).
 - **Action / Refresh (Key 5):** Open match/GP details, expand standings, or trigger an immediate data refresh.
 - **Quick Jump (Key 7):** Instant return to the primary Home Clock from any depth.
@@ -232,6 +252,7 @@ DeskPulse OS is built for physical tactile feedback using a 3×3 matrix macro ke
   - **Appearance:** Theme (Auto / Day / Night / Red Night), Brightness (Manual & Circadian schedules).
   - **Module Visibility:** Toggle workspaces on or off (persisted across reboots).
   - **Casa / Smart Life:** Manage favourite devices, inspect quotas and telemetry.
+  - **Local Network (Rete):** Filter hosts, set custom aliases, inspect router connection.
   - **Device Info:** Wi-Fi signal quality (%), CPU temperature, IP, RAM and storage vitals.
 
 ---
@@ -243,9 +264,10 @@ DeskPulse OS follows a structured, enterprise-grade Git branching and tagging wo
 | Branch / Tag | Purpose & Stability Level |
 | :--- | :--- |
 | `main` | Production-ready development tip; tested on physical hardware before push. |
-| `release/v0.7` | **Current stable release line (v0.7.x)**; receives critical fixes and maintenance patches. |
-| `release/v0.6` | Maintenance branch for previous v0.6.x series. |
-| `v0.7.0`, `v0.6.6`, ... | Immutable annotated Git release tags matching GitHub releases. |
+| `release/v0.8` | **Current stable release line (v0.8.x)**; receives critical fixes and maintenance patches. |
+| `release/v0.7` | Maintenance branch for previous v0.7.x series. |
+| `release/v0.6` | Maintenance branch for legacy v0.6.x series. |
+| `v0.8.0`, `v0.7.0`, ... | Immutable annotated Git release tags matching GitHub releases. |
 
 ---
 
@@ -267,7 +289,7 @@ DeskPulse OS includes the verified kernel fix in [`os/kernel-patches/`](os/kerne
 - [x] **v0.6.1:** Modular Settings Engine, Live Wi-Fi Monitoring, Fantacalcio Live & 24h Soak Verification.
 - [x] **v0.6.6:** **Theme & Motion Engine** — Base/Functional packs, replaceable layouts and motion, editor, personal packs, and persistent scene host.
 - [x] **v0.7.0:** **Smart Home (Casa / Smart Life) & Theme Engine 2.2** — Direct Tuya cloud integration, 4 hero tiles, full device inventory, detail view, quota ledger, offline resilience, and 90.7% faster view transitions.
-- [ ] **v0.8:** **Local Network Overview** — Devices and telemetry collected by the board and local router (Iliadbox/Freebox); zero agents on LAN clients.
+- [x] **v0.8.0:** **Local Network (LAN Hub) & 3D Print Enclosure** — Freebox/Iliadbox router discovery, 39+ host inventory, 4 favorite tiles, IPv4/IPv6 telemetry, Theme API 2.3 (53 surfaces), and turnkey 3D printable desk enclosure CAD package.
 - [ ] **v0.8.1 (optional):** Verified router metadata and additional Hardware/Cyberdeck profiles.
 - [ ] **v0.9:** Animated companion and Cozy profile.
 - [ ] **v0.10:** Companion memory and validated AI scene planning.

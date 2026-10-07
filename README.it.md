@@ -8,34 +8,36 @@
 
 ---
 
-## 🏡 Novità della Versione v0.7.0: Smart Home & Theme Engine 2.2
+## 🌐 Novità della Versione v0.8.0: Rete Locale & Case 3D per Scrivania
 
-Il rilascio **v0.7.0** introduce l'integrazione nativa **Smart Home (Casa / Smart Life)**, ottimizzazioni prestazionali radicali del **Theme Engine 2.2** (riduzione del 90.7% nella latenza di cambio vista) e il tema di riferimento **Apple Calm 1.2.0**:
+Il rilascio **v0.8.0** introduce il modulo **Rete Locale (LAN Hub)** per router Freebox / Iliadbox OS, l'estensione del **Theme Engine 2.3** (53 superfici) e il pacchetto completo di **Case 3D Stampabili per Scrivania**:
 
-- 🏡 **Integrazione Nativа Smart Home & Cloud Tuya:**
-  - **Nessun Server Aggiuntivo**: Client asincrono diretto integrato nel processo Qt, senza necessità di Home Assistant, broker MQTT o container Docker esterni.
-  - **4 Tessere Hero Intelligenti & Lista Funzionale**: Tessere informative rapide nel tema Base e vista densa funzionale in Functional, con visualizzazione in tempo reale di consumi, sensori ambientali e connettività.
-  - **Inventario Completo & Dettaglio Telemetrico**: Paginazione completa dei dispositivi, stato del segnale, orari di aggiornamento e gestione dei preferiti nelle Impostazioni.
-  - **Ledger di Quota & Budget Persistente**: Contatore su disco delle richieste prima dell'invio, riuso automatico dei token e backoff esponenziale per garantire sostenibilità e rispetto delle quote Tuya.
-  - **Verità di Stato & Resilienza Offline**: Separazione netta tra disponibilità cloud e ultimo stato noto (un dispositivo disconnesso mostra esplicitamente lo stato offline e l'ultimo dato registrato, senza falsi zeri).
-- ⚡ **Theme & Motion Engine 2.2 — Abbattimento del 90.7% dei Tempi di Risposta:**
-  - **Sottoscrizioni DTO Pigre**: Latenza p95 nei cambi pagina ridotta da **~1138 ms a ~105 ms** aggiornando soltanto le viste e le pagine attualmente visibili.
-  - **Schermata Orologio Gigante (`home-clock.qml`)**: Cifre digitali da 238px, meteo compatto e tessere per allerte imminenti.
-  - **Cache Multi-Renderer della Shell**: `PageHost` e `OverlayHost` riutilizzano fino a 6 istanze di renderer per famiglia di superficie con rilascio automatico delle risorse.
-  - **49 Superfici di Presentazione Disaccoppiate**: Copertura estesa del contratto grafico per tutti i moduli (orologio, meteo, account, sport, motorsport, casa, impostazioni).
-  - **50 Glifi Vettoriali Semantici**: Generatore offline di atlanti PNG senza overhead di parsing SVG a runtime su hardware embedded.
-- 🍏 **Pacchetto Tema di Riferimento Apple Calm 1.2.0:**
-  - Estetica minimalista con palette Giorno/Notte, orologio dedicato e ottimizzazione nativa per 48 superfici (`theme-projects/apple-calm`).
-- 📡 **Anteprima Architettura v0.8 (Rete Locale & Router):**
-  - Studio completo di discovery LAN non invasiva e analisi delle API per router Freebox/Iliadbox (`dashboard/design/v08-*`).
+- 🌐 **Integrazione Nativа Rete Locale & Router (LAN Hub):**
+  - **Zero Agent sui Computer**: Client asincrono diretto integrato nel processo per leggere l'inventario del router Freebox/Iliadbox senza installare software o demoni sui PC della rete.
+  - **Discovery Completa degli Host**: Riconoscimento di tutti i dispositivi attivi e storici con indirizzi IPv4/IPv6, produttore hardware dal MAC, frequenze Wi-Fi e porte switch Ethernet.
+  - **4 Tessere Dispositivi Preferiti**: Stato immediato per workstation, NAS, stampante o server in visuale Base (tessere) o Functional (righe).
+  - **Filtri Multi-Categoria**: Selezione rapida tra *Tutti*, *Raggiungibili*, *Preferiti* e *Dati precedenti*.
+  - **Database SQLite Transazionale**: Archivio privato persistente con conservazione a 30 giorni e limite di sicurezza di 256 host; la cache sopravvive ai riavvii di rete.
+  - **Operatività in Sola Lettura**: Non altera firewall, DHCP o impostazioni del router.
+- 🎨 **Theme Engine 2.3 (53 Superfici & 18 Contesti):**
+  - 4 nuove superfici di presentazione (`network.overview`, `network.devices`, `network.detail`, `settings.network`).
+  - Fallback additivo elegante allo stile Base per i bundle di terze parti (piena compatibilità con Apple Calm 1.2.0).
+  - Tolleranza all'avvio a freddo estesa a 8 secondi per il primo caricamento.
+- 🖨️ **Case 3D per Scrivania Retro-Futuristico Stampabile:**
+  - Pacchetto CAD 3D completo fornito direttamente nel repository (`SmartPC_3D_Print_Package/` e [`cad_model/`](cad_model/)) con sorgenti OpenSCAD e modelli STL di precisione.
+  - **3 Stili Iconici**:
+    - **Classic**: Ispirato ai computer compatti desktop anni '80/'90.
+    - **Quadra**: Design architettonico moderno e minimale.
+    - **Cyber**: Taglio cyberpunk tattico con prese d'aria laterali e feritoie di raffreddamento.
+  - Modellato su misura per Orange Pi Zero 3W e display USB-C Hagibis 3.5", con alloggiamento per dissipatori 38×38/40×40mm e coperchio posteriore a scatto.
 - 🛡️ **Stabilità Hardware & Appliance Verificata:**
-  - Persistenza al reboot collaudata, servizio systemd `NRestarts=0` e accelerazione hardware EGLFS/KMS su Orange Pi Zero 3W.
+  - Collaudato sulla Orange Pi Zero 3W fisica con discovery LAN reale, zero crash e persistenza systemd `NRestarts=0`.
 
 ---
 
 ## 📸 Gli Spazi di Lavoro
 
-Un carosello a 7 spazi di lavoro fluidi, navigabili in orizzontale e verticale:
+Un carosello a 8 spazi di lavoro fluidi, navigabili in orizzontale e verticale:
 
 | **Orologio Ambient & Shell di Sistema** | **Meteo Live & Previsioni a 3 Giorni** |
 |:---:|:---:|
@@ -46,6 +48,20 @@ Un carosello a 7 spazi di lavoro fluidi, navigabili in orizzontale e verticale:
 | ![Football Hub](dashboard/design/evidence/v06-favourite-team/team-summary.png) | ![Fantacalcio Ratings](dashboard/design/evidence/v06-fantacalcio/fantacalcio-home-starters.png) |
 | **Dashboard Casa (Base)** | **Dispositivi & Telemetria Casa (Functional)** |
 | ![Casa Overview](theme-projects/apple-calm/evidence/optimization-board-eglfs-day/casa.overview--default.png) | ![Casa Devices](theme-projects/apple-calm/evidence/optimization-board-eglfs-day/casa.devices--default.png) |
+
+---
+
+## 🖨️ Case 3D Stampabile per Scrivania
+
+DeskPulse è una vera appliance completa di hardware e chassis! Il repository include i modelli CAD (`SmartPC_3D_Print_Package/` e [`cad_model/`](cad_model/)) realizzati in OpenSCAD:
+
+| **Stile Classic (Retro Macintosh)** | **Stile Quadra (Minimalista)** | **Stile Cyber (Tattico a Feritoie)** |
+|:---:|:---:|:---:|
+| ![Classic](cad_model/style1_mac_classic.png) | ![Quadra](cad_model/style2_quadra.png) | ![Cyber](cad_model/style3_cyber_retro.png) |
+
+- **Incastro Perfetto**: Creato per Orange Pi Zero 3W e schermo Hagibis 3.5" USB-C con guide interne per i cavi.
+- **Raffreddamento a Camino**: Compatibile con dissipatori in alluminio fino a 40×40mm.
+- **Pronto da Stampare**: File STL verificati per stampanti FDM standard con ugello da 0.4mm in PLA, PETG o ABS senza supporti sul corpo principale. Leggi [`SmartPC_3D_Print_Package/ISTRUZIONI_DI_STAMPA.txt`](SmartPC_3D_Print_Package/ISTRUZIONI_DI_STAMPA.txt).
 
 ---
 
@@ -67,19 +83,19 @@ Un carosello a 7 spazi di lavoro fluidi, navigabili in orizzontale e verticale:
 ## 🏗️ Architettura di Sistema
 
 ```text
-┌─────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                     DeskPulse OS Shell                                      │
-│  [Orologio]  •  [Meteo]  •  [AI/Codex]  •  [Serie A]  •  [F1]  •  [MotoGP]  •  [Casa / IoT]  │
-├─────────────────────────────────────────────────────────────────────────────────────────────┤
-│                       Compositore Accelerato su GPU Qt 6 Quick / QML                        │
-│                        60 FPS Hardware VSync via GPU PowerVR BXM-4-64                       │
-├─────────────────────────────────────────────────────────────────────────────────────────────┤
-│                             Piano Grafico Diretto DRM/KMS (EGLFS)                           │
-│                    (Bypassa X11 e Wayland • Gestione diretta input evdev)                   │
-├─────────────────────────────────────────────────────────────────────────────────────────────┤
-│                     Kernel Linux 6.6 con Patch Hardware DP-AltMode PLL                      │
-│               Protezione MicroSD (swap zram, tmpfs in /tmp, commit fs a 30s)                │
-└─────────────────────────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                             DeskPulse OS Shell                                              │
+│  [Orologio] • [Meteo] • [AI/Codex] • [Serie A] • [F1] • [MotoGP] • [Smart Home] • [Rete Locale / LAN Hub]  │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                               Compositore Accelerato su GPU Qt 6 Quick / QML                                │
+│                               60 FPS Hardware VSync via GPU PowerVR BXM-4-64                                │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                    Piano Grafico Diretto DRM/KMS (EGLFS)                                    │
+│                            (Bypassa X11 e Wayland • Gestione diretta input evdev)                           │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                     Kernel Linux 6.6 con Patch DP-AltMode                                   │
+│                        Protezione MicroSD (swap zram, tmpfs in /tmp, commit fs a 30s)                       │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -119,11 +135,11 @@ Lo script configura automaticamente pacchetti Qt6, permessi utente `smartpc`, fi
 └──────────────┴──────────────┴──────────────┘
 ```
 
-- **Carosello Orizzontale (Tasti 4 / 6):** Oggi ↔ Meteo ↔ AI/Codex ↔ Serie A ↔ F1 ↔ MotoGP ↔ Casa (Smart Life).
+- **Carosello Orizzontale (Tasti 4 / 6):** Oggi ↔ Meteo ↔ AI/Codex ↔ Serie A ↔ F1 ↔ MotoGP ↔ Casa ↔ Rete locale.
 - **Navigazione Verticale (Tasti 2 / 8):** Viste di dettaglio (es. Calendario ↕ Classifica ↕ Risultati o Dispositivi ↕ Dettaglio).
 - **Azione / Aggiorna (Tasto 5):** Apre i dettagli dell'incontro/GP o forza un aggiornamento dati.
 - **Tasto Rapido Home (Tasto 7):** Torna istantaneamente all'orologio principale da qualsiasi profondità.
-- **Menu di Sistema (Tasto 9):** Regolazione aspetto (temi, luminosità), notifiche (fascia silenzio), gestione preferiti Casa e telemetria hardware in tempo reale.
+- **Menu di Sistema (Tasto 9):** Regolazione aspetto (temi, luminosità), notifiche (fascia silenzio), preferiti Casa e Rete, telemetria hardware in tempo reale.
 
 ---
 
@@ -134,9 +150,10 @@ DeskPulse OS segue una struttura rigorosa di rami Git e tag semantici:
 | Branch / Tag | Ruolo & Livello di Stabilità |
 | :--- | :--- |
 | `main` | Ramo principale di sviluppo pronto per la produzione; collaudato su hardware prima del push. |
-| `release/v0.7` | **Ramo di manutenzione stabile corrente (serie v0.7.x)**; accoglie fix critici. |
-| `release/v0.6` | Ramo di manutenzione per la precedente serie v0.6.x. |
-| `v0.7.0`, `v0.6.6`, ... | Tag annotati immutabili coincidenti con le release ufficiali su GitHub. |
+| `release/v0.8` | **Ramo di manutenzione stabile corrente (serie v0.8.x)**; accoglie fix critici. |
+| `release/v0.7` | Ramo di manutenzione per la precedente serie v0.7.x. |
+| `release/v0.6` | Ramo di manutenzione per la serie v0.6.x legacy. |
+| `v0.8.0`, `v0.7.0`, ... | Tag annotati immutabili coincidenti con le release ufficiali su GitHub. |
 
 ---
 
@@ -148,7 +165,7 @@ DeskPulse OS segue una struttura rigorosa di rami Git e tag semantici:
 - [x] **v0.6.1:** Architettura Impostazioni Modulare, Wi-Fi Live, Fantacalcio Live & Verifica 24h.
 - [x] **v0.6.6:** **Theme Engine** — Base/Functional, layout e animazioni sostituibili, editor, pacchetti personali e scene persistenti.
 - [x] **v0.7.0:** **Casa / Smart Life & Theme Engine 2.2** — Integrazione Tuya diretta, 4 tessere preferite, inventario, telemetria di dettaglio, ledger delle quote, resilienza offline e riduzione del 90.7% della latenza.
-- [ ] **v0.8:** **Rete locale** — Panoramica dei dispositivi e informazioni osservabili dalla board, con eventuali dati router (Iliadbox/Freebox); nessun agent sui computer.
+- [x] **v0.8.0:** **Rete locale (LAN Hub) & Case 3D Stampabile** — Integrazione router Freebox/Iliadbox, discovery di 39+ host, 4 tessere preferite, telemetria IPv4/IPv6, Theme API 2.3 (53 superfici) e modelli CAD STL/OpenSCAD del case.
 - [ ] **v0.8.1 (facoltativa):** Metadati router verificati e profili Hardware/Cyberdeck aggiuntivi.
 - [ ] **v0.9:** Compagno animato e profilo Cozy.
 - [ ] **v0.10:** Memoria del compagno e scene AI validate.
