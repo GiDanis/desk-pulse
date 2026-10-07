@@ -2,7 +2,7 @@
 
 **7 ottobre 2026 · Europe/Rome · implementata e installata sulla Orange Pi.**
 
-La dashboard legge l'inventario iliadbox dalla board e presenta Panoramica, Dispositivi, Dettaglio e Impostazioni Rete. La consegna è una candidata: il software, le letture reali, EGLFS e il reboot sono verificati; le transizioni fisiche acceso/sonno/scollegato e la copertura dei segmenti isolati restano da osservare. La v0.8.1 non è implementata.
+La dashboard legge l'inventario iliadbox dalla board e presenta Panoramica, Dispositivi, Dettaglio e Impostazioni Rete. La consegna è una candidata: il software, le letture reali, EGLFS e il reboot sono verificati; le transizioni fisiche acceso/sonno/scollegato e la copertura dei segmenti isolati restano da osservare. La v0.8.1 non faceva parte di questa consegna; la candidata successiva ha un [resoconto separato](v081-implementation-report.md).
 
 ## Comportamento consegnato
 
