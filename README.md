@@ -43,11 +43,33 @@ Instead of treating the board as a desktop computer running a slow browser kiosk
 
 ---
 
-**v0.8.1 is released and verified on hardware:** read-only Internet/router, Wi-Fi and Ethernet views, qualified metrics, 1h/24h RRD history, Theme API 2.4 (56 surfaces), ergonomic 6° inclined 3D printed enclosure, and preserved Apple Calm/preferences across cold reboot. [Delivery and evidence](dashboard/design/v081-implementation-report.md) · [Usage](dashboard/design/v081-network-operations.md).
+**v0.8.3 is released and verified on hardware:** Unified Sport Hub (Serie A, F1, MotoGP), 6-category task-oriented settings, Theme Engine 2.5 (60 surfaces), Apple Calm 1.3.1 space optimization for 3.5" displays, worker persistence with fsync, and cold reboot verified. [Delivery report](dashboard/design/v083-implementation-report.md) · [Space optimization](dashboard/design/v083-space-optimization-report.md) · [Usage](dashboard/design/v083-ux-operations.md).
 
-## 🚀 What's New in v0.8.1: Router Metrics, RRD History & Refined 3D Enclosure
+## 🚀 What's New in v0.8.3: Unified Sport Hub, Task-Oriented Settings & Theme Engine 2.5
 
-DeskPulse OS **v0.8.1** expands network capabilities and physical enclosure ergonomics:
+DeskPulse OS **v0.8.3** delivers a major UX and stability consolidation for desk displays:
+
+- 🏎️ **Unified Sport Hub & 6-Workspace Carousel:**
+  - Consolidated horizontal navigation down from 8 to **6 streamlined workspaces**: *Today ↔ Weather ↔ AI/Codex ↔ Sport ↔ Casa ↔ Rete*.
+  - Serie A Football, Formula 1, and MotoGP are unified in the dedicated **Sport Hub** (`sport-hub.qml`). Navigate disciplines with **2/8**, enter with **OK (5)**, and ascend with **7**.
+  - Independent state preservation: returning to any sport discipline restores your previous view and selection.
+- ⚙️ **Task-Oriented 6-Category Settings Menu:**
+  - Redesigned from the ground up: *Display (Schermo)*, *Appearance (Aspetto)*, *Modules & Home*, *Alerts (Avvisi)*, *Connected Services*, and *Data & Updates*.
+  - Text scale preview with Save/Cancel, theme management submenus, and unified manual refresh dispatch with verified feedback.
+- 🎨 **Theme Engine 2.5 & Apple Calm 1.3.1 Space Optimization:**
+  - Contract expanded to **60 presentation surfaces** across 22 contexts (`sport.hub`, `settings.services`, `settings.sports`, `settings.appearance.management`).
+  - **Apple Calm 1.3.1**: Tailored for 3.5" 960×640 IPS screens—compact 56px top bar, 912×552 content area, smooth scrolling lists, 59 native surfaces, and 57 vector glyphs.
+  - High-contrast Canvas dash patterns (`setLineDash`) for historical graphs.
+- 🛡️ **Under-the-Hood Reliability & Speed:**
+  - Weather worker atomic persistence with `fsync`: Qt timer callback latency during save dropped from **155.3 ms down to 5.8 ms**!
+  - Account JSON 32 KB safety bounds and atomic watcher.
+  - Verified on physical Orange Pi Zero 3W Debian 13 with EGLFS/KMS DRM, 0 crashes, and `NRestarts=0` systemd persistence.
+
+---
+
+## 🌐 Recap of v0.8.1: Router Metrics, RRD History & Refined 3D Enclosure
+
+DeskPulse OS **v0.8.1** expanded network capabilities and physical enclosure ergonomics:
 
 - 📊 **Network Metrics & RRD History Hub:**
   - **3 Dedicated Views**: Iliadbox/Internet WAN status, Wi-Fi radio/stations breakdown, and Ethernet switch port metrics.
@@ -172,19 +194,16 @@ Live atmospheric conditions, hourly trends, and a 3-day forecast powered by Open
 ### 3. 🤖 AI & Codex Quota Monitor
 Tracks ChatGPT & OpenAI Codex plan limits, usage percentages, reset countdowns, and available credits. Syncs securely over your local network via SSH from your PC workstation **without ever exposing private tokens, passwords, or API keys**.
 
-### 4. ⚽ Serie A Football Hub & Favourite Team HUD
-Full season fixtures, live 20-team league standings, and deep match details (lineups, match statistics, goalscorers). Select your favourite club (*"Squadra del Cuore"*) for a dedicated team view with upcoming matches, squad list, and stadium info. Includes **Fantacalcio** starting XI, bench, and live editorial ratings.
+### 4. 🏎️ Unified Sport Hub (Serie A, Formula 1 & MotoGP)
+All your sports in one fluid command center. Navigate with **2/8** between **Serie A Football**, **Formula 1**, and **MotoGP**, press **OK (5)** to dive into match schedules, live timings, and standings, and press **7** to return.
+- **Serie A & Favourite Team**: Season fixtures, live league table, team squad, and Fantacalcio starting XI with editorial ratings.
+- **Formula 1**: Local weekend session times, circuit telemetry, and driver/constructor standings.
+- **MotoGP**: Grand Prix calendar, Sprint & GP results, and rider championship standings.
 
-### 5. 🏎️ Formula 1 Grand Prix Command Center
-Full season calendar with local weekend start times, race results, and driver/constructor world championship standings powered by Jolpica. Features **real-time SignalR WebSocket live timing** via QtWebSockets, tracking positions, lap times, gaps, tyre compounds, and pit stops.
-
-### 6. 🏍️ MotoGP Paddock Monitor
-Calendar, circuit specifications, Sprint & Grand Prix classifications, and rider championship standings via PulseLive. Includes live timing lite integration for race sessions.
-
-### 7. 🏡 Smart Home (Casa / Smart Life) Command Deck
+### 5. 🏡 Smart Home (Casa / Smart Life) Command Deck
 Direct in-process integration with Tuya Cloud without extra servers. Displays 4 customizable favorite devices as glanceable hero tiles, full paginated device inventory, signal quality, and telemetry details. Protected by a persistent request budget ledger to prevent cloud rate-limiting.
 
-### 8. 🌐 Local Network & Router Command Deck (LAN Hub)
+### 6. 🌐 Local Network & Router Command Deck (LAN Hub)
 Direct in-process integration with Freebox / Iliadbox router OS without requiring agents on computers. Discovers all network hosts with IPv4/IPv6 addresses, MAC vendors, Wi-Fi bands, and Ethernet port mappings. Supports 4 quick-glance favorite devices, multi-category filters, and private transactional SQLite persistence.
 
 ---
@@ -265,17 +284,17 @@ DeskPulse OS is built for physical tactile feedback using a 3×3 matrix macro ke
 └──────────────┴──────────────┴──────────────┘
 ```
 
-- **Horizontal Carousel (Keys 4 / 6):** Today ↔ Weather ↔ AI/Codex ↔ Serie A ↔ F1 ↔ MotoGP ↔ Smart Home (Casa) ↔ Local Network (Rete).
+- **Horizontal Carousel (Keys 4 / 6):** Today ↔ Weather ↔ AI/Codex ↔ Sport (Serie A, F1, MotoGP) ↔ Smart Home (Casa) ↔ Local Network (Rete).
 - **Vertical Navigation (Keys 2 / 8):** Navigate deeper into views (e.g. Schedule ↕ Standings ↕ Results or Devices ↕ Details).
-- **Action / Refresh (Key 5):** Open match/GP details, expand standings, or trigger an immediate data refresh.
-- **Quick Jump (Key 7):** Instant return to the primary Home Clock from any depth.
+- **Action / Enter (Key 5):** Open match/GP details, expand standings, enter sport disciplines, or trigger an immediate data refresh.
+- **Quick Jump (Key 7):** Return to the previous view context or instant return to the primary Home Clock.
 - **System Menu (Key 9):**
-  - **Notifications:** Quiet hours schedule and category-level alert muting.
-  - **Appearance:** Theme (Auto / Day / Night / Red Night), Brightness (Manual & Circadian schedules).
-  - **Module Visibility:** Toggle workspaces on or off (persisted across reboots).
-  - **Casa / Smart Life:** Manage favourite devices, inspect quotas and telemetry.
-  - **Local Network (Rete):** Filter hosts, set custom aliases, inspect router connection.
-  - **Device Info:** Wi-Fi signal quality (%), CPU temperature, IP, RAM and storage vitals.
+  - **Screen (Schermo):** Text scale preview, display sleep timeout.
+  - **Appearance (Aspetto):** Themes, brightness schedules, and Theme Management (import/export).
+  - **Modules & Home:** Toggle workspace visibility, sport disciplines, and dynamic home cards.
+  - **Alerts (Avvisi):** Quiet hours, alert thresholds.
+  - **Connected Services:** Tuya Cloud and Iliadbox router connection status.
+  - **Data & Updates:** Centrally trigger manual data refresh with live feedback.
 
 ---
 
@@ -286,10 +305,10 @@ DeskPulse OS follows a structured, enterprise-grade Git branching and tagging wo
 | Branch / Tag | Purpose & Stability Level |
 | :--- | :--- |
 | `main` | Production-ready development tip; tested on physical hardware before push. |
-| `release/v0.8` | **Current stable release line (v0.8.x)**; receives critical fixes and maintenance patches. |
+| `release/v0.8` | **Current stable release line (v0.8.x)**; updated with v0.8.3. |
 | `release/v0.7` | Maintenance branch for previous v0.7.x series. |
 | `release/v0.6` | Maintenance branch for legacy v0.6.x series. |
-| `v0.8.0`, `v0.7.0`, ... | Immutable annotated Git release tags matching GitHub releases. |
+| `v0.8.3`, `v0.8.1`, `v0.8.0`, ... | Immutable annotated Git release tags matching GitHub releases. |
 
 ---
 
@@ -313,6 +332,7 @@ DeskPulse OS includes the verified kernel fix in [`os/kernel-patches/`](os/kerne
 - [x] **v0.7.0:** **Smart Home (Casa / Smart Life) & Theme Engine 2.2** — Direct Tuya cloud integration, 4 hero tiles, full device inventory, detail view, quota ledger, offline resilience, and 90.7% faster view transitions.
 - [x] **v0.8.0:** **Local Network (LAN Hub) & 3D Print Enclosure** — Freebox/Iliadbox router discovery, 39+ host inventory, 4 favorite tiles, IPv4/IPv6 telemetry, Theme API 2.3 (53 surfaces), and turnkey 3D printable desk enclosure CAD package.
 - [x] **v0.8.1:** **Network Metrics, RRD History & Refined 3D Enclosure** — Iliadbox/Internet, Wi-Fi and Ethernet views with qualified metrics and 1h/24h RRD history graphs; Theme API 2.4 (56 surfaces); 6° inclined ergonomic lid and convective cooling louvers. [Delivery report](dashboard/design/v081-implementation-report.md).
+- [x] **v0.8.3:** **Unified Sport Hub, Task-Based Settings & Theme Engine 2.5** — Consolidated 6-workspace carousel, task-oriented settings, 60 presentation surfaces, Apple Calm 1.3.1 space optimization, and worker persistence. [Delivery report](dashboard/design/v083-implementation-report.md).
 - [ ] **v0.9:** Animated companion and Cozy profile.
 - [ ] **v0.10:** Companion memory and validated AI scene planning.
 - [ ] **v1.0:** Integrated reliability, installation, upgrades and recovery.

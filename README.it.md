@@ -37,7 +37,7 @@ Il rilascio **v0.8.0** introduce il modulo **Rete Locale (LAN Hub)** per router 
 
 ## 📸 Gli Spazi di Lavoro
 
-Un carosello a 8 spazi di lavoro fluidi, navigabili in orizzontale e verticale:
+Un carosello a 6 spazi di lavoro fluidi, navigabili in orizzontale e verticale:
 
 | **Orologio Ambient & Shell di Sistema** | **Meteo Live & Previsioni a 3 Giorni** |
 |:---:|:---:|
@@ -135,11 +135,17 @@ Lo script configura automaticamente pacchetti Qt6, permessi utente `smartpc`, fi
 └──────────────┴──────────────┴──────────────┘
 ```
 
-- **Carosello Orizzontale (Tasti 4 / 6):** Oggi ↔ Meteo ↔ AI/Codex ↔ Serie A ↔ F1 ↔ MotoGP ↔ Casa ↔ Rete locale.
-- **Navigazione Verticale (Tasti 2 / 8):** Viste di dettaglio (es. Calendario ↕ Classifica ↕ Risultati o Dispositivi ↕ Dettaglio).
-- **Azione / Aggiorna (Tasto 5):** Apre i dettagli dell'incontro/GP o forza un aggiornamento dati.
-- **Tasto Rapido Home (Tasto 7):** Torna istantaneamente all'orologio principale da qualsiasi profondità.
-- **Menu di Sistema (Tasto 9):** Regolazione aspetto (temi, luminosità), notifiche (fascia silenzio), preferiti Casa e Rete, telemetria hardware in tempo reale.
+- **Carosello Orizzontale (Tasti 4 / 6):** Oggi ↔ Meteo ↔ AI/Codex ↔ Sport (Calcio, F1, MotoGP) ↔ Casa ↔ Rete locale.
+- **Navigazione Verticale (Tasti 2 / 8):** Viste di dettaglio o navigazione discipline nello Sport Hub.
+- **Azione / Entra (Tasto 5):** Apre i dettagli dell'incontro/GP, entra nelle discipline sportive o forza un aggiornamento dati.
+- **Tasto Indietro / Home (Tasto 7):** Risale al livello precedente o torna all'orologio principale.
+- **Menu di Sistema (Tasto 9):**
+  - **Schermo:** Anteprima scala testo e spegnimento display.
+  - **Aspetto:** Temi, luminosità e Gestione Temi per import/export.
+  - **Moduli e Home:** Visibilità moduli, discipline Sport e tessere dinamiche Home.
+  - **Avvisi:** Fascia di silenzio e soglie di allerta.
+  - **Servizi collegati:** Stato collegamenti Tuya e router Iliadbox.
+  - **Dati e aggiornamenti:** Refresh manuale centralizzato con feedback in tempo reale.
 
 ---
 
@@ -150,10 +156,10 @@ DeskPulse OS segue una struttura rigorosa di rami Git e tag semantici:
 | Branch / Tag | Ruolo & Livello di Stabilità |
 | :--- | :--- |
 | `main` | Ramo principale di sviluppo pronto per la produzione; collaudato su hardware prima del push. |
-| `release/v0.8` | **Ramo di manutenzione stabile corrente (serie v0.8.x)**; accoglie fix critici. |
+| `release/v0.8` | **Ramo di manutenzione stabile corrente (serie v0.8.x)**; aggiornato alla v0.8.3. |
 | `release/v0.7` | Ramo di manutenzione per la precedente serie v0.7.x. |
 | `release/v0.6` | Ramo di manutenzione per la serie v0.6.x legacy. |
-| `v0.8.1`, `v0.8.0`, `v0.7.0`, ... | Tag annotati immutabili coincidenti con le release ufficiali su GitHub. |
+| `v0.8.3`, `v0.8.1`, `v0.8.0`, ... | Tag annotati immutabili coincidenti con le release ufficiali su GitHub. |
 
 ---
 
@@ -167,6 +173,7 @@ DeskPulse OS segue una struttura rigorosa di rami Git e tag semantici:
 - [x] **v0.7.0:** **Casa / Smart Life & Theme Engine 2.2** — Integrazione Tuya diretta, 4 tessere preferite, inventario, telemetria di dettaglio, ledger delle quote, resilienza offline e riduzione del 90.7% della latenza.
 - [x] **v0.8.0:** **Rete locale (LAN Hub) & Case 3D Stampabile** — Integrazione router Freebox/Iliadbox, discovery di 39+ host, 4 tessere preferite, telemetria IPv4/IPv6, Theme API 2.3 (53 superfici) e modelli CAD STL/OpenSCAD del case.
 - [x] **v0.8.1:** **Metriche Router, Storico RRD & Case 3D Perfezionato** — Viste Iliadbox/Internet, Wi-Fi e porte Ethernet con metriche qualificate e grafici storici RRD 1h/24h; Theme API 2.4 (56 superfici); coperchio con inclinazione ergonomica a 6° e feritoie convettive. [Report di consegna](dashboard/design/v081-implementation-report.md).
+- [x] **v0.8.3:** **Sport Hub Unificato, Impostazioni per Compiti & Theme Engine 2.5** — Carosello a 6 macroaree, impostazioni riorganizzate, 60 superfici, ottimizzazione spazi display 3,5″ su Apple Calm 1.3.1 e persistenza atomica worker. [Report di consegna](dashboard/design/v083-implementation-report.md).
 - [ ] **v0.9:** Compagno animato e profilo Cozy.
 - [ ] **v0.10:** Memoria del compagno e scene AI validate.
 - [ ] **v1.0:** Stabilità integrata, installazione, aggiornamento e recupero.
