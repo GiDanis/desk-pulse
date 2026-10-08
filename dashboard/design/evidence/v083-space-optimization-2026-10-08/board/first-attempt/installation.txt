@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/var/lib/smartpc-dashboard/v083-space-staging/install-board.py", line 83, in <module>
+    run_user([importer], "theme-import.txt", software)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/lib/smartpc-dashboard/v083-space-staging/install-board.py", line 45, in run_user
+    subprocess.run(["runuser", "-u", "smartpc", "--", "env", *environment, *graphics, "python3", *map(str, arguments)],
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   stdout=stream, stderr=subprocess.STDOUT, check=True, timeout=timeout)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['runuser', '-u', 'smartpc', '--', 'env', 'HOME=/var/lib/smartpc-dashboard', 'XDG_CONFIG_HOME=/var/lib/smartpc-dashboard/.config', 'XDG_DATA_HOME=/var/lib/smartpc-dashboard/.local/share', 'XDG_CACHE_HOME=/var/cache/smartpc-dashboard', 'QT_QPA_PLATFORM=offscreen', 'QT_QUICK_BACKEND=software', 'python3', '/var/lib/smartpc-dashboard/v083-space-proof/import-production.py']' returned non-zero exit status 1.

@@ -1,0 +1,1826 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "smartpc-theme-pack-v1",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "id",
+    "name",
+    "version"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 80,
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "extends": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+    },
+    "tokens": {
+      "type": "object",
+      "properties": {
+        "colors.background": {
+          "type": "string",
+          "default": "#101923",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "colors.backgroundOverlay": {
+          "type": "string",
+          "default": "#0b1219",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "colors.surface": {
+          "type": "string",
+          "default": "#1c2d38",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "colors.surfaceFocused": {
+          "type": "string",
+          "default": "#28403f",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "colors.border": {
+          "type": "string",
+          "default": "#35525d",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "colors.divider": {
+          "type": "string",
+          "default": "#31505b",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "colors.textPrimary": {
+          "type": "string",
+          "default": "#e9f1ef",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "colors.textSecondary": {
+          "type": "string",
+          "default": "#b3c2c7",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "colors.accent": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "colors.bannerSurface": {
+          "type": "string",
+          "default": "#29423f",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "colors.debugSurface": {
+          "type": "string",
+          "default": "#273e48",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "colors.demoSurface": {
+          "type": "string",
+          "default": "#304750",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "shape.radiusCard": {
+          "type": "integer",
+          "default": 13,
+          "minimum": 0,
+          "maximum": 24
+        },
+        "shape.radiusRow": {
+          "type": "integer",
+          "default": 9,
+          "minimum": 0,
+          "maximum": 24
+        },
+        "shape.radiusPill": {
+          "type": "integer",
+          "default": 7,
+          "minimum": 0,
+          "maximum": 24
+        },
+        "shape.radiusButton": {
+          "type": "integer",
+          "default": 6,
+          "minimum": 0,
+          "maximum": 24
+        },
+        "metrics.spacing": {
+          "type": "integer",
+          "default": 24,
+          "minimum": 8,
+          "maximum": 40
+        },
+        "metrics.listRows": {
+          "type": "integer",
+          "default": 4,
+          "minimum": 3,
+          "maximum": 4
+        },
+        "metrics.borderWidth": {
+          "type": "integer",
+          "default": 2,
+          "minimum": 1,
+          "maximum": 4
+        },
+        "metrics.focusWidth": {
+          "type": "integer",
+          "default": 3,
+          "minimum": 2,
+          "maximum": 4
+        },
+        "typography.textScale": {
+          "type": "number",
+          "default": 1.0,
+          "minimum": 0.85,
+          "maximum": 1.1
+        },
+        "typography.uiFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "typography.numbersFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "typography.displayFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "typography.bodyWeight": {
+          "type": "integer",
+          "default": 400,
+          "minimum": 100,
+          "maximum": 900
+        },
+        "typography.headingWeight": {
+          "type": "integer",
+          "default": 700,
+          "minimum": 100,
+          "maximum": 900
+        },
+        "typography.size18": {
+          "type": "integer",
+          "default": 18,
+          "minimum": 13,
+          "maximum": 22
+        },
+        "typography.size19": {
+          "type": "integer",
+          "default": 19,
+          "minimum": 14,
+          "maximum": 23
+        },
+        "typography.size20": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 15,
+          "maximum": 25
+        },
+        "typography.size21": {
+          "type": "integer",
+          "default": 21,
+          "minimum": 15,
+          "maximum": 26
+        },
+        "typography.size22": {
+          "type": "integer",
+          "default": 22,
+          "minimum": 16,
+          "maximum": 27
+        },
+        "typography.size23": {
+          "type": "integer",
+          "default": 23,
+          "minimum": 17,
+          "maximum": 28
+        },
+        "typography.size24": {
+          "type": "integer",
+          "default": 24,
+          "minimum": 18,
+          "maximum": 30
+        },
+        "typography.size25": {
+          "type": "integer",
+          "default": 25,
+          "minimum": 18,
+          "maximum": 31
+        },
+        "typography.size26": {
+          "type": "integer",
+          "default": 26,
+          "minimum": 19,
+          "maximum": 32
+        },
+        "typography.size27": {
+          "type": "integer",
+          "default": 27,
+          "minimum": 20,
+          "maximum": 33
+        },
+        "typography.size28": {
+          "type": "integer",
+          "default": 28,
+          "minimum": 21,
+          "maximum": 35
+        },
+        "typography.size29": {
+          "type": "integer",
+          "default": 29,
+          "minimum": 21,
+          "maximum": 36
+        },
+        "typography.size30": {
+          "type": "integer",
+          "default": 30,
+          "minimum": 22,
+          "maximum": 37
+        },
+        "typography.size31": {
+          "type": "integer",
+          "default": 31,
+          "minimum": 23,
+          "maximum": 38
+        },
+        "typography.size32": {
+          "type": "integer",
+          "default": 32,
+          "minimum": 24,
+          "maximum": 40
+        },
+        "typography.size33": {
+          "type": "integer",
+          "default": 33,
+          "minimum": 24,
+          "maximum": 41
+        },
+        "typography.size34": {
+          "type": "integer",
+          "default": 34,
+          "minimum": 25,
+          "maximum": 42
+        },
+        "typography.size35": {
+          "type": "integer",
+          "default": 35,
+          "minimum": 26,
+          "maximum": 43
+        },
+        "typography.size36": {
+          "type": "integer",
+          "default": 36,
+          "minimum": 27,
+          "maximum": 45
+        },
+        "typography.size37": {
+          "type": "integer",
+          "default": 37,
+          "minimum": 27,
+          "maximum": 46
+        },
+        "typography.size39": {
+          "type": "integer",
+          "default": 39,
+          "minimum": 29,
+          "maximum": 48
+        },
+        "typography.size40": {
+          "type": "integer",
+          "default": 40,
+          "minimum": 30,
+          "maximum": 50
+        },
+        "typography.size45": {
+          "type": "integer",
+          "default": 45,
+          "minimum": 33,
+          "maximum": 56
+        },
+        "typography.size46": {
+          "type": "integer",
+          "default": 46,
+          "minimum": 34,
+          "maximum": 57
+        },
+        "typography.size47": {
+          "type": "integer",
+          "default": 47,
+          "minimum": 35,
+          "maximum": 58
+        },
+        "typography.size52": {
+          "type": "integer",
+          "default": 52,
+          "minimum": 39,
+          "maximum": 65
+        },
+        "typography.size56": {
+          "type": "integer",
+          "default": 56,
+          "minimum": 42,
+          "maximum": 70
+        },
+        "typography.size65": {
+          "type": "integer",
+          "default": 65,
+          "minimum": 48,
+          "maximum": 81
+        },
+        "typography.size69": {
+          "type": "integer",
+          "default": 69,
+          "minimum": 51,
+          "maximum": 86
+        },
+        "typography.size139": {
+          "type": "integer",
+          "default": 139,
+          "minimum": 104,
+          "maximum": 173
+        },
+        "typography.size152": {
+          "type": "integer",
+          "default": 152,
+          "minimum": 114,
+          "maximum": 190
+        },
+        "typography.size44": {
+          "type": "integer",
+          "default": 44,
+          "minimum": 33,
+          "maximum": 55
+        },
+        "metrics.compactRows": {
+          "type": "integer",
+          "default": 3,
+          "minimum": 2,
+          "maximum": 3
+        },
+        "metrics.overviewRows": {
+          "type": "integer",
+          "default": 3,
+          "minimum": 2,
+          "maximum": 3
+        },
+        "metrics.fantasyRows": {
+          "type": "integer",
+          "default": 5,
+          "minimum": 4,
+          "maximum": 5
+        },
+        "typography.clockWeight": {
+          "type": "integer",
+          "default": 300,
+          "minimum": 100,
+          "maximum": 900
+        },
+        "shape.radiusPanel": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 0,
+          "maximum": 24
+        },
+        "shape.radiusBadge": {
+          "type": "integer",
+          "default": 8,
+          "minimum": 0,
+          "maximum": 24
+        },
+        "shape.radiusDense": {
+          "type": "integer",
+          "default": 5,
+          "minimum": 0,
+          "maximum": 16
+        },
+        "shape.radiusMarker": {
+          "type": "integer",
+          "default": 2,
+          "minimum": 0,
+          "maximum": 6
+        },
+        "metrics.hairlineWidth": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 0,
+          "maximum": 2
+        },
+        "notifications.small.surface": {
+          "type": "string",
+          "default": "#29423f",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.small.titleColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.small.bodyColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.small.sourceColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.small.accent": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.small.borderColor": {
+          "type": "string",
+          "default": "#35525d",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.small.radius": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 0,
+          "maximum": 40
+        },
+        "notifications.small.borderWidth": {
+          "type": "integer",
+          "default": 3,
+          "minimum": 0,
+          "maximum": 8
+        },
+        "notifications.small.padding": {
+          "type": "integer",
+          "default": 18,
+          "minimum": 0,
+          "maximum": 64
+        },
+        "notifications.small.gap": {
+          "type": "integer",
+          "default": 6,
+          "minimum": 4,
+          "maximum": 40
+        },
+        "notifications.small.width": {
+          "type": "integer",
+          "default": 872,
+          "minimum": 180,
+          "maximum": 960
+        },
+        "notifications.small.height": {
+          "type": "integer",
+          "default": 93,
+          "minimum": 32,
+          "maximum": 640
+        },
+        "notifications.small.insetX": {
+          "type": "integer",
+          "default": 44,
+          "minimum": 0,
+          "maximum": 780
+        },
+        "notifications.small.insetY": {
+          "type": "integer",
+          "default": 88,
+          "minimum": 0,
+          "maximum": 590
+        },
+        "notifications.small.anchor": {
+          "type": "string",
+          "default": "bottom",
+          "maxLength": 120,
+          "enum": [
+            "top",
+            "bottom",
+            "center"
+          ]
+        },
+        "notifications.small.titleSize": {
+          "type": "integer",
+          "default": 29,
+          "minimum": 18,
+          "maximum": 72
+        },
+        "notifications.small.bodySize": {
+          "type": "integer",
+          "default": 21,
+          "minimum": 16,
+          "maximum": 44
+        },
+        "notifications.small.sourceSize": {
+          "type": "integer",
+          "default": 22,
+          "minimum": 16,
+          "maximum": 32
+        },
+        "notifications.small.guideSize": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 16,
+          "maximum": 32
+        },
+        "notifications.small.titleFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.small.bodyFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.small.sourceFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.small.guideFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.small.titleWeight": {
+          "type": "integer",
+          "default": 700,
+          "minimum": 100,
+          "maximum": 900
+        },
+        "notifications.small.noticeBodyWeight": {
+          "type": "integer",
+          "default": 400,
+          "minimum": 100,
+          "maximum": 900
+        },
+        "notifications.small.titleLines": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 12
+        },
+        "notifications.small.bodyLines": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 30
+        },
+        "notifications.small.showIcon": {
+          "type": "boolean",
+          "default": false
+        },
+        "notifications.small.showSource": {
+          "type": "boolean",
+          "default": false
+        },
+        "notifications.small.rows": {
+          "type": "integer",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 5
+        },
+        "notifications.large.surface": {
+          "type": "string",
+          "default": "#29423f",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.large.titleColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.large.bodyColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.large.sourceColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.large.accent": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.large.borderColor": {
+          "type": "string",
+          "default": "#35525d",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.large.radius": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 0,
+          "maximum": 40
+        },
+        "notifications.large.borderWidth": {
+          "type": "integer",
+          "default": 3,
+          "minimum": 0,
+          "maximum": 8
+        },
+        "notifications.large.padding": {
+          "type": "integer",
+          "default": 26,
+          "minimum": 0,
+          "maximum": 64
+        },
+        "notifications.large.gap": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 4,
+          "maximum": 40
+        },
+        "notifications.large.width": {
+          "type": "integer",
+          "default": 872,
+          "minimum": 180,
+          "maximum": 960
+        },
+        "notifications.large.height": {
+          "type": "integer",
+          "default": 446,
+          "minimum": 32,
+          "maximum": 640
+        },
+        "notifications.large.insetX": {
+          "type": "integer",
+          "default": 44,
+          "minimum": 0,
+          "maximum": 780
+        },
+        "notifications.large.insetY": {
+          "type": "integer",
+          "default": 106,
+          "minimum": 0,
+          "maximum": 590
+        },
+        "notifications.large.anchor": {
+          "type": "string",
+          "default": "top",
+          "maxLength": 120,
+          "enum": [
+            "top",
+            "bottom",
+            "center"
+          ]
+        },
+        "notifications.large.titleSize": {
+          "type": "integer",
+          "default": 44,
+          "minimum": 18,
+          "maximum": 72
+        },
+        "notifications.large.bodySize": {
+          "type": "integer",
+          "default": 30,
+          "minimum": 16,
+          "maximum": 44
+        },
+        "notifications.large.sourceSize": {
+          "type": "integer",
+          "default": 22,
+          "minimum": 16,
+          "maximum": 32
+        },
+        "notifications.large.guideSize": {
+          "type": "integer",
+          "default": 25,
+          "minimum": 16,
+          "maximum": 32
+        },
+        "notifications.large.titleFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.large.bodyFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.large.sourceFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.large.guideFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.large.titleWeight": {
+          "type": "integer",
+          "default": 700,
+          "minimum": 100,
+          "maximum": 900
+        },
+        "notifications.large.noticeBodyWeight": {
+          "type": "integer",
+          "default": 400,
+          "minimum": 100,
+          "maximum": 900
+        },
+        "notifications.large.titleLines": {
+          "type": "integer",
+          "default": 2,
+          "minimum": 1,
+          "maximum": 12
+        },
+        "notifications.large.bodyLines": {
+          "type": "integer",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 30
+        },
+        "notifications.large.showIcon": {
+          "type": "boolean",
+          "default": false
+        },
+        "notifications.large.showSource": {
+          "type": "boolean",
+          "default": true
+        },
+        "notifications.large.rows": {
+          "type": "integer",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 5
+        },
+        "notifications.urgent.surface": {
+          "type": "string",
+          "default": "#0b1219",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.urgent.titleColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.urgent.bodyColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.urgent.sourceColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.urgent.accent": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.urgent.borderColor": {
+          "type": "string",
+          "default": "#35525d",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.urgent.radius": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 0,
+          "maximum": 40
+        },
+        "notifications.urgent.borderWidth": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 0,
+          "maximum": 8
+        },
+        "notifications.urgent.padding": {
+          "type": "integer",
+          "default": 44,
+          "minimum": 0,
+          "maximum": 64
+        },
+        "notifications.urgent.gap": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 4,
+          "maximum": 40
+        },
+        "notifications.urgent.width": {
+          "type": "integer",
+          "default": 960,
+          "minimum": 180,
+          "maximum": 960
+        },
+        "notifications.urgent.height": {
+          "type": "integer",
+          "default": 640,
+          "minimum": 32,
+          "maximum": 640
+        },
+        "notifications.urgent.insetX": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 780
+        },
+        "notifications.urgent.insetY": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 590
+        },
+        "notifications.urgent.anchor": {
+          "type": "string",
+          "default": "top",
+          "maxLength": 120,
+          "enum": [
+            "top",
+            "bottom",
+            "center"
+          ]
+        },
+        "notifications.urgent.titleSize": {
+          "type": "integer",
+          "default": 56,
+          "minimum": 18,
+          "maximum": 72
+        },
+        "notifications.urgent.bodySize": {
+          "type": "integer",
+          "default": 30,
+          "minimum": 16,
+          "maximum": 44
+        },
+        "notifications.urgent.sourceSize": {
+          "type": "integer",
+          "default": 23,
+          "minimum": 16,
+          "maximum": 32
+        },
+        "notifications.urgent.guideSize": {
+          "type": "integer",
+          "default": 27,
+          "minimum": 16,
+          "maximum": 32
+        },
+        "notifications.urgent.titleFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.urgent.bodyFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.urgent.sourceFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.urgent.guideFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.urgent.titleWeight": {
+          "type": "integer",
+          "default": 700,
+          "minimum": 100,
+          "maximum": 900
+        },
+        "notifications.urgent.noticeBodyWeight": {
+          "type": "integer",
+          "default": 400,
+          "minimum": 100,
+          "maximum": 900
+        },
+        "notifications.urgent.titleLines": {
+          "type": "integer",
+          "default": 2,
+          "minimum": 1,
+          "maximum": 12
+        },
+        "notifications.urgent.bodyLines": {
+          "type": "integer",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 30
+        },
+        "notifications.urgent.showIcon": {
+          "type": "boolean",
+          "default": false
+        },
+        "notifications.urgent.showSource": {
+          "type": "boolean",
+          "default": true
+        },
+        "notifications.urgent.rows": {
+          "type": "integer",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 5
+        },
+        "notifications.badge.surface": {
+          "type": "string",
+          "default": "#1c2d38",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.badge.titleColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.badge.bodyColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.badge.sourceColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.badge.accent": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.badge.borderColor": {
+          "type": "string",
+          "default": "#35525d",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.badge.radius": {
+          "type": "integer",
+          "default": 8,
+          "minimum": 0,
+          "maximum": 40
+        },
+        "notifications.badge.borderWidth": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 0,
+          "maximum": 8
+        },
+        "notifications.badge.padding": {
+          "type": "integer",
+          "default": 4,
+          "minimum": 0,
+          "maximum": 64
+        },
+        "notifications.badge.gap": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 4,
+          "maximum": 40
+        },
+        "notifications.badge.width": {
+          "type": "integer",
+          "default": 276,
+          "minimum": 180,
+          "maximum": 960
+        },
+        "notifications.badge.height": {
+          "type": "integer",
+          "default": 36,
+          "minimum": 32,
+          "maximum": 640
+        },
+        "notifications.badge.insetX": {
+          "type": "integer",
+          "default": 487,
+          "minimum": 0,
+          "maximum": 780
+        },
+        "notifications.badge.insetY": {
+          "type": "integer",
+          "default": 31,
+          "minimum": 0,
+          "maximum": 590
+        },
+        "notifications.badge.anchor": {
+          "type": "string",
+          "default": "top",
+          "maxLength": 120,
+          "enum": [
+            "top",
+            "bottom",
+            "center"
+          ]
+        },
+        "notifications.badge.titleSize": {
+          "type": "integer",
+          "default": 21,
+          "minimum": 18,
+          "maximum": 72
+        },
+        "notifications.badge.bodySize": {
+          "type": "integer",
+          "default": 21,
+          "minimum": 16,
+          "maximum": 44
+        },
+        "notifications.badge.sourceSize": {
+          "type": "integer",
+          "default": 18,
+          "minimum": 16,
+          "maximum": 32
+        },
+        "notifications.badge.guideSize": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 16,
+          "maximum": 32
+        },
+        "notifications.badge.titleFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.badge.bodyFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.badge.sourceFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.badge.guideFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.badge.titleWeight": {
+          "type": "integer",
+          "default": 700,
+          "minimum": 100,
+          "maximum": 900
+        },
+        "notifications.badge.noticeBodyWeight": {
+          "type": "integer",
+          "default": 400,
+          "minimum": 100,
+          "maximum": 900
+        },
+        "notifications.badge.titleLines": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 12
+        },
+        "notifications.badge.bodyLines": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 30
+        },
+        "notifications.badge.showIcon": {
+          "type": "boolean",
+          "default": false
+        },
+        "notifications.badge.showSource": {
+          "type": "boolean",
+          "default": false
+        },
+        "notifications.badge.rows": {
+          "type": "integer",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 5
+        },
+        "notifications.inbox.surface": {
+          "type": "string",
+          "default": "#1c2d38",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.inbox.titleColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.inbox.bodyColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.inbox.sourceColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.inbox.accent": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.inbox.borderColor": {
+          "type": "string",
+          "default": "#35525d",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.inbox.radius": {
+          "type": "integer",
+          "default": 9,
+          "minimum": 0,
+          "maximum": 40
+        },
+        "notifications.inbox.borderWidth": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 0,
+          "maximum": 8
+        },
+        "notifications.inbox.padding": {
+          "type": "integer",
+          "default": 18,
+          "minimum": 0,
+          "maximum": 64
+        },
+        "notifications.inbox.gap": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 4,
+          "maximum": 40
+        },
+        "notifications.inbox.width": {
+          "type": "integer",
+          "default": 872,
+          "minimum": 180,
+          "maximum": 960
+        },
+        "notifications.inbox.height": {
+          "type": "integer",
+          "default": 570,
+          "minimum": 32,
+          "maximum": 640
+        },
+        "notifications.inbox.insetX": {
+          "type": "integer",
+          "default": 44,
+          "minimum": 0,
+          "maximum": 780
+        },
+        "notifications.inbox.insetY": {
+          "type": "integer",
+          "default": 35,
+          "minimum": 0,
+          "maximum": 590
+        },
+        "notifications.inbox.anchor": {
+          "type": "string",
+          "default": "top",
+          "maxLength": 120,
+          "enum": [
+            "top",
+            "bottom",
+            "center"
+          ]
+        },
+        "notifications.inbox.titleSize": {
+          "type": "integer",
+          "default": 28,
+          "minimum": 18,
+          "maximum": 72
+        },
+        "notifications.inbox.bodySize": {
+          "type": "integer",
+          "default": 21,
+          "minimum": 16,
+          "maximum": 44
+        },
+        "notifications.inbox.sourceSize": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 16,
+          "maximum": 32
+        },
+        "notifications.inbox.guideSize": {
+          "type": "integer",
+          "default": 27,
+          "minimum": 16,
+          "maximum": 32
+        },
+        "notifications.inbox.titleFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.inbox.bodyFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.inbox.sourceFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.inbox.guideFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.inbox.titleWeight": {
+          "type": "integer",
+          "default": 700,
+          "minimum": 100,
+          "maximum": 900
+        },
+        "notifications.inbox.noticeBodyWeight": {
+          "type": "integer",
+          "default": 400,
+          "minimum": 100,
+          "maximum": 900
+        },
+        "notifications.inbox.titleLines": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 12
+        },
+        "notifications.inbox.bodyLines": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 30
+        },
+        "notifications.inbox.showIcon": {
+          "type": "boolean",
+          "default": false
+        },
+        "notifications.inbox.showSource": {
+          "type": "boolean",
+          "default": true
+        },
+        "notifications.inbox.rows": {
+          "type": "integer",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 5
+        },
+        "notifications.detail.surface": {
+          "type": "string",
+          "default": "#0b1219",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.detail.titleColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.detail.bodyColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.detail.sourceColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.detail.accent": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.detail.borderColor": {
+          "type": "string",
+          "default": "#35525d",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.detail.radius": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 0,
+          "maximum": 40
+        },
+        "notifications.detail.borderWidth": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 0,
+          "maximum": 8
+        },
+        "notifications.detail.padding": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 64
+        },
+        "notifications.detail.gap": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 4,
+          "maximum": 40
+        },
+        "notifications.detail.width": {
+          "type": "integer",
+          "default": 872,
+          "minimum": 180,
+          "maximum": 960
+        },
+        "notifications.detail.height": {
+          "type": "integer",
+          "default": 570,
+          "minimum": 32,
+          "maximum": 640
+        },
+        "notifications.detail.insetX": {
+          "type": "integer",
+          "default": 44,
+          "minimum": 0,
+          "maximum": 780
+        },
+        "notifications.detail.insetY": {
+          "type": "integer",
+          "default": 35,
+          "minimum": 0,
+          "maximum": 590
+        },
+        "notifications.detail.anchor": {
+          "type": "string",
+          "default": "top",
+          "maxLength": 120,
+          "enum": [
+            "top",
+            "bottom",
+            "center"
+          ]
+        },
+        "notifications.detail.titleSize": {
+          "type": "integer",
+          "default": 45,
+          "minimum": 18,
+          "maximum": 72
+        },
+        "notifications.detail.bodySize": {
+          "type": "integer",
+          "default": 30,
+          "minimum": 16,
+          "maximum": 44
+        },
+        "notifications.detail.sourceSize": {
+          "type": "integer",
+          "default": 25,
+          "minimum": 16,
+          "maximum": 32
+        },
+        "notifications.detail.guideSize": {
+          "type": "integer",
+          "default": 27,
+          "minimum": 16,
+          "maximum": 32
+        },
+        "notifications.detail.titleFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.detail.bodyFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.detail.sourceFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.detail.guideFamily": {
+          "type": "string",
+          "default": "",
+          "maxLength": 120
+        },
+        "notifications.detail.titleWeight": {
+          "type": "integer",
+          "default": 700,
+          "minimum": 100,
+          "maximum": 900
+        },
+        "notifications.detail.noticeBodyWeight": {
+          "type": "integer",
+          "default": 400,
+          "minimum": 100,
+          "maximum": 900
+        },
+        "notifications.detail.titleLines": {
+          "type": "integer",
+          "default": 8,
+          "minimum": 1,
+          "maximum": 12
+        },
+        "notifications.detail.bodyLines": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 30
+        },
+        "notifications.detail.showIcon": {
+          "type": "boolean",
+          "default": false
+        },
+        "notifications.detail.showSource": {
+          "type": "boolean",
+          "default": true
+        },
+        "notifications.detail.rows": {
+          "type": "integer",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 5
+        },
+        "notifications.inbox.focusedSurface": {
+          "type": "string",
+          "default": "#28403f",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.accentTextOnCanvas": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.accentTextOnOverlay": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.accentTextOnCard": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.accentTextOnFocused": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.warningOnCanvas": {
+          "type": "string",
+          "default": "#efbd75",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.warningOnOverlay": {
+          "type": "string",
+          "default": "#efbd75",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.warningOnCard": {
+          "type": "string",
+          "default": "#efbd75",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.warningOnFocused": {
+          "type": "string",
+          "default": "#efbd75",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.criticalOnCanvas": {
+          "type": "string",
+          "default": "#f08779",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.criticalOnOverlay": {
+          "type": "string",
+          "default": "#f08779",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.criticalOnCard": {
+          "type": "string",
+          "default": "#f08779",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.criticalOnFocused": {
+          "type": "string",
+          "default": "#f08779",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.accountCriticalOnCanvas": {
+          "type": "string",
+          "default": "#f28c82",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.accountCriticalOnOverlay": {
+          "type": "string",
+          "default": "#f28c82",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.accountCriticalOnCard": {
+          "type": "string",
+          "default": "#f28c82",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.accountCriticalOnFocused": {
+          "type": "string",
+          "default": "#f28c82",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.accentDecoration": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.focusIndicator": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.warningIndicator": {
+          "type": "string",
+          "default": "#efbd75",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "semantic.criticalIndicator": {
+          "type": "string",
+          "default": "#f08779",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.small.guideColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.small.badgeTextColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.small.focusedTitleColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.small.focusedBodyColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.small.focusedSourceColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.large.guideColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.large.badgeTextColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.large.focusedTitleColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.large.focusedBodyColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.large.focusedSourceColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.urgent.guideColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.urgent.badgeTextColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.urgent.focusedTitleColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.urgent.focusedBodyColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.urgent.focusedSourceColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.badge.guideColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.badge.badgeTextColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.badge.focusedTitleColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.badge.focusedBodyColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.badge.focusedSourceColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.inbox.guideColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.inbox.badgeTextColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.inbox.focusedTitleColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.inbox.focusedBodyColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.inbox.focusedSourceColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.detail.guideColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.detail.badgeTextColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.detail.focusedTitleColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.detail.focusedBodyColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "notifications.detail.focusedSourceColor": {
+          "type": "string",
+          "default": "#6de0be",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "ext.summary.clockInset": {
+          "type": "integer",
+          "default": 24,
+          "minimum": 0,
+          "maximum": 80
+        }
+      },
+      "additionalProperties": false
+    },
+    "palettes": {
+      "type": "object",
+      "properties": {
+        "day": {
+          "$ref": "#/properties/tokens"
+        },
+        "night": {
+          "$ref": "#/properties/tokens"
+        }
+      },
+      "additionalProperties": false
+    },
+    "presentations": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+      }
+    },
+    "motion": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "recipe",
+          "durationMs",
+          "distancePx",
+          "easing"
+        ],
+        "properties": {
+          "recipe": {
+            "type": "string"
+          },
+          "durationMs": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 600
+          },
+          "distancePx": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 80
+          },
+          "easing": {
+            "enum": [
+              "linear",
+              "outCubic",
+              "outQuad",
+              "inOutQuad"
+            ]
+          }
+        }
+      }
+    },
+    "scene": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "renderer": {
+          "type": "string"
+        }
+      }
+    },
+    "iconSetId": {
+      "type": "string"
+    },
+    "iconApiVersion": {
+      "const": 1
+    },
+    "iconOverrides": {
+      "type": "object"
+    },
+    "assets": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "path"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "type": {
+            "enum": [
+              "font",
+              "image",
+              "data"
+            ]
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "presentation1",
+          "motion1",
+          "icons1",
+          "scene1"
+        ]
+      }
+    }
+  },
+  "additionalProperties": false
+}

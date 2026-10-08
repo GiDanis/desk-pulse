@@ -1,7 +1,13 @@
 # DeskPulse / SmartPC — MasterPlan dei rilasci
 
-**Revisione 2.21 · 8 ottobre 2026 · Europe/Rome**
-**Checkout e installazione: 0.8.1-rc.1, Theme API 2.4, 56 superfici. Base Git `99f97f5` modificata; tag storico v0.8.0 conservato. E0–E4 consegnate, Apple Calm 1.2.0 e preferenze conservati; nessun tag stabile v0.8.1 creato.**
+**Revisione 2.27 · 8 ottobre 2026 · Europe/Rome**
+**Checkout modificato e installazione: 0.8.3-rc.2, Theme API 2.5, 60 superfici, Apple Calm 1.3.1. HEAD/tag stabile locale v0.8.1 `d761d7a` preservato. Consolidamento C0–C4/U0–U4 e ottimizzazione conservativa degli spazi implementati: 72 casi locali, verifiche EGLFS, manifest di 499 file, backup e reboot provati. Le preferenze utente sono conservate; la patch rc.2 aggiunge soltanto i metadati della nuova revisione del tema. Nessuna promozione stabile implicita.**
+
+**Vincolo grafico confermato:** mantenere icone, colori, font e stile di Apple Calm; adattare geometrie, allineamenti e scorrimento. La 1.3.1 riduce la barra a 56 px, recupera il fondo occupato dalle guide, estende Sport e rende accessibili traffico/temperature iliadbox in panoramica. Informazioni/Risorse cambia correttamente contenuto. Il contratto dei tasti rimane quello esistente; le proposte di riorganizzazione più ampie restano analisi. [Consegna conservativa, catture e prove](v083-space-optimization-report.md).
+
+**Consolidamento consegnato:** **0.8.2 — Affidabilità e risposta** e **0.8.3 — Navigazione e leggibilità**, entrambe come candidate. La 0.8.3 riunisce Sport, organizza sei categorie Impostazioni, completa icone e copertura Rete nei tre temi. Il collaudo umano sul display IPS 3,5″ a 50–60 cm rimane aperto. [Consegna 0.8.3](v083-implementation-report.md), [uso e recupero](v083-ux-operations.md), [manutenzione 0.8.2](v082-implementation-report.md), [piano completo](v082-v083-consolidation-plan.md).
+
+**Requisiti UX trasversali:** coerenza visiva di superfici, grafici e stati; impostazioni per compito, icone semanticamente esplicite e controlli conservati. Il [dossier](ux-research-consolidation-2026-10-08.md) consulta 32 riferimenti, inclusi nove lavori scientifici, e calibra il piano sulla distanza confermata di **50–60 cm**. L'[inventario iniziale](ux-consolidation-static-inventory.md) registra la baseline di 56 superfici; la 0.8.3 estende il contratto a 60 e Apple Calm a 59 presentazioni proprie più scena Base. [Mappa delle impostazioni](evidence/v083-consolidation-2026-10-08/settings-map.json), [icone e catture](evidence/v083-consolidation-2026-10-08/visual/gallery.html). Queste prove software non attestano leggibilità o semplicità fisica.
 
 **Promozione storica registrata nella revisione 2.18:** durante quella revisione `version.py` è passato a **0.7.0**, i README hanno adottato l'etichetta stabile ed è comparso il tag locale **v0.7.0**, commit `7753184` (documentazione/showcase e versione). I report fisici/distributivi consultati restano quelli rc.1/rc.2/rc.3: versione e tag attestano l'identità Git, senza provare da soli una nuova installazione o la chiusura di quota/collaudi Casa. La baseline reale è stata riconciliata durante N0 v0.8: core installato rc.3, checkout 0.7.0. La nuova candidata conserva i gate fisici/di quota precedenti e non modifica i tag storici.
 
@@ -29,6 +35,7 @@ Il cambio completo del tema può mostrare una schermata di caricamento: è un'az
 - Il modulo Account ChatGPT già rilasciato conserva il suo processo di sincronizzazione sul PC: la nuova v0.8 non introduce agent per telemetria hardware.
 - **Spotify/Media non ha una versione assegnata** nel piano attivo: le vecchie righe dei README vengono sostituite dalla sequenza corrente.
 - Cane e Memoria/AI restano v0.9 e v0.10; NPU e modelli locali appartengono alle esplorazioni successive.
+- **Prima della v0.9, consolidare ciò che esiste:** 0.8.2 per bug, persistenza, lifecycle, refresh e costi misurati; 0.8.3 per macroarea Sport, coerenza dei tre temi e leggibilità fisica. Nessun nuovo provider o comando implicito in queste revisioni.
 
 ## 2. Baseline: cosa esiste davvero
 
@@ -40,12 +47,12 @@ Il cambio completo del tema può mostrare una schermata di caricamento: è un'az
 | v0.4 · Account ChatGPT | Rilasciata | Piano, finestre d'uso, crediti quando disponibili, reset e stato della sincronizzazione; modulo nel carosello. |
 | v0.5 · Eventi | Rilasciata | Priorità, scadenza, deduplicazione, SQLite, banner piccoli/grandi, urgenti, cache bollettino e badge non letti. |
 | v0.6 → v0.6.1 · Sport | Rilasciata, con collaudi live aperti | Serie A, squadra preferita, calendario/coppe/rosa, dettaglio partita, Fantacalcio pubblicato e adapter live; F1/MotoGP con programma, classifiche, sessioni e dettagli. |
-| Impostazioni / Informazioni | Revisione installata | Aspetto, Luminosità, Moduli, Notifiche, Account, Sport, Dati e aggiornamenti; Info autonoma con dispositivo, risorse, rete e dati. |
+| Impostazioni / Informazioni | Revisione 0.8.3 installata | Schermo, Aspetto, Moduli e Home, Avvisi, Servizi collegati, Dati e aggiornamenti; Info autonoma in sola lettura. |
 | v0.7 · Casa | Progetto/tag 0.7.0; ultima installazione provata nel report rc.3 | Provider, preferiti, inventario e dettagli integrati; letture board reali. I report di candidata mantengono polling senza policy effettiva disattivato e gate fisici aperti; stato finale 0.7.0 da riconciliare. |
 | v0.6.6 · Theme Engine | Implementato e distribuito | Base/Functional, facade tipizzata, registry visuali, motion/scene, editor e pacchetti personali; sei visuali Avvisi sostituibili con ruoli locali. |
 | Apple Calm 1.2.0 / Theme API 2.2 | Installazione e reboot documentati il 6 ottobre | Tema profondo, Oggi → Orologio, pallini, icone distinte, correzione nomi classifica e ottimizzazione dei contesti/rendering. |
 | v0.8 · Rete locale | Checkout/tag 0.8.0; installazione attestata rc.1, Theme API 2.3 | Letture iliadbox dalla board, 39 record, quattro superfici, preferiti/cache e reboot. Discrepanza 54/39 e guest indisponibile espliciti; presenza fisica e notifiche ancora aperte. |
-| v0.8.1 · Approfondimenti rete | 0.8.1-rc.1 installata; Theme API 2.4 | E0–E4: WAN/fibra, radio/stazioni, porte, storico 1 h/24 h; Base/Functional/Apple Calm e reboot. Survey/MLO operativo, notifiche e collaudo prolungato restano separati. |
+| v0.8.1 · Approfondimenti rete | Checkout/tag locale 0.8.1; ultima installazione attestata rc.1; Theme API 2.4 | E0–E4: WAN/fibra, radio/stazioni, porte, storico 1 h/24 h; Base/Functional/Apple Calm e reboot. Survey/MLO operativo, notifiche e collaudo prolungato restano separati. |
 
 ### Consegne recenti e attribuzione
 
@@ -74,6 +81,8 @@ Fonti: [README dashboard](../README.md), [rilascio Serie A](v06-sport-release.md
 | **Apple Calm 1.2.0 / core rc.3** | Tema completo, Orologio, pallini e navigazione ottimizzata. | Theme API 2.2, renderer e recovery. | Installata e verificata; versione tema distinta dal core. |
 | **v0.8 · Rete locale** | Inventario, preferiti, dettaglio e collegamenti Wi-Fi/porta qualificati. | Adapter iliadbox e Theme API 2.3. | Report candidata installata e reboot verificati; checkout/tag ora 0.8.0. Residui fisici e N4 distinti. |
 | **v0.8.1 · Rete estesa** | iliadbox/Internet, Wi-Fi, Porte, storico e grafici. | v0.8 verificata; unità, direzioni, freschezza e reset dei contatori. | E0–E4 implementate, candidata installata e reboot verificato; residui fisici/prolungati espliciti. |
+| **v0.8.2 · Affidabilità e risposta** | Aggiornamenti veritieri, cache affidabili, correzioni UX urgenti e ottimizzazione misurata. | Baseline 0.8.1 riconciliata e difetti riprodotti. | C0–C4 consegnati come candidata, successivamente integrati nella 0.8.3. |
+| **v0.8.3 · Navigazione e leggibilità** | Un unico Sport, sei macroaree, impostazioni immediate, icone complete e viste coerenti sul display 3,5″. | Garanzie 0.8.2, migrazione preferenze e compatibilità Theme. | Candidata 0.8.3-rc.2 installata; Apple Calm 1.3.1 ottimizza gli spazi conservando lo stile, reboot provato; collaudo fisico aperto. |
 | **v0.9 · Compagno** | Cane animato con scene preparate e reazioni ai moduli. | Temi, eventi e asset misurati sulla board. | Pianificata. |
 | **v0.10 · Memoria e scene AI** | Preferenze e storia del compagno; scene proposte tramite comandi validati. | Compagno deterministico funzionante. | Pianificata. |
 | **v1.0 · Versione stabile** | Configurazione, aggiornamento, recupero e uso continuativo documentati. | Moduli scelti e verifiche integrate. | Obiettivo. |
@@ -85,7 +94,9 @@ flowchart LR
   C --> P["core rc.3 / Apple Calm 1.2.0 · consegnati"]
   P --> D["v0.8 · Rete locale · rc.1 installata"]
   D --> H["v0.8.1 · Router / Wi-Fi / Porte"]
-  H --> E["v0.9 · Compagno"]
+  H --> I["v0.8.2 · Affidabilità"]
+  I --> J["v0.8.3 · Sport / UX 3,5 pollici"]
+  J --> E["v0.9 · Compagno"]
   E --> F["v0.10 · Memoria / AI"]
   F --> G["v1.0 · Stabilità"]
 ```
@@ -324,7 +335,9 @@ Nessuna nuova funzione entra come pagina vuota. Un modulo configurato continua a
 3. **v0.8 — N4 successivo:** notifiche dopo copertura/identità affidabili. Quattro superfici, compatibilità dei temi, SDK e distribuzione sono consegnati; non ricominciare i controlli già superati senza modifiche o problemi nuovi.
 4. **v0.8.1 — E0–E4 consegnate:** router/Internet, Wi-Fi, Porte, RRD e Theme API 2.4, stesso token. Default visibile 30 s; candidata installata, EGLFS e reboot verificati. [Prove e residui](v081-implementation-report.md). Conservare preferenze e collaudare l’uso prolungato; le capacità opzionali non qualificate restano escluse.
 5. **In parallelo alle occasioni reali:** chiudere quota/collaudi Casa e gate live Sport. Per Theme conservare i residui fisici/prolungati documentati; non ricominciare A1–A6 o stress storici già conclusi.
-6. **Poi v0.9/v0.10:** compagno e memoria/AI, sulla base grafica già consegnata. La consegna v0.8 aggiorna il runtime a candidata; questo piano non assegna un tag stabile.
+6. **Ora v0.8.2 — consolidamento:** riconciliare checkout/tag 0.8.1 con il manifest installato rc.1; riprodurre bug e rischi, correggere Meteo/persistenza/lifecycle e feedback refresh, misurare prima/dopo e consegnare con backup/reboot. [Fasi C0–C4](v082-v083-consolidation-plan.md).
+7. **v0.8.3 — UX consegnata come candidata:** Sport unico, sei macroaree, ritorni, impostazioni per compito e copertura Base/Functional/Apple Calm. Preferenze e reboot verificati; chiudere il collaudo umano a 50–60 cm prima della promozione. [Consegna e residui](v083-implementation-report.md).
+8. **Dopo il consolidamento v0.9/v0.10:** compagno e memoria/AI, sulla base grafica già consegnata. Le nuove revisioni sono pianificate, senza modificare runtime o board.
 
 ### Gate aperti e loro effetto
 
@@ -332,10 +345,10 @@ Nessuna nuova funzione entra come pagina vuota. Un modulo configurato continua a
 | --- | --- | --- |
 | Casa: quota/consumo/scadenza | Valori effettivi e polling controllato. | Uso continuativo e accettazione v0.7 finale; non l'analisi o N0 Rete. |
 | Casa: dispositivi/rete | Cambi reali, latenza, hub/rete assenti, cold start offline e gestione account. | Accettazione finale Casa; non cancellare la candidata manuale già consegnata. |
-| Identità della release | Baseline rc.3 riconciliata; 0.8.0-rc.1 installata con manifest 475 file, preferenze e reboot verificati. Checkout/tag ora 0.8.0; nuovo manifest installato non verificato in questa preparazione. | Accettazione dei residui e riconciliazione del manifest prima del prossimo deployment. |
+| Identità della release | Checkout/tag locale 0.8.1 `d761d7a`; ultima ricevuta installata 0.8.1-rc.1, 490 file e reboot attestati dal report. Nessuna nuova ispezione della board in questo piano. | Confrontare il runtime corrente con il checkout prima del prossimo deployment; promozione Git distinta dall'installazione. |
 | Rete: accesso/copertura | Accesso/TLS e inventario dalla board verificati; 54/39 e guest nullo dichiarati. Mancano transizioni fisiche, segmenti isolati e riduzione dei permessi del token. | Accettazione della copertura e future notifiche; candidata utile in consultazione. |
 | Rete: temi | Quattro superfici e kit AI 2.3 consegnati; Base/Functional e fallback Apple Calm verificati EGLFS. | Nuovi temi richiedono la propria verifica; non duplicare il provider. |
-| Metriche v0.8.1 | Direzioni, segnale, MLO, storico e reset sulla board. | Etichette/grafici della release estesa. |
+| Metriche v0.8.1 | Direzioni, unità, storico e reset qualificati nella candidata. Survey fresco e MLO operativo esclusi; uso prolungato/rete fisica restano aperti. | Conservare le qualifiche nelle rifiniture; nuove capacità richiedono nuove prove. |
 | Sport live | Partite/sessioni effettivamente attive e feed voti. | Singolo badge/gate live e notifiche gol. |
 | Theme fisico/prolungato | Tastierino reale, power-cut e uso continuativo; verifiche ottiche dove necessarie. | Qualifica fisica e stabilità finale; evitare nuovi risultati PASS senza prove. |
 

@@ -1,0 +1,22 @@
+..F.
+======================================================================
+FAIL: test_real_main_rows_report_disallowed_controls_and_partial_coverage (__main__.AdjustmentTests.test_real_main_rows_report_disallowed_controls_and_partial_coverage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_adjustments.py", line 105, in test_real_main_rows_report_disallowed_controls_and_partial_coverage
+    self.assertEqual(child.returncode,0,child.stdout+child.stderr)
+AssertionError: 1 != 0 : Sport: Rete Sport disabilitata per verifica offline; cache=True
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_adjustments.py", line 145, in <module>
+    if '--main-proof' in sys.argv: main_proof()
+                                   ^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_adjustments.py", line 126, in main_proof
+    assert rows[0]['enabled'] is False and rows[3]['enabled'] is False,rows
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [{'detail': 'Palette gestita dal tema', 'enabled': False, 'id': 'appearance.palette', 'title': 'Palette', 'value': 'AUTOMATICA'}, {'detail': 'Animazioni del tema e della scena', 'id': 'appearance.motion', 'title': 'Movimento', 'value': 'NORMALE'}, {'detail': 'Parziale · 5 propri · 55 Base', 'id': 'appearance.theme', 'title': 'Tema', 'value': 'Studio Ambient'}, {'detail': 'Conserva il tema al prossimo avvio', 'enabled': True, 'id': 'appearance.apply', 'title': 'Applica e salva', 'value': 'SALVA'}, {'detail': 'Torna al tema salvato', 'enabled': True, 'id': 'appearance.cancel', 'title': 'Annulla anteprima', 'value': 'RIPRISTINA'}, {'detail': 'Editor di compatibilità · la composizione si crea nel tema', 'id': 'appearance.advanced', 'title': 'Personalizzazione avanzata', 'value': 'APRI'}, {'detail': 'Importa, esporta e revisioni', 'id': 'appearance.management', 'target': 'themeManagement', 'title': 'Gestione temi'}]
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 2.627s
+
+FAILED (failures=1)

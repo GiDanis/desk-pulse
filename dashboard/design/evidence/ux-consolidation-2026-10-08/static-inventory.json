@@ -1,0 +1,1072 @@
+{
+  "date": "2026-10-08",
+  "kind": "static-declarations-only",
+  "limits": [
+    "Not a runtime/rendering/physical audit",
+    "Declared setting rows include conditional entries and templates; not the count of simultaneously visible controls",
+    "No explicit theme presentation does not imply a broken view; inheritance and fallback require runtime verification"
+  ],
+  "sources": [
+    {
+      "path": "dashboard/theme-api/surfaces.json",
+      "sha256": "3ff52d1040036ee8963724f9ea0d29545042106434dbc7f9c2e9f4b2a22241b6"
+    },
+    {
+      "path": "dashboard/theme-api/actions.json",
+      "sha256": "1454aa37348617fa9cce2a639a1fa676dd84d70e846bec50bf5408540d6fb852"
+    },
+    {
+      "path": "dashboard/icons/catalog.json",
+      "sha256": "9525c2aec172ba80658a41cb43e1dfd967d1fd24c5e214c39860d7c261ab267a"
+    },
+    {
+      "path": "dashboard/icons/renderers.json",
+      "sha256": "878c0075944b4f9a7397e81c84c92dd835423c96ce3fc311a59f08a548d13c64"
+    },
+    {
+      "path": "theme-projects/apple-calm/bundle/theme.json",
+      "sha256": "fef5ccd44dc0c2cc5d48fee880f1d7efd167bfe377842cf55b013cb68aa77dc3"
+    },
+    {
+      "path": "theme-projects/apple-calm/design/icon-source.json",
+      "sha256": "d2698f0b670f4041ef6a349b80a427889eb4c6ed250dd39090b908d93a2dd465"
+    }
+  ],
+  "summary": {
+    "surfaceDeclarations": 56,
+    "explicitAppleCalmPresentations": 48,
+    "surfacesWithoutExplicitAppleCalmPresentation": [
+      "network.detail",
+      "network.devices",
+      "network.overview",
+      "network.ports",
+      "network.router",
+      "network.wifi",
+      "scene.main",
+      "settings.network"
+    ],
+    "settingsSectionsDeclared": 13,
+    "settingsRowDeclarations": 97,
+    "settingsSectionsWithoutRowDeclarations": [
+      "settings.casa",
+      "settings.network"
+    ],
+    "builtinIconMappings": {
+      "builtin.plain": 22
+    },
+    "appleCalmIconPaths": 50,
+    "appleCalmIconAliases": 22
+  },
+  "surfaces": [
+    {
+      "id": "account.usage",
+      "hostFamily": "page",
+      "context": "PageContext",
+      "actionCount": 7,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "alerts.badge",
+      "hostFamily": "notification",
+      "context": "NotificationContext",
+      "actionCount": 2,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "alerts.banner.large",
+      "hostFamily": "notification",
+      "context": "NotificationContext",
+      "actionCount": 2,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "alerts.banner.small",
+      "hostFamily": "notification",
+      "context": "NotificationContext",
+      "actionCount": 2,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "alerts.detail",
+      "hostFamily": "notification",
+      "context": "NotificationContext",
+      "actionCount": 3,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "alerts.inbox",
+      "hostFamily": "notification",
+      "context": "NotificationContext",
+      "actionCount": 5,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "alerts.urgent",
+      "hostFamily": "notification",
+      "context": "NotificationContext",
+      "actionCount": 3,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "casa.detail",
+      "hostFamily": "overlay",
+      "context": "CasaContext",
+      "actionCount": 8,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "casa.devices",
+      "hostFamily": "page",
+      "context": "CasaContext",
+      "actionCount": 9,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "casa.overview",
+      "hostFamily": "page",
+      "context": "CasaContext",
+      "actionCount": 9,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "device.info",
+      "hostFamily": "overlay",
+      "context": "InfoContext",
+      "actionCount": 10,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "home.clock",
+      "hostFamily": "page",
+      "context": "PageContext",
+      "actionCount": 7,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "home.day",
+      "hostFamily": "page",
+      "context": "PageContext",
+      "actionCount": 7,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "home.now",
+      "hostFamily": "page",
+      "context": "PageContext",
+      "actionCount": 7,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "network.detail",
+      "hostFamily": "overlay",
+      "context": "NetworkContext",
+      "actionCount": 10,
+      "explicitAppleCalmPresentation": false
+    },
+    {
+      "id": "network.devices",
+      "hostFamily": "page",
+      "context": "NetworkContext",
+      "actionCount": 10,
+      "explicitAppleCalmPresentation": false
+    },
+    {
+      "id": "network.overview",
+      "hostFamily": "page",
+      "context": "NetworkContext",
+      "actionCount": 11,
+      "explicitAppleCalmPresentation": false
+    },
+    {
+      "id": "overlay.commands",
+      "hostFamily": "overlay",
+      "context": "CommandsContext",
+      "actionCount": 6,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "overlay.menu",
+      "hostFamily": "overlay",
+      "context": "MenuContext",
+      "actionCount": 9,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "overlay.summary",
+      "hostFamily": "overlay",
+      "context": "SummaryContext",
+      "actionCount": 6,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "racing.calendar",
+      "hostFamily": "overlay",
+      "context": "RacingContext",
+      "actionCount": 12,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "racing.driver.detail",
+      "hostFamily": "overlay",
+      "context": "DriverContext",
+      "actionCount": 12,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "racing.event.detail",
+      "hostFamily": "overlay",
+      "context": "RacingContext",
+      "actionCount": 12,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "racing.live",
+      "hostFamily": "overlay",
+      "context": "RacingContext",
+      "actionCount": 12,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "racing.overview",
+      "hostFamily": "page",
+      "context": "PageContext",
+      "actionCount": 12,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "racing.session.detail",
+      "hostFamily": "overlay",
+      "context": "RacingContext",
+      "actionCount": 12,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "racing.standings",
+      "hostFamily": "overlay",
+      "context": "RacingContext",
+      "actionCount": 12,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "scene.main",
+      "hostFamily": "scene",
+      "context": "SceneContext",
+      "actionCount": 0,
+      "explicitAppleCalmPresentation": false
+    },
+    {
+      "id": "settings.account",
+      "hostFamily": "overlay",
+      "context": "SettingsContext",
+      "actionCount": 10,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "settings.appearance",
+      "hostFamily": "overlay",
+      "context": "SettingsContext",
+      "actionCount": 18,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "settings.appearance.notifications",
+      "hostFamily": "overlay",
+      "context": "SettingsContext",
+      "actionCount": 18,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "settings.casa",
+      "hostFamily": "overlay",
+      "context": "CasaContext",
+      "actionCount": 12,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "settings.display",
+      "hostFamily": "overlay",
+      "context": "SettingsContext",
+      "actionCount": 10,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "settings.index",
+      "hostFamily": "overlay",
+      "context": "SettingsContext",
+      "actionCount": 9,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "settings.integrations",
+      "hostFamily": "overlay",
+      "context": "SettingsContext",
+      "actionCount": 9,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "settings.modules",
+      "hostFamily": "overlay",
+      "context": "SettingsContext",
+      "actionCount": 10,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "settings.network",
+      "hostFamily": "overlay",
+      "context": "NetworkContext",
+      "actionCount": 13,
+      "explicitAppleCalmPresentation": false
+    },
+    {
+      "id": "settings.notifications",
+      "hostFamily": "overlay",
+      "context": "SettingsContext",
+      "actionCount": 9,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "settings.notifications.categories",
+      "hostFamily": "overlay",
+      "context": "SettingsContext",
+      "actionCount": 10,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "settings.notifications.quiet",
+      "hostFamily": "overlay",
+      "context": "SettingsContext",
+      "actionCount": 10,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "settings.racing",
+      "hostFamily": "overlay",
+      "context": "SettingsContext",
+      "actionCount": 10,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "settings.sources",
+      "hostFamily": "overlay",
+      "context": "SettingsContext",
+      "actionCount": 10,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "settings.sport",
+      "hostFamily": "overlay",
+      "context": "SettingsContext",
+      "actionCount": 10,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "shell.main",
+      "hostFamily": "shell",
+      "context": "ShellContext",
+      "actionCount": 6,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "sport.fixtures",
+      "hostFamily": "overlay",
+      "context": "SportListContext",
+      "actionCount": 12,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "sport.match.detail",
+      "hostFamily": "overlay",
+      "context": "MatchContext",
+      "actionCount": 12,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "sport.overview",
+      "hostFamily": "page",
+      "context": "PageContext",
+      "actionCount": 12,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "sport.standings",
+      "hostFamily": "overlay",
+      "context": "SportListContext",
+      "actionCount": 12,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "sport.team",
+      "hostFamily": "page",
+      "context": "PageContext",
+      "actionCount": 12,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "sport.team.detail",
+      "hostFamily": "overlay",
+      "context": "TeamContext",
+      "actionCount": 12,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "sport.team.picker",
+      "hostFamily": "overlay",
+      "context": "TeamPickerContext",
+      "actionCount": 12,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "weather.forecast",
+      "hostFamily": "page",
+      "context": "PageContext",
+      "actionCount": 7,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "weather.now",
+      "hostFamily": "page",
+      "context": "PageContext",
+      "actionCount": 7,
+      "explicitAppleCalmPresentation": true
+    },
+    {
+      "id": "network.router",
+      "hostFamily": "overlay",
+      "context": "NetworkRouterContext",
+      "actionCount": 12,
+      "explicitAppleCalmPresentation": false
+    },
+    {
+      "id": "network.wifi",
+      "hostFamily": "overlay",
+      "context": "NetworkWifiContext",
+      "actionCount": 12,
+      "explicitAppleCalmPresentation": false
+    },
+    {
+      "id": "network.ports",
+      "hostFamily": "overlay",
+      "context": "NetworkPortsContext",
+      "actionCount": 12,
+      "explicitAppleCalmPresentation": false
+    }
+  ],
+  "settingRows": {
+    "settings.index": [
+      {
+        "id": "appearance",
+        "legacyPosition": 0,
+        "conditional": false
+      },
+      {
+        "id": "display",
+        "legacyPosition": 1,
+        "conditional": false
+      },
+      {
+        "id": "modules",
+        "legacyPosition": 2,
+        "conditional": false
+      },
+      {
+        "id": "notifications",
+        "legacyPosition": 3,
+        "conditional": false
+      },
+      {
+        "id": "account",
+        "legacyPosition": 4,
+        "conditional": false
+      },
+      {
+        "id": "integrations",
+        "legacyPosition": 5,
+        "conditional": true
+      },
+      {
+        "id": "sources",
+        "legacyPosition": 6,
+        "conditional": false
+      },
+      {
+        "id": "casa",
+        "legacyPosition": 7,
+        "conditional": false
+      },
+      {
+        "id": "network",
+        "legacyPosition": 8,
+        "conditional": false
+      }
+    ],
+    "settings.display": [
+      {
+        "id": "display.mode",
+        "legacyPosition": 0,
+        "conditional": false
+      },
+      {
+        "id": "display.manualBrightness",
+        "legacyPosition": 1,
+        "conditional": false
+      },
+      {
+        "id": "display.dayBrightness",
+        "legacyPosition": 2,
+        "conditional": false
+      },
+      {
+        "id": "display.nightBrightness",
+        "legacyPosition": 3,
+        "conditional": false
+      },
+      {
+        "id": "display.dayStart",
+        "legacyPosition": 4,
+        "conditional": false
+      },
+      {
+        "id": "display.nightStart",
+        "legacyPosition": 5,
+        "conditional": false
+      }
+    ],
+    "settings.appearance": [
+      {
+        "id": "appearance.palette",
+        "legacyPosition": 0,
+        "conditional": false
+      },
+      {
+        "id": "appearance.motion",
+        "legacyPosition": 1,
+        "conditional": false
+      },
+      {
+        "id": "appearance.theme",
+        "legacyPosition": 2,
+        "conditional": false
+      },
+      {
+        "id": "appearance.homeComposition",
+        "legacyPosition": 3,
+        "conditional": false
+      },
+      {
+        "id": "appearance.textScale",
+        "legacyPosition": 4,
+        "conditional": false
+      },
+      {
+        "id": "appearance.density",
+        "legacyPosition": 5,
+        "conditional": false
+      },
+      {
+        "id": "appearance.cardRadius",
+        "legacyPosition": 6,
+        "conditional": false
+      },
+      {
+        "id": "appearance.accent",
+        "legacyPosition": 7,
+        "conditional": false
+      },
+      {
+        "id": "appearance.uiFont",
+        "legacyPosition": 8,
+        "conditional": false
+      },
+      {
+        "id": "appearance.numbersFont",
+        "legacyPosition": 9,
+        "conditional": false
+      },
+      {
+        "id": "appearance.transitions",
+        "legacyPosition": 10,
+        "conditional": false
+      },
+      {
+        "id": "appearance.scene",
+        "legacyPosition": 11,
+        "conditional": false
+      },
+      {
+        "id": "appearance.apply",
+        "legacyPosition": 12,
+        "conditional": false
+      },
+      {
+        "id": "appearance.cancel",
+        "legacyPosition": 13,
+        "conditional": false
+      },
+      {
+        "id": "appearance.reset",
+        "legacyPosition": 14,
+        "conditional": false
+      },
+      {
+        "id": "appearance.reload",
+        "legacyPosition": 15,
+        "conditional": false
+      },
+      {
+        "id": "appearance.clockFont",
+        "legacyPosition": 16,
+        "conditional": false
+      },
+      {
+        "id": "appearance.import",
+        "legacyPosition": 17,
+        "conditional": false
+      },
+      {
+        "id": "appearance.export",
+        "legacyPosition": 18,
+        "conditional": false
+      },
+      {
+        "id": "appearance.notifications",
+        "legacyPosition": 19,
+        "conditional": false
+      }
+    ],
+    "settings.appearance.notifications": [
+      {
+        "id": "notifications.visual.mode",
+        "legacyPosition": 0,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.composition.small",
+        "legacyPosition": 1,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.composition.large",
+        "legacyPosition": 2,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.composition.urgent",
+        "legacyPosition": 3,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.composition.badge",
+        "legacyPosition": 4,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.composition.inbox",
+        "legacyPosition": 5,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.composition.detail",
+        "legacyPosition": 6,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.preview",
+        "legacyPosition": 7,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.padding",
+        "legacyPosition": 8,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.titleSize",
+        "legacyPosition": 9,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.bodySize",
+        "legacyPosition": 10,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.sourceSize",
+        "legacyPosition": 11,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.radius",
+        "legacyPosition": 12,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.anchor",
+        "legacyPosition": 13,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.inboxRows",
+        "legacyPosition": 14,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.titleFont",
+        "legacyPosition": 15,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.bodyFont",
+        "legacyPosition": 16,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.sourceFont",
+        "legacyPosition": 17,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.icon",
+        "legacyPosition": 18,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.source",
+        "legacyPosition": 19,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.enter",
+        "legacyPosition": 20,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.exit",
+        "legacyPosition": 21,
+        "conditional": false
+      },
+      {
+        "id": "appearance.apply",
+        "legacyPosition": 22,
+        "conditional": false
+      },
+      {
+        "id": "notifications.visual.reset",
+        "legacyPosition": 23,
+        "conditional": false
+      },
+      {
+        "id": "appearance.back",
+        "legacyPosition": 24,
+        "conditional": false
+      }
+    ],
+    "settings.modules": [
+      {
+        "id": "module.oggi",
+        "legacyPosition": 0,
+        "conditional": false
+      },
+      {
+        "id": "module.meteo",
+        "legacyPosition": 1,
+        "conditional": false
+      },
+      {
+        "id": "module.account",
+        "legacyPosition": 2,
+        "conditional": false
+      },
+      {
+        "id": "module.sport",
+        "legacyPosition": 3,
+        "conditional": true
+      },
+      {
+        "id": "module.f1",
+        "legacyPosition": 4,
+        "conditional": true
+      },
+      {
+        "id": "module.motogp",
+        "legacyPosition": 5,
+        "conditional": true
+      },
+      {
+        "id": "module.casa",
+        "legacyPosition": 6,
+        "conditional": true
+      },
+      {
+        "id": "module.network",
+        "legacyPosition": 7,
+        "conditional": true
+      }
+    ],
+    "settings.notifications": [
+      {
+        "id": "notifications.quiet",
+        "legacyPosition": 0,
+        "conditional": false
+      },
+      {
+        "id": "notifications.categories",
+        "legacyPosition": 1,
+        "conditional": false
+      }
+    ],
+    "settings.notifications.quiet": [
+      {
+        "id": "notifications.quiet.enabled",
+        "legacyPosition": 0,
+        "conditional": false
+      },
+      {
+        "id": "notifications.quiet.start",
+        "legacyPosition": 1,
+        "conditional": false
+      },
+      {
+        "id": "notifications.quiet.end",
+        "legacyPosition": 2,
+        "conditional": false
+      }
+    ],
+    "settings.notifications.categories": [
+      {
+        "id": "notifications.weatherInterruptions",
+        "legacyPosition": 0,
+        "conditional": false
+      },
+      {
+        "id": "notifications.accountInterruptions",
+        "legacyPosition": 1,
+        "conditional": false
+      },
+      {
+        "id": "notifications.sportGoals",
+        "legacyPosition": 2,
+        "conditional": true
+      }
+    ],
+    "settings.account": [
+      {
+        "id": "account.warningThreshold",
+        "legacyPosition": 0,
+        "conditional": false
+      },
+      {
+        "id": "account.criticalThreshold",
+        "legacyPosition": 1,
+        "conditional": false
+      }
+    ],
+    "settings.integrations": [
+      {
+        "id": "integration.sport",
+        "legacyPosition": 0,
+        "conditional": true
+      },
+      {
+        "id": "integration.f1",
+        "legacyPosition": 1,
+        "conditional": true
+      },
+      {
+        "id": "integration.motogp",
+        "legacyPosition": 2,
+        "conditional": true
+      }
+    ],
+    "settings.sources": [
+      {
+        "id": "source.weather",
+        "legacyPosition": 0,
+        "conditional": false
+      },
+      {
+        "id": "source.alerts",
+        "legacyPosition": 1,
+        "conditional": false
+      },
+      {
+        "id": "source.account",
+        "legacyPosition": 2,
+        "conditional": false
+      },
+      {
+        "id": "source.sport",
+        "legacyPosition": 3,
+        "conditional": true
+      },
+      {
+        "id": "source.f1",
+        "legacyPosition": 4,
+        "conditional": true
+      },
+      {
+        "id": "source.motogp",
+        "legacyPosition": 5,
+        "conditional": true
+      },
+      {
+        "id": "source.casa",
+        "legacyPosition": 6,
+        "conditional": true
+      },
+      {
+        "id": "source.network",
+        "legacyPosition": 7,
+        "conditional": true
+      }
+    ],
+    "settings.sport": [
+      {
+        "id": "sport.favouriteTeam",
+        "legacyPosition": 0,
+        "conditional": false
+      },
+      {
+        "id": "sport.showOnHome",
+        "legacyPosition": 1,
+        "conditional": false
+      },
+      {
+        "id": "sport.notifications",
+        "legacyPosition": 2,
+        "conditional": false
+      },
+      {
+        "id": "sport.season",
+        "legacyPosition": 3,
+        "conditional": false
+      },
+      {
+        "id": "sport.source",
+        "legacyPosition": 4,
+        "conditional": false
+      }
+    ],
+    "settings.racing": [
+      {
+        "id": "racing.season",
+        "legacyPosition": 0,
+        "conditional": false,
+        "kindQualifiedId": "racing.{kind}.season"
+      },
+      {
+        "id": "racing.showOnHome",
+        "legacyPosition": 1,
+        "conditional": false,
+        "kindQualifiedId": "racing.{kind}.showOnHome"
+      },
+      {
+        "id": "racing.source",
+        "legacyPosition": 2,
+        "conditional": false,
+        "kindQualifiedId": "racing.{kind}.source"
+      }
+    ]
+  },
+  "builtinIconMappings": {
+    "builtin.plain": {
+      "system.home": "home",
+      "system.back": "back",
+      "system.settings": "settings",
+      "system.alerts": "alerts",
+      "status.offline": "offline",
+      "status.stale": "stale",
+      "status.unavailable": "unknown",
+      "weather.clear": "clear",
+      "weather.cloudy": "cloudy",
+      "weather.rain": "rain",
+      "weather.snow": "snow",
+      "weather.fog": "fog",
+      "weather.storm": "storm",
+      "weather.unknown": "unknown",
+      "sport.favourite": "star",
+      "notification.default": "alerts",
+      "notification.weather": "cloudy",
+      "notification.account": "stale",
+      "casa.temperature": "temperature",
+      "casa.light": "light",
+      "casa.plug": "plug",
+      "casa.motion": "motion"
+    }
+  },
+  "appleCalmIconPathIds": [
+    "account",
+    "bell",
+    "calendar",
+    "check",
+    "chevron-down",
+    "chevron-left",
+    "chevron-right",
+    "chevron-up",
+    "clock",
+    "close",
+    "cloud",
+    "connected-home",
+    "critical",
+    "display",
+    "droplet",
+    "fan",
+    "flag",
+    "fog",
+    "football",
+    "home",
+    "info",
+    "keyboard",
+    "lightbulb",
+    "menu",
+    "modules",
+    "moon",
+    "moon-cloud",
+    "motion",
+    "motorcycle",
+    "network",
+    "offline",
+    "palette",
+    "partly-cloudy",
+    "plug",
+    "quiet",
+    "race-car",
+    "rain",
+    "refresh",
+    "search",
+    "settings",
+    "snow",
+    "source",
+    "star",
+    "storm",
+    "sun",
+    "thermometer",
+    "trophy",
+    "unknown",
+    "warning",
+    "wind"
+  ],
+  "appleCalmIconAliases": {
+    "system.home": "home",
+    "system.back": "chevron-left",
+    "system.settings": "settings",
+    "system.alerts": "bell",
+    "status.offline": "offline",
+    "status.stale": "clock",
+    "status.unavailable": "unknown",
+    "weather.clear": "sun",
+    "weather.cloudy": "cloud",
+    "weather.rain": "rain",
+    "weather.snow": "snow",
+    "weather.fog": "fog",
+    "weather.storm": "storm",
+    "weather.unknown": "unknown",
+    "sport.favourite": "star",
+    "notification.default": "bell",
+    "notification.weather": "cloud",
+    "notification.account": "account",
+    "casa.temperature": "thermometer",
+    "casa.light": "lightbulb",
+    "casa.plug": "plug",
+    "casa.motion": "motion"
+  }
+}

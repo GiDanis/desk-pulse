@@ -1,0 +1,141 @@
+..E.E.....sF.F...FFF........F..
+======================================================================
+ERROR: test_comments_strings_do_not_create_routes (__main__.ContractTests.test_comments_strings_do_not_create_routes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_api_contract.py", line 81, in qml_tokens
+    value = json.loads(token) if token.startswith('"') else ast.literal_eval(token)
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/ast.py", line 66, in literal_eval
+    node_or_string = parse(node_or_string.lstrip(" \t"), mode='eval')
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/ast.py", line 52, in parse
+    return compile(source, filename, mode, flags,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<unknown>", line 1
+    '
+    ^
+SyntaxError: unterminated string literal (detected at line 1)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_api_contract.py", line 187, in test_comments_strings_do_not_create_routes
+    self.assertEqual(ThemeApiContract(root).check_source_coverage()['routes'], 40)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_api_contract.py", line 375, in check_source_coverage
+    tokens = qml_tokens(path.read_text(encoding='utf-8'))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_api_contract.py", line 83, in qml_tokens
+    raise ContractError('api.source.string', 'QML', 'stringa non analizzabile')
+theme_api_contract.ContractError: QML: stringa non analizzabile
+
+======================================================================
+ERROR: test_coverage_and_not_runtime_availability (__main__.ContractTests.test_coverage_and_not_runtime_availability)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_api_contract.py", line 81, in qml_tokens
+    value = json.loads(token) if token.startswith('"') else ast.literal_eval(token)
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/ast.py", line 66, in literal_eval
+    node_or_string = parse(node_or_string.lstrip(" \t"), mode='eval')
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/ast.py", line 52, in parse
+    return compile(source, filename, mode, flags,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<unknown>", line 1
+    '
+    ^
+SyntaxError: unterminated string literal (detected at line 1)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_api_contract.py", line 53, in test_coverage_and_not_runtime_availability
+    self.assertEqual(c.check_source_coverage()['routes'], 40)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_api_contract.py", line 375, in check_source_coverage
+    tokens = qml_tokens(path.read_text(encoding='utf-8'))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_api_contract.py", line 83, in qml_tokens
+    raise ContractError('api.source.string', 'QML', 'stringa non analizzabile')
+theme_api_contract.ContractError: QML: stringa non analizzabile
+
+======================================================================
+FAIL: test_generator_stale_artifact_detected (__main__.ContractTests.test_generator_stale_artifact_detected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_api_contract.py", line 250, in test_generator_stale_artifact_detected
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : {"status": "invalid", "issues": [{"code": "api.source.string", "path": "QML", "message": "stringa non analizzabile"}]}
+
+
+======================================================================
+FAIL: test_literal_route_assignment_detected (__main__.ContractTests.test_literal_route_assignment_detected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_api_contract.py", line 181, in test_literal_route_assignment_detected
+    self.code('api.coverage.routes', lambda: ThemeApiContract(root).check_source_coverage())
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_api_contract.py", line 48, in code
+    self.assertEqual(caught.exception.code, code, str(caught.exception))
+AssertionError: 'api.source.string' != 'api.coverage.routes'
+- api.source.string
++ api.coverage.routes
+ : QML: stringa non analizzabile
+
+======================================================================
+FAIL: test_new_qml_content_detected (__main__.ContractTests.test_new_qml_content_detected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_api_contract.py", line 205, in test_new_qml_content_detected
+    self.code('api.coverage.contents', lambda: ThemeApiContract(root).check_source_coverage())
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_api_contract.py", line 48, in code
+    self.assertEqual(caught.exception.code, code, str(caught.exception))
+AssertionError: 'api.source.string' != 'api.coverage.contents'
+- api.source.string
++ api.coverage.contents
+ : QML: stringa non analizzabile
+
+======================================================================
+FAIL: test_new_registry_content_detected (__main__.ContractTests.test_new_registry_content_detected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_api_contract.py", line 200, in test_new_registry_content_detected
+    self.code('api.coverage.registry', lambda: ThemeApiContract(root).check_source_coverage())
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_api_contract.py", line 48, in code
+    self.assertEqual(caught.exception.code, code, str(caught.exception))
+AssertionError: 'api.source.string' != 'api.coverage.registry'
+- api.source.string
++ api.coverage.registry
+ : QML: stringa non analizzabile
+
+======================================================================
+FAIL: test_new_route_in_single_quoted_call_detected (__main__.ContractTests.test_new_route_in_single_quoted_call_detected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_api_contract.py", line 175, in test_new_route_in_single_quoted_call_detected
+    self.code('api.coverage.routes', lambda: ThemeApiContract(root).check_source_coverage())
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_api_contract.py", line 48, in code
+    self.assertEqual(caught.exception.code, code, str(caught.exception))
+AssertionError: 'api.source.string' != 'api.coverage.routes'
+- api.source.string
++ api.coverage.routes
+ : QML: stringa non analizzabile
+
+======================================================================
+FAIL: test_unknown_dynamic_route_requires_inventory (__main__.ContractTests.test_unknown_dynamic_route_requires_inventory)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_api_contract.py", line 193, in test_unknown_dynamic_route_requires_inventory
+    self.code('api.coverage.dynamic', lambda: ThemeApiContract(root).check_source_coverage())
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_api_contract.py", line 48, in code
+    self.assertEqual(caught.exception.code, code, str(caught.exception))
+AssertionError: 'api.source.string' != 'api.coverage.dynamic'
+- api.source.string
++ api.coverage.dynamic
+ : QML: stringa non analizzabile
+
+----------------------------------------------------------------------
+Ran 31 tests in 1.137s
+
+FAILED (failures=6, errors=2, skipped=1)

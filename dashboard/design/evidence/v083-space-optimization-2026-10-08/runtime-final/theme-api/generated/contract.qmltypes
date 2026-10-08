@@ -1,0 +1,5356 @@
+import QtQuick.tooling 1.2
+
+// Generated contract blueprint; not runtime type availability.
+// A1 must verify registration/metaobjects before this is used by the public SDK.
+
+Module {
+    Component {
+        name: "SourceState"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/SourceState 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "status"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "sourceId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "sourceLabel"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "updatedAt"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "checkedAt"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "hasData"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "isStale"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "errorCode"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "error"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "dataRevision"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "NumericValue"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NumericValue 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "available"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "value"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "unit"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "displayText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "sourceRevision"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "ScalarValue"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/ScalarValue 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "available"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "value"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "unit"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "displayText"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "SurfaceLifecycle"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/SurfaceLifecycle 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "state"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "active"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "interactive"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "preview"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "generation"
+            type: "int"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "ClockState"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/ClockState 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "epoch"
+            type: "double"
+            isReadonly: true
+        }
+        Property {
+            name: "timeText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "dateText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "timezone"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "locale"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "night"
+            type: "bool"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "SelectionState"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/SelectionState 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "selectedId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "tabId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "anchorId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "offset"
+            type: "double"
+            isReadonly: true
+        }
+        Property {
+            name: "index"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "count"
+            type: "int"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "OperationState"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/OperationState 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "requestId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "status"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "errorCode"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "message"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "Command"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/Command 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "key"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "actionId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "targetId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "label"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "enabled"
+            type: "bool"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "AvailableAction"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/AvailableAction 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "enabled"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "reason"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "Tab"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/Tab 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "label"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "enabled"
+            type: "bool"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "Family"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/Family 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "label"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "available"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "visible"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "views"
+            type: "TabModel"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "NavigationSnapshot"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NavigationSnapshot 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "familyId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "viewId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "overlayId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "familyPosition"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "familyCount"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "viewPosition"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "viewCount"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "scopeId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "scopeLabel"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "scopeCount"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "scopePosition"
+            type: "int"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "ShellLayout"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/ShellLayout 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "header"
+            type: "QRectF"
+            isReadonly: true
+        }
+        Property {
+            name: "content"
+            type: "QRectF"
+            isReadonly: true
+        }
+        Property {
+            name: "guide"
+            type: "QRectF"
+            isReadonly: true
+        }
+        Property {
+            name: "sceneSafeRegions"
+            type: "QVariantList"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "UiStatus"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/UiStatus 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "urgent"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "recovery"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "quiet"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "night"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "diagnostics"
+            type: "bool"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "AppearanceDraftSummary"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/AppearanceDraftSummary 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "editing"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "themeId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "paletteMode"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "motionMode"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "textScale"
+            type: "double"
+            isReadonly: true
+        }
+        Property {
+            name: "readyToApply"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "status"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "error"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "MenuRow"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/MenuRow 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "title"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "detail"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "enabled"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "actionId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "targetId"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "SettingOption"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/SettingOption 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "label"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "value"
+            type: "QVariant"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "SettingRow"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/SettingRow 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "title"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "detail"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "control"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "value"
+            type: "ScalarValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "enabled"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "reason"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "actionId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "targetId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "minimum"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "maximum"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "step"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "options"
+            type: "SettingOptionModel"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "InfoRow"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/InfoRow 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "title"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "value"
+            type: "ScalarValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "detail"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "sourceId"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "WeatherForecast"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/WeatherForecast 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "date"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "dayText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "code"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "description"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "high"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "low"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "rainProbability"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "WeatherData"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/WeatherData 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "location"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "code"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "description"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "temperature"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "feelsLike"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "humidity"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "precipitation"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "rainProbability"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "windSpeed"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "windDirection"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "windDirectionText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "gusts"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "observationAt"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "forecast"
+            type: "WeatherForecastModel"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "NextEventData"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NextEventData 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "title"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "category"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "startsAt"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "whenText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "AccountWindow"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/AccountWindow 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "label"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "usedPercent"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "windowDurationMinutes"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "resetsAt"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "severity"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "AccountData"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/AccountData 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "plan"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "windows"
+            type: "AccountWindowModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "resetCredits"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "warningThreshold"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "criticalThreshold"
+            type: "int"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "TeamIdentity"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/TeamIdentity 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "name"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "shortName"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "crestId"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "MatchEvent"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/MatchEvent 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "kind"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "minute"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "teamId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "playerId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "playerName"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "text"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "MatchStatistic"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/MatchStatistic 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "label"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "home"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "away"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "LineupPlayer"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/LineupPlayer 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "name"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "shirtNumber"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "role"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "group"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "inMinute"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "outMinute"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "Lineup"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/Lineup 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "teamId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "formation"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "coach"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "players"
+            type: "LineupPlayerModel"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "MatchData"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/MatchData 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "competitionId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "competitionName"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "season"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "roundId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "providerMatchId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "status"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "rawStatus"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "home"
+            type: "TeamIdentity"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "away"
+            type: "TeamIdentity"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "homeScore"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "awayScore"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "kickoffAt"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "whenText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "minute"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "pendingVAR"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "venue"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "events"
+            type: "MatchEventModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "statistics"
+            type: "MatchStatisticModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "lineups"
+            type: "LineupModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "detailLoading"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "detailError"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "detailFetchedAt"
+            type: "QVariant"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "Standing"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/Standing 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "entityId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "name"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "position"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "played"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "points"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "wins"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "draws"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "losses"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "goalsFor"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "goalsAgainst"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "goalDifference"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "Round"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/Round 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "label"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "SportData"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/SportData 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "competitionId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "competitionName"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "season"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "calendarScope"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "matches"
+            type: "MatchModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "standings"
+            type: "StandingModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "teams"
+            type: "TeamIdentityModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "rounds"
+            type: "RoundModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "activeMatchIds"
+            type: "QVariantList"
+            isReadonly: true
+        }
+        Property {
+            name: "favouriteTeamId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "hasLiveView"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "liveVerified"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "goalsEnabled"
+            type: "bool"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "TeamData"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/TeamData 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "identity"
+            type: "TeamIdentity"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "calendarScope"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "fixtures"
+            type: "MatchModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "squad"
+            type: "LineupPlayerModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "info"
+            type: "InfoRowModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "standing"
+            type: "Standing"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "recordText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "cacheError"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "FantasyBonus"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/FantasyBonus 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "label"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "count"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "points"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "FantasyPlayer"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/FantasyPlayer 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "name"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "role"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "shirtNumber"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "group"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "inMinute"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "outMinute"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "vote"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "fantavote"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "voteText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "fantavoteText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "withoutVote"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "bonuses"
+            type: "FantasyBonusModel"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "FantasyTeam"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/FantasyTeam 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "name"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "players"
+            type: "FantasyPlayerModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "total"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "FantasyData"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/FantasyData 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "matchId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "provisional"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "liveVerified"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "loading"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "teams"
+            type: "FantasyTeamModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "message"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "warning"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "liveNotice"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "cacheError"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "RacingTiming"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/RacingTiming 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "driverId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "driverName"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "position"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "lap"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "time"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "gap"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "interval"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "speed"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "tyre"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "compound"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "status"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "team"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "points"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "PitStop"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/PitStop 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "lap"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "duration"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "stopNumber"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "timeText"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "LapTime"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/LapTime 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "lap"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "time"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "position"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "Stint"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/Stint 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "compound"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "startLap"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "endLap"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "tyreAge"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "DriverData"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/DriverData 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "name"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "team"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "nationality"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "number"
+            type: "NumericValue"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "timing"
+            type: "RacingTiming"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "detailRows"
+            type: "InfoRowModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "pitStops"
+            type: "PitStopModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "laps"
+            type: "LapTimeModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "stints"
+            type: "StintModel"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "RacingSessionData"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/RacingSessionData 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "kind"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "name"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "startsAt"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "endsAt"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "status"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "results"
+            type: "RacingTimingModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "info"
+            type: "InfoRowModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "RacingEventData"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/RacingEventData 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "name"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "roundId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "startsAt"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "endsAt"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "circuit"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "sessions"
+            type: "RacingSessionModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "info"
+            type: "InfoRowModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "summary"
+            type: "InfoRowModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "RaceMessage"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/RaceMessage 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "text"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "issuedAt"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "severity"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "RacingLiveData"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/RacingLiveData 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "active"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "rows"
+            type: "RacingTimingModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "messages"
+            type: "RaceMessageModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "info"
+            type: "InfoRowModel"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "RacingData"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/RacingData 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "kind"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "year"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "events"
+            type: "RacingEventModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "standings"
+            type: "StandingModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "constructors"
+            type: "StandingModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "live"
+            type: "RacingLiveData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "detailLoading"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "detailError"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "partialError"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "NotificationEvent"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NotificationEvent 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "revision"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "rank"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "category"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "severity"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "weatherSeverity"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "title"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "body"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "sourceId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "sourceLabel"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "issuedAt"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "expiresAt"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "seen"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "bannerSize"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "MotionPolicy"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/MotionPolicy 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "mode"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "suspended"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "urgent"
+            type: "bool"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "ActorSnapshot"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/ActorSnapshot 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "actorId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "pose"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "locomotion"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "sequence"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "paused"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "anchor"
+            type: "QPointF"
+            isReadonly: true
+        }
+        Property {
+            name: "motionMode"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "SceneConfiguration"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/SceneConfiguration 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "enabled"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "rendererId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "mode"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "ThemeStyle"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/ThemeStyle 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "background"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "backgroundOverlay"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "surface"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "surfaceFocused"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "border"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "divider"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "textPrimary"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "textSecondary"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "accent"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "bannerSurface"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "debugSurface"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "demoSurface"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "radiusCard"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "radiusRow"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "radiusPill"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "radiusButton"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "spacing"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "listRows"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "borderWidth"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "focusWidth"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "textScale"
+            type: "double"
+            isReadonly: true
+        }
+        Property {
+            name: "uiFamily"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "numbersFamily"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "displayFamily"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "bodyWeight"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "headingWeight"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font18"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font19"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font20"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font21"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font22"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font23"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font24"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font25"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font26"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font27"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font28"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font29"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font30"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font31"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font32"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font33"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font34"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font35"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font36"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font37"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font39"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font40"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font45"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font46"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font47"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font52"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font56"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font65"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font69"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font139"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "font152"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "variant"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "font44"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "compactRows"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "overviewRows"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "fantasyRows"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "clockWeight"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "radiusPanel"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "radiusBadge"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "radiusDense"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "radiusMarker"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "hairlineWidth"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "semantic"
+            type: "SemanticPalette"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "tokenSnapshot"
+            type: "QVariantMap"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "NotificationStyle"
+        prototype: "ThemeStyle"
+        exports: ["SmartPC.ThemeApi/NotificationStyle 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "prefix"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "surfaceColor"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "noticeFocusedSurface"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "titleColor"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "bodyColor"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "sourceColor"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "noticeAccent"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "noticeBorder"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "noticeRadius"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "noticeBorderWidth"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "padding"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "gap"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "panelWidth"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "panelHeight"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "insetX"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "insetY"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "anchor"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "titleSize"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "bodySize"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "sourceSize"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "guideSize"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "titleFamily"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "bodyFamily"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "sourceFamily"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "guideFamily"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "titleWeight"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "noticeBodyWeight"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "titleLines"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "bodyLines"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "showIcon"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "showSource"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "noticeRows"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "layoutY"
+            type: "double"
+            isReadonly: true
+        }
+        Property {
+            name: "mode"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "guideColor"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "badgeTextColor"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "focusedTitleColor"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "focusedBodyColor"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "focusedSourceColor"
+            type: "QColor"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "SemanticPalette"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/SemanticPalette 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "accentTextOnCanvas"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "accentTextOnOverlay"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "accentTextOnCard"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "accentTextOnFocused"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "warningOnCanvas"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "warningOnOverlay"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "warningOnCard"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "warningOnFocused"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "criticalOnCanvas"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "criticalOnOverlay"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "criticalOnCard"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "criticalOnFocused"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "accountCriticalOnCanvas"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "accountCriticalOnOverlay"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "accountCriticalOnCard"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "accountCriticalOnFocused"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "accentDecoration"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "focusIndicator"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "warningIndicator"
+            type: "QColor"
+            isReadonly: true
+        }
+        Property {
+            name: "criticalIndicator"
+            type: "QColor"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "CasaMetric"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/CasaMetric 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "code"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "label"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "type"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "value"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "unit"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "quality"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "checkedAt"
+            type: "double"
+            isReadonly: true
+        }
+        Property {
+            name: "stale"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "displayText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "previous"
+            type: "bool"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "CasaDevice"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/CasaDevice 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "name"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "category"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "model"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "productId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "online"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "present"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "missingCount"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "favourite"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "availability"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "availabilityPrevious"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "previous"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "primaryText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "secondaryText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "iconId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "metrics"
+            type: "CasaMetricModel"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "CasaData"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/CasaData 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "devices"
+            type: "CasaDeviceModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "favourites"
+            type: "CasaDeviceModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "configured"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "busy"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "polling"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "quotaConfigured"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "requests"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "remaining"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "modeText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "feedback"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "readOnly"
+            type: "bool"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "NetworkDetail"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkDetail 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "section"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "title"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "value"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "detail"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "NetworkDevice"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkDevice 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "name"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "originalName"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "kind"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "mac"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "vendor"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "interface"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "primaryAddress"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "connectionText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "statusText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "previous"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "favourite"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "lastSeen"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "collectedAt"
+            type: "double"
+            isReadonly: true
+        }
+        Property {
+            name: "details"
+            type: "NetworkDetailModel"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "NetworkData"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkData 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "reachableText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "coverage"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "wanText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "localText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "feedback"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "modeText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "configured"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "hasInventory"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "busy"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "polling"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "readOnly"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "countCurrent"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "knownCount"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "devices"
+            type: "NetworkDeviceModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "favourites"
+            type: "NetworkDeviceModel"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "NetworkMetricRow"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkMetricRow 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "title"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "value"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "detail"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "targetId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "previous"
+            type: "bool"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "NetworkMetricEntity"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkMetricEntity 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "name"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "NetworkChartPoint"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkChartPoint 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "time"
+            type: "double"
+            isReadonly: true
+        }
+        Property {
+            name: "value"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "breakBefore"
+            type: "bool"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "NetworkChartSeries"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkChartSeries 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "id"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "label"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "unit"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "points"
+            type: "NetworkChartPointModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "gaps"
+            type: "int"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "NetworkChart"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkChart 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "start"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "end"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "resolution"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Property {
+            name: "rawPoints"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "series"
+            type: "NetworkChartSeriesModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "previous"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "period"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "unit"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "message"
+            type: "QString"
+            isReadonly: true
+        }
+    }
+    Component {
+        name: "NetworkMetricsView"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkMetricsView 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "title"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "summary"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "selectedLabel"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "sourceText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "section"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "busy"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "hasChart"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "rows"
+            type: "NetworkMetricRowModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "entities"
+            type: "NetworkMetricEntityModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "chart"
+            type: "NetworkChart"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "SportDiscipline"
+        prototype: "MenuRow"
+        exports: ["SmartPC.ThemeApi/SportDiscipline 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "iconId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+    }
+    Component {
+        name: "SurfaceContext"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/SurfaceContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "contentId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "contextVersion"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "surfaceInstanceId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "appearanceRevision"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "dataRevision"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "style"
+            type: "ThemeStyle"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "lifecycle"
+            type: "SurfaceLifecycle"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "viewport"
+            type: "QRectF"
+            isReadonly: true
+        }
+        Property {
+            name: "safeArea"
+            type: "QRectF"
+            isReadonly: true
+        }
+        Property {
+            name: "commands"
+            type: "CommandModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "actions"
+            type: "ActionModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "motionPolicy"
+            type: "MotionPolicy"
+            isReadonly: true
+            isPointer: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "PageContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/PageContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "clock"
+            type: "ClockState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "weather"
+            type: "WeatherData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "account"
+            type: "AccountData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "nextEvent"
+            type: "NextEventData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "sport"
+            type: "SportData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "team"
+            type: "TeamData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "fantasy"
+            type: "FantasyData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "racing"
+            type: "RacingData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "network"
+            type: "NetworkData"
+            isReadonly: true
+            isPointer: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "ShellContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/ShellContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "families"
+            type: "FamilyModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "currentFamilyId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "currentViewId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "navigation"
+            type: "NavigationSnapshot"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "layout"
+            type: "ShellLayout"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "uiStatus"
+            type: "UiStatus"
+            isReadonly: true
+            isPointer: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "MenuContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/MenuContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "rows"
+            type: "MenuRowModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "CommandsContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/CommandsContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "keyMap"
+            type: "CommandModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "firstRun"
+            type: "bool"
+            isReadonly: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "SummaryContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/SummaryContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "familyId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "clock"
+            type: "ClockState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "weather"
+            type: "WeatherData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "nextEvent"
+            type: "NextEventData"
+            isReadonly: true
+            isPointer: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "SettingsContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/SettingsContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "sectionId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "rows"
+            type: "SettingRowModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "draft"
+            type: "AppearanceDraftSummary"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "operation"
+            type: "OperationState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "description"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "feedback"
+            type: "QString"
+            isReadonly: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "InfoContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/InfoContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "tabs"
+            type: "TabModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "rows"
+            type: "InfoRowModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "sources"
+            type: "SourceModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "updatedAt"
+            type: "QVariant"
+            isReadonly: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "SportListContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/SportListContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "matches"
+            type: "MatchModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "standings"
+            type: "StandingModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "rounds"
+            type: "RoundModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selectedRoundId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "favouriteTeamId"
+            type: "QString"
+            isReadonly: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "MatchContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/MatchContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "match"
+            type: "MatchData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "tabs"
+            type: "TabModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "fantasy"
+            type: "FantasyData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "detailOperation"
+            type: "OperationState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "origin"
+            type: "QString"
+            isReadonly: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "TeamContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/TeamContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "team"
+            type: "TeamData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "tabs"
+            type: "TabModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "calendarScope"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "serieAOnly"
+            type: "bool"
+            isReadonly: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "TeamPickerContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/TeamPickerContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "teams"
+            type: "TeamIdentityModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "savedTeamId"
+            type: "QString"
+            isReadonly: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "RacingContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/RacingContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "kind"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "racing"
+            type: "RacingData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "event"
+            type: "RacingEventData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "session"
+            type: "RacingSessionData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "tabs"
+            type: "TabModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "detailOperation"
+            type: "OperationState"
+            isReadonly: true
+            isPointer: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "DriverContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/DriverContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "kind"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "driver"
+            type: "DriverData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "live"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "tabs"
+            type: "TabModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "detailOperation"
+            type: "OperationState"
+            isReadonly: true
+            isPointer: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "SceneContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/SceneContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "actor"
+            type: "ActorSnapshot"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "configuration"
+            type: "SceneConfiguration"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "occupiedRegions"
+            type: "QVariantList"
+            isReadonly: true
+        }
+        Property {
+            name: "notification"
+            type: "NotificationEvent"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "clock"
+            type: "ClockState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "motionPolicy"
+            type: "MotionPolicy"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "suspended"
+            type: "bool"
+            isReadonly: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "NotificationContext"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NotificationContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "apiVersion"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "contentId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "mode"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "style"
+            type: "ThemeStyle"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "visualStyle"
+            type: "NotificationStyle"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "active"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "interactive"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "exiting"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "preview"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "ready"
+            type: "bool"
+            isReadonly: true
+        }
+        Property {
+            name: "error"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "viewportWidth"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "viewportHeight"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "event"
+            type: "QVariantMap"
+            isReadonly: true
+        }
+        Property {
+            name: "items"
+            type: "QVariantList"
+            isReadonly: true
+        }
+        Property {
+            name: "selectedEventId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "unreadCount"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "sourceStatus"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "scrollOffset"
+            type: "double"
+            isReadonly: true
+        }
+        Property {
+            name: "scrollMaximum"
+            type: "double"
+            isReadonly: true
+        }
+        Property {
+            name: "occupiedRegions"
+            type: "QVariantList"
+            isReadonly: true
+        }
+        Property {
+            name: "appearanceRevision"
+            type: "int"
+            isReadonly: true
+        }
+        Property {
+            name: "safeArea"
+            type: "QRectF"
+            isReadonly: true
+        }
+        Property {
+            name: "actions"
+            type: "QVariantList"
+            isReadonly: true
+        }
+        Property {
+            name: "commandHints"
+            type: "QVariantList"
+            isReadonly: true
+        }
+        Property {
+            name: "guideText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "sourceText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "validityText"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "iconId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "eventData"
+            type: "NotificationEvent"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "itemModel"
+            type: "NotificationEventModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "commands"
+            type: "CommandModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "sourceMetadata"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "motionPolicy"
+            type: "MotionPolicy"
+            isReadonly: true
+            isPointer: true
+        }
+        Method {
+            name: "requestAction"
+            type: "bool"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+        Method {
+            name: "request"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+        Method {
+            name: "settleMotion"
+        }
+        Method {
+            name: "formatStamp"
+            type: "QString"
+            Parameter {
+                name: "arg0"
+                type: "QVariant"
+            }
+        }
+        Signal {
+            name: "settleMotionRequested"
+        }
+    }
+    Component {
+        name: "CasaContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/CasaContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "casa"
+            type: "CasaData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selectedDevice"
+            type: "CasaDevice"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "rows"
+            type: "SettingRowModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "description"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "feedback"
+            type: "QString"
+            isReadonly: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "NetworkContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/NetworkContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selectedDevice"
+            type: "NetworkDevice"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "rows"
+            type: "NetworkSettingRowModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "description"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "feedback"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "network"
+            type: "NetworkData"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "detailRows"
+            type: "NetworkDetailModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "deviceRows"
+            type: "NetworkDeviceModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "overviewSection"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "tools"
+            type: "NetworkMetricRowModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "NetworkRouterContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/NetworkRouterContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "metrics"
+            type: "NetworkMetricsView"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "NetworkWifiContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/NetworkWifiContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "metrics"
+            type: "NetworkMetricsView"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "NetworkPortsContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/NetworkPortsContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "metrics"
+            type: "NetworkMetricsView"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "SportHubContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/SportHubContext 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+        Property {
+            name: "rows"
+            type: "SportDisciplineModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "description"
+            type: "QString"
+            isReadonly: true
+        }
+        Method {
+            name: "requestAction"
+            type: "QVariantMap"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg1"
+                type: "QString"
+            }
+            Parameter {
+                name: "arg2"
+                type: "QVariantMap"
+            }
+        }
+    }
+    Component {
+        name: "CommandModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/CommandModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "ActionModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/ActionModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "TabModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/TabModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "FamilyModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/FamilyModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "MenuRowModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/MenuRowModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "SettingRowModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/SettingRowModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "SettingOptionModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/SettingOptionModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "InfoRowModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/InfoRowModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "WeatherForecastModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/WeatherForecastModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "AccountWindowModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/AccountWindowModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "TeamIdentityModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/TeamIdentityModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "MatchEventModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/MatchEventModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "MatchStatisticModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/MatchStatisticModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "LineupPlayerModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/LineupPlayerModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "LineupModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/LineupModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "MatchModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/MatchModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "StandingModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/StandingModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "RoundModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/RoundModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "FantasyBonusModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/FantasyBonusModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "FantasyPlayerModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/FantasyPlayerModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "FantasyTeamModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/FantasyTeamModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "RacingTimingModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/RacingTimingModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "PitStopModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/PitStopModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "LapTimeModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/LapTimeModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "StintModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/StintModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "RacingSessionModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/RacingSessionModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "RacingEventModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/RacingEventModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "RaceMessageModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/RaceMessageModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "NotificationEventModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NotificationEventModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "SourceModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/SourceModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "CasaDeviceModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/CasaDeviceModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "CasaMetricModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/CasaMetricModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "NetworkDetailModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkDetailModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "NetworkDeviceModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkDeviceModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "NetworkSettingRowModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkSettingRowModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "NetworkMetricRowModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkMetricRowModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "NetworkMetricEntityModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkMetricEntityModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "NetworkChartPointModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkChartPointModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "NetworkChartSeriesModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/NetworkChartSeriesModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+    Component {
+        name: "SportDisciplineModel"
+        prototype: "QObject"
+        exports: ["SmartPC.ThemeApi/SportDisciplineModel 2.5"]
+        exportMetaObjectRevisions: [517]
+        isCreatable: false
+    }
+}

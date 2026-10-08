@@ -1,0 +1,19 @@
+Sport: Rete Sport disabilitata per verifica offline; cache=True
+Traceback (most recent call last):
+  File "/var/lib/smartpc-dashboard/v083-staging/smartpc-v083-project/dashboard/check_network_metrics_ui.py", line 122, in <module>
+    if a.child:print(json.dumps(verify(json.loads(a.child),a.capture),ensure_ascii=False))
+                                ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/lib/smartpc-dashboard/v083-staging/smartpc-v083-project/dashboard/check_network_metrics_ui.py", line 83, in verify
+    h.expression('networkOverviewSection="tools"');grab('tools')
+                                                   ~~~~^^^^^^^^^
+  File "/var/lib/smartpc-dashboard/v083-staging/smartpc-v083-project/dashboard/check_network_metrics_ui.py", line 80, in grab
+    h.pump(220);assert not h.messages,h.messages
+                       ^^^^^^^^^^^^^^
+AssertionError: ['Context2D: The font families specified are invalid: DejaVuLGCSans']
+
+
+Traceback (most recent call last):
+  File "/var/lib/smartpc-dashboard/v083-staging/smartpc-v083-project/dashboard/check_network_metrics_ui.py", line 127, in <module>
+    result=subprocess.run(cmd,timeout=65,capture_output=True,text=True);print(result.stdout);print(result.stderr,file=sys.stderr);assert result.returncode==0
+                                                                                                                                         ^^^^^^^^^^^^^^^^^^^^
+AssertionError

@@ -1,0 +1,43 @@
+{
+  "id": "racing.event.detail:circuit",
+  "covers": [
+    "racing.event.detail:circuit"
+  ],
+  "family": "racing",
+  "surfaceId": "racing.event.detail",
+  "variant": "circuit",
+  "clockEpoch": 1790848800,
+  "initialProperties": {
+    "familyId": "f1",
+    "overlay": "racingEvent",
+    "racingEventPage": 1
+  },
+  "domainSetup": [
+    "racing:f1"
+  ],
+  "expectedExpressions": [
+    "racingEvent.id.length > 0",
+    "racingEventPage === 1"
+  ],
+  "invariants": [
+    "navigationAndTab",
+    "overlayStack",
+    "inputFocus",
+    "providerEffects",
+    "actorIdentity",
+    "eventFlagsAndDeadline"
+  ],
+  "actions": [
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 4
+    },
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 6
+    }
+  ],
+  "publicApiBinding": "deferredA1"
+}

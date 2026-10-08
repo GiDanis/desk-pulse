@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/var/lib/smartpc-dashboard/v083-space-proof/import-production.py", line 7, in <module>
+    revision=BundleManager(Path("/var/lib/smartpc-dashboard/.local/share/SmartPC/SmartPC")).import_bundle(Path("/var/lib/smartpc-dashboard/v083-space-staging/smartpc-apple-calm-1.3.1.smartpc-theme"),preflight=lambda *_:cache["result"],require_preflight=True)
+  File "/opt/smartpc/dashboard/theme_bundle.py", line 790, in import_bundle
+    _extract_archive(source, payload)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/opt/smartpc/dashboard/theme_bundle.py", line 735, in _extract_archive
+    require(REQUIRED | {'integrity.json'} <= {i.filename for i in entries}, 'archive', 'payload incompleto')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/smartpc/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: archive: payload incompleto

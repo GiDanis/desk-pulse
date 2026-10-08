@@ -1,0 +1,450 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "registryVersion": {
+      "const": 1,
+      "type": "integer"
+    },
+    "presentations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240
+          },
+          "apiVersion": {
+            "type": "integer"
+          },
+          "contextApi": {
+            "enum": [
+              "page2",
+              "notification1",
+              "shell1",
+              "overlay1",
+              "scene1",
+              "icon1",
+              "motion1"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "contentIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "minimum": {
+                  "type": "number"
+                },
+                "maximum": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "minimum",
+                "maximum"
+              ]
+            }
+          },
+          "sceneMode": {
+            "enum": [
+              "actor",
+              "background",
+              "decoration",
+              "canvas"
+            ]
+          },
+          "footprint": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "width": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 960
+              },
+              "height": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 960
+              }
+            },
+            "required": [
+              "width",
+              "height"
+            ]
+          },
+          "respectsOccupiedRegions": {
+            "type": "boolean"
+          },
+          "dataProjection": {
+            "enum": [
+              "full",
+              "route"
+            ],
+            "description": "Opt-in selection of only the records rendered by a supported public sport page; full is the compatible default."
+          }
+        },
+        "required": [
+          "id",
+          "file",
+          "apiVersion",
+          "contentIds",
+          "contextApi"
+        ]
+      }
+    },
+    "recipes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240
+          },
+          "apiVersion": {
+            "type": "integer"
+          },
+          "contextApi": {
+            "enum": [
+              "page2",
+              "notification1",
+              "shell1",
+              "overlay1",
+              "scene1",
+              "icon1",
+              "motion1"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "contentIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "minimum": {
+                  "type": "number"
+                },
+                "maximum": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "minimum",
+                "maximum"
+              ]
+            }
+          },
+          "sceneMode": {
+            "enum": [
+              "actor",
+              "background",
+              "decoration",
+              "canvas"
+            ]
+          },
+          "footprint": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "width": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 960
+              },
+              "height": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 960
+              }
+            },
+            "required": [
+              "width",
+              "height"
+            ]
+          },
+          "respectsOccupiedRegions": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "file",
+          "apiVersion"
+        ]
+      }
+    },
+    "iconRenderers": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240
+          },
+          "apiVersion": {
+            "type": "integer"
+          },
+          "contextApi": {
+            "enum": [
+              "page2",
+              "notification1",
+              "shell1",
+              "overlay1",
+              "scene1",
+              "icon1",
+              "motion1"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "contentIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "minimum": {
+                  "type": "number"
+                },
+                "maximum": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "minimum",
+                "maximum"
+              ]
+            }
+          },
+          "sceneMode": {
+            "enum": [
+              "actor",
+              "background",
+              "decoration",
+              "canvas"
+            ]
+          },
+          "footprint": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "width": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 960
+              },
+              "height": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 960
+              }
+            },
+            "required": [
+              "width",
+              "height"
+            ]
+          },
+          "respectsOccupiedRegions": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "file",
+          "apiVersion"
+        ]
+      }
+    },
+    "sceneRenderers": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240
+          },
+          "apiVersion": {
+            "type": "integer"
+          },
+          "contextApi": {
+            "enum": [
+              "page2",
+              "notification1",
+              "shell1",
+              "overlay1",
+              "scene1",
+              "icon1",
+              "motion1"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "contentIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "minimum": {
+                  "type": "number"
+                },
+                "maximum": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "minimum",
+                "maximum"
+              ]
+            }
+          },
+          "sceneMode": {
+            "enum": [
+              "actor",
+              "background",
+              "decoration",
+              "canvas"
+            ]
+          },
+          "footprint": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "width": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 960
+              },
+              "height": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 960
+              }
+            },
+            "required": [
+              "width",
+              "height"
+            ]
+          },
+          "respectsOccupiedRegions": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "file",
+          "apiVersion",
+          "sceneMode",
+          "footprint"
+        ]
+      }
+    },
+    "iconSets": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object"
+      }
+    }
+  },
+  "required": [
+    "registryVersion"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:smartpc:theme-visual-registry:1",
+  "title": "SmartPC namespaced visual registry format1"
+}

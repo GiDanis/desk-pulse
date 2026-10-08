@@ -1,0 +1,56 @@
+{
+  "id": "sport.match.detail:teamRoute",
+  "covers": [
+    "sport.match.detail:teamRoute"
+  ],
+  "family": "sport-match",
+  "surfaceId": "sport.match.detail",
+  "variant": "teamRoute",
+  "clockEpoch": 1790848800,
+  "initialProperties": {
+    "familyId": "sport",
+    "overlay": "sportDetail",
+    "sportDetailPage": 0
+  },
+  "domainSetup": [
+    "match:teamRoute"
+  ],
+  "expectedExpressions": [
+    "sportOverlay.detail",
+    "sportDetailPage === 0",
+    "sportMatch.canonicalMatchId.length > 0",
+    "sportTeamDetail",
+    "sportMatch.canonicalMatchId.indexOf(\"team:foto:\") === 0",
+    "sportMatch.status === \"finished\"",
+    "sportMatch.homeScore === 1",
+    "sportMatch.awayScore === 2",
+    "sportMatch.scoreText === \"1 – 2\""
+  ],
+  "invariants": [
+    "navigationAndTab",
+    "overlayStack",
+    "inputFocus",
+    "providerEffects",
+    "actorIdentity",
+    "eventFlagsAndDeadline"
+  ],
+  "actions": [
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 4
+    },
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 6
+    }
+  ],
+  "publicApiBinding": "deferredA1",
+  "expectedDomain": {
+    "status": "finished",
+    "homeScore": 1,
+    "awayScore": 2,
+    "scoreText": "1 – 2"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "id": "sport.team.detail:fixtures",
+  "covers": [
+    "sport.team.detail:fixtures"
+  ],
+  "family": "team",
+  "surfaceId": "sport.team.detail",
+  "variant": "fixtures",
+  "clockEpoch": 1790848800,
+  "initialProperties": {
+    "familyId": "sport",
+    "overlay": "sportTeam",
+    "teamTab": 0,
+    "teamSerieAOnly": false
+  },
+  "domainSetup": [
+    "team:summary"
+  ],
+  "expectedExpressions": [
+    "teamTab === 0",
+    "teamRows.length > 0"
+  ],
+  "invariants": [
+    "navigationAndTab",
+    "overlayStack",
+    "inputFocus",
+    "providerEffects",
+    "actorIdentity",
+    "eventFlagsAndDeadline"
+  ],
+  "actions": [
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 4
+    },
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 6
+    }
+  ],
+  "publicApiBinding": "deferredA1"
+}

@@ -1,0 +1,43 @@
+{
+  "id": "racing.standings:drivers",
+  "covers": [
+    "racing.standings:drivers"
+  ],
+  "family": "racing",
+  "surfaceId": "racing.standings",
+  "variant": "drivers",
+  "clockEpoch": 1790848800,
+  "initialProperties": {
+    "familyId": "f1",
+    "overlay": "racingTable",
+    "racingStandingTab": 0
+  },
+  "domainSetup": [
+    "racing:f1"
+  ],
+  "expectedExpressions": [
+    "racingRows.length > 0",
+    "racingStandingTab === 0"
+  ],
+  "invariants": [
+    "navigationAndTab",
+    "overlayStack",
+    "inputFocus",
+    "providerEffects",
+    "actorIdentity",
+    "eventFlagsAndDeadline"
+  ],
+  "actions": [
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 4
+    },
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 6
+    }
+  ],
+  "publicApiBinding": "deferredA1"
+}

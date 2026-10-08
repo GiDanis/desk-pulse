@@ -1,0 +1,41 @@
+{
+  "id": "alerts.detail:default",
+  "covers": [
+    "alerts.detail:default"
+  ],
+  "family": "notifications",
+  "surfaceId": "alerts.detail",
+  "variant": "default",
+  "clockEpoch": 1790848800,
+  "initialProperties": {
+    "familyId": "oggi",
+    "overlay": "alertDetail"
+  },
+  "domainSetup": [
+    "notification:detail"
+  ],
+  "expectedExpressions": [
+    "unreadAlertCount > 0"
+  ],
+  "invariants": [
+    "navigationAndTab",
+    "overlayStack",
+    "inputFocus",
+    "providerEffects",
+    "actorIdentity",
+    "eventFlagsAndDeadline"
+  ],
+  "actions": [
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 4
+    },
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 6
+    }
+  ],
+  "publicApiBinding": "deferredA1"
+}
