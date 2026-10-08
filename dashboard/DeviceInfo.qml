@@ -38,7 +38,8 @@ Item {
         provider("Meteo", dashboard.weather, "meteo"),
         row("Protezione Civile", dashboard.events.sourceStatus || "In attesa", "Controllo " + dashboard.eventStamp(dashboard.events.sourceCheckedAt), "alerts"),
         provider("Account ChatGPT", dashboard.account, "account"),
-        provider("Casa / Smart Life", dashboard.casa, "casa")
+        provider("Casa / Smart Life", dashboard.casa, "casa"),
+        provider("Rete / iliadbox", dashboard.network, "network")
     ].concat(backend && backend.sportAvailable ? [provider("Serie A", dashboard.sport, "sport")] : [])
         .concat(backend && backend.racingAvailable.indexOf("f1") >= 0 ? [provider("Formula 1", dashboard.racingStates.f1, "f1")] : [])
         .concat(backend && backend.racingAvailable.indexOf("motogp") >= 0 ? [provider("MotoGP", dashboard.racingStates.motogp, "motogp")] : [])

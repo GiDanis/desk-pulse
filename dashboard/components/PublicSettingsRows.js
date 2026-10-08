@@ -131,7 +131,7 @@ var canonicalSections = {
 var simpleAppearanceIds = ["appearance.palette","appearance.motion","appearance.theme","appearance.textScale",
     "appearance.revision","appearance.apply","appearance.cancel","appearance.import","appearance.export","appearance.advanced"]
 var indexTargets = {appearance:"appearance",system:"display",modules:"modules",notifications:"notifications",
-    accountSettings:"account",integrations:"integrations",sources:"sources",casaSettings:"casa",networkSettings:"network"}
+    services:"services",accountSettings:"account",integrations:"integrations",sources:"sources",casaSettings:"casa",networkSettings:"network"}
 var integrationTargets = {sportSettings:"integration.sport",f1:"integration.f1",motogp:"integration.motogp"}
 var sourceTargets = {meteo:"source.weather",weather:"source.weather",alerts:"source.alerts",account:"source.account",
     sport:"source.sport",f1:"source.f1",motogp:"source.motogp",casa:"source.casa",network:"source.network"}
@@ -154,11 +154,12 @@ function setToggle(row,value) {
     if (value !== undefined) row.value={available:true,value:!!value,displayText:String(row.value === undefined ? value : row.value)}
 }
 function identity(surface,row,index,options) {
-    if (surface === "settings.index") return indexTargets[row.target] || ""
+    if (row.id && row.id.indexOf(".")>=0) return row.id
+    if (surface === "settings.index") return row.target === "services" ? "services" : indexTargets[row.target] || ""
     if (surface === "settings.modules") return options.families[index] ? "module."+options.families[index].id : ""
     if (surface === "settings.integrations") return integrationTargets[row.target] || ""
     if (surface === "settings.sources") return sourceTargets[row.target] || ""
-    if (surface === "settings.notifications") return notificationTargets[row.target] || ""
+    if (surface === "settings.notifications") return row.target === "accountSettings" ? "notifications.accountThresholds" : notificationTargets[row.target] || ""
     if (surface === "settings.appearance" && !options.advancedAppearance) return row.id || simpleAppearanceIds[index] || ""
     if (surface === "settings.appearance" && index === 20) return "appearance.simple"
     if (surface === "settings.racing") {
@@ -190,11 +191,12 @@ function canonicalize(surface,rows,options) {
         var row=Object.assign({},raw),id=identity(surface,row,index,options)
         row.id=id || String(row.id || surface+":"+index)
         row.enabled=row.enabled !== false
+        if (row.target && surface !== "settings.sources") {row.control="action"}
         row.control="action";row.actionId="settings.activate";row.targetId=row.id
         row.reason=row.enabled ? "" : row.detail || "Operazione non disponibile nello stato corrente"
         var editable=surface !== "settings.index" && surface !== "settings.integrations" && surface !== "settings.notifications" && surface !== "settings.sources"
-        if (editable) row.actionId="settings.adjust"
-        if (id.indexOf("module.") === 0) setToggle(row,id === "module.oggi" || (options.visibleModules || []).indexOf(id.slice(7)) >= 0)
+        if (editable && !row.target) row.actionId="settings.adjust"
+        if (id.indexOf("module.") === 0) setToggle(row,id === "module.oggi" || !!(backend.moduleVisibility || {})[id.slice(7)])
         if (surface === "settings.sources") { row.actionId="sources.refresh";row.targetId=row.target }
         if (id === "display.mode") setChoice(row,choices(["auto","manual"],["Automatico","Manuale"]),backend.brightnessMode)
         else if (id === "display.manualBrightness") setNumber(row,20,100,5,backend.manualBrightness)
@@ -219,7 +221,7 @@ function canonicalize(surface,rows,options) {
         if (id === "sport.season" && options.sportUpdating || /^racing\.(f1|motogp)\.season$/.test(id) && (options.racingUpdating || (options.racing || {}).detailLoading)) {
             row.enabled=false;row.reason="Attendere il completamento dell'aggiornamento"
         }
-        if (surface === "settings.appearance" || surface === "settings.appearance.notifications") {
+        if (surface === "settings.appearance" || surface === "settings.appearance.notifications" || surface === "settings.appearance.management" || id.indexOf("appearance.")===0) {
             if (busy) { row.enabled=false;row.reason="Attendere il completamento dell'operazione" }
             if (["appearance.apply","appearance.cancel","appearance.reset","appearance.reload","appearance.import","appearance.export"].indexOf(id) >= 0) {
                 row.control=id === "appearance.import" || id === "appearance.export" ? "transfer" : "action"

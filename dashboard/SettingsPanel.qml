@@ -9,18 +9,35 @@ Item {
     property StyleFacade style: Theme
     required property var dashboard
     readonly property var entries: [
-        {title: "Aspetto", detail: "Tema e animazioni", target: "appearance"},
-        {title: "Luminosità", detail: "Livello manuale e fasce giorno / notte", target: "system"},
-        {title: "Moduli visibili", detail: "Scegli gli argomenti del carosello", target: "modules"},
-        {title: "Notifiche", detail: "Fascia silenzio e avvisi sullo schermo", target: "notifications"},
-        {title: "Account ChatGPT", detail: "Soglie di utilizzo e avvisi", target: "accountSettings"},
-        {title: "Sport", detail: "Squadra, stagioni e riepiloghi Home", target: "integrations"},
-        {title:"Casa / Smart Life",detail:"Dispositivi scelti e aggiornamenti",target:"casaSettings"},
-        {title:"Rete locale",detail:"iliadbox, dispositivi e preferiti",target:"networkSettings"},
-        {title: "Dati e aggiornamenti", detail: "Stato delle fonti e aggiornamento manuale", target: "sources"}
-    ].filter(row => row.target !== "integrations" || dashboard.dashboardState &&
-        (dashboard.dashboardState.sportAvailable || dashboard.dashboardState.racingAvailable.length))
-    readonly property var targets: ["settings", "appearance", "appearanceNotifications", "system", "modules", "notifications", "notificationQuiet", "notificationCategories", "accountSettings", "integrations", "sources"]
+        {title:"Schermo",detail:"Luminosità, orari e dimensione testo",target:"system"},
+        {title:"Aspetto",detail:"Tema, palette e movimento",target:"appearance"},
+        {title:"Moduli e Home",detail:"Argomenti visibili e riepiloghi",target:"modules"},
+        {title:"Avvisi",detail:"Interruzioni, silenzio e soglie",target:"notifications"},
+        {title:"Servizi collegati",detail:"Account dal PC, Casa e Rete",target:"services"},
+        {title:"Dati e aggiornamenti",detail:"Ultima lettura ed esito delle fonti",target:"sources"}
+    ]
+    readonly property var serviceEntries: [
+        {id:"service.account",title:"Account ChatGPT",detail:"Dati ricevuti dal PC · stato e rilettura",target:"sources",source:"account"},
+        {id:"service.casa",title:"Casa / Smart Life",detail:dashboard.casaData.configured ? "Preferiti e raccolta" : "Non configurato · opzioni disponibili",target:"casaSettings"},
+        {id:"service.network",title:"Rete / iliadbox",detail:dashboard.networkData.configured ? "Preferiti, alias e raccolta" : "Non configurato · opzioni disponibili",target:"networkSettings"}
+    ]
+    readonly property var moduleEntries: dashboard.allFamilies.map(row=>({id:"module."+row.id,moduleId:row.id,title:row.name,
+        detail:row.id==="oggi" ? "Sempre raggiungibile" : row.id==="sports" ? "Nasconde l'area senza cambiare le discipline" : "Nel carosello degli argomenti",
+        value:row.id==="oggi" ? "SEMPRE ATTIVO" : backend && backend.moduleVisibility[row.id] ? "ATTIVO" : "DISATTIVO",enabled:row.id!=="oggi"}))
+        .concat([{id:"modules.sports",title:"Sport e riepiloghi Home",detail:"Discipline, squadra e stagioni",target:"sportModules"}])
+    readonly property var sportModuleEntries: [
+        {id:"module.sport",moduleId:"sport",title:"Calcio",detail:"Serie A e la tua squadra",enabled:!!backend && backend.sportAvailable},
+        {id:"module.f1",moduleId:"f1",title:"Formula 1",detail:"Programma e classifiche",enabled:!!backend && backend.racingAvailable.indexOf("f1")>=0},
+        {id:"module.motogp",moduleId:"motogp",title:"MotoGP",detail:"Programma e classifiche",enabled:!!backend && backend.racingAvailable.indexOf("motogp")>=0}
+    ].map(row=>Object.assign({},row,{value:backend && backend.moduleVisibility[row.moduleId] ? "ATTIVO" : "DISATTIVO",detail:row.enabled ? row.detail : "Provider non disponibile"}))
+        .concat(sportEntries.map(row=>Object.assign({},row,{id:PublicSettingsRows.integrationTargets[row.target]})))
+    readonly property var managementRows: themeService ? [
+        {id:"appearance.revision",title:"Versione del tema",value:Theme.appearance.themeVersion,detail:"Revisioni installate · anteprima",enabled:catalogTheme.retention!=="latest"},
+        {id:"appearance.import",title:"Importa tema",value:"IMPORTA",detail:"Pacchetto ricevuto dal PC"},
+        {id:"appearance.export",title:"Esporta tema",value:"ESPORTA",detail:"Condivide il pacchetto corrente"},
+        {id:"appearance.reload",title:"Rileggi catalogo",value:"CONTROLLA",detail:"Temi presenti sul dispositivo"}
+    ] : []
+    readonly property var targets: ["settings", "services", "sportModules", "themeManagement", "appearance", "appearanceNotifications", "system", "modules", "notifications", "notificationQuiet", "notificationCategories", "accountSettings", "integrations", "sources"]
     readonly property bool active: targets.indexOf(dashboard.overlay) >= 0
     readonly property var backend: dashboard.dashboardState
     readonly property string section: dashboard.overlay
@@ -36,11 +53,16 @@ Item {
         .concat(backend && backend.racingAvailable.indexOf("f1") >= 0 ? [{title: "Formula 1", detail: sourceDetail(dashboard.racingStates.f1), target: "f1", value: "AGGIORNA"}] : [])
         .concat(backend && backend.racingAvailable.indexOf("motogp") >= 0 ? [{title: "MotoGP", detail: sourceDetail(dashboard.racingStates.motogp), target: "motogp", value: "AGGIORNA"}] : [])
         .concat(backend ? [{title:"Casa / Smart Life",detail:sourceDetail(dashboard.casa)+" · "+(dashboard.casaData.modeText || "Da configurare"),target:"casa",value:"AGGIORNA",enabled:!!dashboard.casaData.configured && !dashboard.casaData.busy}] : [])
-        .concat(backend ? [{title:"Rete locale",detail:sourceDetail(dashboard.network)+" · "+(dashboard.networkData.modeText || "Da configurare"),target:"network",value:"AGGIORNA",enabled:!!dashboard.networkData.configured && !dashboard.networkData.busy}] : []) : []
+        .concat(backend ? [{title:"Rete locale",detail:sourceDetail(dashboard.network)+" · "+(dashboard.networkData.modeText || "Da configurare"),target:"network",value:"AGGIORNA",enabled:!!dashboard.networkData.configured && !dashboard.networkData.busy}] : [])
+        .map(row => {
+            const operation = backend ? backend.sourceRefreshStates[row.target] : null
+            return operation ? Object.assign({}, row, {detail: operation.message + " · " + row.detail}) : row
+        }) : []
     function sourceDetail(value) {
         if (!value) return "Non disponibile"
         const names = {active: "Aggiornato", updating: "Aggiornamento…", offline: "Offline · dati salvati", stale: "Dati salvati", error: "Errore", unavailable: "Non disponibile"}
-        return (names[value.status] || "In attesa") + (value.updatedAt ? " · " + dashboard.eventStamp(value.updatedAt) : "")
+        const cacheError = value.data && value.data.cacheError
+        return (cacheError ? "Dati acquisiti · cache non salvata" : names[value.status] || "In attesa") + (value.updatedAt ? " · " + dashboard.eventStamp(value.updatedAt) : "")
     }
     readonly property bool quietActive: backend && backend.quietHoursEnabled &&
         (backend.quietStartMinute < backend.quietEndMinute
@@ -50,16 +72,20 @@ Item {
     readonly property string quietRange: backend ? dashboard.quietTime(backend.quietStartMinute) + " – " + dashboard.quietTime(backend.quietEndMinute) : "—"
     readonly property var notificationEntries: [
         {title: "Fascia silenzio", detail: backend && backend.quietHoursEnabled ? quietRange + " · " + (quietActive ? "silenzio in corso" : "fuori fascia") : "Disattivata · nessuna pausa oraria dei banner", target: "notificationQuiet"},
-        {title: "Avvisi sullo schermo", detail: "Scegli quali categorie possono interrompere la vista", target: "notificationCategories"}
+        {title: "Avvisi sullo schermo", detail: "Scegli quali categorie possono interrompere la vista", target: "notificationCategories"},
+        {title:"Soglie Account",detail:"Utilizzo e livello critico",target:"accountSettings"}
     ]
-    readonly property var rows: !active ? [] : section === "settings" ? entries : section === "integrations" ? sportEntries : section === "sources" ? sourceEntries : section === "modules" ? dashboard.allFamilies.map(row => ({title: row.name, detail: row.id === "oggi" ? "La Home resta sempre disponibile" : "Nel carosello orizzontale", value: row.id === "oggi" ? "SEMPRE VISIBILE" : dashboard.visibleModules.indexOf(row.id) >= 0 ? "VISIBILE" : "NASCOSTO", enabled: row.id !== "oggi"})) : section === "appearance" ? appearanceRows
+    readonly property var rows: !active ? [] : section === "settings" ? entries : section === "integrations" ? sportEntries : section === "sources" ? sourceEntries : section === "services" ? serviceEntries : section === "sportModules" ? sportModuleEntries : section === "themeManagement" ? managementRows : section === "modules" ? moduleEntries : section === "appearance" ? appearanceRows
  : section === "appearanceNotifications" ? notificationAppearanceRows : section === "system" ? [
         {title: "Modalità", value: dashboard.systemValue(1), detail: "Automatico segue la fascia giorno / notte"},
         {title: "Livello manuale", value: dashboard.systemValue(2), detail: "Usato in modalità manuale", enabled: backend && backend.brightnessMode === "manual"},
         {title: "Livello giorno", value: dashboard.systemValue(3), detail: "Usato in modalità automatica", enabled: backend && backend.brightnessMode === "auto"},
         {title: "Livello notte", value: dashboard.systemValue(4), detail: "Usato in modalità automatica", enabled: backend && backend.brightnessMode === "auto"},
         {title: "Giorno dalle", value: dashboard.systemValue(5), detail: "Orario condiviso con il tema automatico"},
-        {title: "Notte dalle", value: dashboard.systemValue(6), detail: "Orario condiviso con il tema automatico"}
+        {title: "Notte dalle", value: dashboard.systemValue(6), detail: "Orario condiviso con il tema automatico"},
+        {id:"appearance.textScale",title:"Dimensione testo",value:Math.round(root.style.textScale*100)+"%",detail:supportsAdjustment("textScale") ? "Anteprima · salva oppure annulla" : "Dimensione gestita dal tema",enabled:supportsAdjustment("textScale")},
+        {id:"appearance.apply",title:"Salva testo",value:"SALVA",detail:"Conserva la dimensione al riavvio",enabled:!!themeService && themeService.editing && themeService.readyToApply},
+        {id:"appearance.cancel",title:"Annulla anteprima",value:"ANNULLA",detail:"Torna alla dimensione salvata",enabled:!!themeService && themeService.editing}
     ] : section === "notifications" ? notificationEntries : section === "notificationQuiet" ? [
         {title: "Silenzio programmato", value: backend && backend.quietHoursEnabled ? "ATTIVO" : "DISATTIVO", detail: "Durante la fascia, i banner non compaiono", setting: 0},
         {title: "Dalle", value: dashboard.notificationValue(1), detail: "Inizio incluso · passi di 15 minuti", setting: 1, enabled: backend && backend.quietHoursEnabled},
@@ -91,7 +117,7 @@ Item {
         {title:"Importa temi",value:"IMPORTA",detail:"Pacchetti locali ricevuti dal PC"},
         {title:"Esporta tema",value:"ESPORTA",detail:"Pacchetto completo per un altro dispositivo"},
         {title:"Personalizzazione avanzata",value:"APRI",detail:"Editor di compatibilità · la composizione si crea nel tema"}
-    ].map((row,index) => Object.assign({},row,{id:PublicSettingsRows.simpleAppearanceIds[index]})).filter(row => row.id !== "appearance.revision" || catalogTheme.retention !== "latest") : []
+    ].map((row,index) => Object.assign({},row,{id:PublicSettingsRows.simpleAppearanceIds[index]})).filter(row => ["appearance.textScale","appearance.revision","appearance.import","appearance.export"].indexOf(row.id)<0).concat([{id:"appearance.management",title:"Gestione temi",detail:"Importa, esporta e revisioni",target:"themeManagement"}]) : []
     readonly property var advancedAppearanceRows: themeService ? [
         {title: "Palette", value: ({auto:"AUTOMATICA",day:"GIORNO",night:"NOTTE"})[themeService.draft.paletteMode || "auto"], detail: supportsAdjustment("paletteMode") ? "Bozza · segue gli orari di Luminosità in automatico" : "Palette gestita dal tema",enabled:supportsAdjustment("paletteMode")},
         {title: "Movimento", value: ({normal:"NORMALE",reduced:"RIDOTTO",off:"DISATTIVO"})[themeService.draft.motionMode], detail: "Transizioni e scena rispettano la stessa policy"},
@@ -114,7 +140,9 @@ Item {
         {title: "Esporta personalizzazione", value: "ESPORTA", detail: "Cartella theme-exports · include font e risorse del pacchetto"},
         {title: "Avvisi", detail: "Composizioni, testo, forme e animazioni · anteprima isolata", target: "appearanceNotifications"},
         {title:"Personalizzazione rapida",value:"TORNA",detail:"Tema, palette, testo e movimento"}
-    ] : []
+    ].map((row,index)=>Object.assign({},row,{id:index===20 ? "appearance.simple" : PublicSettingsRows.canonicalSections["settings.appearance"][index]}))
+        .filter(row=>["appearance.textScale","appearance.import","appearance.export","appearance.reload"].indexOf(row.id)<0)
+        .concat([{id:"appearance.management",title:"Gestione temi",detail:"Importa, esporta e revisioni",target:"themeManagement"}]) : []
     readonly property var notificationModes: ["small","large","urgent","badge","inbox","detail"]
     readonly property var notificationLabels: ["PICCOLO","GRANDE","URGENTE","BADGE","ELENCO","DETTAGLIO"]
     readonly property string notificationMode: notificationModes[dashboard.notificationAppearanceMode]
@@ -205,43 +233,55 @@ Item {
         feedback=service.lastError || (!accepted ? "Operazione non disponibile" : actionIndex === 5 ? "Salvataggio in corso…" : "Anteprima · Applica e salva per conservarla")
     }
     function editAppearance(direction) {
+        const actionIndex=(rows[selected] || {}).id==="appearance.simple" ? 20 : PublicSettingsRows.canonicalSections["settings.appearance"].indexOf((rows[selected] || {}).id)
         const service = themeService
         if (!service || (service.status === "saving" || service.status === "working")) return
-        if (!service.editing && selected !== 15) service.beginEdit()
-        if (selected === 0) service.setSection("paletteMode",cycle(["auto","day","night"],service.draft.paletteMode || "auto",direction))
-        else if (selected === 1) service.setSection("motionMode",cycle(["normal","reduced","off"],service.draft.motionMode,direction))
-        else if (selected === 2) service.selectDraft(cycle(service.themes.map(t => t.id),service.draft.themeId,direction))
-        else if (selected === 3) service.setSection("presentations",Object.assign({},service.draft.overrides.presentations || {},{"home.now":cycle(homePresentations,Theme.presentations["home.now"],direction)}))
-        else if (selected === 4) service.setToken("typography.textScale",Math.max(.85,Math.min(1.1,Math.round((root.style.textScale + direction * .05)*100)/100)))
-        else if (selected === 5) {
+        if (!service.editing && actionIndex !== 15) service.beginEdit()
+        if (actionIndex === 0) service.setSection("paletteMode",cycle(["auto","day","night"],service.draft.paletteMode || "auto",direction))
+        else if (actionIndex === 1) service.setSection("motionMode",cycle(["normal","reduced","off"],service.draft.motionMode,direction))
+        else if (actionIndex === 2) service.selectDraft(cycle(service.themes.map(t => t.id),service.draft.themeId,direction))
+        else if (actionIndex === 3) service.setSection("presentations",Object.assign({},service.draft.overrides.presentations || {},{"home.now":cycle(homePresentations,Theme.presentations["home.now"],direction)}))
+        else if (actionIndex === 4) service.setToken("typography.textScale",Math.max(.85,Math.min(1.1,Math.round((root.style.textScale + direction * .05)*100)/100)))
+        else if (actionIndex === 5) {
             const wide = root.style.listRows === 4
             service.setTokens({"metrics.listRows":wide?3:4,"metrics.compactRows":wide?2:3,"metrics.overviewRows":wide?2:3,"metrics.fantasyRows":wide?4:5})
-        } else if (selected === 6) service.setToken("shape.radiusCard",Math.max(0,Math.min(24,root.style.radiusCard + direction * 2)))
-        else if (selected === 7) service.setToken("colors.accent",cycle(["#6de0be","#e6c880","#b5d3ff","#efc3e6"],root.style.accent.toString(),direction))
-        else if (selected === 8 || selected === 9 || selected === 16) service.setToken(selected===8?"typography.uiFamily":selected===9?"typography.numbersFamily":"typography.displayFamily",cycle(service.fontFamilies,selected===8?root.style.uiFamily:selected===9?root.style.numbersFamily:root.style.displayFamily,direction))
-        else if (selected === 10) {
+        } else if (actionIndex === 6) service.setToken("shape.radiusCard",Math.max(0,Math.min(24,root.style.radiusCard + direction * 2)))
+        else if (actionIndex === 7) service.setToken("colors.accent",cycle(["#6de0be","#e6c880","#b5d3ff","#efc3e6"],root.style.accent.toString(),direction))
+        else if (actionIndex === 8 || actionIndex === 9 || actionIndex === 16) service.setToken(actionIndex===8?"typography.uiFamily":actionIndex===9?"typography.numbersFamily":"typography.displayFamily",cycle(service.fontFamilies,actionIndex===8?root.style.uiFamily:actionIndex===9?root.style.numbersFamily:root.style.displayFamily,direction))
+        else if (actionIndex === 10) {
             const recipe = cycle(navigationRecipes,Theme.motion["navigate.family"].recipe,direction)
             service.setSection("motion",Object.assign({},service.draft.overrides.motion || {},{"navigate.family":{recipe:recipe,durationMs:160,distancePx:20,easing:"outCubic"},"navigate.view":{recipe:recipe,durationMs:160,distancePx:20,easing:"outCubic"}}))
-        } else if (selected === 11) service.setSection("scene",{enabled:!Theme.appearance.scene.enabled})
-        else if (selected === 12) service.apply()
-        else if (selected === 13) service.cancel()
-        else if (selected === 14) service.resetDraft()
-        else if (selected === 15) service.reloadCatalog()
-        else if (selected === 20) { advancedAppearance=false; dashboard.optionIndex=0 }
-        else if (selected === 17 || selected === 18) service.transferPack(selected === 17 ? "import" : "export")
-        feedback = service.lastError || (selected === 12 ? "Salvataggio in corso…" : "Anteprima · Applica e salva per conservarla")
+        } else if (actionIndex === 11) service.setSection("scene",{enabled:!Theme.appearance.scene.enabled})
+        else if (actionIndex === 12) service.apply()
+        else if (actionIndex === 13) service.cancel()
+        else if (actionIndex === 14) service.resetDraft()
+        else if (actionIndex === 15) service.reloadCatalog()
+        else if (actionIndex === 20) { advancedAppearance=false; dashboard.optionIndex=0 }
+        else if (actionIndex === 17 || actionIndex === 18) service.transferPack(actionIndex === 17 ? "import" : "export")
+        feedback = service.lastError || (actionIndex === 12 ? "Salvataggio in corso…" : "Anteprima · Applica e salva per conservarla")
     }
     Connections {
         target: root.themeService
         function onSaveFinished(ok) { root.feedback = ok ? "Aspetto salvato" : root.themeService.lastError }
     }
     readonly property int selected: section === "settings" ? dashboard.settingsIndex : section === "modules" ? dashboard.modulesIndex : section === "system" ? dashboard.systemIndex : section === "notifications" ? dashboard.notificationIndex : section === "notificationQuiet" ? dashboard.quietIndex : section === "notificationCategories" ? dashboard.categoryIndex : section === "sources" ? dashboard.sourceIndex : dashboard.optionIndex
-    readonly property int pageStart: Math.floor(selected / root.style.listRows) * root.style.listRows
-    readonly property string heading: ({settings: "IMPOSTAZIONI", appearance: "ASPETTO", appearanceNotifications: "ASPETTO / AVVISI", system: "LUMINOSITÀ", modules: "MODULI VISIBILI", notifications: "NOTIFICHE", notificationQuiet: "NOTIFICHE / FASCIA SILENZIO", notificationCategories: "NOTIFICHE / AVVISI A SCHERMO", accountSettings: "ACCOUNT CHATGPT", integrations: "SPORT", sources: "DATI E AGGIORNAMENTI"})[section] || ""
-    readonly property string description: section === "system" ? "Regola l'immagine · livelli dal 20 al 100%, passi di 5%" : section === "sources" ? "Aggiornamento manuale · attesa minima 30 secondi tra richieste" : section === "notifications" ? "Due regole separate: quando interrompere e quali categorie" : section === "notificationQuiet" ? "Gli urgenti restano visibili per le categorie abilitate" : section === "notificationCategories" ? "Disattivare una categoria non cancella l'elenco Avvisi" : section === "accountSettings" ? "Preferenze salvate · soglie separate dall'acquisto di crediti" : (section === "appearance" || section === "appearanceNotifications") ? "Anteprima · Applica e salva, oppure 7 per annullare" : "Preferenze salvate automaticamente"
-    readonly property string explanation: section === "notifications" ? "Gli avvisi ricevuti restano consultabili da 3 AVVISI.\nLe soglie di utilizzo si regolano in Account ChatGPT." : section === "notificationQuiet" ? (backend && backend.quietHoursEnabled ? quietRange + " · " + (quietActive ? "silenzio in corso" : "fuori fascia") : "Fascia disattivata · nessuna pausa oraria") + "\nLe categorie disattivate restano nascoste anche fuori fascia." : section === "notificationCategories" ? "Meteo/Account consentiti: banner fuori fascia, urgenti sempre.\nMeteo/Account nascosti: restano nell'elenco 3 AVVISI." : ""
+    readonly property int visibleRowCount: 3
+    readonly property int pageStart: Math.floor(selected / visibleRowCount) * visibleRowCount
+    readonly property string heading: ({settings: "IMPOSTAZIONI", appearance: "ASPETTO", appearanceNotifications: "ASPETTO / AVVISI", system: "SCHERMO", modules: "MODULI E HOME", notifications: "AVVISI", services:"SERVIZI COLLEGATI", sportModules:"SPORT E HOME", themeManagement:"GESTIONE TEMI", notificationQuiet: "NOTIFICHE / FASCIA SILENZIO", notificationCategories: "NOTIFICHE / AVVISI A SCHERMO", accountSettings: "ACCOUNT CHATGPT", integrations: "SPORT", sources: "DATI E AGGIORNAMENTI"})[section] || ""
+    readonly property string description: section === "settings" ? "Scegli un gruppo" : section === "themeManagement" ? "Trasferimenti e revisioni dei temi" : section === "services" ? "Stato e opzioni dei collegamenti" : section === "sportModules" ? "Discipline visibili e riepiloghi Home" : section === "system" ? "Luminosità salvata subito · testo in anteprima da salvare" : section === "sources" ? "Aggiornamento manuale · attesa minima 30 secondi tra richieste" : section === "notifications" ? "Categorie, fascia silenzio e soglie Account" : section === "notificationQuiet" ? "Gli urgenti restano visibili per le categorie abilitate" : section === "notificationCategories" ? "Disattivare una categoria non cancella l'elenco Avvisi" : section === "accountSettings" ? "Preferenze salvate · soglie separate dall'acquisto di crediti" : (section === "appearance" || section === "appearanceNotifications") ? "Anteprima · Applica e salva, oppure 7 per annullare" : "Preferenze salvate automaticamente"
+    readonly property string explanation: section === "notifications" ? "Gli avvisi ricevuti restano consultabili da 3 AVVISI.\nLe soglie si regolano qui da Soglie Account." : section === "notificationQuiet" ? (backend && backend.quietHoursEnabled ? quietRange + " · " + (quietActive ? "silenzio in corso" : "fuori fascia") : "Fascia disattivata · nessuna pausa oraria") + "\nLe categorie disattivate restano nascoste anche fuori fascia." : section === "notificationCategories" ? "Meteo/Account consentiti: banner fuori fascia, urgenti sempre.\nMeteo/Account nascosti: restano nell'elenco 3 AVVISI." : ""
     property string feedback: ""
-    onSectionChanged: { feedback = ""; if (section !== "appearance" && section !== "appearanceNotifications") advancedAppearance=false }
+    property string feedbackSource: ""
+    Connections {
+        target: root.backend
+        function onSettingsChanged() {
+            if (root.section === "sources" && root.feedbackSource) {
+                const operation = root.backend.sourceRefreshStates[root.feedbackSource]
+                if (operation) root.feedback = operation.message
+            }
+        }
+    }
+    onSectionChanged: { feedback = ""; feedbackSource = ""; if (["appearance","appearanceNotifications","themeManagement"].indexOf(section)<0) advancedAppearance=false }
 
     function setSelected(index) {
         if (section === "settings") dashboard.settingsIndex = index
@@ -253,32 +293,45 @@ Item {
         else if (section === "sources") dashboard.sourceIndex = index
         else dashboard.optionIndex = index
         feedback = ""
+        feedbackSource = ""
     }
     function activate(direction) {
         if (!backend || !rows.length) return
         const row = rows[selected]
         if (!row || row.enabled === false) return
-        if (section === "settings") {
-            dashboard.optionIndex = 0; dashboard.systemIndex = 0; dashboard.notificationIndex = 0
+        if (section === "settings" || section === "services") {
+            dashboard.systemIndex = 0; dashboard.notificationIndex = 0
             dashboard.quietIndex = 0; dashboard.categoryIndex = 0; dashboard.sourceIndex = 0
             dashboard.modulesIndex = dashboard.allFamilies.length > 1 ? 1 : 0
             dashboard.pushOverlay(row.target)
-        } else if (section === "integrations") {
+            if (row.source) dashboard.sourceIndex=Math.max(0,sourceEntries.findIndex(entry=>entry.target===row.source))
+        } else if (section === "integrations" || section === "sportModules" && !row.moduleId) {
             if (row.target === "sportSettings") { dashboard.sportSettingsIndex = 0; dashboard.pushOverlay("sportSettings") }
             else { dashboard.racingSettingsKind = row.target; dashboard.racingSettingsIndex = 0; dashboard.pushOverlay("racingSettings") }
         } else if (section === "notifications") dashboard.pushOverlay(row.target)
+        else if (section === "sportModules") backend.toggleModuleVisibility(row.moduleId)
+        else if (section === "themeManagement") dashboard.publicAppearanceSetting("settings.appearance.management",{id:row.id,control:row.id==="appearance.revision" ? "choice" : "transfer",options:[]},direction)
         else if (section === "notificationCategories" && row.sportSetting !== undefined) backend.adjustSportSetting(row.sportSetting, direction)
         else if (section === "sources") {
+            feedbackSource = row.target
             const sent = backend.refreshSource(row.target)
-            feedback = backend.demo ? "Demo · nessuna richiesta esterna" : !sent ? "Attendi 30 secondi prima di riprovare" : row.target === "account" ? "Cache riletta · gli aggiornamenti arrivano dal PC" : "Richiesta inviata · lo stato viene aggiornato dalla fonte"
+            const operation = backend.sourceRefreshStates[row.target]
+            feedback = operation ? operation.message : backend.demo ? "Demo · nessuna richiesta esterna" : sent ? "Richiesta inviata · in attesa dell'esito" : "Richiesta non accettata"
         } else if (section === "appearance") {
-            if (row.target) { dashboard.optionIndex = 0; dashboard.pushOverlay(row.target) }
+            if (row.target) { dashboard.pushOverlay(row.target) }
             else if (advancedAppearance) editAppearance(direction)
             else editSimpleAppearance(direction)
         } else if (section === "appearanceNotifications") {
             editNotifications(direction)
-        } else if (section === "system") backend.adjustDisplaySetting(selected + 1, direction)
-        else if (section === "modules") dashboard.toggleModule(selected)
+        } else if (section === "system") {
+            if (selected<6) backend.adjustDisplaySetting(selected+1,direction)
+            else if (row.id==="appearance.apply") themeService.apply()
+            else if (row.id==="appearance.cancel") themeService.cancel()
+            else { if (!themeService.editing) themeService.beginEdit();themeService.setToken("typography.textScale",Math.max(.85,Math.min(1.1,Math.round((root.style.textScale+direction*.05)*100)/100))) }
+        } else if (section === "modules") {
+            if (row.target) {dashboard.pushOverlay(row.target)}
+            else backend.toggleModuleVisibility(row.moduleId)
+        }
         else if (section === "notificationQuiet" || section === "notificationCategories") backend.adjustNotificationSetting(row.setting, direction)
         else if (section === "accountSettings") backend.adjustAccountSetting(selected, direction)
     }
@@ -287,28 +340,28 @@ Item {
         const minimum = section === "modules" && rows.length > 1 ? 1 : 0
         if (position === 2) setSelected(Math.max(minimum, selected - 1))
         else if (position === 8) setSelected(Math.min(rows.length - 1, selected + 1))
-        else if (position === 5 || (position === 4 || position === 6) && ["settings", "integrations", "notifications", "sources"].indexOf(section) < 0 && !rows[selected].target) activate(position === 4 ? -1 : 1)
+        else if (position === 5 || (position === 4 || position === 6) && ["settings", "services", "integrations", "notifications", "sources"].indexOf(section) < 0 && !rows[selected].target) activate(position === 4 ? -1 : 1)
         return true
     }
     AppIcon { style: root.style; z: 1; x: 870; y: 29; iconId: "system.settings"; opticalSize: 32 }
     Rectangle { anchors.fill: parent; color: root.style.backgroundOverlay }
     AppText { style: root.style; x: 44; y: root.rows.length <= 2 ? 334 : 410; width: 872; height: 66; visible: root.explanation !== ""; text: root.explanation; color: root.style.textSecondary; font.pixelSize: root.style.font22; lineHeight: 1.35 }
-    AppText { style: root.style; x: 44; y: 30; width: 872; text: root.heading; color: root.style.accentTextOnOverlay; font.pixelSize: root.style.font37; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
-    AppText { style: root.style; x: 44; y: 84; width: 872; text: root.description; color: root.style.textSecondary; font.pixelSize: root.style.font22; elide: Text.ElideRight }
+    AppText { style: root.style; x: 44; y: 30; width: 872; text: root.heading; color: root.style.accentTextOnOverlay; font.pixelSize: root.style.font45; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
+    AppText { style: root.style; x: 44; y: 84; width: 872; text: root.description; color: root.style.textSecondary; font.pixelSize: root.style.font26; elide: Text.ElideRight }
     Repeater {
-        model: root.rows.slice(root.pageStart, root.pageStart + root.style.listRows)
+        model: root.rows.slice(root.pageStart, root.pageStart + root.visibleRowCount)
         delegate: SelectableRow { style: root.style; selectedState: selectedRow;
             required property var modelData
             required property int index
             readonly property int rowIndex: root.pageStart + index
             readonly property bool selectedRow: rowIndex === root.selected
             objectName: root.section + "Row" + rowIndex
-            x: 44; y: 132 + index * (348 / root.style.listRows); width: 872; height: 348 / root.style.listRows - 10; radius: root.style.radiusRow
+            x: 44; y: 132 + index * (348 / root.visibleRowCount); width: 872; height: 348 / root.visibleRowCount - 10; radius: root.style.radiusRow
             color: selectedRow ? root.style.surfaceFocused : root.style.surface
             border.color: selectedRow ? root.style.focusIndicator : root.style.border; border.width: selectedRow ? root.style.focusWidth : root.style.hairlineWidth
-            AppText { style: root.style; x: 20; y: 10; width: 485; text: modelData.title; color: modelData.enabled === false ? root.style.textSecondary : root.style.textPrimary; font.pixelSize: root.style.font28; font.weight: (selectedRow) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
-            AppText { style: root.style; x: 20; y: parent.height - 30; width: 825; text: modelData.detail || ""; color: root.style.textSecondary; font.pixelSize: root.style.font20; elide: Text.ElideRight }
-            AppText { style: root.style; x: 515; y: 13; width: 334; horizontalAlignment: Text.AlignRight; text: modelData.value || "›"; color: modelData.enabled === false ? root.style.textSecondary : selectedRow ? root.style.accentTextOnFocused : root.style.textPrimary; font.pixelSize: root.style.font25; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
+            AppText { style: root.style; x: 20; y: 10; width: 485; text: modelData.title; color: modelData.enabled === false ? root.style.textSecondary : root.style.textPrimary; font.pixelSize: root.style.font36; font.weight: (selectedRow) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
+            AppText { style: root.style; x: 20; y: parent.height - 42; width: 825; text: modelData.detail || ""; color: root.style.textSecondary; font.pixelSize: root.style.font26; elide: Text.ElideRight }
+            AppText { style: root.style; x: 515; y: 13; width: 334; horizontalAlignment: Text.AlignRight; text: modelData.value || "›"; color: modelData.enabled === false ? root.style.textSecondary : selectedRow ? root.style.accentTextOnFocused : root.style.textPrimary; font.pixelSize: root.style.font32; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
             MouseArea { anchors.fill: parent; onClicked: { root.setSelected(parent.rowIndex); root.activate(1) } }
         }
     }
