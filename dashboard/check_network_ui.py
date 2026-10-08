@@ -64,6 +64,13 @@ def verify(profile,capture=None):
                 finally:release.set()
                 settle(s)
             assert completions==[True];checks+=['pausedPollingStillAges','durablePreferencesOffGuiThread']
+            cold=NetworkService(auto_refresh=True,config_path=config,state_dir=base/'automatic-cold',transport=router,clock=lambda:wall[0],monotonic=lambda:mono[0]);services.append(cold)
+            until=time.monotonic()+6
+            while not cold._snapshot['checkedAt'] and time.monotonic()<until:h.pump(5)
+            assert cold.moduleState['status']=='active' and not cold._busy
+            restored_cold=NetworkService(auto_refresh=False,config_path=config,state_dir=base/'automatic-cold',transport=router,clock=lambda:wall[0],monotonic=lambda:mono[0]);services.append(restored_cold)
+            assert restored_cold._snapshot==cold._snapshot
+            cold.close();checks.append('automaticColdStartPersistsBeforePublication')
         h.root.setProperty('familyId','network');h.pump(180)
         def grab(label):
             h.pump(180);assert not h.messages,h.messages

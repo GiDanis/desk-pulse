@@ -112,8 +112,9 @@ def main():
         app.processEvents()
 
     press(4)
-    assert value("familyId") == "motogp"
-    press(4)
+    assert value("familyId") == "sports"
+    press(8)
+    press(5)
     assert value("familyId") == "f1"
     for kind in ("f1", "motogp"):
         assert value("familyId") == kind and value("racingView") == "PROGRAMMA"
@@ -214,15 +215,23 @@ def main():
             assert value("racingStandingTab") == 0 and value("racingIndex") == 0
         press(7)
         if kind == "f1":
-            press(6)
+            press(7)
+            press(8)
+            press(5)
     # Each discipline remembers its view when changing family.
-    press(4)
+    press(7)
+    press(2)
+    press(5)
     assert value("racingView") == "CLASSIFICA"
-    press(6)
+    press(7)
+    press(8)
+    press(5)
     assert value("racingView") == "CLASSIFICA"
     # A current active stream adds a timing view; disconnect keeps the viewed
     # rows available without a Live badge or an unsolicited page jump.
-    press(4)
+    press(7)
+    press(2)
+    press(5)
     f1 = services["f1"]
     # This phase injects a connected stream into a service with auto-refresh
     # disabled. Its normal age tick correctly calls ensure(False), which would
@@ -281,13 +290,12 @@ def main():
     press(8)
     press(5)
     assert value("overlay") == "settings"
-    for _ in range(5):
-        press(8)
-    assert value("settingsIndex") == 5
+    window.setProperty("settingsIndex",2)
     press(5)
-    assert value("overlay") == "integrations"
-    press(8)
-    press(8)
+    window.setProperty("modulesIndex",6)
+    press(5)
+    window.setProperty("optionIndex",5)
+    assert value("overlay") == "sportModules"
     press(5)
     assert (
         value("overlay") == "racingSettings" and value("racingSettingsKind") == "motogp"
@@ -297,6 +305,9 @@ def main():
     assert services["motogp"].moduleState["data"]["showOnHome"]
     press(1)
     press(4)
+    assert value("familyId") == "sports"
+    window.setProperty("sportHubSelectedId","motogp")
+    press(5)
     assert value("familyId") == "motogp"
     state.toggleModuleVisibility("motogp")
     app.processEvents()

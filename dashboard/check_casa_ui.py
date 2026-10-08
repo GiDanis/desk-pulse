@@ -42,9 +42,9 @@ def verify(profile, capture=None):
                 raise TuyaError("offline", "Cloud di prova non raggiungibile.")
             return fake(url, headers, timeout)
 
-        def make(directory):
+        def make(directory, automatic=False):
             service = CasaService(
-                auto_refresh=False,
+                auto_refresh=automatic,
                 config_path=config,
                 state_dir=directory,
                 transport=transport,
@@ -70,6 +70,17 @@ def verify(profile, capture=None):
         )
         assert service.moduleState["data"]["favourites"][0]["primaryText"] == "Spento"
         checks.append("singleFlightAndPreSendAccounting")
+        failure[0] = False
+        cold = make(base / "automatic-cold", automatic=True)
+        deadline = time.monotonic() + 5
+        while not cold._snapshot["checkedAt"] and time.monotonic() < deadline:
+            harness.pump(5)
+        assert cold.moduleState["status"] == "active" and not cold._busy
+        assert cold.budget.data["requests"] == 3
+        restored_cold = make(base / "automatic-cold")
+        assert restored_cold._snapshot == cold._snapshot
+        cold.close()
+        checks.append("AutomaticColdStartPersistsBeforePublication")
         mono[0] += 60
         wall[0] += 60
         before = service.budget.data["requests"]

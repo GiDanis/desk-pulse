@@ -123,19 +123,23 @@ def main_proof():
         harness.root.setProperty('overlay','appearance');harness.pump(60)
         settings=harness.root.findChild(QObject,'settingsPanel')
         rows=as_value(settings.property('simpleAppearanceRows'))
-        assert rows[0]['enabled'] is False and rows[3]['enabled'] is False,rows
+        assert rows[0]['enabled'] is False,rows
         fallback_count = len(ThemeApiContract().surfaces) - 5
         assert 'Parziale' in rows[2]['detail'] and '5 propri' in rows[2]['detail'] and f'{fallback_count} Base' in rows[2]['detail'],rows[2]
         assert rows[1].get('enabled',True),'global motion policy must remain available'
         payload=harness.expression('publicSurfacePayload("settings.appearance")')
         by_id={row['id']:row for row in payload['rows']}
         assert by_id['appearance.palette']['enabled'] is False
-        assert by_id['appearance.textScale']['enabled'] is False
+        assert 'appearance.textScale' not in by_id
+        harness.root.setProperty('overlay','system');harness.pump(40)
+        display=harness.expression('publicSurfacePayload("settings.display")')
+        assert next(row for row in display['rows'] if row['id']=='appearance.textScale')['enabled'] is False
+        harness.root.setProperty('overlay','appearance');harness.pump(40)
         assert 'Parziale' in by_id['appearance.theme']['detail']
         assert by_id['appearance.motion']['enabled'] is True
         settings.setProperty('advancedAppearance',True);harness.pump(20)
         rows=as_value(settings.property('advancedAppearanceRows'))
-        assert rows[0]['enabled'] is False and rows[4]['enabled'] is False
+        assert rows[0]['enabled'] is False and 'appearance.textScale' not in {row['id'] for row in rows}
         assert not harness.messages,harness.messages
         print('main-settings-adjustments-passed')
     finally: harness.close()

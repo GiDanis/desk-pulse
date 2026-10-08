@@ -255,7 +255,7 @@ execute('pushOverlay("appearance")')
 # This section exercises the retained compatibility editor, explicitly opened
 # from the new ordinary appearance menu.
 root.findChild(QObject,'settingsPanel').setProperty('advancedAppearance',True)
-root.setProperty('optionIndex',19); key(Qt.Key_Return)
+notification_entry=next(i for i,row in enumerate(as_value(root.findChild(QObject,'settingsPanel').property('rows'))) if row['id']=='appearance.notifications'); root.setProperty('optionIndex',notification_entry); key(Qt.Key_Return)
 assert root.property('overlay')=='appearanceNotifications' and service.editing
 root.setProperty('optionIndex',9); old = service.resolvedAppearance['tokens']['notifications.small.titleSize']; key(Qt.Key_Right)
 assert service.resolvedAppearance['tokens']['notifications.small.titleSize']==old+2
@@ -267,7 +267,7 @@ for _ in range(6):
     assert rows()==before and not events.eventState['visibleBanner'] and not events.eventState['urgent']
 key(Qt.Key_Escape); assert root.property('notificationPreviewMode')==''
 key(Qt.Key_Escape); assert root.property('overlay')=='appearance' and service.editing
-assert root.property('optionIndex')==19
+assert root.property('optionIndex')==notification_entry
 key(Qt.Key_Escape); assert not service.editing
 report['cases'].append('editor_and_six_isolated_previews')
 

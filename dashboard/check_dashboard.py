@@ -136,10 +136,11 @@ def main() -> None:
     press(8)
     press(5)
     assert window.property("overlay") == "settings"
+    window.setProperty("settingsIndex",1)
     press(5)
     assert window.property("overlay") == "appearance"
     press(7)
-    press(8)
+    window.setProperty("settingsIndex",0)
     press(5)
     assert window.property("overlay") == "system"
     quick_window = shiboken6.wrapInstance(shiboken6.getCppPointer(window)[0], QQuickWindow)
@@ -172,7 +173,7 @@ def main() -> None:
     press(7)
     assert window.property("overlay") == "settings"
     assert not system_row.isVisible(), "system settings leaked into the menu"
-    press(8)
+    window.setProperty("settingsIndex",2)
     press(5)
     assert window.property("overlay") == "modules"
     assert state.visibleModules == ["oggi", "meteo", "account"]

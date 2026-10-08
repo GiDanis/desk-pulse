@@ -68,6 +68,27 @@ class PublicApiTests(unittest.TestCase):
         self.assertIs(context.clock, clock)
         self.assertEqual(notices, ['time'])
 
+    def test_equal_count_row_swap_and_reorder_notify_projections(self):
+        context = self.factory.create('device.info')
+        rows = [{'id': 'software', 'title': 'Software'}, {'id': 'display', 'title': 'Display'}]
+        self.assertTrue(self.factory.update(context, {'rows': rows}))
+        model = context.rows
+        events, counts = [], []
+        context.rowsChanged.connect(lambda: events.append([model.get(i).id for i in range(model.count)]))
+        model.countChanged.connect(lambda: counts.append(model.count))
+        resources = [{'id': 'cpu', 'title': 'CPU'}, {'id': 'ram', 'title': 'RAM'}]
+        self.assertTrue(self.factory.update(context, {'rows': resources}))
+        self.assertIs(context.rows, model)
+        self.assertEqual(events[-1], ['cpu', 'ram'])
+        cpu = model.get(0)
+        self.assertTrue(self.factory.update(context, {'rows': list(reversed(resources))}))
+        self.assertEqual(events[-1], ['ram', 'cpu'])
+        self.assertIs(model.get(1), cpu)
+        self.assertEqual(counts, [])
+        total = len(events)
+        self.assertTrue(self.factory.update(context, {'rows': list(reversed(resources))}))
+        self.assertEqual(len(events), total)
+
     def test_bad_snapshot_retains_previous_complete_data(self):
         context = self.factory.create('home.now')
         before = context._snapshot()

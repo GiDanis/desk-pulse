@@ -71,6 +71,8 @@ def main():
         app.processEvents()
         wait_ready(app,window)
     press(4)
+    assert value('familyId') == 'sports'
+    press(5)
     assert value('familyId') == 'sport'
     assert value('sportView') == 'PROSSIME'
     assert value('sportMatch')['homeTeam']

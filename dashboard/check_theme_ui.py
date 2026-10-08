@@ -101,12 +101,13 @@ service.cancel()
 # Exercise numeric values through the actual QML editor and Qt keyboard path.
 QQmlExpression(engine.rootContext(),root,'pushOverlay("appearance")').evaluate()
 root.findChild(QObject,'settingsPanel').setProperty('advancedAppearance',True)
-root.setProperty('optionIndex',6);before=service.resolvedAppearance['tokens']['shape.radiusCard'];press(window,Qt.Key_Right)
+root.setProperty('optionIndex',5);before=service.resolvedAppearance['tokens']['shape.radiusCard'];press(window,Qt.Key_Right)
 assert service.resolvedAppearance['tokens']['shape.radiusCard']==min(24,before+2),service.lastError
-root.setProperty('optionIndex',5);press(window,Qt.Key_Right)
-assert service.resolvedAppearance['tokens']['metrics.listRows']==3,service.lastError
-assert service.resolvedAppearance['tokens']['metrics.compactRows']==2
 root.setProperty('optionIndex',4);press(window,Qt.Key_Right)
+assert service.resolvedAppearance['tokens']['metrics.listRows']==4,service.lastError
+assert service.resolvedAppearance['tokens']['metrics.compactRows']==3
+QQmlExpression(engine.rootContext(),root,'(popOverlay(),pushOverlay("system"))').evaluate()
+root.setProperty('systemIndex',6);press(window,Qt.Key_Right)
 assert service.resolvedAppearance['tokens']['typography.textScale']==1.05,service.lastError
 press(window,Qt.Key_Escape);assert not service.editing
 # Import/select a third data pack plus an installed presentation extension.

@@ -77,23 +77,25 @@ prefs=Path(preferences.fileName());before=hashlib.sha256(prefs.read_bytes()).hex
 # Navigate the ordinary menu with real QKeyEvent; no private visual object IDs.
 key(Qt.Key_9);assert root.property('overlay')=='menu'
 key(Qt.Key_Down);key(Qt.Key_5);assert root.property('overlay')=='settings'
-key(Qt.Key_5);assert root.property('overlay')=='appearance'
-root.findChild(QObject,'settingsPanel').setProperty('advancedAppearance',True)
-for _ in range(17):key(Qt.Key_Down)
-assert root.property('optionIndex')==17
+key(Qt.Key_Down);key(Qt.Key_5);assert root.property('overlay')=='appearance'
+for _ in range(6):key(Qt.Key_Down)
+assert root.property('optionIndex')==6
+key(Qt.Key_5);assert root.property('overlay')=='themeManagement'
+key(Qt.Key_Down);assert root.property('optionIndex')==1
 key(Qt.Key_5);until(lambda:service.status!='working')
 assert 'braun-rams' in service.catalog.packs,service.lastError
 assert service.activeThemeId==baseline,'Import applied the theme'
 preferences.sync();after=hashlib.sha256(prefs.read_bytes()).hexdigest() if prefs.exists() else None
 assert before==after,'Import wrote preferences'
-for _ in range(15):key(Qt.Key_Up)
+key(Qt.Key_Escape)
+for _ in range(4):key(Qt.Key_Up)
 assert root.property('optionIndex')==2
 for _ in range(len(service.catalog.packs)+1):
     if service.activeThemeId=='braun-rams':break
     key(Qt.Key_Right);wait_ready(app,root)
 assert service.activeThemeId=='braun-rams',service.lastError
 assert window.activeFocusItem().objectName()=='inputOwner'
-for _ in range(10):key(Qt.Key_Down)
+key(Qt.Key_Down)
 key(Qt.Key_5);wait_save(app,service)
 assert not service.editing
 assert ThemeService(store=store).activeThemeId=='braun-rams'

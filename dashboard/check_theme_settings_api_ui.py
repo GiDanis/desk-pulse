@@ -47,12 +47,12 @@ def verify():
         # Documented IDs must work even when display labels and legacy targets
         # differ, and no renderer receives a private controller/model.
         index=context('settings.index')
-        assert ids(index)==['appearance','display','modules','notifications','account','integrations','casa','network','sources']
+        assert ids(index)==['display','appearance','modules','notifications','services','sources']
         assert all(index.rows.get(i).enabled for i in range(index.rows.count))
         assert request(index,'settings.activate','display').status=='completed'
         assert harness.value('overlay')=='system'
         display=context('settings.display')
-        assert ids(display)==['display.mode','display.manualBrightness','display.dayBrightness','display.nightBrightness','display.dayStart','display.nightStart']
+        assert ids(display)==['display.mode','display.manualBrightness','display.dayBrightness','display.nightBrightness','display.dayStart','display.nightStart','appearance.textScale','appearance.apply','appearance.cancel']
         mode=row(display,'display.mode')
         assert mode.enabled and mode.control=='choice' and mode.options.count==2
         assert mode.value.value=='manual'
@@ -71,7 +71,7 @@ def verify():
         assert harness.state.dayBrightness==max(20,before-5)
 
         modules=context('settings.modules')
-        assert ids(modules)==['module.'+family['id'] for family in harness.value('allFamilies')]
+        assert ids(modules)==['module.'+family['id'] for family in harness.value('allFamilies')]+['modules.sports']
         assert not row(modules,'module.oggi').enabled
         old=harness.state.visibleModules
         assert request(modules,'settings.adjust','module.meteo',{'direction':1}).status=='completed'
@@ -93,7 +93,7 @@ def verify():
         assert request(sport,'settings.adjust','sport.notifications',{'direction':1}).status=='failed'
 
         notification_rules=context('settings.notifications')
-        assert ids(notification_rules)==['notifications.quiet','notifications.categories']
+        assert ids(notification_rules)==['notifications.quiet','notifications.categories','notifications.accountThresholds']
         assert request(notification_rules,'settings.activate','notifications.quiet').status=='completed'
         assert harness.value('overlay')=='notificationQuiet'
         quiet=context('settings.notifications.quiet')
@@ -127,16 +127,16 @@ def verify():
             assert request(sources,'sources.refresh','meteo').status=='failed'
 
         appearance=context('settings.appearance')
-        assert ids(appearance)==['appearance.palette','appearance.motion','appearance.theme','appearance.textScale','appearance.revision',
-            'appearance.apply','appearance.cancel','appearance.import','appearance.export','appearance.advanced']
+        assert ids(appearance)==['appearance.palette','appearance.motion','appearance.theme','appearance.apply','appearance.cancel','appearance.advanced','appearance.management']
         assert appearance.draft.editing==harness.service.editing
         assert appearance.draft.readyToApply==harness.service.readyToApply
-        assert row(appearance,'appearance.textScale').step==.05
-        assert not row(appearance,'appearance.revision').enabled
+        assert 'appearance.textScale' not in ids(appearance)
+        display=context('settings.display')
+        assert row(display,'appearance.textScale').step==.05
         harness.reset_effects();domain_before=deepcopy(harness.state.eventsState)
-        assert request(appearance,'settings.adjust','appearance.textScale',{'direction':1}).status=='completed'
+        assert request(display,'settings.adjust','appearance.textScale',{'direction':1}).status=='completed'
         assert harness.service.draft['overrides']['tokens']['typography.textScale']==1.05
-        update(appearance)
+        appearance=context('settings.appearance')
         assert appearance.draft.textScale==1.05 and appearance.draft.readyToApply
         assert not any(harness.effects.values()) and harness.state.eventsState==domain_before
         with patch('theme_service.QThreadPool'):
@@ -144,7 +144,7 @@ def verify():
         assert saving.accepted and saving.status=='pending','generic Apply must await persistence result'
         update(appearance)
         assert appearance.operation.status=='pending' and not appearance.draft.readyToApply
-        assert not row(appearance,'appearance.textScale').enabled
+        assert not row(appearance,'appearance.theme').enabled
         assert request(appearance,'appearance.cancel').status=='failed'
         harness.service._saved(False,'synthetic preference write fault')
         assert saving.status=='failed' and saving.errorCode=='synthetic preference write fault'
@@ -152,20 +152,23 @@ def verify():
         assert appearance.operation.status=='failed' and appearance.draft.editing
         assert appearance.draft.textScale==1.05 and appearance.draft.error=='synthetic preference write fault'
 
+        management=context('settings.appearance.management')
+        assert not row(management,'appearance.revision').enabled
         for operation in ('import','export'):
             with patch('theme_service.QThreadPool'):
-                result=request(appearance,'settings.activate','appearance.'+operation)
+                result=request(management,'settings.activate','appearance.'+operation)
             assert result.status=='pending',operation
             harness.service._pack_finished(False,'synthetic '+operation+' fault')
             assert result.status=='failed',operation
-            update(appearance)
+            update(management)
+        appearance=context('settings.appearance')
         assert request(appearance,'settings.activate','appearance.advanced').status=='completed'
         update(appearance)
         assert settings.property('advancedAppearance') and row(appearance,'appearance.cardRadius').control=='number'
         assert request(appearance,'settings.adjust','appearance.cardRadius',{'direction':1}).status=='completed'
         assert request(appearance,'settings.activate','appearance.simple').status=='completed'
         update(appearance)
-        assert not settings.property('advancedAppearance') and appearance.rows.count==10
+        assert not settings.property('advancedAppearance') and appearance.rows.count==7
 
         notifications=context('settings.appearance.notifications')
         assert notifications.rows.count==25

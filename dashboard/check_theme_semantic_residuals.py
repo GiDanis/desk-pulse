@@ -44,7 +44,14 @@ def main():
         raw = json.loads((CORPUS / 'domains/weather-zero.json').read_text())['raw']
         weather = WeatherService(auto_refresh=False)
         last_complete = normalize_response(raw)
-        weather._on_finished(last_complete, None)
+        from unittest.mock import patch
+        import time
+        with patch('weather.fetch_weather', return_value=last_complete):
+            assert weather.refresh()
+            deadline = time.monotonic() + 5
+            while weather._in_flight and time.monotonic() < deadline:
+                harness.pump(10)
+            assert not weather._in_flight
         persisted = weather._cache_path.read_bytes()
         fetched_at = weather._fetched_at
         incomplete = deepcopy(raw); incomplete['daily']['temperature_2m_max'] = incomplete['daily']['temperature_2m_max'][:1]
@@ -57,6 +64,7 @@ def main():
         assert weather._snapshot == last_complete and len(weather._snapshot['forecast']) == 3
         assert weather._fetched_at == fetched_at and weather._cache_path.read_bytes() == persisted
         assert weather._last_error and weather.moduleState['status'] != 'active'
+        weather.close()
         results.append({'id': 'weather.partial-retains-complete', 'status': 'passed', 'scope': 'Actual normalization rejects incomplete daily arrays; WeatherService retains complete snapshot/cache/fetchedAt and truthful error state'})
         # All protected space blocked: app-owned actor remains and is paused.
         assert harness.service.setSection('scene', {'enabled': True, 'renderer': 'builtin.actor'})

@@ -105,8 +105,13 @@ def setting(title):
     press(9)
     window.setProperty("menuIndex", 1)
     press(5)
-    window.setProperty("settingsIndex", value("settingsItems").index(title))
+    window.setProperty("settingsIndex", value("settingsItems").index({"Luminosità":"Schermo","Moduli visibili":"Moduli e Home","Notifiche":"Avvisi","Account ChatGPT":"Avvisi","Sport":"Moduli e Home"}.get(title,title)))
     press(5)
+    if title == "Account ChatGPT":
+        window.setProperty("notificationIndex",2);press(5)
+    elif title == "Sport":
+        window.setProperty("modulesIndex",6);press(5)
+        window.setProperty("optionIndex",3)
 
 
 press(9)
@@ -116,6 +121,7 @@ press(5)
 capture("settings")
 press(2)
 assert value("settingsIndex") == 0, "focus wrapped at the top"
+window.setProperty("settingsIndex",1)
 press(5)
 assert value("overlay") == "appearance"
 capture("appearance")
@@ -158,9 +164,9 @@ capture("brightness-manual")
 window.setProperty("systemIndex", 5)
 capture("brightness-hours")
 press(8)
-assert value("systemIndex") == 5, "focus wrapped at the bottom"
+assert value("systemIndex") == 6, "text-size row is not reachable"
 press(7)
-assert value("overlay") == "settings" and value("settingsIndex") == 1
+assert value("overlay") == "settings" and value("settingsIndex") == 0
 
 setting("Moduli visibili")
 capture("modules")
@@ -227,7 +233,7 @@ assert restored.accountWarningPercent == state.accountWarningPercent
 assert restored.accountCriticalPercent == state.accountCriticalPercent
 
 setting("Sport")
-assert value("overlay") == "integrations"
+assert value("overlay") == "sportModules"
 capture("sport-settings-menu")
 press(8)
 press(5)
@@ -242,7 +248,7 @@ with patch.object(state, "adjustRacingSetting") as refresh:
 press(7)
 assert value("overlay") == "racingSettings" and value("racingSettingsIndex") == 2
 press(7)
-assert value("overlay") == "integrations" and value("optionIndex") == 1
+assert value("overlay") == "sportModules" and value("optionIndex") == 4
 press(8)
 press(5)
 assert value("overlay") == "racingSettings" and value("racingSettingsKind") == "motogp"
@@ -273,10 +279,10 @@ with patch.object(weather, "refresh") as refresh:
     assert live_state.refreshSource("meteo")
     assert not live_state.refreshSource("meteo")
     assert refresh.call_count == 1
-with patch.object(racing["f1"], "adjust") as refresh:
+with patch.object(racing["f1"], "refreshManual") as refresh:
     assert live_state.refreshSource("f1")
     assert not live_state.refreshSource("f1")
-    refresh.assert_called_once_with(2, 1)  # Preserve the provider's full/manual path.
+    refresh.assert_called_once_with()  # Full/manual acquisition, with truthful acceptance.
 
 press(1)
 press(9)
