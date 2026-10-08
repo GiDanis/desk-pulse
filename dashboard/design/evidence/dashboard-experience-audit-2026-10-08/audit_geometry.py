@@ -77,7 +77,8 @@ try:
             class_name = child.metaObject().className()
             radius = child.property('radius')
             text = child.property('text')
-            if radius is not None and float(radius) > 0 and box[2] >= 100 and box[3] >= 55:
+            original = bounds(child)
+            if radius is not None and float(radius) > 0 and original[2] >= 100 and original[3] >= 55:
                 cards.append({'type': class_name, 'bounds': bounds(child), 'visibleBounds': box})
             if text and isinstance(text, str):
                 labels.append({'text': text, 'bounds': bounds(child), 'visibleBounds': box})
@@ -104,8 +105,10 @@ try:
         if legacy:
             assert args.theme != 'apple', sid
             item = h.window.contentItem()
-        else:
+        elif args.theme == 'apple':
             assert item.property('contentReady') is True, sid
+        else:
+            assert host.property('currentReady') is True, sid
         cards, labels, lists = collect(item)
         last = max((c['visibleBounds'][1]+c['visibleBounds'][3] for c in cards), default=None)
         root_box = bounds(item)
