@@ -20,7 +20,9 @@ try:
  from theme_test_support import as_value,wait_save
  manager=BundleManager(base,app_root=ROOT/'dashboard')
  project=ROOT/'theme-projects/apple-calm/bundle'
- digest=validate_project(project)['digest']
+ validation=validate_project(project)
+ digest=validation['digest']
+ expected_content_height=validation['manifest']['layout']['content']['height']
  cache_path=project.parent/'evidence/preflight-cache.json'
  cache=json.loads(cache_path.read_text()) if cache_path.exists() else {}
  def checked_preflight(payload,manifest,registry):
@@ -40,7 +42,7 @@ try:
   return as_value(adapter.property('publicContext'))
  def expression(obj,text):
   e=QQmlExpression(QQmlEngine.contextForObject(obj),obj,text);value,undefined=e.evaluate();assert not e.hasError(),e.error().toString();assert not undefined,text;return as_value(value)
- names={'home.now':'homeNow','home.clock':'homeClock','home.day':'homeDay','casa.overview':'casaOverview','casa.devices':'casaDevices','weather.now':'weatherNow','weather.forecast':'weatherForecast','account.usage':'accountPanel','sport.overview':'sportPanel','sport.team':'sportTeamPanel','racing.overview':'racingPanel','alerts.badge':'unreadAlertsBadge','alerts.banner.small':'eventBanner','alerts.banner.large':'eventLargeBanner','alerts.urgent':'eventUrgent','alerts.inbox':'alertsInbox','alerts.detail':'alertDetail','shell.main':'shellHost'}
+ names={'home.now':'homeNow','home.clock':'homeClock','home.day':'homeDay','casa.overview':'casaOverview','casa.devices':'casaDevices','network.overview':'networkOverview','network.devices':'networkDevices','weather.now':'weatherNow','weather.forecast':'weatherForecast','account.usage':'accountPanel','sport.hub':'sportHub','sport.overview':'sportPanel','sport.team':'sportTeamPanel','racing.overview':'racingPanel','alerts.badge':'unreadAlertsBadge','alerts.banner.small':'eventBanner','alerts.banner.large':'eventLargeBanner','alerts.urgent':'eventUrgent','alerts.inbox':'alertsInbox','alerts.detail':'alertDetail','shell.main':'shellHost'}
  registry=json.loads((ROOT/'theme-projects/apple-calm/bundle/theme.json').read_text())['presentations']
  def host_for(sid):return h.root.findChild(QObject,names.get(sid,'overlayHost'))
  def capture(label):
@@ -111,7 +113,7 @@ try:
    assert abs(indicator.property('position')-20*(position-1))<.1,{'axis':indicator.objectName(),'position':indicator.property('position'),'target':indicator.property('targetPosition'),'selected':position,'animating':indicator.property('animating'),'mode':ctx.motionPolicy.mode}
   assert abs(family.property('x')+family.property('width')/2-480)<.1
   assert view.property('x')==939
-  assert h.expression('pageGeometry("home.now").height')==528
+  assert h.expression('pageGeometry("home.now").height')==expected_content_height
   navigation_steps+=1
  for direction in (1,-1):
   for _ in range(len(h.value('families'))):
@@ -208,7 +210,7 @@ try:
  assert not h.messages,h.messages
  assert not h.transport,h.transport
  report={'status':'passed','qt':qVersion(),'platform':h.app.platformName(),'windowSize':[h.window.width(),h.window.height()],'palette':A.palette,'revision':{k:revision[k] for k in ['id','version','digest']},'apiFingerprint':contract.fingerprint,'canonicalCases':records,'additionalChecks':['sport-fixtures-keyboard-order','long-statistics-keypad-scroll','typed-notification-root-scroll-extent','public-detail-scroll-dispatch','team-picker-none-route','account-public-selection-offset','apply-reload','ten-menu-cycles'],'qmlWarnings':h.messages,'networkDenied':True,'boardRuntime':'eglfsFixtures' if h.app.platformName()=='eglfs' else 'notVerified','performance':'notVerified'}
- report['navigationDots']={'steps':navigation_steps,'dynamicFamilies':True,'centeredFamilies':True,'rightEdgeViews':True,'contentHeight':528,'motion':motion_checks}
+ report['navigationDots']={'steps':navigation_steps,'dynamicFamilies':True,'centeredFamilies':True,'rightEdgeViews':True,'contentHeight':h.expression('pageGeometry("home.now").height'),'motion':motion_checks}
  report['additionalChecks']+=['navigation-both-axes-and-wrap','dynamic-family-dot-count','normal-reduced-off-dot-animation','dot-settlement','consistent-overlay-scopes','persistent-shell-across-details-and-settings']
  (A.output/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
  print(json.dumps({k:v for k,v in report.items() if k!='canonicalCases'},ensure_ascii=False),flush=True)

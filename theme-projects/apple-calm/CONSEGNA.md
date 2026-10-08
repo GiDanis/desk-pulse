@@ -1,4 +1,18 @@
-# Apple Calm 1.2.0 — consegna del 6 ottobre 2026
+# Apple Calm — consegne
+
+## Revisione 1.3.1 · 8 ottobre 2026
+
+Installata con **SmartPC 0.8.3-rc.2 / Theme API 2.5**. Adatta gli spazi conservando palette, font, icone e stile delle card: barra 56 px, contenuto 912×552 a x24/y72, liste scorrevoli, Sport senza legenda permanente, traffico WAN e sensori iliadbox in panoramica. Corretto il cambio delle schede Informazioni a pari numero di righe. Digest `484b983f1622fbaccbfc09047d4c39641e5e1646bba04a2fd5cbc88f5aeb9a84`; 499 file verificati, 72 controlli locali, 1.062 combinazioni native, prove mirate EGLFS giorno/notte e 19 superfici/92 passi su Main. Reboot reale verificato, servizio `active/running`, `NRestarts=0`, GUI pronta e preferenze conservate. Backup `/var/backups/smartpc-before-v083-space-20261008T130632Z`; prove `/var/lib/smartpc-dashboard/v083-space-proof/`. I due tentativi precedenti e i rollback sono documentati. Resta il giudizio di leggibilità fisica a 50–60 cm. [Resoconto e catture](../../dashboard/design/v083-space-optimization-report.md), [uso e recupero](../../dashboard/design/v083-ux-operations.md).
+
+## Revisione 1.3.0 · 8 ottobre 2026
+
+Installata con **SmartPC 0.8.3-rc.1 / Theme API 2.5**, con manifest di 498 file e reboot verificati, GUI pronta, servizio attivo e `NRestarts=0`. Sport unico, sei gruppi Impostazioni, Rete nativa, righe grandi e sette nuovi glifi. **59 superfici proprie più scena Base**, 57 glifi; digest `10bd33af67b331a2e2993ef83b7c5724800edeb078bd029a8ce08059e8ae0c86`. Preflight PC/nativo di 1.062 combinazioni, Main locale giorno/notte e 15 superfici EGLFS notte, con 90 passi di navigazione per prova e zero warning QML. Le 38 preferenze originali sono conservate, con due sole chiavi di migrazione; ledger Casa invariato. La prima qualifica EGLFS ha rilevato un alias font Canvas non valido: rollback verificato e correzione QML degli assi prima della consegna. Il collaudo ottico/tastierino a 50–60 cm resta aperto. [Resoconto completo](../../dashboard/design/v083-implementation-report.md), [uso](../../dashboard/design/v083-ux-operations.md). Le consegne storiche rimangono sotto.
+
+## Revisione 1.2.1 · 8 ottobre 2026
+
+Installata con SmartPC **0.8.2-rc.1**, Theme API 2.4 e reboot verificato. Nuovi mapping Rete, titoli coerenti e feedback senza duplicazione; digest `575fd88f93592423d53eba0ba7deedcd3fab25398baddb768a8d224768fa0b21`. Preflight nativo, tre superfici EGLFS notte, palette giorno locale e 138 passi di navigazione con Normale/Ridotto/Disattivo, senza warning. Le 38 preferenze sono conservate. [Resoconto e limiti](../../dashboard/design/v082-implementation-report.md). La consegna storica e le sue misure rimangono sotto.
+
+## Apple Calm 1.2.0 — consegna del 6 ottobre 2026
 
 **Installato e verificato sull’Orange Pi dopo un riavvio del sistema.** SmartPC esegue il core 0.7.0-rc.3 e Apple Calm 1.2.0. Il servizio è `active/running`, `NRestarts=0`; heartbeat GUI fresco, identità esatta, nessuna attivazione pendente, quarantena o recovery. Le 38 preferenze estranee all’aspetto coincidono con il backup originale. Palette `auto` e movimento `normal` sono conservati.
 

@@ -21,7 +21,7 @@ Item {
                 radius: 12
                 border.width: selected ? 2 : 1
                 border.color: root.style ? selected ? root.style.semantic.focusIndicator : root.style.border : "#CDD2DA"
-                Label { id: label; anchors.fill: parent; anchors.margins: 8; themeStyle: root.style; size: 18; text: tab.item.label; maximumLineCount: 1; horizontalAlignment: Text.AlignHCenter }
+                Label { id: label; anchors.fill: parent; anchors.margins: 8; themeStyle: root.style; size: 22; text: tab.item.label; maximumLineCount: 1; horizontalAlignment: Text.AlignHCenter }
                 MouseArea { anchors.fill: parent; enabled: tab.item.enabled && !!root.context; onClicked: root.context.requestAction("tabs.select", tab.item.id, {}) }
             }
         }

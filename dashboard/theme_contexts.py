@@ -185,6 +185,9 @@ class ReadOnlySnapshot(QObject):
                     nested_changed = previous._replace(value, validated=True) if kind in CONTRACT.models else previous._update(value, validated=True)
                     if nested_changed:
                         changed.append(name)
+                        # The QObject identity is stable, but its public value changed.
+                        # Re-evaluate QML projections, including equal-count swaps.
+                        getattr(self, name + 'Changed').emit()
                     continue
                 replacement = PUBLIC_TYPES[kind](value, self, validated=True)
             else:

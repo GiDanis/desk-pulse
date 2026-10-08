@@ -3,7 +3,7 @@
   "module": {
     "uri": "SmartPC.ThemeApi",
     "major": 2,
-    "minor": 4
+    "minor": 5
   },
   "apiState": "implemented",
   "surfaces": [
@@ -1668,6 +1668,116 @@
         "width": 960,
         "height": 640
       }
+    },
+    {
+      "id": "sport.hub",
+      "context": "SportHubContext",
+      "contextVersion": 1,
+      "hostFamily": "page",
+      "legacySource": "presentations/sport-hub.qml",
+      "legacyRoute": null,
+      "variants": [],
+      "actions": [
+        "navigation.back",
+        "navigation.family.step",
+        "navigation.home",
+        "navigation.inbox",
+        "navigation.menu",
+        "selection.move",
+        "selection.select",
+        "details.open"
+      ],
+      "fallback": "base",
+      "rendererState": "publicBuiltin",
+      "layout": {
+        "policy": "legacyFixed",
+        "width": 872,
+        "height": 455
+      }
+    },
+    {
+      "id": "settings.services",
+      "context": "SettingsContext",
+      "contextVersion": 1,
+      "hostFamily": "overlay",
+      "legacySource": "SettingsPanel.qml",
+      "legacyRoute": "services",
+      "variants": [],
+      "actions": [
+        "navigation.back",
+        "navigation.family.step",
+        "navigation.home",
+        "navigation.inbox",
+        "navigation.menu",
+        "navigation.view.step",
+        "selection.move",
+        "selection.select",
+        "settings.activate",
+        "settings.adjust"
+      ],
+      "fallback": "base",
+      "rendererState": "fixedComponent",
+      "layout": {
+        "policy": "legacyFixed",
+        "width": 960,
+        "height": 640
+      }
+    },
+    {
+      "id": "settings.sports",
+      "context": "SettingsContext",
+      "contextVersion": 1,
+      "hostFamily": "overlay",
+      "legacySource": "SettingsPanel.qml",
+      "legacyRoute": "sportModules",
+      "variants": [],
+      "actions": [
+        "navigation.back",
+        "navigation.family.step",
+        "navigation.home",
+        "navigation.inbox",
+        "navigation.menu",
+        "navigation.view.step",
+        "selection.move",
+        "selection.select",
+        "settings.activate",
+        "settings.adjust"
+      ],
+      "fallback": "base",
+      "rendererState": "fixedComponent",
+      "layout": {
+        "policy": "legacyFixed",
+        "width": 960,
+        "height": 640
+      }
+    },
+    {
+      "id": "settings.appearance.management",
+      "context": "SettingsContext",
+      "contextVersion": 1,
+      "hostFamily": "overlay",
+      "legacySource": "SettingsPanel.qml",
+      "legacyRoute": "themeManagement",
+      "variants": [],
+      "actions": [
+        "navigation.back",
+        "navigation.family.step",
+        "navigation.home",
+        "navigation.inbox",
+        "navigation.menu",
+        "navigation.view.step",
+        "selection.move",
+        "selection.select",
+        "settings.activate",
+        "settings.adjust"
+      ],
+      "fallback": "base",
+      "rendererState": "fixedComponent",
+      "layout": {
+        "policy": "legacyFixed",
+        "width": 960,
+        "height": 640
+      }
     }
   ],
   "protectedObjects": [
@@ -1683,18 +1793,22 @@
       "expression": "row.target",
       "source": "SettingsPanel.targets and app-owned settings rows",
       "possibleRoutes": [
+        "accountSettings",
         "appearance",
         "appearanceNotifications",
-        "system",
-        "modules",
-        "notifications",
-        "notificationQuiet",
-        "notificationCategories",
-        "accountSettings",
+        "casaSettings",
         "integrations",
+        "modules",
+        "networkSettings",
+        "notificationCategories",
+        "notificationQuiet",
+        "notifications",
+        "services",
         "sources",
+        "sportModules",
         "sportSettings",
-        "casaSettings"
+        "system",
+        "themeManagement"
       ]
     },
     {
@@ -2456,6 +2570,30 @@
       {
         "id": "network.ports:default",
         "surfaceId": "network.ports",
+        "variant": "default",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "sport.hub:default",
+        "surfaceId": "sport.hub",
+        "variant": "default",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "settings.services:default",
+        "surfaceId": "settings.services",
+        "variant": "default",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "settings.sports:default",
+        "surfaceId": "settings.sports",
+        "variant": "default",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "settings.appearance.management:default",
+        "surfaceId": "settings.appearance.management",
         "variant": "default",
         "verification": "requiredNotExecuted"
       }

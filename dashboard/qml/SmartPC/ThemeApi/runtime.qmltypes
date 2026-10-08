@@ -3099,6 +3099,30 @@ Module {
         }
     }
     Component {
+        name: "SportDiscipline"
+        prototype: "MenuRow"
+        exports: ["SmartPC.ThemeApi/SportDiscipline 2.0", "SmartPC.ThemeApi/SportDiscipline 2.1", "SmartPC.ThemeApi/SportDiscipline 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "iconId"
+            type: "QString"
+            isReadonly: true
+        }
+        Property {
+            name: "source"
+            type: "SourceState"
+            isReadonly: true
+            isPointer: true
+        }
+        Signal {
+            name: "iconIdChanged"
+        }
+        Signal {
+            name: "sourceChanged"
+        }
+    }
+    Component {
         name: "CommandModel"
         prototype: "QAbstractListModel"
         exports: ["SmartPC.ThemeApi/CommandModel 2.0", "SmartPC.ThemeApi/CommandModel 2.1", "SmartPC.ThemeApi/CommandModel 2.2"]
@@ -4755,6 +4779,38 @@ Module {
         }
     }
     Component {
+        name: "SportDisciplineModel"
+        prototype: "QAbstractListModel"
+        exports: ["SmartPC.ThemeApi/SportDisciplineModel 2.0", "SmartPC.ThemeApi/SportDisciplineModel 2.1", "SmartPC.ThemeApi/SportDisciplineModel 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "count"
+            type: "int"
+            isReadonly: true
+        }
+        Signal {
+            name: "countChanged"
+        }
+        Method {
+            name: "get"
+            type: "QObject"
+            isPointer: true
+            Parameter {
+                name: "arg0"
+                type: "int"
+            }
+        }
+        Method {
+            name: "indexOf"
+            type: "int"
+            Parameter {
+                name: "arg0"
+                type: "QString"
+            }
+        }
+    }
+    Component {
         name: "SurfaceContext"
         prototype: "QObject"
         exports: ["SmartPC.ThemeApi/SurfaceContext 2.0", "SmartPC.ThemeApi/SurfaceContext 2.1", "SmartPC.ThemeApi/SurfaceContext 2.2"]
@@ -6183,6 +6239,39 @@ Module {
                 name: "arg0"
                 type: "QVariant"
             }
+        }
+    }
+    Component {
+        name: "SportHubContext"
+        prototype: "SurfaceContext"
+        exports: ["SmartPC.ThemeApi/SportHubContext 2.0", "SmartPC.ThemeApi/SportHubContext 2.1", "SmartPC.ThemeApi/SportHubContext 2.2"]
+        exportMetaObjectRevisions: [512, 513, 514]
+        isCreatable: false
+        Property {
+            name: "rows"
+            type: "SportDisciplineModel"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "selection"
+            type: "SelectionState"
+            isReadonly: true
+            isPointer: true
+        }
+        Property {
+            name: "description"
+            type: "QString"
+            isReadonly: true
+        }
+        Signal {
+            name: "rowsChanged"
+        }
+        Signal {
+            name: "selectionChanged"
+        }
+        Signal {
+            name: "descriptionChanged"
         }
     }
     Component {

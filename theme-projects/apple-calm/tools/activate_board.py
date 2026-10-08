@@ -74,11 +74,15 @@ revision=service.resolvedAppearance['bundleRevision']
 if identity:assert revision==identity,{'expected':identity,'actual':revision}
 journal=service.lifecycle.read()
 assert journal['active']==revision and journal['pending'] is None,journal
-assert preferences()==before,'non-appearance preferences changed'
+after=preferences()
+assert all(after.get(key)==value for key,value in before.items()),'existing non-appearance preferences changed'
+added=set(after)-set(before)
+assert added <= {'navigation/schemaVersion','navigation/sportVisible'},added
+assert int(settings.value('navigation/schemaVersion',0))==1,'navigation migration missing'
 assert not warnings,warnings
 args.output.mkdir(parents=True,exist_ok=True)
 assert window.grabWindow().save(str(args.output/'installed-home-demo.png'))
-report={'status':'passed','operation':'apply' if args.apply else 'coldVerify','qt':qVersion(),'platform':app.platformName(),'windowSize':[window.width(),window.height()],'revision':revision,'journalActiveMatches':True,'pendingActivation':False,'nonAppearancePreferencesPreserved':True,'nonAppearancePreferenceCount':len(before),'qmlWarnings':warnings,'providerData':'isolated demo, no live-data claim'}
+report={'status':'passed','operation':'apply' if args.apply else 'coldVerify','qt':qVersion(),'platform':app.platformName(),'windowSize':[window.width(),window.height()],'revision':revision,'journalActiveMatches':True,'pendingActivation':False,'nonAppearancePreferencesPreserved':True,'nonAppearancePreferenceCount':len(after),'addedPreferenceKeys':sorted(added),'qmlWarnings':warnings,'providerData':'isolated demo, no live-data claim'}
 (args.output/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
 print(json.dumps(report,ensure_ascii=False))
 events.close()

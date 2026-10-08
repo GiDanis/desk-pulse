@@ -262,7 +262,8 @@ def effective_manifest(value, surfaces):
     known=set(coverage['surfaces']) | set(coverage['fallbacks'])
     groups=[{'casa.overview','casa.devices','casa.detail','settings.casa'},
             {'network.overview','network.devices','network.detail','settings.network'},
-            {'network.router','network.wifi','network.ports'}]
+            {'network.router','network.wifi','network.ports'},
+            {'sport.hub','settings.services','settings.sports','settings.appearance.management'}]
     missing=set(surfaces)-known
     if missing and missing <= set.union(*groups) and all(not (group & missing) or group <= missing for group in groups):
         coverage['fallbacks']=sorted(set(coverage['fallbacks']) | missing)

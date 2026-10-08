@@ -4677,6 +4677,54 @@
       ],
       "additionalProperties": false
     },
+    "SportDiscipline": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "detail": {
+          "type": "string",
+          "readOnly": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "actionId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "targetId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "iconId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "source": {
+          "$ref": "#/$defs/SourceState",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "detail",
+        "enabled",
+        "actionId",
+        "targetId",
+        "iconId",
+        "source"
+      ],
+      "additionalProperties": false
+    },
     "SurfaceContext": {
       "type": "object",
       "properties": {
@@ -7187,6 +7235,103 @@
       ],
       "additionalProperties": false
     },
+    "SportHubContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SportDiscipline"
+          },
+          "maxItems": 3,
+          "readOnly": true
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionState",
+          "readOnly": true
+        },
+        "description": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "rows",
+        "selection",
+        "description"
+      ],
+      "additionalProperties": false
+    },
     "CommandModel": {
       "type": "array",
       "items": {
@@ -7459,6 +7604,13 @@
         "$ref": "#/$defs/NetworkChartSeries"
       },
       "maxItems": 2
+    },
+    "SportDisciplineModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/SportDiscipline"
+      },
+      "maxItems": 3
     }
   },
   "description": "Choose an explicit $defs type. Python validator also checks model identity uniqueness and request allowlists."

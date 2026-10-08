@@ -10,6 +10,6 @@ Panel {
     title: Format.settingTitle(context.sectionId)
     subtitle: context.description
     rows: { context.dataRevision; return Format.settings(context.rows) }
-    footer: [context.feedback,context.operation.message,context.draft && context.draft.editing ? "Anteprima · " + context.draft.themeId : ""].filter(Boolean).join(" · ")
+    footer: [context.feedback,context.operation.message,context.draft && context.draft.editing ? "Anteprima non salvata" : ""].filter((value,index,values) => value && values.indexOf(value) === index).join(" · ")
     rowAction: "settings.activate"
 }

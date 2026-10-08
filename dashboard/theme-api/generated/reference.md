@@ -4,7 +4,7 @@
 
 Generated from the four canonical JSON documents. Do not edit generated files.
 
-API fingerprint: `1c6a56515e2f78c3a48c9f794e72a2906d919347dc3ad62d0266e4c770bedeb2`
+API fingerprint: `2c492a33223315ec27a31f4c2a59c9894a01e3d69fd9cf7c112ca8ac08738e99`
 
 This fingerprint is independent from the schema-1 registry fingerprint.
 
@@ -68,6 +68,10 @@ This fingerprint is independent from the schema-1 registry fingerprint.
 | network.router | NetworkRouterContext 1 | overlay | networkRouter | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, network.metrics.entity, network.metrics.section, network.metrics.refresh, network.metrics.window, network.metrics.metric |
 | network.wifi | NetworkWifiContext 1 | overlay | networkWifi | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, network.metrics.entity, network.metrics.section, network.metrics.refresh, network.metrics.window, network.metrics.metric |
 | network.ports | NetworkPortsContext 1 | overlay | networkPorts | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, network.metrics.entity, network.metrics.section, network.metrics.refresh, network.metrics.window, network.metrics.metric |
+| sport.hub | SportHubContext 1 | page | — | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open |
+| settings.services | SettingsContext 1 | overlay | services | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate, settings.adjust |
+| settings.sports | SettingsContext 1 | overlay | sportModules | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate, settings.adjust |
+| settings.appearance.management | SettingsContext 1 | overlay | themeManagement | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate, settings.adjust |
 
 ## Contexts
 
@@ -600,6 +604,28 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | motionPolicy | MotionPolicy | optional / non-null | {} |
 | metrics | NetworkMetricsView | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
+
+Method `requestAction(string, string, legacyMap) → ActionResult`.
+
+### SportHubContext
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| contentId | string | required / non-null | {} |
+| contextVersion | int | required / non-null | {"const": 1} |
+| surfaceInstanceId | string | required / non-null | {} |
+| appearanceRevision | int | required / non-null | {"minimum": 0} |
+| dataRevision | int | required / non-null | {"minimum": 0} |
+| style | ThemeStyle | required / non-null | {} |
+| lifecycle | SurfaceLifecycle | required / non-null | {} |
+| viewport | Rect | required / non-null | {} |
+| safeArea | Rect | required / non-null | {} |
+| commands | CommandModel | required / non-null | {} |
+| actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
+| rows | SportDisciplineModel | required / non-null | {} |
+| selection | SelectionState | required / non-null | {} |
+| description | string | required / non-null | {} |
 
 Method `requestAction(string, string, legacyMap) → ActionResult`.
 
@@ -1648,6 +1674,19 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | entities | NetworkMetricEntityModel | required / non-null | {} |
 | chart | NetworkChart | required / non-null | {} |
 
+### SportDiscipline
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| id | string | required / non-null | {} |
+| title | string | required / non-null | {} |
+| detail | string | required / non-null | {} |
+| enabled | bool | required / non-null | {} |
+| actionId | string | required / non-null | {} |
+| targetId | string | required / non-null | {} |
+| iconId | string | required / non-null | {} |
+| source | SourceState | required / non-null | {} |
+
 ## Models
 
 | Model | Row type | Identity |
@@ -1691,6 +1730,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | NetworkMetricEntityModel | NetworkMetricEntity | id |
 | NetworkChartPointModel | NetworkChartPoint | id |
 | NetworkChartSeriesModel | NetworkChartSeries | id |
+| SportDisciplineModel | SportDiscipline | id |
 
 ## Actions
 

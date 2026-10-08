@@ -3,7 +3,7 @@
   "module": {
     "uri": "SmartPC.ThemeApi",
     "major": 2,
-    "minor": 4
+    "minor": 5
   },
   "apiState": "implemented",
   "privateHandles": [
@@ -2991,6 +2991,19 @@
           "readOnly": true
         }
       }
+    },
+    "SportDiscipline": {
+      "extends": "MenuRow",
+      "fields": {
+        "iconId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "source": {
+          "type": "SourceState",
+          "readOnly": true
+        }
+      }
     }
   },
   "models": {
@@ -3218,6 +3231,12 @@
       "itemType": "NetworkChartSeries",
       "identityRole": "id",
       "maxItems": 2
+    },
+    "SportDisciplineModel": {
+      "itemType": "SportDiscipline",
+      "identityRole": "id",
+      "updates": "diffByIdentity",
+      "maxItems": 3
     }
   },
   "contexts": {
@@ -4216,6 +4235,34 @@
         },
         "selection": {
           "type": "SelectionState",
+          "readOnly": true
+        }
+      },
+      "methods": {
+        "requestAction": {
+          "parameters": [
+            "string",
+            "string",
+            "legacyMap"
+          ],
+          "result": "ActionResult"
+        }
+      }
+    },
+    "SportHubContext": {
+      "version": 1,
+      "extends": "SurfaceContext",
+      "fields": {
+        "rows": {
+          "type": "SportDisciplineModel",
+          "readOnly": true
+        },
+        "selection": {
+          "type": "SelectionState",
+          "readOnly": true
+        },
+        "description": {
+          "type": "string",
           "readOnly": true
         }
       },

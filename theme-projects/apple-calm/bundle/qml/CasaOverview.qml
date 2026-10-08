@@ -9,8 +9,8 @@ Panel {
     title:"Preferiti"
     subtitle:context.selection.anchorId === "casa.tabs" ? "Scegli la vista" : "Casa · Smart Life"
     source:context.source
-    rows:Format.casaDevices(context.casa.favourites)
-    emptyText:"Scegli i dispositivi in Impostazioni → Casa"
+    rows: { context.dataRevision; return Format.casaDevices(context.casa.favourites) }
+    emptyText:"Scegli i dispositivi in Servizi collegati → Casa"
     footer:context.feedback || context.casa.modeText
     rowAction:"details.open"
 }

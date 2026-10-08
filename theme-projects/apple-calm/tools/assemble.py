@@ -30,11 +30,11 @@ entry('Menu.qml','Panel','MenuContext','''title: "Menu"
 entry('DeviceInfo.qml','Panel','InfoContext','''title: "Informazioni dispositivo"
     tabs: context.tabs
     rows: { context.dataRevision; return Format.info(context.rows) }
-    footer: context.updatedAt === null ? "Informazioni non disponibili" : "Rilevato " + Format.stamp(context.updatedAt)''')
+    footer: Format.stamp(context.updatedAt) ? "Rilevato " + Format.stamp(context.updatedAt) : "Informazioni non disponibili"''')
 entry('Settings.qml','Panel','SettingsContext','''title: Format.settingTitle(context.sectionId)
     subtitle: context.description
     rows: { context.dataRevision; return Format.settings(context.rows) }
-    footer: [context.feedback,context.operation.message,context.draft && context.draft.editing ? "Anteprima · " + context.draft.themeId : ""].filter(Boolean).join(" · ")
+    footer: [context.feedback,context.operation.message,context.draft && context.draft.editing ? "Anteprima non salvata" : ""].filter((value,index,values) => value && values.indexOf(value) === index).join(" · ")
     rowAction: "settings.activate"''')
 entry('SportOverview.qml','Panel','PageContext','''pageMode: true
     title: context.sport ? context.sport.competitionName || "Calcio" : "Calcio"
@@ -70,7 +70,7 @@ entry('TeamDetail.qml','Panel','TeamContext','''title: context.team ? context.te
     footer: context.serieAOnly ? "Calendario Serie A" : "Calendario completo"
     rowAction: "details.open"''')
 entry('TeamPicker.qml','Panel','TeamPickerContext','''title: "Scegli squadra"
-    subtitle: "La selezione si salva con 5"
+    subtitle: "Scegli la squadra preferita"
     rows: { context.dataRevision; return Format.list(context.teams).map(x => Format.row(x.id,x.name,x.id === context.savedTeamId ? "Squadra preferita" : "", "", "football")) }
     rowAction: "details.open"''')
 for name,title,id in [('RacingCalendar.qml','Calendario gare','racing.calendar'),('RacingEvent.qml','Gran premio','racing.event.detail'),('RacingSession.qml','Sessione','racing.session.detail'),('RacingStandings.qml','Classifica motorsport','racing.standings'),('RacingLive.qml','Timing','racing.live')]:
@@ -88,8 +88,10 @@ entry('DriverDetail.qml','Panel','DriverContext','''title: context.driver ? cont
     footer: context.detailOperation.status === "pending" ? "Caricamento dettagli" : context.detailOperation.message''')
 for name,mode in [('NoticeBadge.qml','badge'),('NoticeSmall.qml','small'),('NoticeLarge.qml','large'),('NoticeUrgent.qml','urgent'),('NoticeInbox.qml','inbox'),('NoticeDetail.qml','detail')]:
  entry(name,'Notice','NotificationContext',f'mode: "{mode}"')
+# Theme-owned network geometry follows the reviewed core renderer sources.
+for output,source in {'NetworkRouter.qml': 'network-router.qml', 'NetworkWifi.qml': 'network-wifi.qml', 'NetworkPorts.qml': 'network-ports.qml', 'NetworkHeader.qml': 'NetworkHeader.qml', 'NetworkHistoryChart.qml': 'NetworkHistoryChart.qml', 'CasaLabel.qml': 'CasaLabel.qml'}.items():
+ (Q/output).write_text((ROOT.parents[1]/'dashboard/presentations'/source).read_text())
 registry=json.loads((PREP/'visual-registry.planned.json').read_text())
-registry['presentations'][-1]['name']='Impostazioni'
 (B/'visual-registry.json').write_text(json.dumps(registry,ensure_ascii=False,indent=2)+'\n')
 theme=json.loads((PREP/'theme.planned.json').read_text())
 for identifier,file in [('ui','Cantarell-VF.otf'),('numbers','LiberationSans-Regular.ttf'),('display','LiberationSans-Bold.ttf')]:

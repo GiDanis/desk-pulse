@@ -66,7 +66,7 @@ def read_corpus():
 
 class LegacyHarness:
     """Real Main/ThemeService and seeded domain services with denied network."""
-    KEPT=('familyId','viewIndex','overlay','overlayStack','menuIndex','settingsIndex','optionIndex','infoPage','infoIndex','sportView','sportMatchId','sportIndex','sportFocusedId','sportDetailPage','sportDetailOffset','sportTeamDetail','teamTab','teamIndex','teamFocusedId','teamPickerIndex','teamSerieAOnly','fantasyTeamIndex','fantasyPlayerIndex','racingViewNames','racingEventId','racingSessionId','racingDriverId','racingDriverLive','racingDriverPage','racingIndex','racingFocusedId','racingDetailPage','racingEventPage','racingInfoIndex','racingTimingPage','racingStandingTab','racingSettingsKind','alertIndex','alertFocusedId','alertScroll','selectedAlert')
+    KEPT=('sportListBookmarks','racingListBookmarks','settingsRouteSelections','sportHubSelectedId','racingRouteStates','familyId','viewIndex','overlay','overlayStack','menuIndex','settingsIndex','optionIndex','infoPage','infoIndex','sportView','sportMatchId','sportIndex','sportFocusedId','sportDetailPage','sportDetailOffset','sportTeamDetail','teamTab','teamIndex','teamFocusedId','teamPickerIndex','teamSerieAOnly','fantasyTeamIndex','fantasyPlayerIndex','racingViewNames','racingEventId','racingSessionId','racingDriverId','racingDriverLive','racingDriverPage','racingIndex','racingFocusedId','racingDetailPage','racingEventPage','racingInfoIndex','racingTimingPage','racingStandingTab','racingSettingsKind','alertIndex','alertFocusedId','alertScroll','selectedAlert')
     def __init__(self,base,profile):
         from PySide6.QtCore import QObject,Property,Signal,Slot,QSettings,QUrl,QDateTime,qInstallMessageHandler
         from PySide6.QtGui import QGuiApplication,QWindow
@@ -324,7 +324,7 @@ class LegacyHarness:
     def assert_surface(self,case):
         from PySide6.QtCore import QObject
         from theme_test_support import as_value
-        sid=case['surfaceId'];names={'home.now':'homeNow','home.clock':'homeClock','home.day':'homeDay','weather.now':'weatherNow','weather.forecast':'weatherForecast','account.usage':'accountPanel','sport.overview':'sportPanel','sport.team':'sportTeamPanel','racing.overview':'racingPanel','casa.overview':'casaOverview','casa.devices':'casaDevices','network.overview':'networkOverview','network.devices':'networkDevices','alerts.badge':'unreadAlertsBadge','alerts.banner.small':'eventBanner','alerts.banner.large':'eventLargeBanner','alerts.urgent':'eventUrgent','alerts.inbox':'alertsInbox','alerts.detail':'alertDetail'}
+        sid=case['surfaceId'];names={'home.now':'homeNow','home.clock':'homeClock','home.day':'homeDay','weather.now':'weatherNow','weather.forecast':'weatherForecast','account.usage':'accountPanel','sport.hub':'sportHub','sport.overview':'sportPanel','sport.team':'sportTeamPanel','racing.overview':'racingPanel','casa.overview':'casaOverview','casa.devices':'casaDevices','network.overview':'networkOverview','network.devices':'networkDevices','alerts.badge':'unreadAlertsBadge','alerts.banner.small':'eventBanner','alerts.banner.large':'eventLargeBanner','alerts.urgent':'eventUrgent','alerts.inbox':'alertsInbox','alerts.detail':'alertDetail'}
         if sid in names:
             obj=self.root.findChild(QObject,names[sid]);assert obj is not None and obj.property('readiness')=='ready',(sid,'not ready')
             item=as_value(obj.property('currentItem'));assert item is not None,(sid,'no renderer')

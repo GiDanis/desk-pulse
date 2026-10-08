@@ -10,5 +10,5 @@ Panel {
     title: "Informazioni dispositivo"
     tabs: context.tabs
     rows: { context.dataRevision; return Format.info(context.rows) }
-    footer: context.updatedAt === null ? "Informazioni non disponibili" : "Rilevato " + Format.stamp(context.updatedAt)
+    footer: Format.stamp(context.updatedAt) ? "Rilevato " + Format.stamp(context.updatedAt) : "Informazioni non disponibili"
 }

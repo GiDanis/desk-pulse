@@ -9,7 +9,7 @@ Panel {
     title:"Dispositivi"
     subtitle:context.selection.anchorId === "casa.tabs" ? "Scegli la vista" : "Casa · Smart Life"
     source:context.source
-    rows:Format.casaDevices(context.casa.devices)
+    rows: { context.dataRevision; return Format.casaDevices(context.casa.devices) }
     emptyText:"Nessun dispositivo disponibile"
     footer:context.feedback || context.casa.modeText
     rowAction:"details.open"
