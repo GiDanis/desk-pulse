@@ -125,7 +125,7 @@ class CasaService(QObject):
                 self._timer.start()
                 # One bounded initial discovery; never a recurring unknown-quota poll.
                 if self.client and not self._snapshot["checkedAt"]:
-                    QTimer.singleShot(0, self.refresh)
+                    QTimer.singleShot(0, lambda: self.refresh())
                 elif self._automatic():
                     self._next = self.monotonic()
 

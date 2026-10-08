@@ -105,13 +105,19 @@ class _Worker(QRunnable):
                 except (OSError, ValueError):
                     # Valid network data remains usable even on a full disk.
                     self.cache_error = "Cache non salvata"
-            self.signals.finished.emit(value, None)
         except Exception as error:
-            self.signals.finished.emit(None, error)
+            value, failure = None, error
+        else:
+            failure = None
+        try:
+            self.signals.finished.emit(value, failure)
+        except RuntimeError:
+            pass  # Qt receivers can already be gone during application shutdown.
 
 
 class SportService(QObject):
     changed = Signal()
+    refreshFinished = Signal(bool, str)
     eventsChanged = Signal(object)
 
     def __init__(
@@ -186,14 +192,14 @@ class SportService(QObject):
         self._closed = False
         self._timer = QTimer(self)
         self._timer.setSingleShot(True)
-        self._timer.timeout.connect(self.refresh)
+        self._timer.timeout.connect(lambda: self.refresh())
         # Reevaluate Live freshness even during a stalled worker/backoff.
         self._age_timer = QTimer(self)
         self._age_timer.setInterval(15000)
         self._age_timer.timeout.connect(self._age_changed)
         self._age_timer.start()
         if auto_refresh:
-            QTimer.singleShot(0, self.refresh)
+            QTimer.singleShot(0, lambda: self.refresh())
 
     def _age_changed(self):
         self.changed.emit()
@@ -366,10 +372,10 @@ class SportService(QObject):
             error=self._error,
         )
 
-    @Slot()
+    @Slot(result=bool)
     def refresh(self, detail_only=False):
         if self._closed or self._worker:
-            return
+            return False
         now = time.time()
         current = season_for(now)
         if current != self._seasons[0]:
@@ -406,14 +412,15 @@ class SportService(QObject):
         self._worker = worker
         QThreadPool.globalInstance().start(worker)
         self.changed.emit()
+        return True
 
-    @Slot()
+    @Slot(result=bool)
     def refreshManual(self):
-        if time.monotonic() - self._last_manual < 30:
-            return
+        if self._closed or self._worker or time.monotonic() - self._last_manual < 30:
+            return False
         self._last_manual = time.monotonic()
         self._last_full = 0
-        self.refresh()
+        return self.refresh()
 
     @Slot(str)
     def selectMatch(self, identity):
@@ -475,6 +482,8 @@ class SportService(QObject):
         self._sync_fantasy()
         self.changed.emit()
         self._publish_events()
+        self.refreshFinished.emit(bool(snapshot) and not cache_error,
+                                  "Dati acquisiti · cache non salvata" if snapshot and cache_error else self._error)
         if (
             self._snapshot
             and completed_selection != self._selected_id

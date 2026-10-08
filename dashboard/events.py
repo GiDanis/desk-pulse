@@ -49,6 +49,7 @@ class _AlertWorker(QRunnable):
 
 class EventService(QObject):
     changed = Signal()
+    refreshFinished = Signal(bool, str)
 
     def __init__(self, *, path: Path | str | None = None, auto_refresh: bool = True) -> None:
         super().__init__()
@@ -105,10 +106,10 @@ class EventService(QObject):
 
         self._poll_timer = QTimer(self)
         self._poll_timer.setInterval(30 * 60_000)
-        self._poll_timer.timeout.connect(self.refresh_weather_alerts)
+        self._poll_timer.timeout.connect(lambda: self.refresh_weather_alerts())
         if auto_refresh:
             self._poll_timer.start()
-            QTimer.singleShot(0, self.refresh_weather_alerts)
+            QTimer.singleShot(0, lambda: self.refresh_weather_alerts())
         self._tick()
 
     def set_quiet(self, enabled: bool, start: int, end: int) -> None:
@@ -312,20 +313,25 @@ class EventService(QObject):
             }]
         self.publish_snapshot("demo", values)
 
-    @Slot()
-    def refresh_weather_alerts(self) -> None:
-        if self._in_flight:
-            return
+    @Slot(result=bool)
+    def refresh_weather_alerts(self) -> bool:
+        if getattr(self, "_closed", False) or self._in_flight:
+            return False
         self._in_flight = True
         worker = _AlertWorker(self._alert_provider)
         worker.signals.finished.connect(self._on_weather_finished)
         self._worker = worker
         QThreadPool.globalInstance().start(worker)
+        return True
 
     @Slot(object, object)
     def _on_weather_finished(self, result: object, error: object) -> None:
+        if getattr(self, "_closed", False):
+            return
         self._in_flight = False
         self._worker = None
+        ok = False
+        message = str(error or "Bollettino non aggiornato")[:100]
         if isinstance(result, BulletinSnapshot):
             try:
                 if result.key < self._engine.source_revision("weather-alert"):
@@ -334,16 +340,20 @@ class EventService(QObject):
                 self._source_status = "aggiornata · bollettino invariato" if result.unchanged else "aggiornata"
                 if result.cache_error:
                     self._source_status += " · cache non salvata"
+                ok = not result.cache_error
+                message = "Bollettino acquisito · cache non salvata" if result.cache_error else "Bollettino controllato"
                 self._source_checked_at = result.checked_at
                 self._source_fetched_at = result.fetched_at
                 self._source_from_cache = False
                 self._source_bulletin_key = result.key
             except (ValueError, KeyError) as exc:
                 self._source_status = f"errore: {exc}"
+                message = str(exc)[:100]
         else:
             prefix = "cache · " if self._source_from_cache else ""
             self._source_status = f"{prefix}non aggiornata: {str(error or 'errore')[:80]}"
         self._tick()
+        self.refreshFinished.emit(ok, message)
 
     def close(self) -> None:
         self._closed = True

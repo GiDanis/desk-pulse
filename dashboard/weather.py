@@ -11,6 +11,8 @@ import json
 import math
 import os
 import tempfile
+import time
+from threading import Event
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -28,6 +30,7 @@ LONGITUDE = 14.57070
 TIMEZONE = "Europe/Rome"
 REFRESH_INTERVAL_MS = 15 * 60 * 1000
 REQUEST_TIMEOUT_SECONDS = 12
+MAX_AGE_SECONDS = 30 * 60
 API_URL = "https://api.open-meteo.com/v1/forecast"
 
 WEEKDAYS_IT = (
@@ -66,7 +69,7 @@ WEATHER_CODES_IT = {
 
 
 def _number(value: Any, decimals: int = 0, suffix: str = "") -> str:
-    if not isinstance(value, (int, float)) or isinstance(value, bool):
+    if _finite(value) is None:
         return "—"
     return f"{value:.{decimals}f}{suffix}"
 
@@ -89,7 +92,7 @@ def _rain_value(hourly, current_time):
 def _weather_description(code: Any) -> str:
     try:
         return WEATHER_CODES_IT.get(int(code), "Condizioni variabili")
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         return "Condizioni non disponibili"
 
 
@@ -97,7 +100,7 @@ def _wind_direction(degrees: Any) -> str:
     try:
         directions = ("N", "NE", "E", "SE", "S", "SO", "O", "NO")
         return directions[round(float(degrees) / 45) % 8]
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         return "—"
 
 
@@ -111,7 +114,7 @@ def _nearest_precipitation_probability(hourly: dict[str, Any], current_time: str
         candidates = [
             (abs((datetime.fromisoformat(stamp) - current).total_seconds()), value)
             for stamp, value in zip(times, probabilities)
-            if isinstance(stamp, str) and isinstance(value, (int, float))
+            if isinstance(stamp, str) and _finite(value) is not None
         ]
         return _number(min(candidates, key=lambda item: item[0])[1], suffix="%") if candidates else "—"
     except (TypeError, ValueError):
@@ -125,6 +128,12 @@ def normalize_response(payload: dict[str, Any]) -> dict[str, Any]:
     hourly = payload.get("hourly", {})
     if not isinstance(current, dict) or not isinstance(daily, dict):
         raise ValueError("Risposta meteo incompleta")
+    if not isinstance(hourly, dict) or _finite(current.get("temperature_2m")) is None or _finite(current.get("weather_code")) is None:
+        raise ValueError("Condizioni meteo non valide")
+    try:
+        datetime.fromisoformat(current["time"])
+    except (KeyError, TypeError, ValueError):
+        raise ValueError("Data meteo non valida") from None
 
     code = current.get("weather_code")
     direction = _wind_direction(current.get("wind_direction_10m"))
@@ -139,6 +148,8 @@ def normalize_response(payload: dict[str, Any]) -> dict[str, Any]:
         for index, date_text in enumerate(dates[:3]):
             try:
                 day = datetime.fromisoformat(date_text).weekday()
+                if any(_finite(value) is None for value in (highs[index], lows[index], codes[index])):
+                    raise ValueError("Previsioni giornaliere non valide")
                 forecast.append({
                     "day": "OGGI" if index == 0 else WEEKDAYS_IT[day],
                     "date": date_text,
@@ -203,7 +214,7 @@ def fetch_weather() -> dict[str, Any]:
     }
     request = Request(
         f"{API_URL}?{urlencode(parameters)}",
-        headers={"User-Agent": "SmartPC-Dashboard/0.2 (Open-Meteo client)"},
+        headers={"User-Agent": "SmartPC-Dashboard (Open-Meteo client)"},
     )
     try:
         with urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
@@ -223,25 +234,77 @@ class _WorkerSignals(QObject):
 
 
 class _WeatherWorker(QRunnable):
-    def __init__(self) -> None:
+    def __init__(self, cache_path: Path) -> None:
         super().__init__()
         self.signals = _WorkerSignals()
+        self.cache_path = cache_path
+        self.cancelled = Event()
+        self.fetched_at = 0.0
+        self.cache_error = ""
 
     @Slot()
     def run(self) -> None:
         try:
             snapshot, error = fetch_weather(), None
+            self.fetched_at = time.time()
+            if self.cancelled.is_set():
+                return
+            try:
+                save_weather_cache(self.cache_path, snapshot, self.fetched_at)
+            except (OSError, ValueError):
+                self.cache_error = "Dati acquisiti · cache non salvata; ripristino offline non garantito"
         except Exception as exc:  # The worker reports errors to the UI service.
             snapshot, error = None, str(exc)
         try:
-            self.signals.finished.emit(snapshot, error)
+            if not self.cancelled.is_set():
+                self.signals.finished.emit(snapshot, error)
         except RuntimeError:
             # The Qt receiver can disappear while a network request finishes at shutdown.
             pass
 
 
+def save_weather_cache(path: Path, snapshot: dict, fetched_at: float) -> None:
+    """Persist a complete snapshot atomically in the acquisition worker."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temporary = tempfile.mkstemp(prefix="weather-", suffix=".json", dir=path.parent)
+    try:
+        with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
+            json.dump({"snapshot": snapshot, "fetched_at": fetched_at}, stream, allow_nan=False)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, path)
+        directory = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+
+
+def valid_cached_snapshot(snapshot: object) -> bool:
+    if not isinstance(snapshot, dict) or not isinstance(snapshot.get("temperature"), str):
+        return False
+    forecast = snapshot.get("forecast")
+    if not isinstance(forecast, list) or len(forecast) != 3:
+        return False
+    try:
+        datetime.fromisoformat(snapshot["weather_time"])
+        for day in forecast:
+            if not isinstance(day, dict) or _finite(day.get("code")) is None:
+                return False
+            datetime.fromisoformat(day["date"])
+            if not all(isinstance(day.get(key), str) for key in ("day", "high", "low", "description")):
+                return False
+    except (KeyError, TypeError, ValueError):
+        return False
+    return True
+
+
 class WeatherService(QObject):
     changed = Signal()
+    refreshFinished = Signal(bool, str)
 
     def __init__(self, auto_refresh: bool = True) -> None:
         super().__init__()
@@ -250,16 +313,23 @@ class WeatherService(QObject):
         self._from_cache = False
         self._in_flight = False
         self._last_error = ""
+        self._cache_error = ""
+        self._closed = False
         self._worker: _WeatherWorker | None = None
         self._cache_path = self._get_cache_path()
         self._load_cache()
 
         self._timer = QTimer(self)
         self._timer.setInterval(REFRESH_INTERVAL_MS)
-        self._timer.timeout.connect(self.refresh)
+        self._timer.timeout.connect(lambda: self.refresh())
+        self._age_timer = QTimer(self)
+        self._age_timer.setInterval(60_000)
+        self._age_timer.timeout.connect(self._age_changed)
+        self._age_timer.start()
+        self._published_status = self.moduleState["status"]
         if auto_refresh:
             self._timer.start()
-            QTimer.singleShot(0, self.refresh)
+            QTimer.singleShot(0, lambda: self.refresh())
 
     @staticmethod
     def _get_cache_path() -> Path:
@@ -272,32 +342,19 @@ class WeatherService(QObject):
             cached = json.loads(self._cache_path.read_text(encoding="utf-8"))
             snapshot = cached.get("snapshot")
             fetched_at = cached.get("fetched_at")
-            if (isinstance(snapshot, dict)
-                    and isinstance(snapshot.get("temperature"), str)
-                    and isinstance(snapshot.get("forecast"), list)
-                    and len(snapshot["forecast"]) == 3
-                    and all(isinstance(day, dict) for day in snapshot["forecast"])
-                    and isinstance(fetched_at, (int, float))):
+            if (valid_cached_snapshot(snapshot) and _finite(fetched_at) is not None
+                    and 0 < fetched_at <= time.time() + 300):
                 self._snapshot = snapshot
                 self._fetched_at = fetched_at
                 self._from_cache = True
         except (OSError, ValueError, AttributeError):
             pass
 
-    def _save_cache(self) -> None:
-        try:
-            self._cache_path.parent.mkdir(parents=True, exist_ok=True)
-            descriptor, temp_name = tempfile.mkstemp(prefix="weather-", suffix=".json", dir=self._cache_path.parent)
-            try:
-                with os.fdopen(descriptor, "w", encoding="utf-8") as cache_file:
-                    json.dump({"snapshot": self._snapshot, "fetched_at": self._fetched_at}, cache_file)
-                os.replace(temp_name, self._cache_path)
-            finally:
-                if os.path.exists(temp_name):
-                    os.unlink(temp_name)
-        except OSError:
-            # The live dashboard remains useful even when persistent cache is unavailable.
-            pass
+    def _age_changed(self) -> None:
+        status = self.moduleState["status"]
+        if not self._closed and status != self._published_status:
+            self._published_status = status
+            self.changed.emit()
 
     @Property("QVariantMap", notify=changed)
     def moduleState(self) -> dict[str, Any]:
@@ -306,7 +363,7 @@ class WeatherService(QObject):
             status = "offline" if self._snapshot else "error"
         elif self._in_flight:
             status = "updating"
-        elif self._snapshot and self._from_cache:
+        elif self._snapshot and (self._from_cache or time.time() - self._fetched_at > MAX_AGE_SECONDS or self._fetched_at > time.time() + 300):
             status = "stale"
         elif self._snapshot:
             status = "active"
@@ -314,31 +371,50 @@ class WeatherService(QObject):
             status = "unavailable"
         return module_state(
             status=status, source="Open-Meteo", updated_at=self._fetched_at,
-            data=self._snapshot, error=self._last_error,
+            data=dict(self._snapshot, cacheError=self._cache_error) if self._snapshot else {},
+            error=self._last_error or self._cache_error,
         )
 
-    @Slot()
-    def refresh(self) -> None:
-        if self._in_flight:
-            return
+    @Slot(result=bool)
+    def refresh(self) -> bool:
+        if self._closed or self._in_flight:
+            return False
         self._in_flight = True
         self._last_error = ""
-        worker = _WeatherWorker()
+        worker = _WeatherWorker(self._cache_path)
         worker.signals.finished.connect(self._on_finished)
         self._worker = worker
         QThreadPool.globalInstance().start(worker)
         self.changed.emit()
+        return True
 
     @Slot(object, object)
     def _on_finished(self, snapshot: object, error: object) -> None:
+        if self._closed:
+            return
+        worker = self._worker
         self._in_flight = False
         self._worker = None
         if isinstance(snapshot, dict):
             self._snapshot = snapshot
-            self._fetched_at = datetime.now().astimezone().timestamp()
+            self._fetched_at = worker.fetched_at if worker else time.time()
             self._from_cache = False
             self._last_error = ""
-            self._save_cache()
+            self._cache_error = worker.cache_error if worker else ""
         else:
             self._last_error = str(error or "Errore meteo")
         self.changed.emit()
+        self._published_status = self.moduleState["status"]
+        self.refreshFinished.emit(isinstance(snapshot, dict) and not self._cache_error,
+                                  self._last_error or self._cache_error)
+
+    def close(self) -> None:
+        if self._closed:
+            return
+        self._closed = True
+        self._timer.stop()
+        self._age_timer.stop()
+        if self._worker:
+            self._worker.cancelled.set()
+            self._worker.signals.finished.disconnect(self._on_finished)
+        self._in_flight = False

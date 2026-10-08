@@ -76,6 +76,7 @@ class DashboardState(QObject):
     casaRefreshFinished = Signal(bool, str)
     systemChanged = Signal()
     settingsChanged = Signal()
+    sourceRefreshFinished = Signal(str, bool, str)
     modulesChanged = Signal()
     accountThresholdsChanged = Signal()
     eventChanged = Signal()
@@ -90,6 +91,7 @@ class DashboardState(QObject):
         self._events = events
         self._sport = sport
         self._racing = racing or {}
+        self._source_refresh_states: dict[str, dict] = {}
         self._network = network
         if network is not None:
             network.changed.connect(self.networkChanged)
@@ -123,10 +125,23 @@ class DashboardState(QObject):
             self._appearance = None
             self._theme_recovery_error = str(error)
         self._last_source_refresh: dict[str, float] = {}
+        providers = {"meteo": weather, "account": account, "alerts": events,
+                     "sport": sport, "casa": casa, "network": network, **self._racing}
+        for source, provider in providers.items():
+            if provider is not None and hasattr(provider, "refreshFinished"):
+                provider.refreshFinished.connect(
+                    lambda ok, message, name=source: self._finish_source_refresh(name, ok, message))
         self._module_visible = {
             module_id: _saved_bool(self._settings, f"moduleVisible/{module_id}")
             for module_id in TOGGLEABLE_MODULES
         }
+        # Keep provider keys for rollback; the macroarea has an independent gate.
+        self._sport_group_visible = _saved_bool(self._settings, "navigation/sportVisible",
+                                              any(self._module_visible[k] for k in ("sport", "f1", "motogp")))
+        if not self._settings.contains("navigation/schemaVersion"):
+            self._settings.setValue("navigation/sportVisible", self._sport_group_visible)
+            self._settings.setValue("navigation/schemaVersion", 1)
+            self._settings.sync()
         saved = self._settings.value("nightMode", "auto")
         self._night_mode = saved if saved in ("auto", "day", "night") else "auto"
         brightness_mode = self._settings.value("brightnessMode", "auto")
@@ -193,29 +208,56 @@ class DashboardState(QObject):
 
     @Slot(str, result=bool)
     def refreshSource(self, source: str) -> bool:
-        """Manual refresh keeps provider guards and adds a 30-second cooldown."""
+        """Acceptance and completion are distinct; keep each provider's guards."""
         now = time.monotonic()
-        if source == 'network':
-            return bool(self._network and self._network.refresh())
-        if source == 'casa':
-            return bool(self._casa and self._casa.refresh())
-        if self._demo or now - self._last_source_refresh.get(source, -60) < 30:
+        if self._demo:
+            self._set_source_refresh(source, "refused", "Demo · nessuna richiesta esterna")
             return False
-        action = {
-            "meteo": self._weather.refresh,
-            "account": self._account.refresh,
-        }.get(source)
-        if source == "alerts" and self._events:
-            action = self._events.refresh_weather_alerts
-        elif source == "sport" and self._sport:
-            action = self._sport.refreshManual
-        elif source in self._racing:
-            action = lambda: self._racing[source].adjust(2, 1)
-        if action:
+        current = self._source_refresh_states.get(source, {})
+        if current.get("status") in ("running", "queued"):
+            self._set_source_refresh(source, current["status"], "Aggiornamento già in corso")
+            return False
+        if source not in ("casa", "network") and now - self._last_source_refresh.get(source, -60) < 30:
+            self._set_source_refresh(source, "cooldown", "Attendi 30 secondi prima di riprovare")
+            return False
+        providers = {"meteo": self._weather, "account": self._account, "alerts": self._events,
+                     "sport": self._sport, "casa": self._casa, "network": self._network, **self._racing}
+        provider = providers.get(source)
+        if provider is None:
+            self._set_source_refresh(source, "unavailable", "Fonte non disponibile")
+            return False
+        action = (provider.refresh_weather_alerts if source == "alerts" else
+                  provider.refreshManual if source == "sport" or source in self._racing else provider.refresh)
+        self._set_source_refresh(source, "running", "Rilettura dal PC…" if source == "account" else "Aggiornamento in corso…")
+        try:
+            accepted = bool(action())
+        except (OSError, RuntimeError):
+            accepted = False
+        if accepted:
             self._last_source_refresh[source] = now
-            action()
+            if source == "network" and getattr(provider, "_pending_refresh", False):
+                self._set_source_refresh(source, "queued", "Aggiornamento accodato allo storico in corso")
             return True
+        busy = bool(getattr(provider, "_worker", None) or getattr(provider, "_in_flight", False))
+        message = "Aggiornamento già in corso" if busy else "Richiesta non accettata · verifica stato e attesa della fonte"
+        self._set_source_refresh(source, "refused", message)
         return False
+
+    @Property("QVariantMap", notify=settingsChanged)
+    def sourceRefreshStates(self):
+        return {name: value.copy() for name, value in self._source_refresh_states.items()}
+
+    def _set_source_refresh(self, source, status, message):
+        self._source_refresh_states[source] = {"status": status, "message": message,
+                                               "updatedAt": time.time()}
+        self.settingsChanged.emit()
+
+    def _finish_source_refresh(self, source, ok, message):
+        if self._source_refresh_states.get(source, {}).get("status") not in ("running", "queued"):
+            return  # Scheduled acquisitions do not claim completion of a manual operation.
+        self._set_source_refresh(source, "succeeded" if ok else "failed",
+                                 message or ("Dati acquisiti e salvati" if ok else "Aggiornamento non riuscito · ultimi dati conservati"))
+        self.sourceRefreshFinished.emit(source, ok, message)
 
     @Property('QVariantMap', notify=casaChanged)
     def casaState(self):
@@ -436,8 +478,22 @@ class DashboardState(QObject):
         return ["oggi"] + [module_id for module_id in TOGGLEABLE_MODULES
                            if self._module_visible[module_id] and (module_id != "sport" or self._sport is not None) and (module_id not in ("f1","motogp") or module_id in self._racing) and (module_id != "casa" or self.casaAvailable) and (module_id != "network" or self.networkAvailable)]
 
+    @Property(bool, notify=modulesChanged)
+    def sportGroupVisible(self):
+        return self._sport_group_visible
+
+    @Property("QVariantMap", notify=modulesChanged)
+    def moduleVisibility(self):
+        return {**self._module_visible, "sports": self._sport_group_visible}
+
     @Slot(str)
     def toggleModuleVisibility(self, module_id: str) -> None:
+        if module_id == "sports":
+            self._sport_group_visible = not self._sport_group_visible
+            self._settings.setValue("navigation/sportVisible", self._sport_group_visible)
+            self._settings.sync()
+            self.settingsChanged.emit()
+            return
         if module_id not in TOGGLEABLE_MODULES:
             return
         self._module_visible[module_id] = not self._module_visible[module_id]

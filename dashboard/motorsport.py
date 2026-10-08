@@ -106,13 +106,19 @@ class Worker(QRunnable):
                         path.unlink()
             except (OSError, ValueError):
                 self.cache_error = "Cache non salvata"
-            self.signals.finished.emit(data, None)
         except Exception as error:
-            self.signals.finished.emit(None, error)
+            data, failure = None, error
+        else:
+            failure = None
+        try:
+            self.signals.finished.emit(data, failure)
+        except RuntimeError:
+            pass  # Do not report a second failure through a deleted Qt signal.
 
 
 class MotorsportService(QObject):
     changed = Signal()
+    refreshFinished = Signal(bool, str)
     eventsChanged = Signal(object)
 
     def __init__(self, kind, *, auto_refresh=True, cache_directory=None, initial=None):
@@ -161,7 +167,7 @@ class MotorsportService(QObject):
             self._timing.changed.connect(self.changed)
         self._timer = QTimer(self)
         self._timer.setSingleShot(True)
-        self._timer.timeout.connect(self.refresh)
+        self._timer.timeout.connect(lambda: self.refresh())
         self._age = QTimer(self)
         self._age.setInterval(1000 if kind == "f1" else 15000)
         self._age.timeout.connect(self._tick)
@@ -173,7 +179,7 @@ class MotorsportService(QObject):
         self._view_at = 0
         self._view_from_cache = None
         if auto_refresh:
-            QTimer.singleShot(0, self.refresh)
+            QTimer.singleShot(0, lambda: self.refresh())
 
     def _cache_path(self):
         return self._directory / (self.kind + "-" + str(self._year) + ".json")
@@ -331,10 +337,10 @@ class MotorsportService(QObject):
             error=self._error,
         )
 
-    @Slot()
+    @Slot(result=bool)
     def refresh(self, detail_only=False, force=False):
         if self._closed or self._worker:
-            return
+            return False
         near = self._near()
         full = not detail_only and (
             not self._snapshot
@@ -357,6 +363,15 @@ class MotorsportService(QObject):
         self._worker = worker
         QThreadPool.globalInstance().start(worker)
         self.changed.emit()
+        return True
+
+    @Slot(result=bool)
+    def refreshManual(self):
+        if self._closed or self._worker or time.monotonic() - self._last_manual < 30:
+            return False
+        self._last_manual = time.monotonic()
+        self._last_full = 0
+        return self.refresh(force=True)
 
     @Slot()
     def refreshDetails(self):
@@ -400,6 +415,8 @@ class MotorsportService(QObject):
         self.changed.emit()
         self._publish_home()
         self._tick()
+        self.refreshFinished.emit(bool(data) and not self._cache_error,
+                                  "Dati acquisiti · cache non salvata" if data and self._cache_error else self._error)
         if (
             worker.selection != self._selection or worker.driver_id != self._driver_id
         ) and self._selection[0]:
@@ -480,10 +497,8 @@ class MotorsportService(QObject):
             self._settings.setValue("motorsport/" + self.kind + "/home", self._home)
             self.changed.emit()
             self._publish_home()
-        elif row == 2 and time.monotonic() - self._last_manual >= 30:
-            self._last_manual = time.monotonic()
-            self._last_full = 0
-            self.refresh(force=True)
+        elif row == 2:
+            self.refreshManual()
         self._settings.sync()
 
     def close(self):

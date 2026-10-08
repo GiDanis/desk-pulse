@@ -81,7 +81,7 @@ class NetworkService(QObject):
             if auto_refresh:
                 self._timer.start()
                 if self.client and self._snapshot['preferences']['polling']:
-                    QTimer.singleShot(0, self.refresh)
+                    QTimer.singleShot(0, lambda: self.refresh())
 
     def _configure(self):
         client = IliadboxClient(load_config(self.config_path), transport=self.transport, cancelled=self._stop.is_set)

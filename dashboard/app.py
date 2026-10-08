@@ -78,6 +78,8 @@ def main() -> int:
             trace.attach(engine.rootObjects()[0])
         result = application.exec()
     finally:
+        weather.close()
+        account.close()
         network.close()
         casa.close()
         if state.appearance:
