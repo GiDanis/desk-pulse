@@ -312,14 +312,6 @@ module smartpc_base_style1_deluxe() {
         rounded_box(case_w, case_d, base_h, corner_r);
         base_common_cutouts();
 
-        // Front Face: Iconic Perimeter Shadow Line (Bevel)
-        translate([case_w/2, 0, base_h/2]) {
-            translate([0, 0.4, 0])
-                difference() {
-                    rounded_box(case_w - 3.0, 3*wall_t, base_h - 3.0, 1.8);
-                    rounded_box(case_w - 4.4, 3*wall_t + 2, base_h - 4.4, 1.2);
-                }
-        }
 
         // Front Face: Apple Logo / Vintage Rainbow Plaque Recess (Left, blind relief depth 0.8mm -> 2.4mm wall remaining)
         translate([11.0, 0.4, 3.6]) {
@@ -339,18 +331,19 @@ module smartpc_base_style1_deluxe() {
         }
 
         // Deluxe SuperDrive Bay Assembly (Upper Right)
+        // Spacing engineered with solid bridges >= 1.6mm (Eliminates Flag A: 0.30mm)
         translate([60.0, 0, 12.4]) {
-            front_cut(w=44.0, h=2.2, depth=1.4);
-            translate([-4.0, 0, 0]) front_cut(w=34.0, h=0.7, depth=1.8); // 1.4mm wall remaining (> 1.2mm)
+            front_cut(w=36.0, h=2.0, depth=1.0);
+            translate([-2.0, 0, 0]) front_cut(w=28.0, h=0.7, depth=1.2);
             // Tactile Eject Button with Thumb Dish
-            translate([24.5, 0, 0]) {
-                front_cut(w=4.4, h=2.8, depth=1.5);
-                translate([0, 0.4, 0]) rotate([90, 0, 0]) cylinder(d=1.9, h=1.0, center=true);
+            translate([22.0, 0, 0]) {
+                front_cut(w=3.2, h=2.2, depth=1.0);
+                translate([0, 0.4, 0]) rotate([90, 0, 0]) cylinder(d=1.6, h=0.8, center=true);
             }
             // Drive Activity LED Lens
-            translate([28.2, 0, 0]) front_cut(w=1.8, h=1.2, depth=1.0);
+            translate([26.0, 0, 0]) front_cut(w=1.6, h=1.2, depth=0.8);
             // Emergency Manual Eject Pinhole
-            translate([30.5, 0, 0]) rotate([90, 0, 0]) cylinder(d=1.1, h=2.5, center=true);
+            translate([29.2, 0, 0]) rotate([90, 0, 0]) cylinder(d=1.2, h=2.0, center=true);
         }
 
         // Typographic Nameplate Recess ("SmartPC / 30")
@@ -362,31 +355,31 @@ module smartpc_base_style1_deluxe() {
                 horizontal_capsule_cut(length=60.0, height=1.2, depth=1.4);
         }
 
-        // Flanks: Ergonomic Recessed Carry Scoops with 4 Precision Angled Louvers
-        // Scoop depth 0.8mm into 2.4mm wall -> 1.6mm wall remaining (> 1.5mm)
-        // Louver fin thickness = 1.3mm, borders > 1.5mm everywhere
+        // Flanks: Ergonomic Recessed Carry Scoops with 3 Robust Angled Louvers
+        // Scoop depth 0.6mm into 2.4mm wall -> 1.8mm wall remaining (> 1.5mm)
+        // Louver fin thickness = 1.75mm solid resin (> 1.5mm DFM standard, Eliminates Flag B: 0.60mm)
         // Left Flank
-        translate([0.4, case_d/2 - 2.0, 8.5])
-            side_carry_scoop(length_y=46.0, height_z=12.0, depth_x=0.8, r=2.5);
-        for (i = [0 : 3]) {
-            translate([0, case_d/2 - 2.0, 4.8 + i * 2.5])
+        translate([0.3, case_d/2 - 2.0, 8.5])
+            side_carry_scoop(length_y=46.0, height_z=12.0, depth_x=0.6, r=2.5);
+        for (i = [-1, 0, 1]) {
+            translate([0, case_d/2 - 2.0, 8.5 + i * 3.6])
                 rotate([0, 35, 0])
                 rotate([0, 90, 0])
                 hull() {
-                    translate([0, -18.0]) cylinder(d=1.2, h=3*wall_t, center=true);
-                    translate([0,  18.0]) cylinder(d=1.2, h=3*wall_t, center=true);
+                    translate([0, -15.0]) cylinder(d=1.2, h=3*wall_t, center=true);
+                    translate([0,  15.0]) cylinder(d=1.2, h=3*wall_t, center=true);
                 }
         }
         // Right Flank
-        translate([case_w - 0.4, case_d/2 - 2.0, 8.5])
-            side_carry_scoop(length_y=46.0, height_z=12.0, depth_x=0.8, r=2.5);
-        for (i = [0 : 3]) {
-            translate([case_w, case_d/2 - 2.0, 4.8 + i * 2.5])
+        translate([case_w - 0.3, case_d/2 - 2.0, 8.5])
+            side_carry_scoop(length_y=46.0, height_z=12.0, depth_x=0.6, r=2.5);
+        for (i = [-1, 0, 1]) {
+            translate([case_w, case_d/2 - 2.0, 8.5 + i * 3.6])
                 rotate([0, -35, 0])
                 rotate([0, 90, 0])
                 hull() {
-                    translate([0, -18.0]) cylinder(d=1.2, h=3*wall_t, center=true);
-                    translate([0,  18.0]) cylinder(d=1.2, h=3*wall_t, center=true);
+                    translate([0, -15.0]) cylinder(d=1.2, h=3*wall_t, center=true);
+                    translate([0,  15.0]) cylinder(d=1.2, h=3*wall_t, center=true);
                 }
         }
     }
