@@ -236,10 +236,11 @@ module base_internal_pillars() {
         }
     }
 
-    // Lid screw pillars (OD 6.0mm, ID 2.8mm -> wall thickness 1.6mm > 1.2mm)
+    // Lid screw pillars (OD 8.8mm, ID 2.8mm, stops exactly at rebate shelf base_h - reb_depth)
+    // Solid 3.0mm wall fully encases 8.5mm foot pockets and eliminates 0.58mm thin floor warning (Cindy Flag A)
     for (pos = lid_posts) {
         difference() {
-            translate([pos[0], pos[1], floor_t]) cylinder(d=6.0, h=base_h - floor_t);
+            translate([pos[0], pos[1], floor_t]) cylinder(d=8.8, h=base_h - reb_depth - floor_t);
             translate([pos[0], pos[1], floor_t - 0.5]) cylinder(d=2.8, h=base_h + 1);
         }
     }
@@ -452,21 +453,21 @@ module smartpc_lid_incline6deg() {
 
         // 6. Upper Flank Ventilation Slats (2 matching slim louvers on each side, fin = 1.32mm)
         for (i = [0 : 1]) {
-            // Left Flank
+            // Left Flank (Cutter h=18.0mm cleanly penetrates 3.35mm wall, eliminates Cindy 0.32mm thin skin)
             translate([0, case_d/2 - 2.0, 4.2 + i * 3.0])
                 rotate([0, 35, 0])
                 rotate([0, 90, 0])
                 hull() {
-                    translate([0, -16.0]) cylinder(d=1.3, h=3*wall_t, center=true);
-                    translate([0,  16.0]) cylinder(d=1.3, h=3*wall_t, center=true);
+                    translate([0, -16.0]) cylinder(d=1.3, h=18.0, center=true);
+                    translate([0,  16.0]) cylinder(d=1.3, h=18.0, center=true);
                 }
             // Right Flank
             translate([case_w, case_d/2 - 2.0, 4.2 + i * 3.0])
                 rotate([0, -35, 0])
                 rotate([0, 90, 0])
                 hull() {
-                    translate([0, -16.0]) cylinder(d=1.3, h=3*wall_t, center=true);
-                    translate([0,  16.0]) cylinder(d=1.3, h=3*wall_t, center=true);
+                    translate([0, -16.0]) cylinder(d=1.3, h=18.0, center=true);
+                    translate([0,  16.0]) cylinder(d=1.3, h=18.0, center=true);
                 }
         }
 
@@ -474,8 +475,8 @@ module smartpc_lid_incline6deg() {
         translate([52.0, case_d, 2.4])
             rotate([90, 0, 0])
             hull() {
-                translate([-18.0, 0]) cylinder(d=1.4, h=3*wall_t, center=true);
-                translate([ 18.0, 0]) cylinder(d=1.4, h=3*wall_t, center=true);
+                translate([-18.0, 0]) cylinder(d=1.4, h=18.0, center=true);
+                translate([ 18.0, 0]) cylinder(d=1.4, h=18.0, center=true);
             }
 
         // 8. Blind Screw Pilot Holes for M2.5 (No holes on top surface!)
