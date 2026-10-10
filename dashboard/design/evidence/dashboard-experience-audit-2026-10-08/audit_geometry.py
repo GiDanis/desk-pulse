@@ -1,4 +1,4 @@
-"""Analysis-only: current Apple Calm geometry and screenshots, offline fixtures."""
+"""Analysis-only: current theme geometry and screenshots, offline fixtures."""
 import argparse
 import json
 from pathlib import Path
@@ -11,6 +11,7 @@ from theme_fixture_support import isolate_process, LegacyHarness, read_corpus
 parser = argparse.ArgumentParser()
 parser.add_argument('--palette', choices=['day', 'night'], default='night')
 parser.add_argument('--theme', choices=['apple', 'base', 'functional'], default='apple')
+parser.add_argument('--account-normalized-only', action='store_true')
 args = parser.parse_args()
 output = Path(__file__).parent / (args.theme + '-' + args.palette)
 output.mkdir(parents=True, exist_ok=True)
@@ -90,10 +91,18 @@ try:
     records, seen = [], set()
     for case in cases:
         sid = case['surfaceId']
+        if args.account_normalized_only and sid != 'account.usage':
+            continue
         if sid not in presentations or sid in seen:
             continue
         seen.add(sid)
         h.setup(case)
+        if args.account_normalized_only:
+            h.account.value['data'] = {'plan':'Fixture', 'windows':[
+                {'label':'5 ore', 'usedPercent':24, 'remainingPercent':76, 'windowDurationMins':300, 'resetsAt':h.now+3600},
+                {'label':'7 giorni', 'usedPercent':62, 'remainingPercent':38, 'windowDurationMins':10080, 'resetsAt':h.now+86400}],
+                'credits':{'unlimited':False, 'balance':'12'}, 'resetCredits':None}
+            h.account.changed.emit()
         h.wait_ready()
         h.pump(150)
         for expression in case['expectedExpressions']:
@@ -120,7 +129,8 @@ try:
                   'lastVisibleCardBottom': last, 'gapToRootBottom': None if last is None else round(root_box[1]+root_box[3]-last,2),
                   'gapBeforeBottomStatus': None if next_status is None else round(next_status-last,2),
                   'providerEffects': dict(h.effects)}
-        assert h.window.grabWindow().save(str(output / (sid + '.png')))
+        suffix = '-normalized' if args.account_normalized_only else ''
+        assert h.window.grabWindow().save(str(output / (sid + suffix + '.png')))
         records.append(record)
         print(sid, record['gapToRootBottom'], record['gapBeforeBottomStatus'], flush=True)
     assert not h.messages and not h.transport
@@ -129,9 +139,14 @@ try:
               'palette': args.palette, 'theme': args.theme, 'themeDigest': validation['digest'] if args.theme == 'apple' else None, 'apiFingerprint': contract.fingerprint,
               'records': records, 'qmlWarnings': h.messages, 'transportCalls': len(h.transport),
               'measurementLimit': 'Card bounds, not all semantic content or optical coverage; sparse/alert states need separate interpretation'}
-    (output / 'audit.json').write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n')
+    report['accountNormalizedFixture'] = args.account_normalized_only
+    report_name = 'audit-account-normalized.json' if args.account_normalized_only else 'audit.json'
+    (output / report_name).write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n')
     print('DONE', len(records), flush=True)
 finally:
     if h:
         h.close()
+        from PySide6.QtCore import QCoreApplication, QEvent
+        QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
+        QCoreApplication.processEvents()
     private.cleanup()

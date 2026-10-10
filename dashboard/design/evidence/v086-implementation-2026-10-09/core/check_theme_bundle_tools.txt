@@ -1,0 +1,129 @@
+E.E.EF.FE
+======================================================================
+ERROR: test_administration_respects_live_resource_leases (__main__.ToolTests.test_administration_respects_live_resource_leases)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle_tools.py", line 86, in test_administration_respects_live_resource_leases
+    revision=manager.import_bundle(EXAMPLE)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_deterministic_archive_and_source_preserved (__main__.ToolTests.test_deterministic_archive_and_source_preserved)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle_tools.py", line 112, in test_deterministic_archive_and_source_preserved
+    report1 = build_bundle(EXAMPLE, first); report2 = build_bundle(EXAMPLE, second)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_export_exact_installed_revision (__main__.ToolTests.test_export_exact_installed_revision)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle_tools.py", line 122, in test_export_exact_installed_revision
+    archive = self.base / 'original.smartpc-theme'; build_bundle(EXAMPLE, archive)
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_project_id_and_explicit_fallbacks (__main__.ToolTests.test_project_id_and_explicit_fallbacks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle_tools.py", line 24, in test_project_id_and_explicit_fallbacks
+    report = validate_project(project)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+FAIL: test_import_requires_real_preflight_and_does_not_apply (__main__.ToolTests.test_import_requires_real_preflight_and_does_not_apply)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle_tools.py", line 75, in test_import_requires_real_preflight_and_does_not_apply
+    self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+AssertionError: 1 != 0 : {
+  "reportVersion": 1,
+  "operation": "import",
+  "status": "invalid",
+  "issues": [
+    {
+      "code": "bundle.validation",
+      "message": "coverage: ogni superficie richiede renderer o fallback esplicito",
+      "phase": "validation",
+      "path": "coverage",
+      "pointer": "/coverage"
+    }
+  ]
+}
+
+
+======================================================================
+FAIL: test_offline_standalone_kit_validation_and_build (__main__.ToolTests.test_offline_standalone_kit_validation_and_build)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle_tools.py", line 61, in test_offline_standalone_kit_validation_and_build
+    self.assertEqual(value.returncode, 0, value.stdout + value.stderr)
+AssertionError: 1 != 0 : {
+  "reportVersion": 1,
+  "operation": "validate",
+  "status": "invalid",
+  "issues": [
+    {
+      "code": "bundle.validation",
+      "message": "coverage: ogni superficie richiede renderer o fallback esplicito",
+      "phase": "validation",
+      "path": "coverage",
+      "pointer": "/coverage"
+    }
+  ]
+}
+
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.710s
+
+FAILED (failures=2, errors=4)

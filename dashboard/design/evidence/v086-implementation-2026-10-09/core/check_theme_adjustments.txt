@@ -1,0 +1,88 @@
+E.FE
+======================================================================
+ERROR: test_disallowed_controls_cannot_modify_bundle_and_inherited_scale_removed (__main__.AdjustmentTests.test_disallowed_controls_cannot_modify_bundle_and_inherited_scale_removed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_adjustments.py", line 53, in test_disallowed_controls_cannot_modify_bundle_and_inherited_scale_removed
+    s=self.service; revision=self.project(); self.assertTrue(s.reloadCatalog())
+                             ^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_adjustments.py", line 44, in project
+    return self.service.bundles.import_bundle(destination,preflight=lambda *_:{'status':'passed','testOnly':True})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_revision_specific_capabilities_and_stale_profiles (__main__.AdjustmentTests.test_revision_specific_capabilities_and_stale_profiles)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_adjustments.py", line 76, in test_revision_specific_capabilities_and_stale_profiles
+    s=self.service; first=self.project(adjustments=('paletteMode','textScale'))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_adjustments.py", line 44, in project
+    return self.service.bundles.import_bundle(destination,preflight=lambda *_:{'status':'passed','testOnly':True})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+FAIL: test_real_main_rows_report_disallowed_controls_and_partial_coverage (__main__.AdjustmentTests.test_real_main_rows_report_disallowed_controls_and_partial_coverage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_adjustments.py", line 105, in test_real_main_rows_report_disallowed_controls_and_partial_coverage
+    self.assertEqual(child.returncode,0,child.stdout+child.stderr)
+AssertionError: 1 != 0 : Sport: Rete Sport disabilitata per verifica offline; cache=True
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_adjustments.py", line 149, in <module>
+    if '--main-proof' in sys.argv: main_proof()
+                                   ^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_adjustments.py", line 119, in main_proof
+    revision=s.bundles.import_bundle(project,preflight=lambda *_:{'status':'passed','testOnly':True})
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.461s
+
+FAILED (failures=1, errors=2)

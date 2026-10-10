@@ -1,0 +1,398 @@
+E.EE.EE.E.EE.E..EE.EEEE..E.
+======================================================================
+ERROR: test_activation_requires_ready_and_revision_frame (__main__.BundleTests.test_activation_requires_ready_and_revision_frame)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 264, in test_activation_requires_ready_and_revision_frame
+    revision = self.installed()
+               ^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 41, in installed
+    return self.manager.import_bundle(self.project, preflight=lambda *args: {'status': 'passed', 'testOnly': True})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_archive_traversal_duplicate_symlink_and_hash_guards (__main__.BundleTests.test_archive_traversal_duplicate_symlink_and_hash_guards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 146, in test_archive_traversal_duplicate_symlink_and_hash_guards
+    build_bundle(self.project, valid)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_catalog_identity_changes_across_same_renderer_id (__main__.BundleTests.test_catalog_identity_changes_across_same_renderer_id)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 194, in test_catalog_identity_changes_across_same_renderer_id
+    first = self.installed()
+            ^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 41, in installed
+    return self.manager.import_bundle(self.project, preflight=lambda *args: {'status': 'passed', 'testOnly': True})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_extended_roles_are_generated_and_reproducible (__main__.BundleTests.test_extended_roles_are_generated_and_reproducible)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 211, in test_extended_roles_are_generated_and_reproducible
+    report = build_bundle(self.project, first)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 661, in build_bundle
+    validate_project(project, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_gc_protects_active_previous_and_candidate (__main__.BundleTests.test_gc_protects_active_previous_and_candidate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 314, in test_gc_protects_active_previous_and_candidate
+    first, second, third = self.installed(), self.installed('2.0.0'), self.installed('3.0.0')
+                           ^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 41, in installed
+    return self.manager.import_bundle(self.project, preflight=lambda *args: {'status': 'passed', 'testOnly': True})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_idempotence_and_same_version_conflict (__main__.BundleTests.test_idempotence_and_same_version_conflict)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 56, in test_idempotence_and_same_version_conflict
+    first = self.installed()
+            ^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 41, in installed
+    return self.manager.import_bundle(self.project, preflight=lambda *args: {'status': 'passed', 'testOnly': True})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_interrupted_journal_recovery_quarantine_preserves_other_files (__main__.BundleTests.test_interrupted_journal_recovery_quarantine_preserves_other_files)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 285, in test_interrupted_journal_recovery_quarantine_preserves_other_files
+    revision = self.installed()
+               ^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 41, in installed
+    return self.manager.import_bundle(self.project, preflight=lambda *args: {'status': 'passed', 'testOnly': True})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_lease_and_previous_block_remove_until_released (__main__.BundleTests.test_lease_and_previous_block_remove_until_released)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 302, in test_lease_and_previous_block_remove_until_released
+    revision = self.installed()
+               ^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 41, in installed
+    return self.manager.import_bundle(self.project, preflight=lambda *args: {'status': 'passed', 'testOnly': True})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_modified_revision_rejected_before_use (__main__.BundleTests.test_modified_revision_rejected_before_use)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 74, in test_modified_revision_rejected_before_use
+    revision = self.installed()
+               ^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 41, in installed
+    return self.manager.import_bundle(self.project, preflight=lambda *args: {'status': 'passed', 'testOnly': True})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_reproducible_build_exact_payload_and_export (__main__.BundleTests.test_reproducible_build_exact_payload_and_export)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 45, in test_reproducible_build_exact_payload_and_export
+    a = build_bundle(self.project, first)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_resources_revision_aware_and_tamper_guard (__main__.BundleTests.test_resources_revision_aware_and_tamper_guard)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 82, in test_resources_revision_aware_and_tamper_guard
+    revision = self.installed()
+               ^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 41, in installed
+    return self.manager.import_bundle(self.project, preflight=lambda *args: {'status': 'passed', 'testOnly': True})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_side_by_side_update_and_downgrade_identity (__main__.BundleTests.test_side_by_side_update_and_downgrade_identity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 67, in test_side_by_side_update_and_downgrade_identity
+    first = self.installed()
+            ^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 41, in installed
+    return self.manager.import_bundle(self.project, preflight=lambda *args: {'status': 'passed', 'testOnly': True})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_supervisor_recovers_crash_and_gui_block (__main__.BundleTests.test_supervisor_recovers_crash_and_gui_block) (attack='crash')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 328, in test_supervisor_recovers_crash_and_gui_block
+    revision = self.installed()
+               ^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 41, in installed
+    return self.manager.import_bundle(self.project, preflight=lambda *args: {'status': 'passed', 'testOnly': True})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_supervisor_recovers_crash_and_gui_block (__main__.BundleTests.test_supervisor_recovers_crash_and_gui_block) (attack='block')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 328, in test_supervisor_recovers_crash_and_gui_block
+    revision = self.installed()
+               ^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 41, in installed
+    return self.manager.import_bundle(self.project, preflight=lambda *args: {'status': 'passed', 'testOnly': True})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_supervisor_recovers_heartbeat_after_readiness_then_block (__main__.BundleTests.test_supervisor_recovers_heartbeat_after_readiness_then_block)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 237, in test_supervisor_recovers_heartbeat_after_readiness_then_block
+    revision = self.installed()
+               ^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 41, in installed
+    return self.manager.import_bundle(self.project, preflight=lambda *args: {'status': 'passed', 'testOnly': True})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_unverified_import_cannot_activate (__main__.BundleTests.test_unverified_import_cannot_activate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_bundle.py", line 279, in test_unverified_import_cannot_activate
+    revision = self.manager.import_bundle(self.project)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.073s
+
+FAILED (errors=16)

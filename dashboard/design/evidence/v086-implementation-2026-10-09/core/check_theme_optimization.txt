@@ -1,0 +1,28 @@
+.E..
+======================================================================
+ERROR: test_latest_requires_commit_and_keeps_live_leases (__main__.OptimizationTests.test_latest_requires_commit_and_keeps_live_leases)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_optimization.py", line 57, in test_latest_requires_commit_and_keeps_live_leases
+    old=manager.import_bundle(project,preflight=lambda *_:{'status':'passed','testOnly':True},require_preflight=True)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.085s
+
+FAILED (errors=1)

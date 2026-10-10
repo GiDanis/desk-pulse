@@ -1,0 +1,56 @@
+test_bundle_revision_A_B_updated_return_has_separate_profiles (__main__.ProfilesTests.test_bundle_revision_A_B_updated_return_has_separate_profiles) ... ERROR
+test_journal_commit_failure_restores_settings_written_by_worker (__main__.ProfilesTests.test_journal_commit_failure_restores_settings_written_by_worker) ... ERROR
+test_save_failed_does_not_commit_profile_or_preferences (__main__.ProfilesTests.test_save_failed_does_not_commit_profile_or_preferences) ... ok
+test_save_job_restores_all_visual_settings_after_sync_error (__main__.ProfilesTests.test_save_job_restores_all_visual_settings_after_sync_error) ... ok
+test_schema1_A_B_return_cancel_and_process_reconstruction (__main__.ProfilesTests.test_schema1_A_B_return_cancel_and_process_reconstruction) ... ok
+
+======================================================================
+ERROR: test_bundle_revision_A_B_updated_return_has_separate_profiles (__main__.ProfilesTests.test_bundle_revision_A_B_updated_return_has_separate_profiles)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_profiles.py", line 78, in test_bundle_revision_A_B_updated_return_has_separate_profiles
+    first = s.bundles.import_bundle(project, preflight=lambda *_: {'status':'passed', 'testOnly':True})
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_journal_commit_failure_restores_settings_written_by_worker (__main__.ProfilesTests.test_journal_commit_failure_restores_settings_written_by_worker)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_profiles.py", line 159, in test_journal_commit_failure_restores_settings_written_by_worker
+    revision = s.bundles.import_bundle(project, preflight=lambda *_:{'status':'passed','testOnly':True})
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 785, in import_bundle
+    build_bundle(source, built, app_root=self.app_root, profile=profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 658, in build_bundle
+    return _write_bundle(project, archive_path, app_root=app_root, profile=profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 688, in _write_bundle
+    report = validate_project(project, app_root, profile)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.449s
+
+FAILED (errors=2)

@@ -1,0 +1,1092 @@
+{
+  "scope": "Design proposal only; not an implemented Theme API contract",
+  "canvas": [
+    960,
+    640
+  ],
+  "toolbarPx": 56,
+  "bodyRect": [
+    24,
+    120,
+    912,
+    504
+  ],
+  "gutterPx": 16,
+  "views": [
+    {
+      "id": "oggi-ora",
+      "topic": "Oggi",
+      "name": "Ora",
+      "question": "Che ora è e che cosa mi serve subito?",
+      "layout": "Ora e meteo affiancati",
+      "blocks": [
+        {
+          "name": "Ora",
+          "rect": [
+            24,
+            120,
+            536,
+            318
+          ],
+          "valuePx": 152,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "HH:MM; data nell’identità vista",
+          "availability": "Orologio locale esistente"
+        },
+        {
+          "name": "Meteo",
+          "rect": [
+            576,
+            120,
+            360,
+            504
+          ],
+          "valuePx": 80,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Condizione, temperatura, percepita e freschezza",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Evento facoltativo",
+          "rect": [
+            24,
+            454,
+            536,
+            170
+          ],
+          "valuePx": 34,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Titolo e orario del prossimo evento qualificato",
+          "availability": "NextEvent esistente; non è un calendario personale"
+        }
+      ],
+      "open5": "Dettaglio Oggi: evento pertinente e condizioni del giorno, con min/max e fonte",
+      "rules": "Ora resta dominante; evento solo se disponibile; nessuna scheda fittizia senza evento."
+    },
+    {
+      "id": "oggi-orologio",
+      "topic": "Oggi",
+      "name": "Orologio",
+      "question": "Leggo l’ora rapidamente a distanza?",
+      "layout": "Orologio dominante",
+      "blocks": [
+        {
+          "name": "Ora",
+          "rect": [
+            24,
+            120,
+            912,
+            340
+          ],
+          "valuePx": 224,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "HH:MM grande, senza secondi",
+          "availability": "Orologio locale esistente"
+        },
+        {
+          "name": "Meteo compatto",
+          "rect": [
+            24,
+            476,
+            448,
+            148
+          ],
+          "valuePx": 36,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Temperatura, condizione e freschezza",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Evento facoltativo",
+          "rect": [
+            488,
+            476,
+            448,
+            148
+          ],
+          "valuePx": 30,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Titolo e ora del prossimo evento qualificato",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        }
+      ],
+      "open5": "Stesso dettaglio Oggi della vista Ora",
+      "rules": "Nessuna costellazione di KPI; se manca evento, fascia meteo estesa. I 224 px sono un candidato da verificare."
+    },
+    {
+      "id": "oggi-giornata",
+      "topic": "Oggi",
+      "name": "Giornata",
+      "question": "Qual è il prossimo appuntamento e come sarà oggi?",
+      "layout": "Evento e giornata",
+      "blocks": [
+        {
+          "name": "Evento / oggi",
+          "rect": [
+            24,
+            120,
+            400,
+            504
+          ],
+          "valuePx": 68,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Prossimo evento qualificato e orario; senza evento, condizioni di oggi",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Meteo oggi",
+          "rect": [
+            440,
+            120,
+            496,
+            244
+          ],
+          "valuePx": 62,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Condizione e massima/minima del giorno",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Probabilità pioggia",
+          "rect": [
+            440,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 52,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Massimo giornaliero disponibile; periodo dichiarato",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Vento",
+          "rect": [
+            696,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 38,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Velocità e direzione correnti; periodo dichiarato",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        }
+      ],
+      "open5": "Dettaglio Oggi, centrato sull’evento; programma pertinente e condizioni complete",
+      "rules": "Non ripetere tre giorni di Previsioni; niente agenda personale o raccomandazioni inventate. Senza evento: meteo principale e contesto non duplicato."
+    },
+    {
+      "id": "meteo-adesso",
+      "topic": "Meteo",
+      "name": "Adesso",
+      "question": "Quali sono le condizioni adesso?",
+      "layout": "Principale e contesto",
+      "blocks": [
+        {
+          "name": "Principale",
+          "rect": [
+            24,
+            120,
+            400,
+            504
+          ],
+          "valuePx": 86,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Condizione, temperatura, percepita; probabilità oraria se qualificata",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Vento",
+          "rect": [
+            440,
+            120,
+            240,
+            244
+          ],
+          "valuePx": 38,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Velocità e direzione",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Umidità",
+          "rect": [
+            696,
+            120,
+            240,
+            244
+          ],
+          "valuePx": 58,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Umidità relativa",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Raffiche",
+          "rect": [
+            440,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 38,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Velocità con periodo del provider",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Precipitazioni",
+          "rect": [
+            696,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 42,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Millimetri con intervallo del dato; non probabilità",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        }
+      ],
+      "open5": "Condizioni complete e fonte; allerte pertinenti solo se disponibili",
+      "rules": "Conservare la famiglia Meteo attuale; la quantità di precipitazione non diventa pioggia totale del giorno."
+    },
+    {
+      "id": "meteo-previsioni",
+      "topic": "Meteo",
+      "name": "Previsioni",
+      "question": "Come cambiano i prossimi tre giorni?",
+      "layout": "Tre giorni confrontabili",
+      "blocks": [
+        {
+          "name": "Oggi",
+          "rect": [
+            24.0,
+            120,
+            293.3333333333333,
+            504
+          ],
+          "valuePx": 62,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Data, condizione, massima, minima e massimo giornaliero della probabilità di pioggia",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Domani",
+          "rect": [
+            333.3333333333333,
+            120,
+            293.3333333333333,
+            504
+          ],
+          "valuePx": 62,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Data, condizione, massima, minima e massimo giornaliero della probabilità di pioggia",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Terzo giorno",
+          "rect": [
+            642.6666666666666,
+            120,
+            293.3333333333333,
+            504
+          ],
+          "valuePx": 62,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Data, condizione, massima, minima e massimo giornaliero della probabilità di pioggia",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        }
+      ],
+      "open5": "Dettaglio del giorno selezionato: stessi dati con periodo e fonte espliciti",
+      "rules": "Tre colonne cronologiche, stesso ordine e scala tipografica. Serie orarie, UV e alba/tramonto non sono esposti dal DTO corrente."
+    },
+    {
+      "id": "account-utilizzo",
+      "topic": "Account",
+      "name": "Utilizzo",
+      "question": "Quanto utilizzo ho consumato e quando si ripristina?",
+      "layout": "Finestre affiancate",
+      "blocks": [
+        {
+          "name": "Finestra breve",
+          "rect": [
+            24,
+            120,
+            448,
+            324
+          ],
+          "valuePx": 80,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Nome servizio, durata reale, percentuale utilizzata, barra 0–100 e reset",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Finestra lunga",
+          "rect": [
+            488,
+            120,
+            448,
+            324
+          ],
+          "valuePx": 80,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Seconda finestra pertinente dello stesso servizio",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Crediti",
+          "rect": [
+            24,
+            460,
+            448,
+            164
+          ],
+          "valuePx": 38,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Saldo riportato, illimitati o non disponibile",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Reset disponibili",
+          "rect": [
+            488,
+            460,
+            448,
+            164
+          ],
+          "valuePx": 38,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Numero di reset credits riportato; distinto dagli orari di reset",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        }
+      ],
+      "open5": "Tutte le finestre, reset assoluto locale e stato della sincronizzazione",
+      "rules": "Una finestra valida occupa la larghezza completa; oltre due si aprono nei dettagli. Selezione stabile per servizio e durata, non ordinata continuamente per consumo."
+    },
+    {
+      "id": "sport-calcio",
+      "topic": "Sport",
+      "name": "Calcio",
+      "question": "C’è una partita in corso o quando si gioca?",
+      "layout": "Principale e contesto",
+      "blocks": [
+        {
+          "name": "Principale",
+          "rect": [
+            24,
+            120,
+            400,
+            504
+          ],
+          "valuePx": 86,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Competizione, squadre, risultato o orario, fase e fonte",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Prossima",
+          "rect": [
+            440,
+            120,
+            240,
+            244
+          ],
+          "valuePx": 34,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Appuntamento successivo distinto dalla principale",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        },
+        {
+          "name": "Squadra",
+          "rect": [
+            696,
+            120,
+            240,
+            244
+          ],
+          "valuePx": 62,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Posizione e punti della squadra/competizione scelta",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        },
+        {
+          "name": "Ultimo esito",
+          "rect": [
+            440,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 48,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Risultato concluso e identità partita",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        },
+        {
+          "name": "Altre partite",
+          "rect": [
+            696,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 42,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Live qualificati, senza includere la principale",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        }
+      ],
+      "open5": "Partita prioritaria e calendario pertinente; poi risultati e classifica",
+      "rules": "Live verificato della preferita → altro live pertinente → prossima preferita → prossima competizione → ultimo esito. Nessuna diretta dedotta dall’orario."
+    },
+    {
+      "id": "sport-f1",
+      "topic": "Sport",
+      "name": "Formula 1",
+      "question": "Quale sessione viene prima e come sta andando il GP?",
+      "layout": "Principale e contesto",
+      "blocks": [
+        {
+          "name": "Principale",
+          "rect": [
+            24,
+            120,
+            400,
+            504
+          ],
+          "valuePx": 86,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "GP/circuito, sessione prioritaria, orario locale o fase",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Successiva",
+          "rect": [
+            440,
+            120,
+            240,
+            244
+          ],
+          "valuePx": 34,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Sessione seguente distinta dalla principale",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        },
+        {
+          "name": "Prossimo GP",
+          "rect": [
+            696,
+            120,
+            240,
+            244
+          ],
+          "valuePx": 33,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "GP successivo, circuito e data",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        },
+        {
+          "name": "Ultima sessione",
+          "rect": [
+            440,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 34,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Risultato con nome pilota e sessione",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        },
+        {
+          "name": "Mondiale",
+          "rect": [
+            696,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 44,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Pilota di interesse o leader, punti e stagione",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        }
+      ],
+      "open5": "Weekend già informativo: sessioni, risultati, timing qualificato, classifica",
+      "rules": "Selezionare la sessione, non solo l’inizio del GP. Al prossimo GP non assegnare il nome del GP corrente."
+    },
+    {
+      "id": "sport-motogp",
+      "topic": "Sport",
+      "name": "MotoGP",
+      "question": "C’è una sessione qualificata live o quale viene dopo?",
+      "layout": "Principale e contesto",
+      "blocks": [
+        {
+          "name": "Principale",
+          "rect": [
+            24,
+            120,
+            400,
+            504
+          ],
+          "valuePx": 86,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "GP/classe, sessione, giro o orario e stato qualificato",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "In testa",
+          "rect": [
+            440,
+            120,
+            240,
+            244
+          ],
+          "valuePx": 34,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Leader se timing corrente; altrimenti ultimo vincitore esplicito",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        },
+        {
+          "name": "Distacco",
+          "rect": [
+            696,
+            120,
+            240,
+            244
+          ],
+          "valuePx": 46,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Distacco qualificato; senza timing: prossimo appuntamento",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        },
+        {
+          "name": "Ultima sessione",
+          "rect": [
+            440,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 42,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Sprint/gara con classe e data",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        },
+        {
+          "name": "Mondiale",
+          "rect": [
+            696,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 34,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Classifica della stagione e classe pertinente",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        }
+      ],
+      "open5": "Weekend e sessioni, risultati, classifica; timing solo se qualificato",
+      "rules": "Distinguere classi, sprint/gara e gara/mondiale. La variante senza live mantiene struttura e cambia etichette esplicitamente."
+    },
+    {
+      "id": "casa-preferiti",
+      "topic": "Casa",
+      "name": "Preferiti",
+      "question": "Qual è lo stato dei dispositivi che mi interessano?",
+      "layout": "Mosaico 2×2",
+      "blocks": [
+        {
+          "name": "Preferito 1",
+          "rect": [
+            24,
+            120,
+            448,
+            244
+          ],
+          "valuePx": 58,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Nome, stato/misura principale, attributo secondario e freschezza locale",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Preferito 2",
+          "rect": [
+            488,
+            120,
+            448,
+            244
+          ],
+          "valuePx": 52,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Nome, stato/misura principale, attributo secondario e freschezza locale",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Preferito 3",
+          "rect": [
+            24,
+            380,
+            448,
+            244
+          ],
+          "valuePx": 58,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Nome, stato/misura principale, attributo secondario e freschezza locale",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Preferito 4",
+          "rect": [
+            488,
+            380,
+            448,
+            244
+          ],
+          "valuePx": 34,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Nome, stato/misura principale, attributo secondario e freschezza locale",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        }
+      ],
+      "open5": "Preferiti estesi con focus e dettaglio del dispositivo",
+      "rules": "Ordine scelto dall’utente; nessun comando ON/OFF. Uno o due preferiti usano schede più larghe, senza riquadri vuoti."
+    },
+    {
+      "id": "casa-ambiente",
+      "topic": "Casa",
+      "name": "Ambiente",
+      "question": "Quali letture ambientali sono disponibili?",
+      "layout": "Principale e contesto",
+      "blocks": [
+        {
+          "name": "Principale",
+          "rect": [
+            24,
+            120,
+            400,
+            504
+          ],
+          "valuePx": 86,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Sensore prioritario nominato, misura, unità e tempo",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Umidità",
+          "rect": [
+            440,
+            120,
+            240,
+            244
+          ],
+          "valuePx": 58,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Stesso sensore della principale se supportato",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        },
+        {
+          "name": "Altro sensore",
+          "rect": [
+            696,
+            120,
+            240,
+            244
+          ],
+          "valuePx": 58,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Nome e temperatura di un altro dispositivo",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        },
+        {
+          "name": "Movimento",
+          "rect": [
+            440,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 31,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Stato del sensore con ultima osservazione",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        },
+        {
+          "name": "Copertura",
+          "rect": [
+            696,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 62,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Numero di sensori con lettura corrente",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        }
+      ],
+      "open5": "Misure complete dei sensori, disponibilità e timestamp",
+      "rules": "Vista condizionale ai codici supportati. Nessuna media tra stanze, punteggio comfort o storico ricostruito."
+    },
+    {
+      "id": "casa-dispositivi",
+      "topic": "Casa",
+      "name": "Dispositivi",
+      "question": "Che cosa compare nel mio catalogo Casa?",
+      "layout": "Principale e contesto",
+      "blocks": [
+        {
+          "name": "Principale",
+          "rect": [
+            24,
+            120,
+            400,
+            504
+          ],
+          "valuePx": 86,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Conteggio del catalogo, disponibili secondo cloud / precedenti",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Preferiti",
+          "rect": [
+            440,
+            120,
+            240,
+            244
+          ],
+          "valuePx": 62,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Numero scelto dall’utente",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Luci",
+          "rect": [
+            696,
+            120,
+            240,
+            244
+          ],
+          "valuePx": 62,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Categoria solo se normalizzata in modo affidabile",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        },
+        {
+          "name": "Prese",
+          "rect": [
+            440,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 62,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Categoria qualificata, senza dedurla dal nome",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        },
+        {
+          "name": "Sensori",
+          "rect": [
+            696,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 62,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Categoria qualificata, senza doppio conteggio",
+          "availability": "Nuova proiezione qualificata dei dati esistenti; contratto da definire"
+        }
+      ],
+      "open5": "Inventario selezionabile, dispositivo, attributi e provenienza",
+      "rules": "In assenza di categorie affidabili usare due riepiloghi utili di disponibilità e preferiti; conteggio cloud non equivale a presenza in rete."
+    },
+    {
+      "id": "rete-traffico",
+      "topic": "Rete",
+      "name": "Traffico",
+      "question": "Quanto traffico WAN c’è e come varia?",
+      "layout": "Valori e andamento",
+      "blocks": [
+        {
+          "name": "Download / upload",
+          "rect": [
+            24,
+            120,
+            400,
+            504
+          ],
+          "valuePx": 86,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Velocità WAN aggregate, unità e timestamp per misura",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Andamento",
+          "rect": [
+            440,
+            120,
+            496,
+            244
+          ],
+          "valuePx": 22,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Ultima ora qualificata, download/upload, assi e buchi dello storico",
+          "availability": "Storico esistente; finestra e disponibilità da qualificare"
+        },
+        {
+          "name": "Stato WAN",
+          "rect": [
+            440,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 42,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Stato riportato dalla box",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Capacità box",
+          "rect": [
+            696,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 38,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Valore riportato, con unità e provenienza; non speed test",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        }
+      ],
+      "open5": "Storico WAN esteso e scelta periodo, con campioni/tempi qualificati",
+      "rules": "Upload deve restare leggibile come numero: sulla stessa scala del download può risultare quasi piatto. Nei dettagli due grafici allineati con scale esplicite."
+    },
+    {
+      "id": "rete-iliadbox",
+      "topic": "Rete",
+      "name": "iliadbox",
+      "question": "La box è operativa e quali stati riporta?",
+      "layout": "Principale e contesto",
+      "blocks": [
+        {
+          "name": "Principale",
+          "rect": [
+            24,
+            120,
+            400,
+            504
+          ],
+          "valuePx": 68,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Stato WAN dominante; uptime e ultimo aggiornamento di contesto",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Sensore box",
+          "rect": [
+            440,
+            120,
+            240,
+            244
+          ],
+          "valuePx": 56,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Temperatura del sensore nominato, non della board",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Wi-Fi",
+          "rect": [
+            696,
+            120,
+            240,
+            244
+          ],
+          "valuePx": 43,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Radio riportate; non conteggio implicito dei client",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Ethernet",
+          "rect": [
+            440,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 43,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Porte e stato link riportato",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Firmware",
+          "rect": [
+            696,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 34,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Versione esatta, con nome lungo gestito nei dettagli",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        }
+      ],
+      "open5": "Stato/sensori del router, sezioni Wi-Fi e Porte",
+      "rules": "Cambiare gerarchia rispetto alla tavola preliminare: Attiva/Non disponibile prima dei 2 giorni di uptime. Box e Orange Pi devono restare identificabili."
+    },
+    {
+      "id": "rete-dispositivi",
+      "topic": "Rete",
+      "name": "Dispositivi",
+      "question": "Quanti record vedo e quali sono raggiungibili secondo box?",
+      "layout": "Principale e contesto",
+      "blocks": [
+        {
+          "name": "Principale",
+          "rect": [
+            24,
+            120,
+            400,
+            504
+          ],
+          "valuePx": 86,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Record inventario, conteggio qualificato e copertura parziale",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Preferito 1",
+          "rect": [
+            440,
+            120,
+            240,
+            244
+          ],
+          "valuePx": 30,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Nome e stato secondo box; osservazione corrente/precedente",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Preferito 2",
+          "rect": [
+            696,
+            120,
+            240,
+            244
+          ],
+          "valuePx": 29,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Identità distinta; non raggiungibile non equivale a spento",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Preferito 3",
+          "rect": [
+            440,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 30,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Nome e osservazione",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        },
+        {
+          "name": "Preferito 4",
+          "rect": [
+            696,
+            380,
+            240,
+            244
+          ],
+          "valuePx": 32,
+          "labelPx": 25,
+          "notePx": 23,
+          "content": "Nome e freschezza locale",
+          "availability": "Dati esistenti; nuova selezione e composizione"
+        }
+      ],
+      "open5": "Inventario completo con filtro esplicito; dettaglio identità/indirizzi/osservazioni",
+      "rules": "Quattro preferiti solo se scelti e presenti; niente velocità per host dedotta dalla WAN o presenza assoluta da record storici."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+
+Sport: Rete Sport disabilitata per verifica offline; cache=True
+Rete locale [transport]: Synthetic unavailable
+Rete locale [storage]: Synthetic disk failure
+Rete locale [auth]: Synthetic revoked
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_network_ui.py", line 117, in <module>
+    if args.child:print(json.dumps(verify(json.loads(args.child),args.capture),ensure_ascii=False))
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_network_ui.py", line 88, in verify
+    h.expression('activateKey(2)');assert h.value('networkTabsSelected');h.expression('activateKey(6)');h.pump(180)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_network_ui.py", line 122, in <module>
+    result=subprocess.run(command,timeout=45,capture_output=True,text=True);print(result.stdout);print(result.stderr,file=sys.stderr);assert result.returncode==0
+                                                                                                                                             ^^^^^^^^^^^^^^^^^^^^
+AssertionError

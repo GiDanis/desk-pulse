@@ -1,0 +1,119 @@
+test_auxiliary_renderer_can_exist_with_builtin_selected (__main__.SceneCoverageTests.test_auxiliary_renderer_can_exist_with_builtin_selected) ... ERROR
+test_editor_override_cannot_replace_owned_scene_with_base (__main__.SceneCoverageTests.test_editor_override_cannot_replace_owned_scene_with_base) ... ERROR
+test_owned_scene_cannot_select_builtin (__main__.SceneCoverageTests.test_owned_scene_cannot_select_builtin) ... FAIL
+test_owned_selected_scene_can_start_disabled_and_enable (__main__.SceneCoverageTests.test_owned_selected_scene_can_start_disabled_and_enable) ... ERROR
+test_primary_scene_in_presentations_is_rejected (__main__.SceneCoverageTests.test_primary_scene_in_presentations_is_rejected) ... FAIL
+test_scene_descriptor_must_belong_to_selected_immutable_revision (__main__.SceneCoverageTests.test_scene_descriptor_must_belong_to_selected_immutable_revision) ... ERROR
+test_selected_external_cannot_claim_fallback_even_when_disabled (__main__.SceneCoverageTests.test_selected_external_cannot_claim_fallback_even_when_disabled) ... FAIL
+
+======================================================================
+ERROR: test_auxiliary_renderer_can_exist_with_builtin_selected (__main__.SceneCoverageTests.test_auxiliary_renderer_can_exist_with_builtin_selected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_scene_coverage.py", line 70, in test_auxiliary_renderer_can_exist_with_builtin_selected
+    catalog = self.catalog()
+              ^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_scene_coverage.py", line 34, in catalog
+    validate_project(self.project)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_editor_override_cannot_replace_owned_scene_with_base (__main__.SceneCoverageTests.test_editor_override_cannot_replace_owned_scene_with_base)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_scene_coverage.py", line 90, in test_editor_override_cannot_replace_owned_scene_with_base
+    catalog = self.catalog()
+              ^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_scene_coverage.py", line 34, in catalog
+    validate_project(self.project)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_owned_selected_scene_can_start_disabled_and_enable (__main__.SceneCoverageTests.test_owned_selected_scene_can_start_disabled_and_enable)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_scene_coverage.py", line 45, in test_owned_selected_scene_can_start_disabled_and_enable
+    catalog = self.catalog()
+              ^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_scene_coverage.py", line 34, in catalog
+    validate_project(self.project)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+ERROR: test_scene_descriptor_must_belong_to_selected_immutable_revision (__main__.SceneCoverageTests.test_scene_descriptor_must_belong_to_selected_immutable_revision)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_scene_coverage.py", line 95, in test_scene_descriptor_must_belong_to_selected_immutable_revision
+    catalog = self.catalog()
+              ^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_scene_coverage.py", line 34, in catalog
+    validate_project(self.project)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 530, in validate_project
+    _manifest(manifest, app_root, profile)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 316, in _manifest
+    require(not own & fallback and own | fallback == surfaces, 'coverage', 'ogni superficie richiede renderer o fallback esplicito')
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_bundle.py", line 96, in require
+    raise ThemeError(path, message)
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+======================================================================
+FAIL: test_owned_scene_cannot_select_builtin (__main__.SceneCoverageTests.test_owned_scene_cannot_select_builtin)
+----------------------------------------------------------------------
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_scene_coverage.py", line 64, in test_owned_scene_cannot_select_builtin
+    with self.assertRaisesRegex(ThemeError, 'coverage.scene.main'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "coverage.scene.main" does not match "coverage: ogni superficie richiede renderer o fallback esplicito"
+
+======================================================================
+FAIL: test_primary_scene_in_presentations_is_rejected (__main__.SceneCoverageTests.test_primary_scene_in_presentations_is_rejected)
+----------------------------------------------------------------------
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_scene_coverage.py", line 86, in test_primary_scene_in_presentations_is_rejected
+    with self.assertRaisesRegex(ThemeError, 'scene.main richiede sceneRenderers'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "scene.main richiede sceneRenderers" does not match "coverage: ogni superficie richiede renderer o fallback esplicito"
+
+======================================================================
+FAIL: test_selected_external_cannot_claim_fallback_even_when_disabled (__main__.SceneCoverageTests.test_selected_external_cannot_claim_fallback_even_when_disabled)
+----------------------------------------------------------------------
+theme_core.ThemeError: coverage: ogni superficie richiede renderer o fallback esplicito
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_scene_coverage.py", line 56, in test_selected_external_cannot_claim_fallback_even_when_disabled
+    with self.assertRaisesRegex(ThemeError, 'coverage.scene.main'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "coverage.scene.main" does not match "coverage: ogni superficie richiede renderer o fallback esplicito"
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.019s
+
+FAILED (failures=3, errors=4)

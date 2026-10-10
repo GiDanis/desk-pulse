@@ -1,0 +1,42 @@
+"""Read-only post-reboot acceptance; require changed boot and fresh GUI proof."""
+import json
+import os
+from pathlib import Path
+import subprocess
+import time
+
+proof = Path('/var/lib/smartpc-dashboard/v086-source-proof')
+before = json.loads((proof / 'activation-health.json').read_text())
+after = json.loads((proof / 'reboot-health.json').read_text())
+receipt = json.loads((proof / 'install-receipt.json').read_text())
+activation = json.loads((proof / 'activation-receipt.json').read_text())
+assert activation['status']=='passed' and activation['appearanceCustomizationsPreserved'] and activation['nonAppearancePreferencesPreserved']
+assert before['activeTheme']==activation['activeTheme']
+assert after['bootId'] != before['bootId'], 'No actual system reboot'
+assert after['version'] == '0.8.6-rc.1' and after['files'] == receipt['files'] and not after['manifestMismatches']
+assert after['service']['ActiveState'] == 'active' and after['service']['SubState'] == 'running'
+assert after['service']['NRestarts'] == '0'
+assert 0 <= time.time()-after['time'] < 15, 'Health measurement is not fresh'
+heartbeat = after['guiHeartbeat']
+assert heartbeat and heartbeat['ready'] and 0 <= heartbeat['ageSeconds'] < 15
+assert heartbeat['pending'] is None and heartbeat['selection'] == after['activeTheme']
+assert after['activeTheme'] == before['activeTheme']
+changed = {k for k in set(before['allPreferenceHashes'])|set(after['allPreferenceHashes']) if before['allPreferenceHashes'].get(k)!=after['allPreferenceHashes'].get(k)}
+assert changed <= {'appearance/themeOverrides'}, changed
+retention=json.loads((proof/'appearance-retention-verification.json').read_text())
+assert retention['status']=='passed' and retention['activeOverridesPreserved'] and retention['otherThemeProfilesPreserved']
+assert after['preferenceHashes'] == before['preferenceHashes']
+env = dict(os.environ, XDG_CONFIG_HOME='/var/lib/smartpc-dashboard/.config',
+           XDG_DATA_HOME='/var/lib/smartpc-dashboard/.local/share', XDG_CACHE_HOME='/var/cache/smartpc-dashboard')
+journal = subprocess.check_output(['sudo', '-n', 'journalctl', '-b', '-u', 'smartpc-dashboard', '--no-pager'], text=True, env=env)
+warnings = [line for line in journal.splitlines() if any(marker in line for marker in
+            ('ReferenceError', 'TypeError', 'Binding loop', 'QQmlApplicationEngine failed', 'Traceback', 'Segmentation fault'))]
+assert not warnings, warnings
+(proof / 'reboot-journal.txt').write_text(journal)
+report = {'status': 'passed', 'version': after['version'], 'files': after['files'],
+          'bootIdBefore': before['bootId'], 'bootIdAfter': after['bootId'],
+          'service': after['service'], 'guiHeartbeat': heartbeat, 'userPreferencesPreserved': True, 'appearanceCustomizationsPreserved':True, 'retentionProfileCleanup':sorted(changed), 'retentionVerification':retention,
+          'activeTheme': after['activeTheme'], 'backup': receipt['backup'], 'appearanceBackup':activation['backup'], 'qmlWarnings': warnings,
+          'verifiedAt': time.time(), 'scope': 'Actual reboot/runtime health; physical readability and long soak separate'}
+(proof / 'reboot-verification.json').write_text(json.dumps(report, indent=2) + '\n')
+print(json.dumps(report), flush=True)

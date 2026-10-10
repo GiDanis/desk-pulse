@@ -1,0 +1,22 @@
+..F.
+======================================================================
+FAIL: test_real_main_rows_report_disallowed_controls_and_partial_coverage (__main__.AdjustmentTests.test_real_main_rows_report_disallowed_controls_and_partial_coverage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_adjustments.py", line 105, in test_real_main_rows_report_disallowed_controls_and_partial_coverage
+    self.assertEqual(child.returncode,0,child.stdout+child.stderr)
+AssertionError: 1 != 0 : Sport: Rete Sport disabilitata per verifica offline; cache=True
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_adjustments.py", line 149, in <module>
+    if '--main-proof' in sys.argv: main_proof()
+                                   ^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_adjustments.py", line 128, in main_proof
+    assert 'Parziale' in rows[2]['detail'] and '5 propri' in rows[2]['detail'] and f'{fallback_count} Base' in rows[2]['detail'],rows[2]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'detail': 'Scegli dalla lista · attivazione e salvataggio', 'id': 'appearance.theme', 'target': 'themeChooser', 'title': 'Tema', 'value': 'Studio Ambient'}
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 2.583s
+
+FAILED (failures=1)
