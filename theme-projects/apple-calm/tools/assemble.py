@@ -7,6 +7,8 @@ B=ROOT/'bundle'; Q=B/'qml'
 PREP=ROOT/'tools/blueprint'
 def put(name,text): (Q/name).write_text('pragma ComponentBehavior: Bound\n'+text.strip()+'\n')
 def entry(name,base,kind,body):
+ # These renderers now have maintained geometry/behavior beyond a generic Panel.
+ if name in {'AccountUsage.qml','DeviceInfo.qml','Settings.qml'}: return
  put(name,f'''import QtQuick
 import SmartPC.ThemeApi 2.0
 import "Format.js" as Format

@@ -53,7 +53,7 @@ function events(model) { return list(model).map(function(x) { return row(x.id, x
 function sessions(model) { return list(model).map(function(x) { return row(x.id, x.name, stamp(x.startsAt), x.status); }); }
 function squad(model) { return list(model).map(function(x) { return row(x.id, number(x.shirtNumber) + "  " + x.name, [x.role, x.group, x.inMinute.available ? "Entra " + number(x.inMinute) : "", x.outMinute.available ? "Esce " + number(x.outMinute) : ""].filter(Boolean).join(" · ")); }); }
 function settings(model) { return list(model).map(function(x) { var r = row(x.id, x.title, x.enabled ? x.detail : x.reason || x.detail, x.value.available || x.control !== "action" && x.control !== "transfer" ? scalar(x.value) : "", settingIcon(x.id)); r.enabled = x.enabled; r.actionId = x.actionId || "settings.activate"; r.targetId = x.targetId || x.id; return r; }); }
-function settingIcon(id) { var exact={sports:"trophy","module.sports":"trophy","modules.sports":"trophy",services:"source","appearance.apply":"save","appearance.import":"import","appearance.export":"export","appearance.reload":"refresh","network.router":"router","network.wifi":"wifi","network.ports":"ethernet"}; if (exact[id]) return exact[id]; if (id.indexOf("network") >= 0) return "network"; if (id.indexOf("casa") >= 0) return "connected-home"; if (id.indexOf("integration") >= 0) return "plug"; if (id.indexOf("info") >= 0) return "info"; if (id.indexOf("command") >= 0) return "keyboard"; if (id.indexOf("sport") >= 0) return "football"; if (id.indexOf("racing") >= 0 || id.indexOf("f1") >= 0) return "race-car"; if (id.indexOf("motogp") >= 0) return "motorcycle"; if (id.indexOf("appearance") >= 0) return "palette"; if (id.indexOf("display") >= 0) return "display"; if (id.indexOf("notification") >= 0) return "bell"; if (id.indexOf("source") >= 0) return "source"; if (id.indexOf("account") >= 0) return "account"; if (id.indexOf("module") >= 0) return "modules"; return "settings"; }
+function settingIcon(id) { var exact={"appearance.theme":"display","appearance.motion":"motion","appearance.palette":"palette",sports:"trophy","module.sports":"trophy","modules.sports":"trophy",services:"source","appearance.apply":"save","appearance.import":"import","appearance.export":"export","appearance.reload":"refresh","network.router":"router","network.wifi":"wifi","network.ports":"ethernet"}; if (exact[id]) return exact[id]; if (id.indexOf("network") >= 0) return "network"; if (id.indexOf("casa") >= 0) return "connected-home"; if (id.indexOf("integration") >= 0) return "plug"; if (id.indexOf("info") >= 0) return "info"; if (id.indexOf("command") >= 0) return "keyboard"; if (id.indexOf("sport") >= 0) return "football"; if (id.indexOf("racing") >= 0 || id.indexOf("f1") >= 0) return "race-car"; if (id.indexOf("motogp") >= 0) return "motorcycle"; if (id.indexOf("appearance") >= 0) return "palette"; if (id.indexOf("display") >= 0) return "display"; if (id.indexOf("notification") >= 0) return "bell"; if (id.indexOf("source") >= 0) return "source"; if (id.indexOf("account") >= 0) return "account"; if (id.indexOf("module") >= 0) return "modules"; return "settings"; }
 function settingTitle(id) { var names = {index:"Impostazioni",appearance:"Aspetto","appearance.notifications":"Aspetto notifiche",display:"Schermo",modules:"Moduli e Home",notifications:"Avvisi",services:"Servizi collegati",sports:"Discipline Sport","appearance.management":"Gestione temi","notifications.categories":"Avvisi sullo schermo","notifications.quiet":"Fascia silenzio",account:"Account ChatGPT",integrations:"Sport",sources:"Dati e aggiornamenti",sport:"Calcio",racing:"Motorsport",casa:"Casa / Smart Life",network:"Rete locale"}; return names[id.replace(/^settings\./, "")] || "Impostazioni"; }
 function matchRows(context) {
     var m = context.match; if (!m) return [];
@@ -99,3 +99,19 @@ function fantasyPlayers(team) { return !team ? [] : list(team.players).map(funct
 function familyIcon(id) { return ({oggi:"clock",meteo:"partly-cloudy",account:"account",sports:"trophy",sport:"football",f1:"race-car",motogp:"motorcycle",casa:"connected-home",network:"network"})[id] || "unknown"; }
 function metricIcon(code) { var id=String(code).toLowerCase(); return id.indexOf("temp")>=0 ? "thermometer" : id.indexOf("humidity")>=0 ? "droplet" : id.indexOf("fan")>=0 ? "fan" : id.indexOf("switch")>=0 ? "plug" : "info"; }
 function casaDevices(model) { return list(model).map(x => row(x.id,x.name,[x.availability+(x.availabilityPrevious ? " · salvata" : ""),x.previous ? "Dato precedente" : "",x.secondaryText].filter(Boolean).join(" · "),x.primaryText,({"casa.temperature":"thermometer","casa.light":"lightbulb","casa.plug":"plug","casa.motion":"motion"})[x.iconId] || "connected-home")); }
+
+function duration(v) {
+    if (!v || !v.available) return "durata N/D";
+    const n=v.value;
+    return n%1440===0 ? n/1440+" giorni" : n%60===0 ? n/60+" ore" : n+" min";
+}
+function forecastDay(date,epoch,fallback) {
+    if (!date) return fallback || "Data N/D";
+    const parts=date.split("-"),day=new Date(Number(parts[0]),Number(parts[1])-1,Number(parts[2]));
+    const today=new Date(epoch*1000);today.setHours(0,0,0,0);
+    const tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);
+    const label=day.getTime()===today.getTime() ? "Oggi" : day.getTime()===tomorrow.getTime() ? "Domani" : ["Dom","Lun","Mar","Mer","Gio","Ven","Sab"][day.getDay()];
+    return label+" · "+parts[2]+"/"+parts[1];
+}
+
+function windowLabel(window) { const label=window.label || "Utilizzo", d=duration(window.windowDurationMinutes);return label===d ? label : label+" · "+d; }

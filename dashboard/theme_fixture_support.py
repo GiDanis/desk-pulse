@@ -345,14 +345,14 @@ class LegacyHarness:
             if case['variant'] in ('normal','reduced','off'):assert mode==case['variant']
             if case['variant']=='canvas':assert host.property('canvasScene') and renderer=='fixture.canvas','canvas variant not actually instantiated'
             if case['variant']=='paused':assert host.property('suspended') and actor.property('paused')
-        elif sid in ('settings.casa','casa.detail','settings.network','network.detail'):
+        elif sid in ('settings.casa','casa.detail','casa.inventory','settings.network','network.detail','network.inventory'):
             host=self.root.findChild(QObject,'overlayHost')
             assert host and host.property('readiness')=='ready' and host.property('visible'),sid
         elif sid.startswith('settings.') and sid not in ('settings.sport','settings.racing'):
             assert self.expression('settingsPanel.active && settingsPanel.rows.length > 0'),sid
         elif sid=='shell.main':assert self.window.width()==960 and self.window.height()==640
         else:assert self.value('overlay')==case['initialProperties'].get('overlay'),sid
-        if sid not in names and sid not in ('shell.main','scene.main','settings.casa','casa.detail','settings.network','network.detail'):
+        if sid not in names and sid not in ('shell.main','scene.main','settings.casa','casa.detail','casa.inventory','settings.network','network.detail','network.inventory'):
             source={'device.info':'DeviceInfo','sport.team.detail':'SportTeamOverlay','sport.team.picker':'SportTeamOverlay'}.get(sid, 'MotorsportOverlay' if sid.startswith('racing.') or sid=='settings.racing' else 'SportOverlay' if sid.startswith('sport.') or sid=='settings.sport' else 'SettingsPanel' if sid.startswith('settings.') else 'DashboardOverlay')
             components=[obj for obj in self.root.findChildren(QObject) if obj.metaObject().className().startswith(source+'_') and obj.metaObject().indexOfProperty('dashboard')>=0]
             assert len(components)==1 and components[0].property('visible') and components[0].property('width')>0 and components[0].property('height')>0,(sid,'legacy component not exposed',source)

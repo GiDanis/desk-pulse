@@ -27,6 +27,7 @@ Item {
     }
     NavigationDots {
         id:viewDots; objectName:"viewDots"
+        visible:root.context.navigation.overlayId!=="device.info" && root.context.navigation.overlayId.indexOf("settings.")!==0
         x:parent.width-21; y:72+(parent.height-88-height)/2; width:implicitWidth; height:implicitHeight
         vertical:true; groupId:root.context.navigation.scopeId || root.context.currentFamilyId
         count:root.context.navigation.scopeCount || root.context.navigation.viewCount

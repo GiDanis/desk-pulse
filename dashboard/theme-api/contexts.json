@@ -3,7 +3,7 @@
   "module": {
     "uri": "SmartPC.ThemeApi",
     "major": 2,
-    "minor": 5
+    "minor": 7
   },
   "apiState": "implemented",
   "privateHandles": [
@@ -891,6 +891,12 @@
           "minimum": 1,
           "maximum": 100,
           "readOnly": true
+        },
+        "credits": {
+          "type": "AccountCredits",
+          "nullable": true,
+          "readOnly": true,
+          "required": false
         }
       }
     },
@@ -3004,6 +3010,108 @@
           "readOnly": true
         }
       }
+    },
+    "AccountCredits": {
+      "fields": {
+        "unlimited": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "balance": {
+          "type": "ScalarValue",
+          "readOnly": true
+        }
+      }
+    },
+    "DashboardCard": {
+      "fields": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "value": {
+          "type": "string",
+          "readOnly": true
+        },
+        "subtitle": {
+          "type": "string",
+          "readOnly": true
+        },
+        "detail": {
+          "type": "string",
+          "readOnly": true
+        },
+        "icon": {
+          "type": "string",
+          "readOnly": true
+        },
+        "targetId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "previous": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "valueSize": {
+          "type": "int",
+          "readOnly": true
+        },
+        "rect": {
+          "type": "Rect",
+          "readOnly": true
+        },
+        "unit": {
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "DashboardSummary": {
+      "fields": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "subtitle": {
+          "type": "string",
+          "readOnly": true
+        },
+        "detailTarget": {
+          "type": "string",
+          "readOnly": true
+        },
+        "eventId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "sessionId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "cards": {
+          "type": "DashboardCardModel",
+          "readOnly": true
+        },
+        "detailRows": {
+          "type": "DashboardCardModel",
+          "readOnly": true
+        },
+        "chart": {
+          "type": "NetworkChart",
+          "readOnly": true,
+          "nullable": true,
+          "required": false
+        }
+      }
     }
   },
   "models": {
@@ -3237,6 +3345,11 @@
       "identityRole": "id",
       "updates": "diffByIdentity",
       "maxItems": 3
+    },
+    "DashboardCardModel": {
+      "itemType": "DashboardCard",
+      "identityRole": "id",
+      "maxItems": 64
     }
   },
   "contexts": {
@@ -3292,6 +3405,12 @@
         "motionPolicy": {
           "type": "MotionPolicy",
           "readOnly": true,
+          "required": false
+        },
+        "dashboardSummary": {
+          "type": "DashboardSummary",
+          "readOnly": true,
+          "nullable": true,
           "required": false
         }
       },
@@ -3479,6 +3598,22 @@
           "type": "NextEventData",
           "nullable": true,
           "readOnly": true
+        },
+        "account": {
+          "type": "AccountData",
+          "readOnly": true,
+          "nullable": true,
+          "required": false
+        },
+        "rows": {
+          "type": "DashboardCardModel",
+          "readOnly": true,
+          "required": false
+        },
+        "selection": {
+          "type": "SelectionState",
+          "readOnly": true,
+          "required": false
         }
       },
       "methods": {

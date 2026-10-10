@@ -1264,6 +1264,17 @@
           "minimum": 1,
           "maximum": 100,
           "readOnly": true
+        },
+        "credits": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AccountCredits",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -4725,6 +4736,154 @@
       ],
       "additionalProperties": false
     },
+    "AccountCredits": {
+      "type": "object",
+      "properties": {
+        "unlimited": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "balance": {
+          "$ref": "#/$defs/ScalarValue",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "unlimited",
+        "balance"
+      ],
+      "additionalProperties": false
+    },
+    "DashboardCard": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "value": {
+          "type": "string",
+          "readOnly": true
+        },
+        "subtitle": {
+          "type": "string",
+          "readOnly": true
+        },
+        "detail": {
+          "type": "string",
+          "readOnly": true
+        },
+        "icon": {
+          "type": "string",
+          "readOnly": true
+        },
+        "targetId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "previous": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "valueSize": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "rect": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "unit": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "value",
+        "subtitle",
+        "detail",
+        "icon",
+        "targetId",
+        "previous",
+        "valueSize",
+        "rect",
+        "unit"
+      ],
+      "additionalProperties": false
+    },
+    "DashboardSummary": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "subtitle": {
+          "type": "string",
+          "readOnly": true
+        },
+        "detailTarget": {
+          "type": "string",
+          "readOnly": true
+        },
+        "eventId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "sessionId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "cards": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DashboardCard"
+          },
+          "maxItems": 64,
+          "readOnly": true
+        },
+        "detailRows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DashboardCard"
+          },
+          "maxItems": 64,
+          "readOnly": true
+        },
+        "chart": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NetworkChart",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "subtitle",
+        "detailTarget",
+        "eventId",
+        "sessionId",
+        "cards",
+        "detailRows"
+      ],
+      "additionalProperties": false
+    },
     "SurfaceContext": {
       "type": "object",
       "properties": {
@@ -4786,6 +4945,17 @@
         "motionPolicy": {
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
+        },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -4864,6 +5034,17 @@
         "motionPolicy": {
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
+        },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "clock": {
           "$ref": "#/$defs/ClockState",
@@ -5049,6 +5230,17 @@
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
         },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "families": {
           "type": "array",
           "items": {
@@ -5161,6 +5353,17 @@
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
         },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "rows": {
           "type": "array",
           "items": {
@@ -5252,6 +5455,17 @@
         "motionPolicy": {
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
+        },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "keyMap": {
           "type": "array",
@@ -5345,6 +5559,17 @@
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
         },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "familyId": {
           "type": "string",
           "readOnly": true
@@ -5374,6 +5599,29 @@
               "type": "null"
             }
           ]
+        },
+        "account": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AccountData",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DashboardCard"
+          },
+          "maxItems": 64,
+          "readOnly": true
+        },
+        "selection": {
+          "$ref": "#/$defs/SelectionState",
+          "readOnly": true
         }
       },
       "required": [
@@ -5456,6 +5704,17 @@
         "motionPolicy": {
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
+        },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "sectionId": {
           "type": "string",
@@ -5581,6 +5840,17 @@
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
         },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "tabs": {
           "type": "array",
           "items": {
@@ -5703,6 +5973,17 @@
         "motionPolicy": {
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
+        },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "source": {
           "$ref": "#/$defs/SourceState",
@@ -5829,6 +6110,17 @@
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
         },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "match": {
           "$ref": "#/$defs/MatchData",
           "readOnly": true
@@ -5953,6 +6245,17 @@
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
         },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "team": {
           "$ref": "#/$defs/TeamData",
           "readOnly": true
@@ -6060,6 +6363,17 @@
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
         },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "teams": {
           "type": "array",
           "items": {
@@ -6156,6 +6470,17 @@
         "motionPolicy": {
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
+        },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "kind": {
           "type": "string",
@@ -6297,6 +6622,17 @@
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
         },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "kind": {
           "type": "string",
           "enum": [
@@ -6417,6 +6753,17 @@
         "motionPolicy": {
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
+        },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "actor": {
           "$ref": "#/$defs/ActorSnapshot",
@@ -6753,6 +7100,17 @@
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
         },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "casa": {
           "$ref": "#/$defs/CasaData",
           "readOnly": true
@@ -6876,6 +7234,17 @@
         "motionPolicy": {
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
+        },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "source": {
           "$ref": "#/$defs/SourceState",
@@ -7033,6 +7402,17 @@
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
         },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "metrics": {
           "$ref": "#/$defs/NetworkMetricsView",
           "readOnly": true
@@ -7120,6 +7500,17 @@
         "motionPolicy": {
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
+        },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "metrics": {
           "$ref": "#/$defs/NetworkMetricsView",
@@ -7209,6 +7600,17 @@
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
         },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "metrics": {
           "$ref": "#/$defs/NetworkMetricsView",
           "readOnly": true
@@ -7296,6 +7698,17 @@
         "motionPolicy": {
           "$ref": "#/$defs/MotionPolicy",
           "readOnly": true
+        },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "rows": {
           "type": "array",
@@ -7611,6 +8024,13 @@
         "$ref": "#/$defs/SportDiscipline"
       },
       "maxItems": 3
+    },
+    "DashboardCardModel": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/DashboardCard"
+      },
+      "maxItems": 64
     }
   },
   "description": "Choose an explicit $defs type. Python validator also checks model identity uniqueness and request allowlists."

@@ -130,7 +130,7 @@ Item {{
         records = []
         for filename, body, should_pass in [('Valid.qml', source, True), ('Invalid.qml', source.replace('style.surface', 'style.surfaec'), False)]:
             path = root / filename; path.write_text(body)
-            result = subprocess.run([executable, '--ignore-settings', '--unresolved-type', 'error', '-W', '0', '-I', str(root), str(path)],
+            result = subprocess.run([executable, '--ignore-settings', '--unresolved-type', 'warning', '-W', '0', '-I', str(root), str(path)],
                                     capture_output=True, text=True, timeout=30)
             if should_pass and result.returncode != 0 or not should_pass and (result.returncode == 0 or 'surfaec' not in result.stderr or 'missing-property' not in result.stderr):
                 raise ContractError('api.typeinfo.lint', filename, (result.stdout + result.stderr)[-3000:])

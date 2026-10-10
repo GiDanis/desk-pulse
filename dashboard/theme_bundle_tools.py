@@ -91,7 +91,7 @@ def lint_project(project, executable=None):
         return {'status': 'notVerified', 'issues': [issue('lint.unavailable', 'qmllint non disponibile')], 'files': []}
     files = []
     for path in sorted(project.rglob('*.qml')):
-        value = subprocess.run([executable, '--ignore-settings', '--unresolved-type', 'error', '-W', '0',
+        value = subprocess.run([executable, '--ignore-settings', '--unresolved-type', 'warning', '-W', '0',
                                 '-I', str(ROOT / 'qml'), str(path)], capture_output=True, text=True, timeout=30)
         files.append({'file': str(path.relative_to(project)), 'exitCode': value.returncode,
                       'diagnostics': value.stdout + value.stderr})

@@ -263,7 +263,8 @@ def effective_manifest(value, surfaces):
     groups=[{'casa.overview','casa.devices','casa.detail','settings.casa'},
             {'network.overview','network.devices','network.detail','settings.network'},
             {'network.router','network.wifi','network.ports'},
-            {'sport.hub','settings.services','settings.sports','settings.appearance.management'}]
+            {'sport.hub','settings.services','settings.sports','settings.appearance.management'},
+            {'casa.inventory'}, {'network.inventory'}]
     missing=set(surfaces)-known
     if missing and missing <= set.union(*groups) and all(not (group & missing) or group <= missing for group in groups):
         coverage['fallbacks']=sorted(set(coverage['fallbacks']) | missing)
@@ -768,6 +769,7 @@ class BundleManager:
         for name in ('theme-bundles', 'theme-staging', 'theme-quarantine', 'theme-reports'):
             (self.root / name).mkdir(parents=True, exist_ok=True)
         self.resources = ResourceResolver(self.app_root)
+        self._lease_verifications = {}
 
     def _revision_path(self, identity):
         revision_key(identity)
@@ -831,6 +833,33 @@ class BundleManager:
                 and revision['registry'] == read_json(path / 'payload/visual-registry.json'), 'revision', 'metadati diversi dal payload')
         revision.update(path=str(path), payload=str(path / 'payload'))
         self.resources.register(revision['key'], revision['payload'])
+        return revision
+
+    def _revision_stamp(self, path):
+        # lstat includes directories and symlinks: replacements, additions,
+        # chmod and writes with a restored mtime still change the fingerprint.
+        entries = [path, *sorted(path.rglob('*'))]
+        return tuple((str(entry.relative_to(path)), info.st_dev, info.st_ino,
+                      info.st_mode, info.st_size, info.st_mtime_ns, info.st_ctime_ns)
+                     for entry in entries for info in [entry.lstat()])
+
+    def _verify_for_lease(self, identity):
+        """Reuse full integrity verification only for unchanged revision trees.
+
+        LifecycleManager calls this while holding manager_lock, keeping the
+        verification/protection transaction atomic against revision cleanup.
+        Explicit verify_revision/import/list/activation keep full verification.
+        """
+        path = self._revision_path(identity)
+        stamp = self._revision_stamp(path)
+        previous = self._lease_verifications.get(str(path))
+        if previous is not None and previous[0] == stamp:
+            return deepcopy(previous[1])
+        revision = self.verify_revision(identity)
+        require(stamp == self._revision_stamp(path), 'revision', 'revisione cambiata durante verifica')
+        if len(self._lease_verifications) >= 8:
+            self._lease_verifications.pop(next(iter(self._lease_verifications)))
+        self._lease_verifications[str(path)] = (stamp, deepcopy(revision))
         return revision
 
     def list_revisions(self, *, include_quarantined=False):

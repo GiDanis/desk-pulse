@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import SmartPC.ThemeApi 2.3
 Item {

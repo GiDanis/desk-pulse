@@ -1,6 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
-import SmartPC.ThemeApi 2.0
+import SmartPC.ThemeApi 2.6
 import "Format.js" as Format
 
 AccountPage {

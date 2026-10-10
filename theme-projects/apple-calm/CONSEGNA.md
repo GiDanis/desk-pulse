@@ -1,5 +1,29 @@
 # Apple Calm — consegne
 
+## Revisione 1.6.2 · 10 ottobre 2026
+
+Installata e attiva con **SmartPC 0.8.7-rc.2 / Theme API 2.7**. Palette, font, icone e layout conservati; dominio team mirato e motion breve da 100 ms per navigazione/ingresso. Core con cache alla chiusura, rilascio dei renderer al cambio tema e contesti inizializzati una volta. Digest `29f17b2dcf54ae37024426b1f3a9d6177f62d7c930ab26308d2381b8cc8cd8d4`. 1.098 combinazioni native, Main nei tre temi, impostazioni/cache e confronti EGLFS qualificati; 515 file, 40 preferenze e personalizzazioni conservati dopo reboot reale, GUI pronta, pending nullo, servizio active/running con NRestarts=0, nessun warning QML rilevato. Backup `/var/backups/smartpc-before-v087-opening-20261010T123037Z`; prove `/var/lib/smartpc-dashboard/v087-opening-proof/`. Residui del freddo, selettore, Impostazioni e collaudo fisico documentati. [Risultati completi](../../dashboard/design/v087-opening-implementation-report.md).
+
+## Revisione 1.6.1 · 9 ottobre 2026
+
+Prima ottimizzazione consegnata con SmartPC 0.8.7-rc.1: cache stile, pubblicazioni selettive e invalidazioni per dominio; digest `083ad5f82a577b45d656f2c92c243b593237233305fe6be5d7e850c0ee38679e`. [Consegna storica, confronto e reboot](../../dashboard/design/v087-performance-implementation-report.md).
+
+## Correzione core 0.8.6-rc.2 · 9 ottobre 2026
+
+Apple Calm 1.6.0 resta attivo con lo stesso digest e contratto. Serie A apre con 5 tutte le partite della giornata; La mia squadra ha una dashboard distinta per calendario e dettagli personali. Nove controlli locali mirati e quattro profili EGLFS, manifest di 513 file e preferenze conservati. [Percorsi, installazione e reboot](../../dashboard/design/v086-serie-a-fix-report.md).
+
+## Revisione 1.6.0 · 9 ottobre 2026
+
+Implementata, qualificata e **attivata** con **SmartPC 0.8.6-rc.1 / Theme API 2.7**. Dashboard orizzontali per tutti gli argomenti, dettagli diretti, inventari informativi Casa/Rete e grafico WAN; palette/font e personalizzazioni conservati, 57 glifi invariati e tre aggiunti. Digest `2cb5518974a4813762bcfc3b3e96fe28c34054c356bd4978807f4ca62ba6d1d8`. 77 esiti locali finali, 1.098 combinazioni native e Main EGLFS nei tre temi; 513 file, avvio a freddo e reboot reale verificati, servizio active/running con NRestarts=0, GUI fresca, pending nullo e nessun warning QML rilevato. Backup iniziale `/var/backups/smartpc-before-v086-dashboard-20261009T184917Z`; backup aspetto `/var/backups/smartpc-before-v086-apple-activation-20261009T193554Z`. Prove persistenti sotto `/var/lib/smartpc-dashboard/v086-dashboard-proof/` e `v086-source-proof/`. Qualifica software distinta dall'uso del pannello IPS a 50–60 cm e dai feed live. [Resoconto, scope e prove](../../dashboard/design/v086-dashboard-implementation-report.md).
+
+## Revisione 1.5.0 · 9 ottobre 2026
+
+Qualificata e importata con **SmartPC 0.8.5-rc.1 / Theme API 2.6**, senza cambiare Base o le preferenze dell'utente. Impostazioni a sei schede e Informazioni a due colonne, con palette/font/asset conservati. Il core aggiunge lista diretta, caricamento per fasi, fix delle transizioni e watchdog limitato. Digest `eafc17dfd36a7b6757504201c18275b856ec90389f9f1038c1666fc16928fbfa`. 75 esiti locali finali, 1.062 combinazioni native, otto profili EGLFS, 503 file; installazione e reboot reale verificati, servizio active/running con NRestarts=0, GUI pronta, pending nullo e tutte le preferenze conservate. Backup `/var/backups/smartpc-before-v085-dashboard-20261009T114340Z`; prove `/var/lib/smartpc-dashboard/v085-dashboard-proof/`. Colleghiamo la qualifica software al perimetro fisico ancora aperto a 50–60 cm. [Resoconto e catture](../../dashboard/design/v085-settings-implementation-report.md).
+
+## Revisione 1.4.0 · 9 ottobre 2026
+
+Qualificata e importata con **SmartPC 0.8.4-rc.1 / Theme API 2.6**, conservando **Base** selezionato dall'utente. Schede adattive, quattro preferiti completi, panorama Rete con WAN/sensori/cataloghi qualificati e crediti Account opzionali; risorse grafiche conservate. Digest `3353fc9e0951efb0ef8e5d52cb92f7b64e50d15a5994fa2ff2dd372e3dc856ef`. 73 regressioni locali finali, 1.062 combinazioni native, sei profili EGLFS e 20 superfici Apple/92 passi su Main. Core installato con 500 file, backup e reboot reale verificati; tutte le preferenze conservate, servizio `active/running`, `NRestarts=0`, GUI pronta, nessuna attivazione pendente o warning QML rilevato. Backup `/var/backups/smartpc-before-v084-dashboard-20261009T100942Z`; prove persistenti `/var/lib/smartpc-dashboard/v084-dashboard-proof/`. Qualificazione con fixture distinta dal giudizio fisico di leggibilità a 50–60 cm. [Resoconto, catture e residui](../../dashboard/design/v084-dashboard-optimization-report.md).
+
 ## Revisione 1.3.1 · 8 ottobre 2026
 
 Installata con **SmartPC 0.8.3-rc.2 / Theme API 2.5**. Adatta gli spazi conservando palette, font, icone e stile delle card: barra 56 px, contenuto 912×552 a x24/y72, liste scorrevoli, Sport senza legenda permanente, traffico WAN e sensori iliadbox in panoramica. Corretto il cambio delle schede Informazioni a pari numero di righe. Digest `484b983f1622fbaccbfc09047d4c39641e5e1646bba04a2fd5cbc88f5aeb9a84`; 499 file verificati, 72 controlli locali, 1.062 combinazioni native, prove mirate EGLFS giorno/notte e 19 superfici/92 passi su Main. Reboot reale verificato, servizio `active/running`, `NRestarts=0`, GUI pronta e preferenze conservate. Backup `/var/backups/smartpc-before-v083-space-20261008T130632Z`; prove `/var/lib/smartpc-dashboard/v083-space-proof/`. I due tentativi precedenti e i rollback sono documentati. Resta il giudizio di leggibilità fisica a 50–60 cm. [Resoconto e catture](../../dashboard/design/v083-space-optimization-report.md), [uso e recupero](../../dashboard/design/v083-ux-operations.md).

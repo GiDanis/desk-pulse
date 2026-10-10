@@ -4,7 +4,7 @@
 
 Generated from the four canonical JSON documents. Do not edit generated files.
 
-API fingerprint: `2c492a33223315ec27a31f4c2a59c9894a01e3d69fd9cf7c112ca8ac08738e99`
+API fingerprint: `6a4b6d171301326282df99081df402c9aa9adb89aeafb879ad38b665b9c2b4c0`
 
 This fingerprint is independent from the schema-1 registry fingerprint.
 
@@ -12,7 +12,7 @@ This fingerprint is independent from the schema-1 registry fingerprint.
 
 | Content ID | Context/version | Host | Legacy route | Actions |
 | --- | --- | --- | --- | --- |
-| account.usage | PageContext 2 | page | — | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move |
+| account.usage | PageContext 2 | page | — | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move |
 | alerts.badge | NotificationContext 1 | notification | — | home, openInbox |
 | alerts.banner.large | NotificationContext 1 | notification | — | home, openInbox |
 | alerts.banner.small | NotificationContext 1 | notification | — | home, openInbox |
@@ -20,18 +20,18 @@ This fingerprint is independent from the schema-1 registry fingerprint.
 | alerts.inbox | NotificationContext 1 | notification | alerts | back, home, moveSelection, openDetails, selectEvent |
 | alerts.urgent | NotificationContext 1 | notification | — | dismiss, home, openDetails |
 | casa.detail | CasaContext 1 | overlay | casaDetail | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, sources.refresh |
-| casa.devices | CasaContext 1 | page | — | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, navigation.family.step, navigation.view.step |
-| casa.overview | CasaContext 1 | page | — | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, navigation.family.step, navigation.view.step |
+| casa.devices | CasaContext 1 | page | — | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select |
+| casa.overview | CasaContext 1 | page | — | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select |
 | device.info | InfoContext 1 | overlay | info | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, sources.refresh, tabs.select |
 | home.clock | PageContext 2 | page | — | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
 | home.day | PageContext 2 | page | — | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
 | home.now | PageContext 2 | page | — | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
 | network.detail | NetworkContext 1 | overlay | networkDetail | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, sources.refresh, network.favourite.toggle, navigation.tab.select |
-| network.devices | NetworkContext 1 | page | — | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, navigation.family.step, navigation.view.step, network.filter.step |
-| network.overview | NetworkContext 1 | page | — | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, navigation.family.step, navigation.view.step, network.filter.step, network.metrics.section |
+| network.devices | NetworkContext 1 | page | — | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, network.filter.step, selection.move, selection.select |
+| network.overview | NetworkContext 1 | page | — | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, network.filter.step, network.metrics.section, selection.move, selection.select |
 | overlay.commands | CommandsContext 1 | overlay | commands | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
 | overlay.menu | MenuContext 1 | overlay | menu | menu.activate, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select |
-| overlay.summary | SummaryContext 1 | overlay | detail | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step |
+| overlay.summary | SummaryContext 1 | overlay | detail | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move |
 | racing.calendar | RacingContext 1 | overlay | racingList | details.open, details.refresh, details.scroll, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, tabs.select |
 | racing.driver.detail | DriverContext 1 | overlay | racingDriver | details.open, details.refresh, details.scroll, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, tabs.select |
 | racing.event.detail | RacingContext 1 | overlay | racingEvent | details.open, details.refresh, details.scroll, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, tabs.select |
@@ -68,10 +68,12 @@ This fingerprint is independent from the schema-1 registry fingerprint.
 | network.router | NetworkRouterContext 1 | overlay | networkRouter | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, network.metrics.entity, network.metrics.section, network.metrics.refresh, network.metrics.window, network.metrics.metric |
 | network.wifi | NetworkWifiContext 1 | overlay | networkWifi | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, network.metrics.entity, network.metrics.section, network.metrics.refresh, network.metrics.window, network.metrics.metric |
 | network.ports | NetworkPortsContext 1 | overlay | networkPorts | navigation.back, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open, network.metrics.entity, network.metrics.section, network.metrics.refresh, network.metrics.window, network.metrics.metric |
-| sport.hub | SportHubContext 1 | page | — | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select, details.open |
+| sport.hub | SportHubContext 1 | page | — | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, selection.move, selection.select |
 | settings.services | SettingsContext 1 | overlay | services | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate, settings.adjust |
 | settings.sports | SettingsContext 1 | overlay | sportModules | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate, settings.adjust |
 | settings.appearance.management | SettingsContext 1 | overlay | themeManagement | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate, settings.adjust |
+| casa.inventory | CasaContext 1 | overlay | casaList | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.tab.select, navigation.view.step, selection.move, selection.select |
+| network.inventory | NetworkContext 1 | overlay | networkList | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.tab.select, navigation.view.step, network.filter.step, selection.move, selection.select |
 
 ## Contexts
 
@@ -91,6 +93,7 @@ This fingerprint is independent from the schema-1 registry fingerprint.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 
 Method `requestAction(string, string, legacyMap) → ActionResult`.
 
@@ -110,6 +113,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | clock | ClockState | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
 | weather | WeatherData | required / nullable | {} |
@@ -139,6 +143,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | families | FamilyModel | required / non-null | {} |
 | currentFamilyId | string | required / non-null | {} |
 | currentViewId | string | required / non-null | {} |
@@ -164,6 +169,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | rows | MenuRowModel | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
 
@@ -185,6 +191,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | keyMap | CommandModel | required / non-null | {} |
 | firstRun | bool | required / non-null | {} |
 
@@ -206,10 +213,14 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | familyId | string | required / non-null | {} |
 | clock | ClockState | required / non-null | {} |
 | weather | WeatherData | required / nullable | {} |
 | nextEvent | NextEventData | required / nullable | {} |
+| account | AccountData | optional / nullable | {} |
+| rows | DashboardCardModel | optional / non-null | {} |
+| selection | SelectionState | optional / non-null | {} |
 
 Method `requestAction(string, string, legacyMap) → ActionResult`.
 
@@ -229,6 +240,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | sectionId | string | required / non-null | {} |
 | rows | SettingRowModel | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
@@ -255,6 +267,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | tabs | TabModel | required / non-null | {} |
 | rows | InfoRowModel | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
@@ -279,6 +292,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | source | SourceState | required / non-null | {} |
 | matches | MatchModel | required / non-null | {} |
 | standings | StandingModel | required / non-null | {} |
@@ -305,6 +319,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | match | MatchData | required / non-null | {} |
 | source | SourceState | required / non-null | {} |
 | tabs | TabModel | required / non-null | {} |
@@ -331,6 +346,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | team | TeamData | required / non-null | {} |
 | tabs | TabModel | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
@@ -355,6 +371,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | teams | TeamIdentityModel | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
 | savedTeamId | string | required / non-null | {} |
@@ -377,6 +394,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | kind | string | required / non-null | {"enum": ["f1", "motogp"]} |
 | source | SourceState | required / non-null | {} |
 | racing | RacingData | required / non-null | {} |
@@ -404,6 +422,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | kind | string | required / non-null | {"enum": ["f1", "motogp"]} |
 | driver | DriverData | required / non-null | {} |
 | source | SourceState | required / non-null | {} |
@@ -430,6 +449,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | required / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | actor | ActorSnapshot | required / non-null | {} |
 | configuration | SceneConfiguration | required / non-null | {} |
 | occupiedRegions | array | required / non-null | {"items": "Rect", "maxItems": 64} |
@@ -504,6 +524,7 @@ Signal `settleMotionRequested()`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | casa | CasaData | required / non-null | {} |
 | source | SourceState | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
@@ -530,6 +551,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | source | SourceState | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
 | selectedDevice | NetworkDevice | required / nullable | {} |
@@ -560,6 +582,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | metrics | NetworkMetricsView | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
 
@@ -581,6 +604,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | metrics | NetworkMetricsView | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
 
@@ -602,6 +626,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | metrics | NetworkMetricsView | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
 
@@ -623,6 +648,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | commands | CommandModel | required / non-null | {} |
 | actions | ActionModel | required / non-null | {} |
 | motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
 | rows | SportDisciplineModel | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
 | description | string | required / non-null | {} |
@@ -928,6 +954,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | resetCredits | NumericValue | required / non-null | {} |
 | warningThreshold | int | required / non-null | {"minimum": 1, "maximum": 100} |
 | criticalThreshold | int | required / non-null | {"minimum": 1, "maximum": 100} |
+| credits | AccountCredits | optional / nullable | {} |
 
 ### TeamIdentity
 
@@ -1687,6 +1714,43 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | iconId | string | required / non-null | {} |
 | source | SourceState | required / non-null | {} |
 
+### AccountCredits
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| unlimited | bool | required / non-null | {} |
+| balance | ScalarValue | required / non-null | {} |
+
+### DashboardCard
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| id | string | required / non-null | {} |
+| title | string | required / non-null | {} |
+| value | string | required / non-null | {} |
+| subtitle | string | required / non-null | {} |
+| detail | string | required / non-null | {} |
+| icon | string | required / non-null | {} |
+| targetId | string | required / non-null | {} |
+| previous | bool | required / non-null | {} |
+| valueSize | int | required / non-null | {} |
+| rect | Rect | required / non-null | {} |
+| unit | string | required / non-null | {} |
+
+### DashboardSummary
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| id | string | required / non-null | {} |
+| title | string | required / non-null | {} |
+| subtitle | string | required / non-null | {} |
+| detailTarget | string | required / non-null | {} |
+| eventId | string | required / non-null | {} |
+| sessionId | string | required / non-null | {} |
+| cards | DashboardCardModel | required / non-null | {} |
+| detailRows | DashboardCardModel | required / non-null | {} |
+| chart | NetworkChart | optional / nullable | {} |
+
 ## Models
 
 | Model | Row type | Identity |
@@ -1731,6 +1795,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | NetworkChartPointModel | NetworkChartPoint | id |
 | NetworkChartSeriesModel | NetworkChartSeries | id |
 | SportDisciplineModel | SportDiscipline | id |
+| DashboardCardModel | DashboardCard | id |
 
 ## Actions
 

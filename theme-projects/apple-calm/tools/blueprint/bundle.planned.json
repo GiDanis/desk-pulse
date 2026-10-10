@@ -1,7 +1,7 @@
 {
   "bundleFormat": 1,
   "id": "studio.applecalm",
-  "version": "1.3.1",
+  "version": "1.6.1",
   "name": "Apple Calm",
   "engineApi": 2,
   "contextApis": {
@@ -80,7 +80,9 @@
       "sport.team.detail",
       "sport.team.picker",
       "weather.forecast",
-      "weather.now"
+      "weather.now",
+      "casa.inventory",
+      "network.inventory"
     ],
     "fallbacks": [
       "scene.main"
@@ -94,174 +96,404 @@
   "trust": "author-code",
   "resources": [
     {
-      "id": "renderer.homenow",
-      "path": "qml/HomeNow.qml",
+      "id": "res.license.txt",
+      "path": "LICENSE.txt",
+      "type": "license"
+    },
+    {
+      "id": "res.fonts.cantarell_license.txt",
+      "path": "fonts/Cantarell-LICENSE.txt",
+      "type": "license"
+    },
+    {
+      "id": "res.fonts.cantarell_vf.otf",
+      "path": "fonts/Cantarell-VF.otf",
+      "type": "font"
+    },
+    {
+      "id": "res.fonts.liberation_license.txt",
+      "path": "fonts/Liberation-LICENSE.txt",
+      "type": "license"
+    },
+    {
+      "id": "res.fonts.liberationsans_bold.ttf",
+      "path": "fonts/LiberationSans-Bold.ttf",
+      "type": "font"
+    },
+    {
+      "id": "res.fonts.liberationsans_regular.ttf",
+      "path": "fonts/LiberationSans-Regular.ttf",
+      "type": "font"
+    },
+    {
+      "id": "res.qml.accountpage.qml",
+      "path": "qml/AccountPage.qml",
       "type": "qml"
     },
     {
-      "id": "renderer.homeday",
-      "path": "qml/HomeDay.qml",
-      "type": "qml"
-    },
-    {
-      "id": "renderer.weathernow",
-      "path": "qml/WeatherNow.qml",
-      "type": "qml"
-    },
-    {
-      "id": "renderer.weatherforecast",
-      "path": "qml/WeatherForecast.qml",
-      "type": "qml"
-    },
-    {
-      "id": "renderer.accountusage",
+      "id": "res.qml.accountusage.qml",
       "path": "qml/AccountUsage.qml",
       "type": "qml"
     },
     {
-      "id": "renderer.sportoverview",
-      "path": "qml/SportOverview.qml",
+      "id": "res.qml.card.qml",
+      "path": "qml/Card.qml",
       "type": "qml"
     },
     {
-      "id": "renderer.teamoverview",
-      "path": "qml/TeamOverview.qml",
+      "id": "res.qml.casadetail.qml",
+      "path": "qml/CasaDetail.qml",
       "type": "qml"
     },
     {
-      "id": "renderer.racingoverview",
-      "path": "qml/RacingOverview.qml",
+      "id": "res.qml.casadevices.qml",
+      "path": "qml/CasaDevices.qml",
       "type": "qml"
     },
     {
-      "id": "renderer.shell",
-      "path": "qml/Shell.qml",
+      "id": "res.qml.casaheader.qml",
+      "path": "qml/CasaHeader.qml",
       "type": "qml"
     },
     {
-      "id": "renderer.menu",
-      "path": "qml/Menu.qml",
+      "id": "res.qml.casalabel.qml",
+      "path": "qml/CasaLabel.qml",
       "type": "qml"
     },
     {
-      "id": "renderer.commands",
+      "id": "res.qml.casaoverview.qml",
+      "path": "qml/CasaOverview.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.casasettings.qml",
+      "path": "qml/CasaSettings.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.clockfocuspage.qml",
+      "path": "qml/ClockFocusPage.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.clockpage.qml",
+      "path": "qml/ClockPage.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.commands.qml",
       "path": "qml/Commands.qml",
       "type": "qml"
     },
     {
-      "id": "renderer.summary",
-      "path": "qml/Summary.qml",
+      "id": "res.qml.currentweatherpage.qml",
+      "path": "qml/CurrentWeatherPage.qml",
       "type": "qml"
     },
     {
-      "id": "renderer.deviceinfo",
+      "id": "res.qml.daypage.qml",
+      "path": "qml/DayPage.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.deviceinfo.qml",
       "path": "qml/DeviceInfo.qml",
       "type": "qml"
     },
     {
-      "id": "renderer.sportfixtures",
-      "path": "qml/SportFixtures.qml",
-      "type": "qml"
-    },
-    {
-      "id": "renderer.sportstandings",
-      "path": "qml/SportStandings.qml",
-      "type": "qml"
-    },
-    {
-      "id": "renderer.matchdetail",
-      "path": "qml/MatchDetail.qml",
-      "type": "qml"
-    },
-    {
-      "id": "renderer.teamdetail",
-      "path": "qml/TeamDetail.qml",
-      "type": "qml"
-    },
-    {
-      "id": "renderer.teampicker",
-      "path": "qml/TeamPicker.qml",
-      "type": "qml"
-    },
-    {
-      "id": "renderer.racingcalendar",
-      "path": "qml/RacingCalendar.qml",
-      "type": "qml"
-    },
-    {
-      "id": "renderer.racingevent",
-      "path": "qml/RacingEvent.qml",
-      "type": "qml"
-    },
-    {
-      "id": "renderer.racingsession",
-      "path": "qml/RacingSession.qml",
-      "type": "qml"
-    },
-    {
-      "id": "renderer.racingstandings",
-      "path": "qml/RacingStandings.qml",
-      "type": "qml"
-    },
-    {
-      "id": "renderer.racinglive",
-      "path": "qml/RacingLive.qml",
-      "type": "qml"
-    },
-    {
-      "id": "renderer.driverdetail",
+      "id": "res.qml.driverdetail.qml",
       "path": "qml/DriverDetail.qml",
       "type": "qml"
     },
     {
-      "id": "renderer.noticebadge",
+      "id": "res.qml.forecastpage.qml",
+      "path": "qml/ForecastPage.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.format.js",
+      "path": "qml/Format.js",
+      "type": "js"
+    },
+    {
+      "id": "res.qml.homeclock.qml",
+      "path": "qml/HomeClock.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.homeday.qml",
+      "path": "qml/HomeDay.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.homenow.qml",
+      "path": "qml/HomeNow.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.iconpaths.js",
+      "path": "qml/IconPaths.js",
+      "type": "js"
+    },
+    {
+      "id": "res.qml.label.qml",
+      "path": "qml/Label.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.matchdetail.qml",
+      "path": "qml/MatchDetail.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.menu.qml",
+      "path": "qml/Menu.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.metric.qml",
+      "path": "qml/Metric.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.navigationdots.qml",
+      "path": "qml/NavigationDots.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.networkdetail.qml",
+      "path": "qml/NetworkDetail.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.networkdevices.qml",
+      "path": "qml/NetworkDevices.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.networkheader.qml",
+      "path": "qml/NetworkHeader.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.networkhistorychart.qml",
+      "path": "qml/NetworkHistoryChart.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.networkmetricspanel.qml",
+      "path": "qml/NetworkMetricsPanel.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.networkoverview.qml",
+      "path": "qml/NetworkOverview.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.networkports.qml",
+      "path": "qml/NetworkPorts.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.networkrouter.qml",
+      "path": "qml/NetworkRouter.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.networksettings.qml",
+      "path": "qml/NetworkSettings.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.networkwifi.qml",
+      "path": "qml/NetworkWifi.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.notice.qml",
+      "path": "qml/Notice.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.noticebadge.qml",
       "path": "qml/NoticeBadge.qml",
       "type": "qml"
     },
     {
-      "id": "renderer.noticesmall",
-      "path": "qml/NoticeSmall.qml",
-      "type": "qml"
-    },
-    {
-      "id": "renderer.noticelarge",
-      "path": "qml/NoticeLarge.qml",
-      "type": "qml"
-    },
-    {
-      "id": "renderer.noticeurgent",
-      "path": "qml/NoticeUrgent.qml",
-      "type": "qml"
-    },
-    {
-      "id": "renderer.noticeinbox",
-      "path": "qml/NoticeInbox.qml",
-      "type": "qml"
-    },
-    {
-      "id": "renderer.noticedetail",
+      "id": "res.qml.noticedetail.qml",
       "path": "qml/NoticeDetail.qml",
       "type": "qml"
     },
     {
-      "id": "renderer.settings",
-      "path": "qml/Settings.qml",
+      "id": "res.qml.noticeinbox.qml",
+      "path": "qml/NoticeInbox.qml",
       "type": "qml"
     },
     {
-      "id": "icons.outline",
+      "id": "res.qml.noticelarge.qml",
+      "path": "qml/NoticeLarge.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.noticesmall.qml",
+      "path": "qml/NoticeSmall.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.noticeurgent.qml",
+      "path": "qml/NoticeUrgent.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.outlineicon.qml",
       "path": "qml/OutlineIcon.qml",
       "type": "qml"
     },
     {
-      "id": "icons.paths",
-      "path": "assets/IconPaths.js",
-      "type": "js"
+      "id": "res.qml.pagecanvas.qml",
+      "path": "qml/PageCanvas.qml",
+      "type": "qml"
     },
     {
-      "id": "license",
-      "path": "LICENSE",
-      "type": "license"
+      "id": "res.qml.panel.qml",
+      "path": "qml/Panel.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.racingcalendar.qml",
+      "path": "qml/RacingCalendar.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.racingevent.qml",
+      "path": "qml/RacingEvent.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.racinglive.qml",
+      "path": "qml/RacingLive.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.racingoverview.qml",
+      "path": "qml/RacingOverview.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.racingsession.qml",
+      "path": "qml/RacingSession.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.racingstandings.qml",
+      "path": "qml/RacingStandings.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.rows.qml",
+      "path": "qml/Rows.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.settings.qml",
+      "path": "qml/Settings.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.shell.qml",
+      "path": "qml/Shell.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.sportfixtures.qml",
+      "path": "qml/SportFixtures.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.sporthub.qml",
+      "path": "qml/SportHub.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.sportoverview.qml",
+      "path": "qml/SportOverview.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.sportstandings.qml",
+      "path": "qml/SportStandings.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.summary.qml",
+      "path": "qml/Summary.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.tabs.qml",
+      "path": "qml/Tabs.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.teamdetail.qml",
+      "path": "qml/TeamDetail.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.teamoverview.qml",
+      "path": "qml/TeamOverview.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.teampicker.qml",
+      "path": "qml/TeamPicker.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.weathercard.qml",
+      "path": "qml/WeatherCard.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.weatherforecast.qml",
+      "path": "qml/WeatherForecast.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.weathernow.qml",
+      "path": "qml/WeatherNow.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.icon_atlas.png",
+      "path": "qml/icon-atlas.png",
+      "type": "image"
+    },
+    {
+      "id": "res.qml.dashboardcards.qml",
+      "path": "qml/DashboardCards.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.topicdashboard.qml",
+      "path": "qml/TopicDashboard.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.casainventory.qml",
+      "path": "qml/CasaInventory.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.networkinventory.qml",
+      "path": "qml/NetworkInventory.qml",
+      "type": "qml"
+    },
+    {
+      "id": "res.qml.minihistory.qml",
+      "path": "qml/MiniHistory.qml",
+      "type": "qml"
     }
   ],
   "extendedTokens": {},

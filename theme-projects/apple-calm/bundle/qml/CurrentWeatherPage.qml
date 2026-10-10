@@ -8,12 +8,12 @@ PageCanvas {
     title: "Meteo"
     subtitle: weather ? weather.location : "Dati non disponibili"
     source: weather ? weather.source : null
-    WeatherCard { x:0; y:94; width:root.width*0.39; height:312; style:root.style; weather:root.weather }
+    WeatherCard { x:0; y:root.bodyTop; width:root.width*400/912; height:root.bodyHeight; style:root.style; weather:root.weather }
     Grid {
-        x:root.width*0.39+16; y:94; columns:2; spacing:12
+        x:root.width*416/912; y:root.bodyTop; columns:2; spacing:16
         Repeater {
-            model: [{title:"Vento", value:root.weather ? Format.number(root.weather.windSpeed) : "—", detail:root.weather ? root.weather.windDirectionText : "", symbol:"wind"}, {title:"Raffiche", value:root.weather ? Format.number(root.weather.gusts) : "—", detail:"", symbol:"wind"}, {title:"Umidità", value:root.weather ? Format.number(root.weather.humidity) : "—", detail:"", symbol:"drop"}, {title:"Pioggia", value:root.weather ? Format.number(root.weather.precipitation) : "—", detail:"", symbol:"rain"}]
-            delegate: Metric { required property var modelData; width:(root.width*0.61-28)/2; height:150; style:root.style; title:modelData.title; value:modelData.value; detail:modelData.detail; symbol:modelData.symbol; valueSize:30 }
+            model: [{title:"Vento",size:34,value:root.weather ? Format.number(root.weather.windSpeed) : "—",detail:root.weather ? root.weather.windDirectionText : "",symbol:"wind"}, {title:"Umidità",size:52,value:root.weather ? Format.number(root.weather.humidity) : "—",detail:"",symbol:"humidity"}, {title:"Raffiche",size:34,value:root.weather ? Format.number(root.weather.gusts) : "—",detail:"",symbol:"wind"}, {title:"Precipitazioni",size:38,value:root.weather ? Format.number(root.weather.precipitation) : "—",detail:"Intervallo del modello",symbol:"rain"}]
+            delegate: Metric { required property var modelData; width:root.width*240/912; height:(root.bodyHeight-16)/2; style:root.style; title:modelData.title; value:modelData.value; detail:modelData.detail; symbol:modelData.symbol; valueSize:modelData.size }
         }
     }
 }

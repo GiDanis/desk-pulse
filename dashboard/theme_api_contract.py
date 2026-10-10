@@ -14,6 +14,8 @@ from pathlib import Path
 import re
 
 ROOT = Path(__file__).parent
+# Internal safety UI is application-owned and is never a theme surface.
+APPLICATION_OWNED_ROUTES = {'themeChooser'}
 DOCUMENTS = ('surfaces.json', 'contexts.json', 'actions.json', 'semantic-roles.json')
 PRIMITIVES = {'string', 'int', 'real', 'bool', 'color', 'scalar', 'legacyMap', 'array'}
 IDENTIFIER = re.compile(r'^[a-z][a-z0-9_.-]{0,127}$')
@@ -405,13 +407,13 @@ class ThemeApiContract:
                         cursor += 1
         approved = {(row['file'], row['expression']) for row in self.surfaces_document.get('dynamicRouting', [])}
         self.require(dynamic == approved, 'routes.dynamic', 'dispatch dinamici non censiti/obsoleti: ' + str(sorted(dynamic ^ approved)), 'api.coverage.dynamic')
-        self.require(observed_routes == expected_routes, 'routes', 'route non coperte/obsolete: ' + str(sorted(observed_routes ^ expected_routes)), 'api.coverage.routes')
+        self.require(observed_routes == expected_routes | APPLICATION_OWNED_ROUTES, 'routes', 'route non coperte/obsolete: ' + str(sorted(observed_routes ^ (expected_routes | APPLICATION_OWNED_ROUTES))), 'api.coverage.routes')
         registry = read_document(self.root / 'presentations/registry.json')
         registered = {cid for row in registry['presentations'] for cid in row['contentIds']}
         expected_hosted = {s['id'] for s in self.surfaces.values() if s['hostFamily'] in ('page', 'notification') or s.get('rendererState') == 'publicBuiltin'}
         self.require(registered == expected_hosted, 'contentIds', 'content ID del registry non coperti/obsoleti: ' + str(sorted(registered ^ expected_hosted)), 'api.coverage.registry')
         self.require(not observed_contents - set(self.surfaces), 'contentIds', 'content ID QML non coperti: ' + str(sorted(observed_contents - set(self.surfaces))), 'api.coverage.contents')
-        return {'routes': len(observed_routes), 'registeredContents': len(registered), 'dynamicDispatches': len(dynamic),
+        return {'routes': len(observed_routes - APPLICATION_OWNED_ROUTES), 'applicationOwnedRoutes': sorted(APPLICATION_OWNED_ROUTES), 'registeredContents': len(registered), 'dynamicDispatches': len(dynamic),
                 'scope': 'Conservative literal/source inventory plus declared dynamic sites; not full QML data-flow analysis'}
 
     def json_schema(self):

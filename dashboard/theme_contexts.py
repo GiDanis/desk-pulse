@@ -291,12 +291,9 @@ def _build_types():
             # Register in dependency order before a parent metaobject declares
             # a property of this exact pointer type. Passing a Python QObject
             # subclass directly to Property would erase it to QObject*.
-            qmlRegisterUncreatableType(cls, 'SmartPC.ThemeApi', 2, 0, name,
-                                       'Owned by SmartPC; obtain this object from the renderer context')
-            qmlRegisterUncreatableType(cls, 'SmartPC.ThemeApi', 2, 1, name,
-                                       'Owned by SmartPC; obtain this object from the renderer context')
-            qmlRegisterUncreatableType(cls, 'SmartPC.ThemeApi', 2, 2, name,
-                                       'Owned by SmartPC; obtain this object from the renderer context')
+            for minor in range(CONTRACT.surfaces_document['module']['minor'] + 1):
+                qmlRegisterUncreatableType(cls, 'SmartPC.ThemeApi', 2, minor, name,
+                                           'Owned by SmartPC; obtain this object from the renderer context')
 
 
 _build_types()

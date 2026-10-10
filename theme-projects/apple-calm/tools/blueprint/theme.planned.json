@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "studio.applecalm",
   "name": "Apple Calm",
-  "version": "1.3.1",
+  "version": "1.6.1",
   "extends": "base",
   "tokens": {
     "colors.background": "#F3F4F6",
@@ -109,14 +109,67 @@
     "metrics.listRows": 3,
     "metrics.borderWidth": 1,
     "metrics.focusWidth": 3,
-    "typography.uiFamily": "Cantarell",
-    "typography.displayFamily": "Liberation Sans",
-    "typography.numbersFamily": "Liberation Sans",
+    "typography.uiFamily": "asset:ui",
+    "typography.displayFamily": "asset:display",
+    "typography.numbersFamily": "asset:numbers",
     "typography.headingWeight": 600,
     "typography.bodyWeight": 400,
     "typography.clockWeight": 600,
     "typography.size139": 139,
-    "typography.size152": 152
+    "typography.size152": 152,
+    "notifications.small.radius": 24,
+    "notifications.small.titleFamily": "asset:ui",
+    "notifications.small.bodyFamily": "asset:ui",
+    "notifications.small.sourceFamily": "asset:ui",
+    "notifications.small.guideFamily": "asset:ui",
+    "notifications.small.width": 896,
+    "notifications.small.insetX": 32,
+    "notifications.large.radius": 24,
+    "notifications.large.titleFamily": "asset:ui",
+    "notifications.large.bodyFamily": "asset:ui",
+    "notifications.large.sourceFamily": "asset:ui",
+    "notifications.large.guideFamily": "asset:ui",
+    "notifications.large.width": 896,
+    "notifications.large.insetX": 32,
+    "notifications.urgent.radius": 24,
+    "notifications.urgent.titleFamily": "asset:ui",
+    "notifications.urgent.bodyFamily": "asset:ui",
+    "notifications.urgent.sourceFamily": "asset:ui",
+    "notifications.urgent.guideFamily": "asset:ui",
+    "notifications.badge.radius": 24,
+    "notifications.badge.titleFamily": "asset:ui",
+    "notifications.badge.bodyFamily": "asset:ui",
+    "notifications.badge.sourceFamily": "asset:ui",
+    "notifications.badge.guideFamily": "asset:ui",
+    "notifications.inbox.radius": 24,
+    "notifications.inbox.titleFamily": "asset:ui",
+    "notifications.inbox.bodyFamily": "asset:ui",
+    "notifications.inbox.sourceFamily": "asset:ui",
+    "notifications.inbox.guideFamily": "asset:ui",
+    "notifications.inbox.width": 896,
+    "notifications.inbox.insetX": 32,
+    "notifications.detail.radius": 24,
+    "notifications.detail.titleFamily": "asset:ui",
+    "notifications.detail.bodyFamily": "asset:ui",
+    "notifications.detail.sourceFamily": "asset:ui",
+    "notifications.detail.guideFamily": "asset:ui",
+    "notifications.small.showIcon": true,
+    "notifications.large.showIcon": true,
+    "notifications.urgent.showIcon": true,
+    "notifications.small.height": 124,
+    "notifications.small.insetY": 88,
+    "notifications.large.height": 360,
+    "notifications.large.insetY": 80,
+    "notifications.inbox.height": 560,
+    "notifications.inbox.insetY": 80,
+    "notifications.detail.width": 896,
+    "notifications.detail.height": 576,
+    "notifications.detail.insetX": 32,
+    "notifications.detail.insetY": 64,
+    "notifications.badge.width": 180,
+    "notifications.badge.height": 44,
+    "notifications.badge.insetX": 604,
+    "notifications.badge.insetY": 10
   },
   "palettes": {
     "day": {},
@@ -275,7 +328,9 @@
     "network.ports": "studio.applecalm.network_ports",
     "settings.services": "studio.applecalm.settings",
     "settings.sports": "studio.applecalm.settings",
-    "settings.appearance.management": "studio.applecalm.settings"
+    "settings.appearance.management": "studio.applecalm.settings",
+    "casa.inventory": "studio.applecalm.casa_inventory",
+    "network.inventory": "studio.applecalm.network_inventory"
   },
   "assets": [],
   "motion": {
@@ -316,32 +371,92 @@
       "easing": "outCubic"
     },
     "focus.change": {
-      "recipe": "builtin.fade",
-      "durationMs": 120,
+      "recipe": "builtin.cut",
+      "durationMs": 0,
       "distancePx": 0,
       "easing": "outCubic"
     },
     "tab.change": {
-      "recipe": "builtin.fade",
-      "durationMs": 120,
+      "recipe": "builtin.cut",
+      "durationMs": 0,
       "distancePx": 0,
       "easing": "outCubic"
     },
     "data.update": {
-      "recipe": "builtin.fade",
-      "durationMs": 120,
+      "recipe": "builtin.cut",
+      "durationMs": 0,
       "distancePx": 0,
       "easing": "outCubic"
     },
     "layout.swap": {
-      "recipe": "builtin.fade",
-      "durationMs": 160,
+      "recipe": "builtin.cut",
+      "durationMs": 0,
       "distancePx": 0,
       "easing": "outCubic"
     },
     "urgent.present": {
       "recipe": "builtin.cut",
       "durationMs": 0,
+      "distancePx": 0,
+      "easing": "outCubic"
+    },
+    "banner.small.enter": {
+      "recipe": "builtin.fade",
+      "durationMs": 120,
+      "distancePx": 0,
+      "easing": "outCubic"
+    },
+    "banner.small.exit": {
+      "recipe": "builtin.fade",
+      "durationMs": 120,
+      "distancePx": 0,
+      "easing": "outCubic"
+    },
+    "banner.large.enter": {
+      "recipe": "builtin.fade",
+      "durationMs": 120,
+      "distancePx": 0,
+      "easing": "outCubic"
+    },
+    "banner.large.exit": {
+      "recipe": "builtin.fade",
+      "durationMs": 120,
+      "distancePx": 0,
+      "easing": "outCubic"
+    },
+    "alerts.badge.enter": {
+      "recipe": "builtin.fade",
+      "durationMs": 120,
+      "distancePx": 0,
+      "easing": "outCubic"
+    },
+    "alerts.badge.exit": {
+      "recipe": "builtin.fade",
+      "durationMs": 120,
+      "distancePx": 0,
+      "easing": "outCubic"
+    },
+    "alerts.inbox.enter": {
+      "recipe": "builtin.fade",
+      "durationMs": 120,
+      "distancePx": 0,
+      "easing": "outCubic"
+    },
+    "alerts.inbox.exit": {
+      "recipe": "builtin.fade",
+      "durationMs": 120,
+      "distancePx": 0,
+      "easing": "outCubic"
+    },
+    "alerts.detail.enter": {
+      "recipe": "builtin.fade",
+      "durationMs": 120,
+      "distancePx": 0,
+      "easing": "outCubic"
+    },
+    "alerts.detail.exit": {
+      "recipe": "builtin.fade",
+      "durationMs": 120,
       "distancePx": 0,
       "easing": "outCubic"
     }

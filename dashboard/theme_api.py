@@ -15,6 +15,7 @@ from PySide6.QtCore import QObject, Property, Signal, Slot, QPointF, QRectF, QMe
 from PySide6.QtGui import QColor
 from PySide6.QtQml import QQmlEngine, QJSValue
 
+from dashboard_summary import build_summary
 from theme_api_contract import ContractError
 from theme_contexts import (CONTRACT, PUBLIC_TYPES, complete_snapshot, complete_field, default_snapshot, snapshot_equal)
 
@@ -219,6 +220,12 @@ def normalize_dto(type_name, raw, *, identity='', source=None):
         for i, window in enumerate(values['windows']):
             if not window['id']:
                 window['id'] = str(raw.get('windows', [])[i].get('id', f'window:{i}'))
+    if type_name == 'AccountCredits' and raw.get('balance') == '':
+        # The backend uses an empty balance for an unavailable measurement.
+        # A real zero balance remains available, including the string "0".
+        values['balance'] = default_snapshot('ScalarValue')
+    if type_name == 'AccountWindow' and 'windowDurationMinutes' not in raw and 'windowDurationMins' in raw:
+        values['windowDurationMinutes'] = numeric(raw['windowDurationMins'])
     if type_name == 'Lineup':
         values['teamId'] = str(raw.get('teamId', raw.get('side', '')))
     if type_name == 'NotificationEvent' and isinstance(raw.get('source'), str):
@@ -288,38 +295,58 @@ def _cached(cache, key, raw, build):
     return result
 
 
+def _style_identity(cache, name, value):
+    """Keep borrowed QObject wrappers stable for this context's lifetime.
+
+    QML marshalling can otherwise recreate the Python wrapper on each call.
+    A strong reference prevents both cache misses and reuse of a dead wrapper's
+    Python id. Factory release/destruction drops the whole private cache.
+    It does not take ownership of the QML QObject.
+    """
+    if cache is not None:
+        cache['object-reference:' + name] = value
+    return id(value)
+
+
 def normalize_legacy(surface_id, payload, cache=None, *, validate=True):
     """Private adapter entry point; the legacy model/controller never escapes."""
     surface = CONTRACT.surfaces[surface_id]
     kind = surface['context']
     payload = _mapping(payload)
     model = _mapping(payload.get('model'))
-    values = default_snapshot(kind)
+    # Defaults belong to this private normalization cache. Replace top-level
+    # fields below; completed public snapshots and context commits own copies.
+    values = dict(_cached(cache, 'defaults', kind, lambda: default_snapshot(kind)))
     for name in values:
         if name in payload and name not in ('style', 'visualStyle'):
             spec = CONTRACT.fields(kind)[name]
             if spec['type'] in CONTRACT.types and payload[name] is not None:
-                values[name] = normalize_dto(spec['type'], payload[name])
+                raw = _plain(payload[name])
+                values[name] = _cached(cache, 'field:' + name, raw,
+                    lambda s=spec, r=raw: normalize_dto(s['type'], r)) if not isinstance(raw, QObject) else normalize_dto(spec['type'], raw)
             elif spec['type'] in CONTRACT.models and isinstance(payload[name], list):
                 item_type = CONTRACT.models[spec['type']]['itemType']
                 identity_key = CONTRACT.models[spec['type']]['identityRole']
-                values[name] = [normalize_dto(item_type, row if isinstance(row, dict) else {'id':str(row),'name':str(row),'label':str(row),'enabled':True},
-                    identity=str(row.get(identity_key, row.get('canonicalMatchId', row.get('title', row.get('label', f'{surface_id}:{name}:{i}'))))) if isinstance(row, dict) else str(row))
-                    for i, row in enumerate(payload[name])]
+                raw = _plain(payload[name])
+                def build_field(rows=raw, dto=item_type, role=identity_key, field=name):
+                    return [normalize_dto(dto, row if isinstance(row, dict) else {'id':str(row),'name':str(row),'label':str(row),'enabled':True},
+                        identity=str(row.get(role, row.get('canonicalMatchId', row.get('title', row.get('label', f'{surface_id}:{field}:{i}'))))) if isinstance(row, dict) else str(row))
+                        for i, row in enumerate(rows)]
+                values[name] = _cached(cache, 'field:' + name, raw, build_field)
             else:
                 values[name] = _plain(payload[name])
     values['contentId'] = surface_id
     if 'contextVersion' in values:
         values['contextVersion'] = surface['contextVersion']
     style_input = payload.get('style')
-    style_key = (id(style_input), payload.get('appearanceRevision', 0), payload.get('viewportWidth'),
+    style_key = (_style_identity(cache, 'style', style_input) if isinstance(style_input, QObject) else None, payload.get('appearanceRevision', 0), payload.get('viewportWidth'),
                  payload.get('viewportHeight'), payload.get('mode'),
                  _mapping(payload.get('event')).get('category'), _mapping(payload.get('event')).get('severity'))
     values['style'] = _cached(cache, 'style', style_key if isinstance(style_input, QObject) else style_input,
         lambda: normalize_dto('ThemeStyle', object_snapshot('ThemeStyle', style_input)))
     if 'visualStyle' in values:
         visual_input = payload.get('visualStyle', style_input)
-        values['visualStyle'] = _cached(cache, 'visualStyle', (id(visual_input), *style_key[1:]) if isinstance(visual_input, QObject) else visual_input,
+        values['visualStyle'] = _cached(cache, 'visualStyle', (_style_identity(cache, 'visualStyle', visual_input), *style_key[1:]) if isinstance(visual_input, QObject) else visual_input,
             lambda: normalize_dto('NotificationStyle', object_snapshot('NotificationStyle', visual_input)))
     if 'lifecycle' in values:
         active = bool(payload.get('active', False))
@@ -355,6 +382,10 @@ def normalize_legacy(surface_id, payload, cache=None, *, validate=True):
     for name, dto in [('weather', 'WeatherData'), ('account', 'AccountData'), ('nextEvent', 'NextEventData'),
                        ('sport', 'SportData'), ('team', 'TeamData'), ('fantasy', 'FantasyData'), ('racing', 'RacingData'), ('network', 'NetworkData')]:
         if name not in values or name in payload:
+            continue
+        # NetworkContext projects data below. Sharing this cache key with the
+        # full envelope makes each of the two passes evict the other's entry.
+        if kind == 'NetworkContext' and name == 'network':
             continue
         raw = _mapping(model.get(name))
         if not raw:
@@ -464,6 +495,49 @@ def normalize_legacy(surface_id, payload, cache=None, *, validate=True):
         values['navigation'] = normalize_dto('NavigationSnapshot', payload.get('navigation', {
             'familyId': payload.get('currentFamilyId', payload.get('familyId', '')),
             'viewId': payload.get('currentViewId', ''), 'overlayId': payload.get('route', '')}))
+    if kind == 'SummaryContext':
+        rows = []
+        def detail_row(identity, title, value, detail=''):
+            rows.append(normalize_dto('DashboardCard', {'id':identity, 'title':title, 'value':value, 'detail':detail}))
+        if payload.get('familyId') == 'account' and values.get('account'):
+            account = values['account']
+            for window in account['windows']:
+                minutes = window['windowDurationMinutes']['value']
+                duration = (f'{minutes / 1440:g} giorni' if minutes % 1440 == 0 else f'{minutes / 60:g} ore' if minutes % 60 == 0 else f'{minutes:g} min') if minutes is not None else 'Durata non disponibile'
+                reset = 'Reset ' + datetime.fromtimestamp(window['resetsAt']).astimezone().strftime('%d/%m %H:%M') if window['resetsAt'] else 'Reset non disponibile'
+                label = window['label'] if window['label'] == duration else window['label']+' · '+duration
+                used = window['usedPercent']
+                detail_row(window['id'], label, (used['displayText'].rstrip('%')+'%') if used['available'] else '—', reset+' · percentuale utilizzata')
+            credits = account.get('credits')
+            if credits:
+                detail_row('credits', 'Crediti disponibili', 'Illimitati' if credits['unlimited'] else credits['balance']['displayText'] or '—')
+            detail_row('resets', 'Reset disponibili', account['resetCredits']['displayText'] or '—')
+            account_source = account.get('source') or {}
+            qualification = ('Dato precedente · ' if account_source.get('isStale') or account_source.get('status') not in ('active',) else '') + account_source.get('sourceLabel', '')
+            if account_source.get('updatedAt'):
+                qualification += ' · ' + datetime.fromtimestamp(account_source['updatedAt']).astimezone().strftime('%d/%m %H:%M')
+            for row in rows:
+                row['detail'] = ' · '.join(filter(None, [row['detail'], qualification]))
+        elif values.get('weather'):
+            weather = values['weather']
+            source = weather['source']
+            qualification = ('Dato precedente · ' if source['isStale'] else '') + source['sourceLabel']
+            if values.get('nextEvent') and values['nextEvent']['title']:
+                detail_row('event', values['nextEvent']['title'], values['nextEvent']['whenText'])
+            for key, label in [('temperature','Temperatura'),('feelsLike','Percepita'),('windSpeed','Vento'),('gusts','Raffiche'),('humidity','Umidità'),('precipitation','Precipitazioni'),('rainProbability','Probabilità del periodo')]:
+                value = weather[key]
+                detail_row(key, label, value['displayText'] or '—', qualification)
+            for day in weather['forecast']:
+                detail_row(day['id'], day['date'], day['low']['displayText']+' / '+day['high']['displayText'], day['description']+' · '+qualification)
+        values['rows'] = rows
+        index = max(0, min(len(rows)-1, int(_mapping(payload.get('selection')).get('index', 0))))
+        values['selection'] = normalize_dto('SelectionState', {'selectedId':rows[index]['id'] if rows else '', 'index':index, 'count':len(rows)})
+    if payload.get('dashboardId') and not payload.get('dashboardSummary') and 'dashboardSummary' in values:
+        summary_model = model
+        if payload['dashboardId'] == 'oggi-giornata' and values.get('weather'):
+            summary_model = {**model, 'weather': {**_mapping(model.get('weather')), 'data': values['weather']}}
+        summary = build_summary(str(payload['dashboardId']), payload, summary_model, float(payload.get('epoch', 0)))
+        values['dashboardSummary'] = normalize_dto('DashboardSummary', summary)
     return complete_snapshot(kind, values) if validate else values
 
 
@@ -526,14 +600,48 @@ class PublicContextFactory(QObject):
             values['surfaceInstanceId'] = f'{self._session}:{self._generation}'
         if 'contextVersion' in values:
             values['contextVersion'] = surface['contextVersion']
-        context = PUBLIC_TYPES[surface['context']](values, parent or self)
+        return self._register_context(surface, values, parent, {})
+
+    def _register_context(self, surface, values, parent, cache, *, validated=False):
+        context = PUBLIC_TYPES[surface['context']](values, parent or self, validated=validated)
         context._broker = self
         context._instance_generation = self._generation
         identity = id(context)
         self._contexts[identity] = (context, self._generation)
-        self._normalization_cache[identity] = {}
+        self._normalization_cache[identity] = cache
         context.destroyed.connect(lambda *_args, key=identity: self._forget(key))
         QQmlEngine.setObjectOwnership(context, QQmlEngine.CppOwnership)
+        return context
+
+    @Slot(str, 'QVariantMap', QObject, result=QObject)
+    def createLegacy(self, surface_id, payload, parent=None):
+        """Private host bridge: validate before constructing/publishing a tree."""
+        surface = CONTRACT.surfaces.get(surface_id)
+        if surface is None:
+            self.diagnostic.emit('api.surface.unknown', surface_id)
+            return None
+        cache = {}
+        try:
+            values = normalize_legacy(surface_id, payload, cache, validate=False)
+            generation = self._generation + 1
+            if 'surfaceInstanceId' in values:
+                values['surfaceInstanceId'] = f'{self._session}:{generation}'
+            if 'lifecycle' in values:
+                values['lifecycle']['generation'] = generation
+            CONTRACT.validate_snapshot(surface['context'], values)
+        except (ContractError, TypeError, ValueError, OverflowError) as error:
+            self.diagnostic.emit(getattr(error, 'code', 'api.value.invalid'), str(error))
+            return None
+        self._generation = generation
+        context = self._register_context(surface, values, parent, cache, validated=True)
+        if 'lifecycle' in values:
+            context._runtime_state = context.lifecycle._snapshot()
+        else:
+            context._runtime_state = {'state': 'exiting' if context.exiting else 'active' if context.active else 'preparing',
+                'active': context.active, 'interactive': context.interactive, 'preview': context.preview,
+                'generation': generation}
+        cache['committed-fields'] = {name: (value, context._snapshots.get(name))
+                                    for name, value in values.items()}
         return context
 
     def _forget(self, identity):
@@ -614,13 +722,25 @@ class PublicContextFactory(QObject):
         if id(context) not in self._contexts:
             return False
         try:
-            snapshot = normalize_legacy(context.contentId, payload,
-                                        self._normalization_cache[id(context)], validate=False)
+            cache = self._normalization_cache[id(context)]
+            snapshot = normalize_legacy(context.contentId, payload, cache, validate=False)
             if 'surfaceInstanceId' in snapshot:
                 snapshot['surfaceInstanceId'] = context.surfaceInstanceId
             if 'lifecycle' in snapshot:
                 snapshot['lifecycle']['generation'] = context._instance_generation
-            return self.update(context, snapshot)
+            # Reuse only private normalized values already committed/validated
+            # by this factory. A direct public update replaces the owned field
+            # and invalidates the shortcut. New values take the normal atomic
+            # validation path; no provider/caller dictionaries are trusted.
+            committed = cache.get('committed-fields', {})
+            delta = {name: value for name, value in snapshot.items()
+                     if name not in committed or committed[name][0] is not value
+                     or committed[name][1] is not context._snapshots.get(name)}
+            accepted = self.update(context, delta)
+            if accepted:
+                cache['committed-fields'] = {name: (value, context._snapshots.get(name))
+                                             for name, value in snapshot.items()}
+            return accepted
         except (ContractError, TypeError, ValueError, OverflowError) as error:
             self.diagnostic.emit(getattr(error, 'code', 'api.value.invalid'), str(error))
             return False
@@ -743,13 +863,14 @@ def runtime_typeinfo():
     """
     import json
     quote = json.dumps
+    minors = range(CONTRACT.surfaces_document['module']['minor'] + 1)
     lines = ['import QtQuick.tooling 1.2', '', '// Generated from runtime metaobjects; QObject pointers narrowed by validated canonical DTO contract.', 'Module {']
     for name, cls in PUBLIC_TYPES.items():
         meta = cls.staticMetaObject
         lines += ['    Component {', '        name: ' + quote(name),
                   '        prototype: ' + quote('QAbstractListModel' if name in CONTRACT.models else 'QObject' if meta.superClass().className() == 'ReadOnlySnapshot' else meta.superClass().className()),
-                  '        exports: [' + quote('SmartPC.ThemeApi/' + name + ' 2.0') + ', ' + quote('SmartPC.ThemeApi/' + name + ' 2.1') + ', ' + quote('SmartPC.ThemeApi/' + name + ' 2.2') + ']',
-                  '        exportMetaObjectRevisions: [512, 513, 514]', '        isCreatable: false']
+                  '        exports: [' + ', '.join(quote('SmartPC.ThemeApi/' + name + ' 2.' + str(minor)) for minor in minors) + ']',
+                  '        exportMetaObjectRevisions: [' + ', '.join(str(512 + minor) for minor in minors) + ']', '        isCreatable: false']
         offset = meta.superClass().propertyOffset() if name in CONTRACT.models else meta.propertyOffset()
         for i in range(offset, meta.propertyCount()):
             prop = meta.property(i)

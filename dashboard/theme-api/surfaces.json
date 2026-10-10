@@ -3,7 +3,7 @@
   "module": {
     "uri": "SmartPC.ThemeApi",
     "major": 2,
-    "minor": 5
+    "minor": 7
   },
   "apiState": "implemented",
   "surfaces": [
@@ -16,6 +16,7 @@
       "legacyRoute": null,
       "variants": [],
       "actions": [
+        "details.open",
         "navigation.back",
         "navigation.family.step",
         "navigation.home",
@@ -196,15 +197,15 @@
         "default"
       ],
       "actions": [
+        "details.open",
         "navigation.back",
+        "navigation.family.step",
         "navigation.home",
         "navigation.inbox",
         "navigation.menu",
+        "navigation.view.step",
         "selection.move",
-        "selection.select",
-        "details.open",
-        "navigation.family.step",
-        "navigation.view.step"
+        "selection.select"
       ],
       "fallback": "base",
       "rendererState": "publicBuiltin",
@@ -225,15 +226,15 @@
         "default"
       ],
       "actions": [
+        "details.open",
         "navigation.back",
+        "navigation.family.step",
         "navigation.home",
         "navigation.inbox",
         "navigation.menu",
+        "navigation.view.step",
         "selection.move",
-        "selection.select",
-        "details.open",
-        "navigation.family.step",
-        "navigation.view.step"
+        "selection.select"
       ],
       "fallback": "base",
       "rendererState": "publicBuiltin",
@@ -392,16 +393,16 @@
         "default"
       ],
       "actions": [
+        "details.open",
         "navigation.back",
+        "navigation.family.step",
         "navigation.home",
         "navigation.inbox",
         "navigation.menu",
-        "selection.move",
-        "selection.select",
-        "details.open",
-        "navigation.family.step",
         "navigation.view.step",
-        "network.filter.step"
+        "network.filter.step",
+        "selection.move",
+        "selection.select"
       ],
       "fallback": "base",
       "rendererState": "publicBuiltin",
@@ -422,17 +423,17 @@
         "default"
       ],
       "actions": [
+        "details.open",
         "navigation.back",
+        "navigation.family.step",
         "navigation.home",
         "navigation.inbox",
         "navigation.menu",
-        "selection.move",
-        "selection.select",
-        "details.open",
-        "navigation.family.step",
         "navigation.view.step",
         "network.filter.step",
-        "network.metrics.section"
+        "network.metrics.section",
+        "selection.move",
+        "selection.select"
       ],
       "fallback": "base",
       "rendererState": "publicBuiltin",
@@ -518,10 +519,11 @@
         "navigation.home",
         "navigation.inbox",
         "navigation.menu",
-        "navigation.view.step"
+        "navigation.view.step",
+        "selection.move"
       ],
       "fallback": "base",
-      "rendererState": "fixedComponent",
+      "rendererState": "publicBuiltin",
       "layout": {
         "policy": "legacyFixed",
         "width": 960,
@@ -1678,14 +1680,14 @@
       "legacyRoute": null,
       "variants": [],
       "actions": [
+        "details.open",
         "navigation.back",
         "navigation.family.step",
         "navigation.home",
         "navigation.inbox",
         "navigation.menu",
         "selection.move",
-        "selection.select",
-        "details.open"
+        "selection.select"
       ],
       "fallback": "base",
       "rendererState": "publicBuiltin",
@@ -1777,6 +1779,67 @@
         "policy": "legacyFixed",
         "width": 960,
         "height": 640
+      }
+    },
+    {
+      "id": "casa.inventory",
+      "context": "CasaContext",
+      "contextVersion": 1,
+      "hostFamily": "overlay",
+      "legacySource": "Main.qml",
+      "legacyRoute": "casaList",
+      "variants": [
+        "default"
+      ],
+      "actions": [
+        "details.open",
+        "navigation.back",
+        "navigation.family.step",
+        "navigation.home",
+        "navigation.inbox",
+        "navigation.menu",
+        "navigation.tab.select",
+        "navigation.view.step",
+        "selection.move",
+        "selection.select"
+      ],
+      "fallback": "base",
+      "rendererState": "publicBuiltin",
+      "layout": {
+        "policy": "legacyFixed",
+        "width": 872,
+        "height": 455
+      }
+    },
+    {
+      "id": "network.inventory",
+      "context": "NetworkContext",
+      "contextVersion": 1,
+      "hostFamily": "overlay",
+      "legacySource": "Main.qml",
+      "legacyRoute": "networkList",
+      "variants": [
+        "default"
+      ],
+      "actions": [
+        "details.open",
+        "navigation.back",
+        "navigation.family.step",
+        "navigation.home",
+        "navigation.inbox",
+        "navigation.menu",
+        "navigation.tab.select",
+        "navigation.view.step",
+        "network.filter.step",
+        "selection.move",
+        "selection.select"
+      ],
+      "fallback": "base",
+      "rendererState": "publicBuiltin",
+      "layout": {
+        "policy": "legacyFixed",
+        "width": 872,
+        "height": 455
       }
     }
   ],
@@ -2594,6 +2657,18 @@
       {
         "id": "settings.appearance.management:default",
         "surfaceId": "settings.appearance.management",
+        "variant": "default",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "casa.inventory:default",
+        "surfaceId": "casa.inventory",
+        "variant": "default",
+        "verification": "requiredNotExecuted"
+      },
+      {
+        "id": "network.inventory:default",
+        "surfaceId": "network.inventory",
         "variant": "default",
         "verification": "requiredNotExecuted"
       }
