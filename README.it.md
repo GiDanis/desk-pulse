@@ -3,7 +3,7 @@
 <p align="center">
   <b>Il Sistema Operativo Ambientale Open-Source per Display da Scrivania e Single Board Computer.</b>
   <br>
-  <i>Accelerato su GPU a 60 FPS stabili direttamente su DRM/KMS tramite Qt 6 Quick / EGLFS. Zero overhead X11. Zero lag Electron. Solo <90 MB di RAM.</i>
+  <i>Rendering Qt Quick accelerato su GPU tramite EGLFS e DRM/KMS. Prestazioni e risorse attuali sono documentate nei rapporti di consegna sulla board.</i>
 </p>
 
 ---
@@ -34,6 +34,10 @@ Il rilascio **v0.8.0** introduce il modulo **Rete Locale (LAN Hub)** per router 
   - Collaudato sulla Orange Pi Zero 3W fisica con discovery LAN reale, zero crash e persistenza systemd `NRestarts=0`.
 
 ---
+
+**Candidata installata: 0.8.7-rc.3 · 10 ottobre 2026.** Sport dà priorità alle partite in corso con dati freschi e al timing della sessione. Le qualifiche concluse restano visibili con gli ultimi tempi; 5 apre l’evento mostrato. Apple Calm 1.6.2 e preferenze conservati, tre temi verificati su EGLFS. [Fix Sport e limiti di verifica](dashboard/design/v087-sport-live-fix-report.md).
+
+**Precedente candidata 0.8.7-rc.2 · 10 ottobre 2026.** Apple Calm 1.6.2 attivo, Theme API 2.7 invariata. Riaperture con cache limitata, dati mirati e contesti inizializzati una volta; palette, font, icone e informazioni conservati, dissolvenze brevi da 100 ms. Nel confronto software EGLFS con motion off: Serie A mediana 466 → 138 ms, Casa 153 → 71 ms, Rete 249 → 111 ms. Tre temi, 515 file, backup, 40 preferenze e personalizzazioni verificati dopo reboot reale. Primi ingressi, Impostazioni e feedback fisico conservano gate residui. [Consegna e limiti](dashboard/design/v087-opening-implementation-report.md) · [MasterPlan](dashboard/design/release-masterplan.md).
 
 ## 📸 Gli Spazi di Lavoro
 
@@ -70,8 +74,8 @@ DeskPulse è una vera appliance completa di hardware e chassis! Il repository in
 | Parametro | ⚡ **DeskPulse OS (Nativo EGLFS/KMS)** | 🐢 **Kiosk Web / Electron** |
 | :--- | :--- | :--- |
 | **Avvio a Freddo** | **~18 secondi** (da systemd al display) | 60–90+ secondi (desktop + browser) |
-| **Consumo RAM** | **< 90 MB** (98% della RAM libera!) | 650 MB – 1.2 GB+ |
-| **Fluidità / Framerate** | **60 FPS stabili** (vsync GPU PowerVR) | 15–30 FPS con scatti visibili |
+| **Consumo RAM** | Dipende da viste, renderer in cache e provider; vedere le prove attuali | Dipende dall’applicazione |
+| **Fluidità / Framerate** | OpenGL hardware su display a 60 Hz; tempi dei frame misurati separatamente | Dipende dall’applicazione |
 | **Latenza di Input** | **Istantanea (polling kernel Linux evdev)** | Dipendente dall'event loop di JS |
 | **Protezione MicroSD** | **Commit a 30s, tmpfs, zram, zero scritture inutili** | Scritture disco elevate che usurano la SD |
 | **Affidabilità 24/7** | **Soak Test 24h Verificato (0 crash, ~43°C)** | Rischio elevato di freeze del browser |
@@ -88,7 +92,7 @@ DeskPulse è una vera appliance completa di hardware e chassis! Il repository in
 │  [Orologio] • [Meteo] • [AI/Codex] • [Serie A] • [F1] • [MotoGP] • [Smart Home] • [Rete Locale / LAN Hub]  │
 ├─────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
 │                               Compositore Accelerato su GPU Qt 6 Quick / QML                                │
-│                               60 FPS Hardware VSync via GPU PowerVR BXM-4-64                                │
+│                               Display a 60 Hz via EGLFS/KMS e GPU PowerVR                                │
 ├─────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
 │                                    Piano Grafico Diretto DRM/KMS (EGLFS)                                    │
 │                            (Bypassa X11 e Wayland • Gestione diretta input evdev)                           │
@@ -119,7 +123,7 @@ cd desk-pulse
 sudo ./scripts/setup-board.sh
 ```
 
-Lo script configura automaticamente pacchetti Qt6, permessi utente `smartpc`, file di configurazione EGLFS e servizio systemd con avvio immediato a 60 FPS.
+Lo script configura automaticamente pacchetti Qt6, permessi utente `smartpc`, file di configurazione EGLFS e servizio systemd con avvio della dashboard EGLFS.
 
 ---
 

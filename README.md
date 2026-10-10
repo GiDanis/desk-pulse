@@ -3,7 +3,7 @@
 <p align="center">
   <b>The Open-Source Ambient Operating System for Desk Displays & Single Board Computers.</b>
   <br>
-  <i>Hardware-accelerated at a rock-solid 60 FPS directly on DRM/KMS via Qt 6 Quick / EGLFS. Zero X11 bloat. Zero Electron lag. <90 MB RAM footprint.</i>
+  <i>Hardware-accelerated Qt Quick rendering directly on DRM/KMS via EGLFS. Current performance and resource use are documented in the board delivery reports.</i>
 </p>
 
 <p align="center">
@@ -11,9 +11,8 @@
   <a href="https://www.orangepi.org/"><img src="https://img.shields.io/badge/Platform-Orange%20Pi%20Zero%203W%20%7C%20SBC-FF6B35?style=for-the-badge&logo=linux&logoColor=white" alt="Platform SBC"></a>
   <a href="https://www.qt.io/"><img src="https://img.shields.io/badge/Compositor-Qt%206%20%7C%20QML%20EGLFS-41CD52?style=for-the-badge&logo=qt&logoColor=white" alt="Qt 6 QML"></a>
   <img src="https://img.shields.io/badge/Display-Hagibis%20960%C3%97640%20%40%2060Hz-00C49F?style=for-the-badge" alt="Hagibis Display">
-  <img src="https://img.shields.io/badge/Graphics-Locked%2060%20FPS-8A2BE2?style=for-the-badge" alt="60 FPS">
+  <img src="https://img.shields.io/badge/Graphics-Hardware%20OpenGL-8A2BE2?style=for-the-badge" alt="Hardware OpenGL">
   <img src="https://img.shields.io/badge/24h%20Soak%20Test-Passed%20(0%20Crashes)-success?style=for-the-badge" alt="24h Stability">
-  <img src="https://img.shields.io/badge/RAM%20Footprint-%3C%2090%20MB-brightgreen?style=for-the-badge" alt="Low RAM">
   <a href="https://github.com/GiDanis/desk-pulse/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-informational?style=for-the-badge" alt="MIT License"></a>
 </p>
 
@@ -37,11 +36,15 @@
 
 **DeskPulse OS** turns an inexpensive single-board computer ($15–$25 Orange Pi Zero 3W, Raspberry Pi, or Radxa) and a mini desktop monitor (like the 3.5" Hagibis 960×640 IPS screen) into an **appliance-grade ambient desk operating system**.
 
-Instead of treating the board as a desktop computer running a slow browser kiosk, DeskPulse OS boots directly into a native GPU-accelerated QML compositor. It operates 24/7 as your dedicated desk command center for time, weather, smart home automation, local network monitoring, AI quota monitoring, live sports, and motorsport telemetry—with near-zero latency and instant tactile controls.
+Instead of treating the board as a desktop computer running a slow browser kiosk, DeskPulse OS boots directly into a native GPU-accelerated QML compositor. It operates 24/7 as your dedicated desk command center for time, weather, smart home automation, local network monitoring, AI quota monitoring, live sports, and motorsport telemetry—with keypad controls and measured performance improvements.
 
 > ⭐ **Star this repository** if you love ambient computing, single-board computers, 3D printing, and distraction-free desk appliances!
 
 ---
+
+**Current installed candidate: 0.8.7-rc.3 (10 October 2026).** Sport dashboards prioritize fresh in-progress matches and session timing. Completed qualifying remains visible with its latest timing; key 5 opens the displayed event. Apple Calm 1.6.2 and preferences preserved, three themes checked on EGLFS. [Sport fix and validation limits](dashboard/design/v087-sport-live-fix-report.md).
+
+**Previous candidate 0.8.7-rc.2 (10 October 2026).** Apple Calm 1.6.2, unchanged Theme API 2.7. Bounded renderer reuse, targeted data and single-pass context initialization preserve the approved GUI; short 100 ms fades restore navigation motion. In the EGLFS software comparison with motion off, median Serie A opening fell from 466 to 138 ms, Casa from 153 to 71 ms and Network from 249 to 111 ms. Three themes, 515 files, backup, 40 preferences and customizations verified after an actual reboot. Cold openings, settings and physical feedback retain open gates. [Delivery and limits](dashboard/design/v087-opening-implementation-report.md) · [Release plan](dashboard/design/release-masterplan.md).
 
 **v0.8.3 is released and verified on hardware:** Unified Sport Hub (Serie A, F1, MotoGP), 6-category task-oriented settings, Theme Engine 2.5 (60 surfaces), Apple Calm 1.3.1 space optimization for 3.5" displays, worker persistence with fsync, and cold reboot verified. [Delivery report](dashboard/design/v083-implementation-report.md) · [Space optimization](dashboard/design/v083-space-optimization-report.md) · [Usage](dashboard/design/v083-ux-operations.md).
 
@@ -153,8 +156,8 @@ DeskPulse OS was engineered from the kernel up as an **always-on appliance**:
 | Metric | ⚡ **DeskPulse OS (Native EGLFS/KMS)** | 🐢 **Web / Electron Kiosk** |
 | :--- | :--- | :--- |
 | **Cold Boot to Interactive UI** | **~18 seconds** (systemd straight to GPU) | 60–90+ seconds (X11/Wayland + Chrome) |
-| **RAM Consumption** | **< 90 MB** (98% of RAM left free!) | 650 MB – 1.2 GB+ |
-| **Frame Rate & Fluidity** | **Locked 60 FPS** (PowerVR hardware vsync) | 15–30 FPS with visible stutter |
+| **RAM Consumption** | Depends on views, cached renderers and providers; see current delivery evidence | Depends on application |
+| **Frame Rate & Fluidity** | Hardware OpenGL on a 60 Hz display; frame timing is measured separately | Depends on application |
 | **Input Latency** | **Instant (direct Linux evdev kernel polling)** | Laggy JavaScript DOM event loop |
 | **MicroSD Card Protection** | **Tuned 30s journal, tmpfs, zram, atomic cache** | Constant disk writes destroy SD cards |
 | **24/7 Reliability** | **Verified 24h Soak Test (0 crashes, ~43°C)** | High risk of browser tab crashes |
@@ -171,7 +174,7 @@ DeskPulse OS was engineered from the kernel up as an **always-on appliance**:
 │  [Clock] • [Weather] • [AI/Codex] • [Serie A] • [F1] • [MotoGP] • [Smart Home] • [Local Network / LAN Hub]  │
 ├─────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
 │                              Qt 6 Quick / QML Hardware-Accelerated Compositor                               │
-│                               60 FPS Hardware VSync via PowerVR BXM-4-64 GPU                                │
+│                               60 Hz display via EGLFS/KMS and PowerVR GPU                                │
 ├─────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
 │                                    Direct DRM/KMS Display Plane (EGLFS)                                     │
 │                            (Bypasses X11 and Wayland • Instant Linux evdev input)                           │

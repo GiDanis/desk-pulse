@@ -2,15 +2,17 @@
 
 Dashboard Qt Quick per Orange Pi Zero 3W e display Hagibis 960×640 a 60 Hz. La v0.6.6 applica la [specifica UX](design/ux-navigation-v2.md): un dato dominante per vista, Home dinamica, due assi di navigazione, tasti coerenti e avvisi condivisi. La board usa Orange Pi Debian 13, Qt 6, EGLFS/KMS e GPU PowerVR.
 
-**Versione installata: v0.8.3 · 8 ottobre 2026.** Sport unico con Calcio/F1/MotoGP, sei categorie Impostazioni, ritorni e selezioni conservati. Apple Calm **1.3.1** ottimizza margini, altezza della barra, liste scorrevoli Casa/Rete e accesso a traffico/temperature iliadbox, mantenendo icone, palette e stile delle card. Corretto il cambio Dispositivo/Risorse in Informazioni. Theme API 2.5 espone 60 superfici. Verificati 72 controlli locali, EGLFS, manifest di 499 file e reboot; preferenze conservate. [Ottimizzazione e prove](design/v083-space-optimization-report.md), [consolidamento precedente](design/v083-implementation-report.md), [uso e recupero](design/v083-ux-operations.md), [piano](design/v082-v083-consolidation-plan.md).
+**Candidata installata: 0.8.7-rc.3 · 10 ottobre 2026.** Sport dà priorità alle partite in corso con dati freschi e al timing della sessione. Le qualifiche concluse restano visibili con gli ultimi tempi; 5 apre l’evento mostrato. Apple Calm 1.6.2 e preferenze conservati, tre temi verificati su EGLFS. [Fix Sport e limiti di verifica](design/v087-sport-live-fix-report.md).
+
+**Precedente candidata 0.8.7-rc.2 · 10 ottobre 2026.** Apple Calm 1.6.2 attivo, Theme API 2.7 invariata. Riaperture con cache limitata, dati mirati e contesti inizializzati una volta; palette, font, icone e informazioni conservati, dissolvenze brevi da 100 ms. Nel confronto software EGLFS con motion off: Serie A mediana 466 → 138 ms, Casa 153 → 71 ms, Rete 249 → 111 ms. Tre temi, 515 file, backup, 40 preferenze e personalizzazioni verificati dopo reboot reale. Primi ingressi, Impostazioni e feedback fisico conservano gate residui. [Consegna e limiti](design/v087-opening-implementation-report.md) · [MasterPlan](design/release-masterplan.md).
 
 ## Esperienza
 
 - **Home:** ora e meteo occupano la schermata. Una tessera «prossimo evento» compare solo quando esiste un evento futuro valido, per esempio un'allerta prevista per domani. Nessun evento viene inventato per riempire lo spazio.
 - **Nuovi avvisi:** sulle due viste Home un badge discreto nell'intestazione indica quanti avvisi della casella non sono stati letti e ricorda il tasto **3**. Compare anche per gli avvisi ambientali e dopo la fine del banner. Aprire la casella non segna tutto come letto: il badge si aggiorna quando si apre il dettaglio di ciascun evento, oppure quando l'evento scade o viene annullato. Durante banner, overlay e menu il badge resta nascosto.
 - **Orizzontale:** Oggi ↔ Meteo ↔ Account ChatGPT ↔ Sport ↔ Casa ↔ Rete locale. I moduli nascosti sono saltati senza lasciare schermate vuote.
-- **Sport:** nell’indice 2/8 sceglie Calcio, F1 o MotoGP, 5 apre, 7 ritorna; viste e selezioni delle discipline sono indipendenti.
-- **Viste disponibili:** Oggi: Ora/Giornata. Meteo: Adesso/Previsioni. Serie A: Prossime/In corso quando esiste/Risultati/Classifica. F1 e MotoGP: Programma/In corso quando esiste/Risultati/Classifica. Casa: Panoramica/Dispositivi. Rete: Panoramica/Dispositivi. Ogni famiglia ricorda la propria vista.
+- **Sport:** 2/8 alterna Serie A, La mia squadra, F1 e MotoGP. Da Serie A, 5 apre tutte le partite della giornata; dalla vista personale apre il club, dalle altre il GP. 7 torna alla dashboard; calendario e classifica restano nel Menu. [Correzione e prove](design/v086-serie-a-fix-report.md).
+- **Viste disponibili:** Oggi Ora/Orologio/Giornata; Meteo Adesso/Previsioni; Account Utilizzo; Sport Serie A/La mia squadra/F1/MotoGP; Casa Preferiti/Ambiente soltanto con misure supportate/Dispositivi; Rete Traffico/iliadbox/Dispositivi. 2/8 cambia dashboard, 4/6 argomento, 5 approfondisce, 7 torna all’origine.
 - **Menu:** Comandi, Impostazioni, Informazioni e Diagnostica. Impostazioni contiene Schermo, Aspetto, Moduli e Home, Avvisi, Servizi collegati e Dati e aggiornamenti. Gestione temi raccoglie i trasferimenti e le revisioni; Sport e Home contiene discipline e riepiloghi. Gli aggiornamenti manuali delle fonti hanno un unico punto centrale. Informazioni resta autonoma e in sola lettura. Le preferenze di visibilità sono persistenti e Oggi resta sempre disponibile. [Percorsi e guida](design/v083-ux-operations.md).
 - **Avvisi:** il tasto 3 apre la casella da qualsiasi vista. Gli avvisi importanti ricevono un banner breve; quelli prioritari aprono un overlay. Indietro chiude l'overlay e restituisce la vista, il menu e la selezione precedenti.
 - **Notifiche:** Menu → Impostazioni → Avvisi permette sempre di attivare o disattivare la fascia di silenzio e regolare inizio e fine a passi di 15 minuti. L'impostazione iniziale è 22:00–07:00, nel fuso Europe/Rome. Il silenzio trattiene i banner fino al termine della fascia, se ancora validi; gli avvisi prioritari restano visibili. Due controlli separati permettono di disattivare le interruzioni di Meteo e Account: gli eventi rimangono consultabili nella casella, ma quella categoria non mostra banner o overlay.
@@ -50,11 +52,11 @@ Le preferenze del tema, della luminosità e dei moduli visibili sono salvate con
 
 La v0.6 integra **FotMob REST diretto** per calendario completo, classifica e dettaglio; **ESPN** è la riserva quando la fonte principale non restituisce dati validi. Non servono API key o abbonamenti. Gli endpoint interni possono cambiare: un errore conserva l'ultimo dato valido e indica origine/ora. Nel fallback ESPN il calendario è limitato ai giorni vicini restituiti dalla fonte, esplicitamente indicato nella schermata.
 
-- Da Home, **4** apre MotoGP; **4, 4, 4** porta a Serie A con tutti i moduli visibili; **2/8** cambiano vista: Prossime, In corso quando presente, Risultati, Classifica. **5** apre l’elenco della vista corrente. In elenco **4/6** alternano partite e classifica, **2/8** scorrono e **5** apre il dettaglio. Classifica completa, tre righe visibili per pagina.
-- **Prossime** mostra tutte le partite future della prossima giornata, anche con lo stesso orario, tre per pagina. Le pagine si alternano ogni otto secondi fino al primo input; la pausa resta attiva nei pannelli e termina dopo uscita/rientro nella famiglia. **In corso** usa lo stesso riepilogo per tutti gli incontri attivi. **Classifica** è direttamente raggiungibile con 2/8 e 5 apre tutte le 20 posizioni. **Risultati** mostra l'ultimo turno; il dettaglio offre marcatori e, quando disponibili, possesso, xG, tiri in porta e moduli delle formazioni.
+- Con **4/6** si raggiunge Sport; **2/8** sceglie Serie A/La mia squadra/F1/MotoGP. **5** apre tutte le partite della giornata Serie A, il club dalla vista La mia squadra o il GP pertinente; **7** torna alla dashboard. Dal **Menu contestuale** si accede a calendario/altre partite e classifica; negli elenchi **2/8** scorre, **4/6** cambia scheda e **5** apre il dettaglio.
+- I risultati e i dettagli conservano marcatori e, quando disponibili, possesso, xG, tiri e formazioni. Le liste storiche sono approfondimenti del riepilogo; non occupano il carosello principale delle dashboard.
 - **Menu → Impostazioni → Moduli e Home → Sport e Home → Calcio** permette di scegliere squadra preferita, tessera della prossima partita in Home, stagione corrente/precedente e aggiornamento manuale. Le scelte sono persistenti. La tessera Home richiede squadra scelta e partita entro sette giorni; di default è disattivata.
 - Il timing viene acquisito con polling adattivo (riposo 6 ore, prepartita 15 minuti, avvicinamento/incontro 30 secondi), con timeout, header di cache, backoff e `Retry-After`. Una risposta valida senza cambiamenti non diventa vecchia solo perché il punteggio resta 0–0.
-- La vista **In corso** esiste quando il provider segnala un incontro attivo e plausibile. In questa release il feed è indicato **da collaudare**; il badge Live e le notifiche gol richiedono la prova durante una partita prevista nel piano. `SMARTPC_SPORT_LIVE_VERIFIED=1` è il gate tecnico, da attivare dopo la verifica, non un rilevatore automatico di qualità.
+- La dashboard Sport dà priorità all’incontro in corso quando il provider lo segnala come attivo e plausibile. In questa release il feed è indicato **da collaudare**; il badge Live e le notifiche gol richiedono la prova durante una partita prevista nel piano. `SMARTPC_SPORT_LIVE_VERIFIED=1` è il gate tecnico, da attivare dopo la verifica, non un rilevatore automatico di qualità.
 - Notifiche disattivate inizialmente; il motore predisposto controlla evento, punteggio e pending VAR, deduplica e imposta una baseline dopo avvio/riconnessione/cambio fonte. ESPN non ha una conferma VAR dimostrata: i suoi eventi non producono overlay gol.
 
 `sport_core.py` contiene adapter, validazione, cache e policy; `sport.py` esegue rete/parsing in worker Qt. `SportView.qml` e `SportOverlay.qml` compongono le viste. Cache in `QStandardPaths.CacheLocation/sport.json` e archivi delle ultime due stagioni. Sul servizio: `/var/cache/smartpc-dashboard/SmartPC/SmartPC/`. Il registro gol è `/var/lib/smartpc-dashboard/sport-goals.json`; credenziali e dataset di prova non entrano nello stato di produzione. Dopo un riavvio offline i dati sono etichettati precedenti, senza nuovi gol. I risultati conclusi vengono ricontrollati e possono essere corretti.
@@ -63,7 +65,7 @@ La v0.6 integra **FotMob REST diretto** per calendario completo, classifica e de
 
 ### La mia squadra
 
-**Serie A → La mia squadra → 5** permette di scegliere una preferita. Il calendario include **tutte le competizioni disponibili**, con filtro Solo Serie A. Quattro schede: **Calendario, Risultati, Info, Rosa**; 4/6 cambia scheda, 2/8 scorre, 5 apre una partita o conferma la scelta. In Info puoi cambiare o rimuovere la preferita e aggiornare il profilo.
+**Sport → La mia squadra → 5** permette di scegliere una preferita. Il calendario include **tutte le competizioni disponibili**, con filtro Solo Serie A. Quattro schede: **Calendario, Risultati, Info, Rosa**; 4/6 cambia scheda, 2/8 scorre, 5 apre una partita o conferma la scelta. In Info puoi cambiare o rimuovere la preferita e aggiornare il profilo.
 
 Preferenza e profilo sono persistenti. Allenatore, stadio, capienza, bilancio Serie A e giocatori vengono mostrati quando disponibili. Le date da confermare restano tali; in assenza del profilo completo viene dichiarato il calendario parziale Serie A. La tessera opzionale Home resta relativa alla Serie A.
 
@@ -79,7 +81,7 @@ La scheda funziona anche dal calendario della preferita. Vicino al calcio d’in
 
 ## Sport · F1 e MotoGP
 
-Dal modulo Serie A, **6** apre F1 e un altro **6** MotoGP. **2/8** cambiano vista; **5** apre calendario → GP → sessione oppure la classifica completa. **4/6** nel dettaglio alternano risultati/informazioni e, nella classifica F1, Piloti/Costruttori. **1** torna alla selezione precedente. Il programma mostra subito l'orario della gara oltre alle prossime sessioni.
+Da Sport, **2/8** alterna Serie A/La mia squadra/F1/MotoGP. **5** apre il GP pertinente, **7** ritorna alla dashboard. Il Menu contestuale mantiene calendario e classifica; nei dettagli **4/6** alterna schede e, nella classifica F1, Piloti/Costruttori. La dashboard mostra la prossima sessione disponibile e l’orario della gara.
 
 - **F1:** Jolpica per programma, risultati Gara/Qualifiche/Sprint, Piloti e Costruttori; OpenF1 gratuito per risultati Libere/Qualifiche Sprint e stint delle sessioni concluse dal 2023; SignalR Core via QtWebSockets per il timing.
 - **MotoGP:** PulseLive per programma filtrato MotoGP, risultati delle sessioni e classifica piloti; gateway lite per il timing. Altre categorie e test sono esclusi.
@@ -223,7 +225,7 @@ Il backup della v0.4 prima del motore eventi è `/var/backups/smartpc-dashboard-
 
 Il dettaglio delle partite future gestisce eventi/statistiche `null`. Mostra stato, orario e stadio, poi le schede **Riepilogo / Statistiche / Formazioni**; i dati non ancora pubblicati hanno un messaggio coerente. Le formazioni disponibili mostrano tutti gli undici titolari di entrambe le squadre.
 
-- In Sport, **5** apre le partite della giornata; **2/8** scorre e **4/6** alterna Partite/Classifica.
+- Dalla dashboard Serie A, **5** apre l’elenco della giornata; **Menu → Altre partite** mantiene lo stesso accesso. Nell’elenco **2/8** scorre e **4/6** alterna Partite/Classifica.
 - Dalla prima partita, **2** porta al selettore Giornata: **4/6** cambia turno e **8** torna alle partite. Questo consente anche la consultazione dei turni precedenti.
 - Nel dettaglio, **4/6** cambia scheda, **2/8** scorre i marcatori se sono più di quattro, **5** aggiorna e **7** torna alla riga selezionata.
 
@@ -231,7 +233,7 @@ Gli errori tecnici restano nei log; caricamento, indisponibilità e dati salvati
 
 ### Accesso diretto alla classifica e più partite
 
-Da **Prossime**, senza incontri attivi, premere **8 due volte** per Classifica e **5** per l’elenco completo. Se è presente In corso, serve una pressione aggiuntiva. In **Prossime / In corso**, il numero di partite e l’indice della pagina sono visibili; tre righe mostrano ciascuna le proprie squadre, orario/stato e punteggio. Gli incontri simultanei restano separati. **5** apre l’elenco con selezione stabile e 2/8 permette di consultarli manualmente.
+Dalla dashboard Sport, **Menu → Classifica** apre l’elenco completo; **Menu → Altre partite** (Calcio) oppure **Calendario** (F1/MotoGP) apre i contenuti secondari. Gli elenchi conservano selezione e accesso ai dettagli; non richiedono dashboard aggiuntive o istruzioni permanenti sul fondo.
 
 ### Etichette del tastierino · 1 ottobre 2026
 
