@@ -6,6 +6,7 @@ from pathlib import Path
 import tempfile
 import time
 import unittest
+from unittest.mock import patch
 from motorsport_core import (
     f1_calendar,
     f1_standings,
@@ -21,6 +22,8 @@ from motorsport_core import (
     MotorClient,
     JOLPICA,
     load_event,
+    bind_timing,
+    refresh,
 )
 from racing_timing import TimingState, moto_timing, f1_date
 from sport_core import timestamp, ProviderError
@@ -38,6 +41,38 @@ def snapshot(kind):
 
 
 class Checks(unittest.TestCase):
+    def test_refresh_requests_current_qualifying_before_race_results_exist(self):
+        calendar = fixture('f1-calendar')
+        events = f1_calendar(calendar, 2026)
+        event, qualifying = [(e, s) for e in events for s in e['sessions'] if s['kind'] == 'Q'][-1]
+        now = qualifying['start'] + 7200
+        requests = []
+        class Replay:
+            def get(self, url):
+                requests.append(url)
+                if url == JOLPICA + '2026.json?limit=100':
+                    return deepcopy(calendar), now
+                if '/driverStandings.' in url:
+                    return fixture('f1-drivers'), now
+                if '/constructorStandings.' in url:
+                    return fixture('f1-constructors'), now
+                return {'MRData': {'series':'f1','RaceTable':{'season':'2026','Races':[]}}}, now
+        with patch('motorsport_core.time.time', return_value=now):
+            refresh(Replay(), 'f1', 2026)
+        self.assertIn(JOLPICA + '2026/' + event['round'] + '/qualifying.json?limit=100', requests)
+        self.assertNotIn(JOLPICA + '2026/last/qualifying.json?limit=100', requests)
+
+    def test_signalr_unsigned_offset_and_calendar_identity(self):
+        self.assertEqual(f1_date('2026-10-10T21:30:00', '08:00:00'), timestamp('2026-10-10T13:30:00Z'))
+        self.assertEqual(f1_date('2026-10-10T21:30:00', '-03:00:00'), timestamp('2026-10-11T00:30:00Z'))
+        data={'kind':'f1','events':[{'id':'gp','name':'Singapore Grand Prix','sessions':[{'id':'q','kind':'Q','start':1000}]}]}
+        feed={'active':True,'isLive':True,'name':'Qualifying','meeting':'Singapore Grand Prix','start':2800}
+        self.assertEqual(bind_timing(data,feed)['sessionId'],'q')
+        self.assertNotIn('sessionId',feed)
+        wrong=bind_timing(data,{**feed,'meeting':'Other GP'})
+        self.assertFalse(wrong['active'])
+        self.assertFalse(wrong['isLive'])
+
     def test_additional_metadata_and_cold_cache(self):
         raw = fixture("f1-results")
         data = snapshot("f1")
@@ -311,9 +346,12 @@ class Checks(unittest.TestCase):
         )
         data["events"] = [
             {
+                "id": "motogp:test",
+                "name": "Test GP",
                 "shortName": "TST",
                 "sessions": [
                     {
+                        "id": "motogp:test:session",
                         "start": now - 60,
                         "timingId": 1,
                         "broadcastActive": True,

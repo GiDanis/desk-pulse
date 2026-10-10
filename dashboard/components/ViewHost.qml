@@ -94,7 +94,7 @@ Item {
         for (const loader of loaders) loader.destroy()
     }
     function retainOrDestroy(loader) {
-        if (!cacheLimit || loader.rendererKey !== rendererKey(appearance,loader.presentationId,loader.surfaceId)) {
+        if (!cacheLimit || loader.rendererKey !== rendererKey(appearance,appearance.presentations[loader.surfaceId],loader.surfaceId)) {
             loader.destroy(); return
         }
         loader.stagedAppearance = appearance
@@ -104,6 +104,7 @@ Item {
         retainedLoaders = loaders
     }
     function restoreInput() { if (controller && typeof controller.restoreInputFocus === "function") controller.restoreInputFocus() }
+    function animateEntrance() { if (currentLoader && renderActive) layoutMotion.play(currentLoader,"panel.enter",1,false) }
     property var pendingLoader: null
     property var currentLoader: null
     readonly property string currentSurfaceId: currentLoader ? currentLoader.surfaceId : ""
@@ -126,13 +127,22 @@ Item {
         else if (pendingLoader) { generation += 1; pendingLoader.destroy(); pendingLoader = null; readiness = currentItem ? "ready" : "idle" }
     }
     onInteractiveChanged: if (context) context.interactive = interactive
+    function repaintCanvases(item) {
+        if (!item) return
+        if (typeof item.requestPaint === "function") item.requestPaint()
+        const visualChildren=item.children || []
+        for (const child of visualChildren) repaintCanvases(child)
+    }
     onAppearanceChanged: {
+        // Reused Canvas renderers retain pixels until explicitly repainted.
+        // Refresh them after the public style adapter publishes the new palette.
+        Qt.callLater(function() { if (host.currentItem) host.repaintCanvases(host.currentItem) })
         const loaders = retainedLoaders.filter(loader => {
-            if (loader.rendererKey === rendererKey(appearance,loader.presentationId,loader.surfaceId)) return true
+            if (loader.rendererKey === rendererKey(appearance,appearance.presentations[loader.surfaceId],loader.surfaceId)) return true
             loader.destroy(); return false
         })
         retainedLoaders = loaders
-        if (!active && currentLoader && currentLoader.rendererKey !== rendererKey(appearance,currentLoader.presentationId,currentLoader.surfaceId)) {
+        if (!active && currentLoader && currentLoader.rendererKey !== rendererKey(appearance,appearance.presentations[currentLoader.surfaceId],currentLoader.surfaceId)) {
             const obsolete = currentLoader
             currentLoader = null; currentItem = null; context = null; readiness = "idle"
             obsolete.destroy()
@@ -188,8 +198,27 @@ Item {
         if (!active || !snapshot) return
         if (traceRecorder) traceEvent("host.prepare",{targetRevision:snapshot.revision,serviceGeneration:serviceGeneration})
         const identifier = snapshot.presentations[contentId]
+        // Closing an overlay keeps its validated renderer bounded by cacheLimit.
+        // A non-empty surface omitted by the theme must still release its lease.
+        if (!identifier && !serviceGeneration) {
+            layoutMotion.settle()
+            generation += 1
+            if (pendingLoader) { pendingLoader.destroy(); pendingLoader=null }
+            const retired = currentLoader
+            currentLoader = null
+            if (retired) {
+                retired.presentationContext.active = false
+                retired.presentationContext.interactive = false
+                if (retired.item && typeof retired.item.settleMotion === "function") retired.item.settleMotion()
+                if (!contentId) retainOrDestroy(retired)
+                else retired.destroy()
+            }
+            currentItem=null; context=null; loadedRendererKey=""; loadedPresentationId=""
+            loadedRevision=snapshot.revision; readiness="idle"; lastError=""
+            return
+        }
         if (!serviceGeneration && pendingLoader && pendingLoader.rendererKey === rendererKey(snapshot,identifier) && pendingLoader.status === Loader.Ready) { commit(pendingLoader); return }
-        if (currentItem && loadedRendererKey === rendererKey(snapshot,identifier)) { loadedRevision = snapshot.revision; readiness = "ready"; if (traceRecorder) traceEvent("host.reuse",{targetRevision:snapshot.revision,serviceGeneration:serviceGeneration}); return }
+        if (!serviceGeneration && currentItem && loadedRendererKey === rendererKey(snapshot,identifier)) { loadedRevision = snapshot.revision; readiness = "ready"; if (traceRecorder) traceEvent("host.reuse",{targetRevision:snapshot.revision,serviceGeneration:serviceGeneration}); return }
         generation += 1
         if (pendingLoader) { pendingLoader.destroy(); pendingLoader = null }
         if (!serviceGeneration) {
@@ -218,10 +247,18 @@ Item {
         const descriptor = snapshot.presentationRegistry[identifier]
         if (!descriptor) {
             readiness = currentItem ? "ready" : "error"; lastError = "Presentazione non registrata: " + identifier
-            if (serviceGeneration && service) service.reportCandidate(serviceGeneration,contentId,false,lastError)
+            if (serviceGeneration && service) {
+                const reportTarget=service, surface=contentId, message=lastError
+                Qt.callLater(function() { reportTarget.reportCandidate(serviceGeneration,surface,false,message) })
+            }
             return
         }
         readiness = "loading"; lastError = ""
+        const requestedGeneration = generation, requestedSurface = contentId
+        // Resolve a whole navigation transaction before constructing a cold
+        // tree. Intermediate routes and cancelled candidates never allocate it.
+        Qt.callLater(function loadRequestedPresentation() {
+            if (!host.active || host.generation !== requestedGeneration || host.contentId !== requestedSurface) return
         const next = slot.createObject(host, {requestGeneration: generation, presentationId: identifier, requestedRevision: snapshot.revision,
             surfaceId: contentId,
             serviceGeneration: serviceGeneration, stagedAppearance: snapshot,
@@ -237,6 +274,7 @@ Item {
         if (next.usePublicApi && service && service.apiFactory) service.apiFactory.installForEngine(next)
         next.setSource(descriptor.sourceUrl || Qt.resolvedUrl("../"+descriptor.file), {context: next.usePublicApi ? next.publicAdapter.publicContext : next.presentationContext})
         next.active = true
+        })
     }
     MotionController { id: layoutMotion; appearance: host.appearance; traceRecorder: host.traceRecorder; traceOwner: host.traceInstanceId }
     Component.onCompleted: prepare(appearance,0)
@@ -278,7 +316,12 @@ Item {
                 if (requestGeneration !== host.generation || !host.active) { destroy(); return }
                 acknowledged = true
                 if (host.traceRecorder) host.traceEvent("host.presentation.ready",{candidateGeneration:requestGeneration,serviceGeneration:serviceGeneration,targetRevision:requestedRevision,presentationId:presentationId})
-                if (serviceGeneration) host.service.reportCandidate(serviceGeneration,host.contentId,true,"")
+                if (serviceGeneration) {
+                    // Publishing changes every host's bindings. A synchronous
+                    // ack here re-enters the shared candidate binding itself.
+                    const reportTarget=host.service, serviceTicket=serviceGeneration, surface=surfaceId
+                    Qt.callLater(function() { if (reportTarget) reportTarget.reportCandidate(serviceTicket,surface,true,"") })
+                }
                 else host.commit(candidate)
             }
             function fail(message) {

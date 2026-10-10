@@ -74,6 +74,9 @@ def main():
     assert value('familyId') == 'sports'
     press(5)
     assert value('familyId') == 'sport'
+    assert value('overlay') == 'sportList'
+    window.setProperty('sportDashboardReturn',False)
+    press(7)
     assert value('sportView') == 'PROSSIME'
     assert value('sportMatch')['homeTeam']
     assert 'FotMob' in current_item(app,window,'sportPanel').findChild(QObject, 'sportSourceText').property('text')

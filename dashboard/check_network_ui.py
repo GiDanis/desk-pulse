@@ -85,11 +85,11 @@ def verify(profile,capture=None):
         h.expression('activateKey(5)');h.pump(80);h.expression('back()');h.pump(80)
         h.expression('networkSelectedId=networkRows[0].id')
         checks.append('detailIdentityRetainedAfterFavouriteChange')
-        h.expression('activateKey(2)');assert h.value('networkTabsSelected');h.expression('activateKey(6)');h.pump(180)
-        assert h.value('activeContentId')=='network.devices';h.expression('activateKey(8)');h.expression('activateKey(5)');h.pump(180)
+        h.expression('activateKey(8)');h.expression('activateKey(8)');h.pump(180)
+        assert h.value('activeContentId')=='network.devices';h.expression('activateKey(5)');h.expression('activateKey(8)');h.expression('activateKey(5)');h.pump(180)
         assert h.value('overlay')=='networkDetail';grab('detail')
         for i in range(4):h.expression('activateKey(6)');h.expression('activateKey(8)');h.pump(50)
-        h.expression('back()');h.expression('pushOverlay("networkSettings")');h.pump(180);grab('settings')
+        h.expression('back()');h.expression('back()');h.expression('pushOverlay("networkSettings")');h.pump(180);grab('settings')
         h.expression('networkSettingsIndex=networkSettingRows.findIndex(r=>r.id==="network.polling")');h.expression('activateKey(5)');assert not h.network.moduleState['data']['polling']
         h.expression('back()');h.root.setProperty('networkFilter',2);h.pump(50);grab('devices')
         # No favourites must not hide Rete; empty filter remains navigable.

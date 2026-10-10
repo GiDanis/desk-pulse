@@ -129,7 +129,7 @@ assert window.activeFocusItem().objectName()=='inputOwner'
 press(Qt.Key_1);wait_ready(app,root)
 # Preview cancellation returns the committed layout, not the Base viewport.
 service.beginEdit();assert service.selectDraft('base');wait_ready(app,root)
-assert home.property('width')==872
+assert home.property('width')==912
 service.cancel();wait_ready(app,root)
 assert home.property('width')==720
 # A revision may integrate header/guide into a full-canvas public page.

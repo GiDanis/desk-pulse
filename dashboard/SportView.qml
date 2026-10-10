@@ -6,6 +6,7 @@ Item {
     id: root
     property StyleFacade style: Theme
     required property var dashboard
+    readonly property real rowStep: Math.max(86,(height-138-40)/Math.max(1,Math.min(style.overviewRows,rows.length)))
     readonly property var sportState: dashboard.sport
     readonly property var sportInfo: dashboard.sportData
     readonly property bool results: dashboard.sportView === "RISULTATI"
@@ -21,7 +22,7 @@ Item {
         if (sportState.status === "unavailable") return "IN ATTESA DEI DATI"
         return "VERIFICATO " + stamp(sportState.updatedAt)
     }
-    Rectangle { width: 872; height: 76; radius: root.style.radiusRow; color: root.style.surface; border.color: root.style.border }
+    Rectangle { width: root.width; height: 76; radius: root.style.radiusRow; color: root.style.surface; border.color: root.style.border }
     AppText { style: root.style; x: 18; y: 9; text: "SERIE A · " + (sportInfo.season || ""); color: root.style.textPrimary; font.pixelSize: root.style.font27; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
     AppText { style: root.style; objectName: "sportSourceText"; x: 18; y: 43; width: 365; text: "Fonte: " + sportState.source + (sportInfo.calendarScope === "nearby" ? " · calendario parziale" : ""); color: root.style.textSecondary; font.pixelSize: root.style.font19; elide: Text.ElideRight }
     AppText { style: root.style; x: 397; y: 14; width: 455; horizontalAlignment: Text.AlignRight; text: root.status(); color: sportState.status === "active" || sportState.status === "updating" ? root.style.accentTextOnCard : root.style.warningOnCard; font.pixelSize: root.style.font21; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
@@ -41,7 +42,7 @@ Item {
             required property var modelData
             required property int index
             readonly property bool favourite: !!root.sportInfo.favourite && (modelData.homeTeamId === root.sportInfo.favourite || modelData.awayTeamId === root.sportInfo.favourite || root.tableView && modelData.teamId === root.sportInfo.favourite)
-            x: 0; y: 138 + index * 86; width: 872; height: 76; radius: root.style.radiusRow; color: root.style.surface; border.color: root.style.border
+            x: 0; y: 138 + index * root.rowStep; width: root.width; height: root.rowStep-12; radius: root.style.radiusRow; color: root.style.surface; border.color: root.style.border
             Rectangle { visible: parent.favourite; x: 1; y: 10; width: 5; height: 56; radius: root.style.radiusMarker; color: root.style.accent }
             AppText { style: root.style; x: 16; y: 7; width: 664; text: root.tableView ? modelData.position + ".  " + modelData.team : modelData.homeTeam + " – " + modelData.awayTeam; color: root.style.textPrimary; font.pixelSize: root.style.font29; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
             AppText { style: root.style; x: 16; y: 43; width: 694; text: root.tableView ? "G " + modelData.played + " · DR " + (modelData.goalDifference === null ? "—" : modelData.goalDifference) : modelData.when + " · " + modelData.statusText + (modelData.minute ? " " + modelData.minute : "") + (modelData.pendingVAR ? " · VAR" : ""); color: modelData.isLive ? root.style.accentTextOnCard : root.style.textSecondary; font.pixelSize: root.style.font21; elide: Text.ElideRight }
@@ -54,8 +55,7 @@ Item {
         color: root.style.textPrimary; font.pixelSize: root.style.font32; wrapMode: Text.WordWrap
     }
     AppText { style: root.style;
-        x: 0; y: 408; width: 872; color: root.style.textSecondary; font.pixelSize: root.style.font22; elide: Text.ElideRight
-        text: root.tableView ? "5 TUTTE LE 20 SQUADRE · 2/8 CAMBIA VISTA" : root.results ? "5 TUTTI I RISULTATI · 2/8 ANCHE CLASSIFICA" :
-            dashboard.sportOverviewMatches.length + " partite" + (dashboard.sportOverviewPages > 1 ? " · Pagina " + (dashboard.sportOverviewPage + 1) + "/" + dashboard.sportOverviewPages + " · cambia ogni 8 s" : "") + " · 5 ELENCO" + (root.inProgress && !sportInfo.liveVerified ? " · feed da collaudare" : "")
+        x: 0; y: root.height-30; width: root.width; color: root.style.textSecondary; font.pixelSize: root.style.font22; elide: Text.ElideRight
+        text: root.tableView ? "Classifica della stagione" : root.results ? "Risultati pubblicati dalla fonte" : dashboard.sportOverviewMatches.length+" partite pubblicate"+(root.inProgress && !sportInfo.liveVerified ? " · feed da collaudare" : "")
     }
 }

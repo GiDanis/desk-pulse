@@ -32,7 +32,7 @@ Item {
         let label = "Fonte " + source
         if (dashboard.racing.status === "offline" || dashboard.racing.status === "stale") label += " · dati salvati"
         if (table) return label + " · Classifica " + acquired(racingInfo.standingsAt) + (racingInfo.standingsRound ? " · GP " + racingInfo.standingsRound : racingInfo.standingsLabel ? " · " + racingInfo.standingsLabel : "")
-        if (timing || (driver && dashboard.racingDriverLive)) return label + " · " + ((racingInfo.live || {}).isLive ? "Live" : "Tempi da verificare") + " · " + acquired((racingInfo.live || {}).dataAt || (racingInfo.live || {}).fetchedAt)
+        if (timing || (driver && dashboard.racingDriverLive)) return label + " · " + ((racingInfo.live || {}).isLive ? "Live" : (racingInfo.live || {}).active ? "Timing aggiornato" : ["Finished","Finalised","Ended"].indexOf((racingInfo.live || {}).status)>=0 ? "Sessione terminata · ultimi tempi" : "Tempi precedenti") + " · " + acquired((racingInfo.live || {}).dataAt || (racingInfo.live || {}).fetchedAt)
         if (driver) {
             let row = dashboard.racingDriver
             let at = dashboard.racingDriverPane === "SOSTE" ? row.pitsAt : dashboard.racingDriverPane === "GIRI" ? row.lapsAt : dashboard.racingDriverPane === "GOMME" ? row.stintsAt : session.resultsAt
@@ -43,7 +43,7 @@ Item {
     }
     Rectangle { anchors.fill: parent; color: dashboard.color }
     AppText { style: root.style; x: 44; y: 29; width: 872; text: settings ? "IMPOSTAZIONI · " + (dashboard.racingSettingsKind === "f1" ? "F1" : "MOTOGP") : driver ? dashboard.racingDriverLive ? "TEMPI DEL PILOTA" : (root.session.name || "SESSIONE").toUpperCase() + " · DETTAGLI PILOTA" : table ? "CLASSIFICA · " + (racingInfo.year || "") : timing ? "TEMPI DELLA SESSIONE" : detail ? (root.session.name || "SESSIONE") : eventList ? "CALENDARIO · " + (racingInfo.year || "") : "PROGRAMMA DEL WEEKEND"; color: root.style.accentTextOnOverlay; font.pixelSize: driver ? root.style.font30 : root.style.font35; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
-    AppText { style: root.style; visible: !settings && !table && !eventList; x: 44; y: 85; width: 872; text: driver ? dashboard.racingDriver.name || "Pilota non più presente nel feed" : timing ? ((racingInfo.live || {}).meeting || "") : root.event.name || ""; color: root.style.textPrimary; font.pixelSize: root.style.font29; elide: Text.ElideRight }
+    AppText { style: root.style; visible: !settings && !table && !eventList; x: 44; y: 85; width: 872; text: driver ? dashboard.racingDriver.name || "Pilota non più presente nel feed" : timing ? ((racingInfo.live || {}).meeting || "") + " · " + (root.session.name || (racingInfo.live || {}).name || "") : root.event.name || ""; color: root.style.textPrimary; font.pixelSize: root.style.font29; elide: Text.ElideRight }
     AppText { style: root.style; visible: eventList; x: 44; y: 88; text: dashboard.racingView === "RISULTATI" ? "GP CONCLUSI · 5 RISULTATI DELLE SESSIONI" : "TUTTI I GP · 5 APRI IL WEEKEND"; color: root.style.textSecondary; font.pixelSize: root.style.font23 }
     Repeater {
         model: root.tabs

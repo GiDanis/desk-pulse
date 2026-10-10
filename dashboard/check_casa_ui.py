@@ -263,14 +263,19 @@ def verify(profile, capture=None):
         if capture:
             capture.mkdir(parents=True, exist_ok=True)
             assert harness.window.grabWindow().save(str(capture / "casa-overview.png"))
-        assert harness.expression("activateKey(2); casaTabsSelected")
-        harness.expression("activateKey(6)")
+        assert harness.expression('activateKey(2); dashboardViewId === "casa-preferiti"')
+        harness.expression("activateKey(8); activateKey(8)")
         harness.wait_ready()
         assert harness.expression('activeContentId === "casa.devices"')
+        harness.expression("activateKey(5)")
+        harness.wait_ready()
+        rows=harness.value("casaData")["devices"]
+        selected=harness.value("casaSelectedId")
+        expected=rows[min(len(rows)-1,next((i for i,r in enumerate(rows) if r["id"]==selected),0)+1)]["id"]
         harness.expression("activateKey(8); activateKey(5)")
         harness.wait_ready()
         assert harness.value("overlay") == "casaDetail"
-        assert harness.value("casaSelectedId") == "demo-sensor"
+        assert harness.value("casaSelectedId") == expected
         if capture:
             assert harness.window.grabWindow().save(str(capture / "casa-detail.png"))
         harness.expression("activateKey(7)")
@@ -289,7 +294,7 @@ def verify(profile, capture=None):
         harness.casa._snapshot["devices"][0]["name"] = "Nome modificato"
         harness.casa.changed.emit()
         harness.pump(40)
-        assert harness.value("casaSelectedId") == "demo-sensor"
+        assert harness.value("casaSelectedId") == expected
         checks.append("RealMainKeyNavigationDetailsFavouritesAndIdentityRetention")
         # Completion goes through the real public action broker, after the worker.
         harness.state._casa = restarted

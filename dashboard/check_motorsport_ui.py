@@ -92,6 +92,7 @@ def main():
     codes = {position: code for code, position in KEY_POSITIONS.items()}
 
     def press(key):
+        from_dashboard=value("familyId")=="sports" and value("overlay")=="" and key==5
         decoder.feed(1, 29, 1)
         if key == 1:
             decoder.feed(1, 42, 1)
@@ -102,6 +103,13 @@ def main():
         decoder.feed(1, 29, 0)
         keypad.keyPressed.emit(decoded)
         app.processEvents()
+        if from_dashboard:
+            assert value("overlay") in ("racingEvent","racingList","racingSession","racingTiming"), ("Dashboard must open its actual details",value("overlay"),value("familyId"),value("sportHubSelectedId"))
+            # Exercise the retained provider views below; root navigation is
+            # covered independently by check_view_organization_ui.
+            window.setProperty("sportDashboardReturn",False)
+            window.setProperty("overlay","")
+            window.setProperty("overlayStack",[])
 
     def settle():
         deadline = time.monotonic() + 3
@@ -114,8 +122,13 @@ def main():
     press(4)
     assert value("familyId") == "sports"
     press(8)
+    assert value("sportHubSelectedId") == "team"
+    press(8)
     press(5)
     assert value("familyId") == "f1"
+    window.setProperty("sportDashboardReturn",False)
+    window.setProperty("overlay","")
+    window.setProperty("overlayStack",[])
     for kind in ("f1", "motogp"):
         assert value("familyId") == kind and value("racingView") == "PROGRAMMA"
         press(5)
@@ -241,11 +254,16 @@ def main():
     f1._error = ""
     now = time.time()
     timing = f1._timing.state
+    live_event = next(e for e in f1._snapshot['events'] if any(s['kind'] == 'RAC' for s in e['sessions']))
+    live_session = next(s for s in live_event['sessions'] if s['kind'] == 'RAC')
+    live_session['start'] = now - 300
+    f1._snapshot = deepcopy(f1._snapshot)
     timing.apply(
         "SessionInfo",
         {
             "Key": 900,
             "Name": "Race",
+            "Meeting": {"Name": live_event['name']},
             "StartDate": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(now - 300)),
         },
         now,

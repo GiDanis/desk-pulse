@@ -183,8 +183,13 @@ service.beginEdit();assert service.setSection('scene',{'enabled':True});wait()
 scene=root.findChild(QObject,'sceneHost');actor_state=as_value(scene.property('actorState'))
 actor_state.setProperty('pose','playing');actor_state.setProperty('locomotion','moving')
 events.set_demo_scenario('banner grande');wait(100)
+# The compact Base shell reserves a header slot for the optional actor; a body
+# banner can leave it clear. An urgent full-screen footprint must still pause it.
+assert not scene.property('regionBlocked')
+events.set_demo_scenario('urgente');wait(100)
 assert scene.property('regionBlocked') and actor_state.property('paused')
 assert actor_state.property('pose')=='playing' and actor_state.property('locomotion')=='idle'
+key(Qt.Key_Escape)
 events.set_demo_scenario('nessuno');wait(250);service.cancel();wait_ready(app,root)
 report['cases'].append('scene_occupied_regions_pause_locomotion_preserve_action')
 

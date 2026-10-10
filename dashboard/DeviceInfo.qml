@@ -52,39 +52,45 @@ Item {
         else if (position === 8) dashboard.infoIndex = Math.min(rows.length - 1, dashboard.infoIndex + 1)
         return true
     }
-    Rectangle { anchors.fill: parent; color: root.style.backgroundOverlay }
-    AppText { style: root.style; renderType: Text.NativeRendering; x: 44; y: 30; text: "INFORMAZIONI"; color: root.style.accentTextOnOverlay; font.pixelSize: root.style.font37; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
-    AppText { style: root.style; renderType: Text.NativeRendering; x: 605; y: 43; width: 310; horizontalAlignment: Text.AlignRight; text: "AGG. " + dashboard.eventStamp(snapshot.updatedAt); color: root.style.textSecondary; font.pixelSize: root.style.font20 }
-    Repeater {
-        model: root.tabs
-        delegate: SelectableRow { style: root.style; selectedState: dashboard.infoPage === index;
+    Rectangle {anchors.fill:parent;color:root.style.background}
+    Rectangle {anchors.fill:parent;color:root.style.backgroundOverlay}
+    AppText {style:root.style;x:24;y:13;text:"Informazioni";color:root.style.textPrimary;font.pixelSize:root.style.font31}
+    AppText {style:root.style;x:606;y:18;width:330;horizontalAlignment:Text.AlignRight;text:dashboard.eventStamp(snapshot.updatedAt);color:root.style.textSecondary;font.pixelSize:root.style.font20}
+    Rectangle {x:24;y:55;width:912;height:1;color:root.style.border}
+    Repeater {model:root.tabs
+        delegate:SelectableRow {
             required property string modelData
             required property int index
-            x: 44 + index * 221; y: 93; width: 209; height: 43; radius: root.style.radiusPill
-            color: dashboard.infoPage === index ? root.style.surfaceFocused : root.style.surface
-            border.color: dashboard.infoPage === index ? root.style.focusIndicator : root.style.border
-            AppText { style: root.style; renderType: Text.NativeRendering; anchors.centerIn: parent; text: modelData; color: dashboard.infoPage === index ? root.style.accentTextOnFocused : root.style.textSecondary; font.pixelSize: root.style.font21; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
-            MouseArea { anchors.fill: parent; onClicked: root.changeTab(index) }
+            style:root.style;selectedState:dashboard.infoPage===index
+            x:24+index*231;y:72;width:219;height:44;radius:root.style.radiusPill
+            color:selectedState ? root.style.surfaceFocused : root.style.surface
+            border.color:selectedState ? root.style.focusIndicator : root.style.border
+            AppText {style:root.style;anchors.centerIn:parent;text:modelData;color:root.style.textPrimary;font.pixelSize:root.style.font21;font.weight:root.style.headingWeight}
+            MouseArea {anchors.fill:parent;onClicked:root.changeTab(parent.index)}
         }
     }
-    Repeater {
-        model: root.rows.slice(root.pageStart, root.pageStart + root.style.listRows)
-        delegate: SelectableRow { style: root.style; selectedState: rowIndex === dashboard.infoIndex;
+    GridView {
+        id:infoGrid
+        objectName:"infoGrid"
+        x:24;y:132;width:924;height:492;clip:true;boundsBehavior:Flickable.StopAtBounds
+        model:root.rows;currentIndex:dashboard.infoIndex
+        cellWidth:462;cellHeight:Math.max(168,Math.round(160*root.style.textScale))
+        onCurrentIndexChanged:Qt.callLater(function(){infoGrid.positionViewAtIndex(infoGrid.currentIndex,GridView.Contain)})
+        onCountChanged:Qt.callLater(function(){infoGrid.positionViewAtIndex(infoGrid.currentIndex,GridView.Contain)})
+        delegate:SelectableRow {
             required property var modelData
             required property int index
-            readonly property int rowIndex: root.pageStart + index
-            objectName: "infoRow" + rowIndex
-            x: 44; y: 153 + index * (332 / root.style.listRows); width: 872; height: 332 / root.style.listRows - 9; radius: root.style.radiusBadge
-            color: rowIndex === dashboard.infoIndex ? root.style.surfaceFocused : root.style.surface
-            border.color: rowIndex === dashboard.infoIndex ? root.style.focusIndicator : root.style.border
-            AppText { style: root.style; renderType: Text.NativeRendering; x: 18; y: 9; width: 283; text: modelData.title; color: root.style.textSecondary; font.pixelSize: root.style.font24; elide: Text.ElideRight }
-            AppText { style: root.style; renderType: Text.NativeRendering; x: 310; y: 9; width: 541; horizontalAlignment: Text.AlignRight; text: modelData.value; color: root.style.textPrimary; font.pixelSize: root.style.font26; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
-            AppText { style: root.style; renderType: Text.NativeRendering; x: 18; y: parent.height - 29; width: 832; text: modelData.detail; color: root.style.textSecondary; font.pixelSize: root.style.font19; elide: Text.ElideRight }
-            MouseArea { anchors.fill: parent; onClicked: dashboard.infoIndex = parent.rowIndex }
+            style:root.style;selectedState:index===dashboard.infoIndex
+            objectName:"infoRow"+index
+            width:450;height:infoGrid.cellHeight-12;radius:root.style.radiusCard
+            color:selectedState ? root.style.surfaceFocused : root.style.surface
+            border.color:selectedState ? root.style.focusIndicator : root.style.border
+            border.width:selectedState ? root.style.focusWidth : root.style.hairlineWidth
+            AppText {style:root.style;x:18;y:9;width:414;text:modelData.title;color:root.style.textSecondary;font.pixelSize:root.style.font24;elide:Text.ElideRight}
+            AppText {style:root.style;x:18;y:43;width:414;height:66;text:modelData.value;color:root.style.textPrimary;font.pixelSize:dashboard.infoPage===1 ? root.style.font32 : root.style.font26;font.weight:root.style.headingWeight;wrapMode:Text.WordWrap;maximumLineCount:2;elide:Text.ElideRight}
+            AppText {style:root.style;x:18;y:parent.height-45;width:414;height:40;text:modelData.detail;color:root.style.textSecondary;font.pixelSize:root.style.font19;wrapMode:Text.WordWrap;maximumLineCount:2;elide:Text.ElideRight}
+            MouseArea {anchors.fill:parent;onClicked:dashboard.infoIndex=parent.index}
         }
+        Rectangle {x:908;width:4;y:infoGrid.visibleArea.yPosition*infoGrid.height;height:Math.max(18,infoGrid.visibleArea.heightRatio*infoGrid.height);radius:2;color:root.style.accent;visible:infoGrid.contentHeight>infoGrid.height;opacity:0.65}
     }
-    AppText { style: root.style; renderType: Text.NativeRendering; x: 44; y: 492; width: 872; text: dashboard.infoPage === 3 ? "Aggiornamenti manuali in Impostazioni › Dati e aggiornamenti" : "Misure automatiche ogni 5 s · qualità Wi-Fi ogni 30 s"; color: root.style.textSecondary; font.pixelSize: root.style.font20; elide: Text.ElideRight }
-    AppText { style: root.style; renderType: Text.NativeRendering; x: 44; y: 521; width: 872; text: (dashboard.infoIndex + 1) + "/" + root.rows.length + " · 4/6 SCHEDA · 2/8 SCORRI"; color: root.style.textSecondary; font.pixelSize: root.style.font21 }
-    Rectangle { x: 44; y: 548; width: 872; height: 1; color: root.style.border }
-    KeyGuide { style: root.style; renderType: Text.NativeRendering; x: 44; y: 571; color: root.style.accentTextOnOverlay; font.pixelSize: root.style.font25 }
 }

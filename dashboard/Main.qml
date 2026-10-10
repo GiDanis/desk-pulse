@@ -108,13 +108,22 @@ Window {
     onActiveFocusItemChanged: if (traceRecorder) { traceRecorder.invalidate("focus.changed"); traceRecorder.traceEvent("input.focus",{objectName:activeFocusItem ? activeFocusItem.objectName : ""}) }
     property var keypad: null
     property var dashboardState: null
-    readonly property string activeContentId: familyId === "sports" ? "sport.hub" : familyId === "oggi" ? (viewIndex[0] === 0 ? "home.now" : viewIndex[0] === 1 ? "home.clock" : "home.day") : familyId === "meteo" ? (viewIndex[1] === 0 ? "weather.now" : "weather.forecast") : familyId === "account" ? "account.usage" : familyId === "sport" ? (sportView === "LA MIA SQUADRA" ? "sport.team" : "sport.overview") : familyId === "casa" ? ((viewIndex[6] || 0) === 0 ? "casa.overview" : "casa.devices") : familyId === "network" ? ((viewIndex[7] || 0) === 0 ? "network.overview" : "network.devices") : "racing.overview"
+    readonly property string activeContentId: familyId === "sports" ? "sport.hub" : familyId === "oggi" ? (viewIndex[0] === 0 ? "home.now" : viewIndex[0] === 1 ? "home.clock" : "home.day") : familyId === "meteo" ? (viewIndex[1] === 0 ? "weather.now" : "weather.forecast") : familyId === "account" ? "account.usage" : familyId === "sport" ? (sportView === "LA MIA SQUADRA" ? "sport.team" : "sport.overview") : familyId === "casa" ? ((viewIndex[6] || 0) < casaDashboardNames.length-1 ? "casa.overview" : "casa.devices") : familyId === "network" ? ((viewIndex[7] || 0) < 2 ? "network.overview" : "network.devices") : "racing.overview"
     onActiveContentIdChanged: { if (traceRecorder) traceRecorder.traceEvent("navigation.content",{surfaceId:activeContentId}); if (themeService) themeService.setActiveContent(activeContentId); Qt.callLater(function() { presentPage(contentLayer.children.find(host => host.active)) }) }
     readonly property var themeService: dashboardState ? dashboardState.appearance : null
     readonly property var themeCandidate: themeService ? themeService.candidateAppearance : ({})
     readonly property bool themePreparing: !!themeCandidate.generation
+    readonly property var themeOperation: themeService ? themeService.themeOperation : ({busy:false})
+    property int themeChoiceIndex: 0
+    property string themeExitRequested: ""
+    function openThemeChooser() { pushOverlay("themeChooser"); return true }
+    function activateThemeChoice(index) {
+        const row=themeService ? themeService.themes[index] : null
+        if (row) { themeChoiceIndex=index; return themeService.activateTheme(row.id) }
+        return false
+    }
 
-    readonly property var publicRoutes: {"alertDetail": "alerts.detail", "alerts": "alerts.inbox", "info": "device.info", "commands": "overlay.commands", "menu": "overlay.menu", "detail": "overlay.summary", "racingList": "racing.calendar", "racingDriver": "racing.driver.detail", "racingEvent": "racing.event.detail", "racingTiming": "racing.live", "racingSession": "racing.session.detail", "racingTable": "racing.standings", "services":"settings.services", "sportModules":"settings.sports", "themeManagement":"settings.appearance.management", "accountSettings": "settings.account", "appearance": "settings.appearance", "appearanceNotifications": "settings.appearance.notifications", "system": "settings.display", "settings": "settings.index", "integrations": "settings.integrations", "modules": "settings.modules", "notifications": "settings.notifications", "notificationCategories": "settings.notifications.categories", "notificationQuiet": "settings.notifications.quiet", "racingSettings": "settings.racing", "sources": "settings.sources", "sportSettings": "settings.sport", "sportList": "sport.fixtures", "sportDetail": "sport.match.detail", "sportTable": "sport.standings", "sportTeam": "sport.team.detail", "sportTeamPicker": "sport.team.picker", "casaDetail":"casa.detail", "casaSettings":"settings.casa", "networkDetail":"network.detail", "networkSettings":"settings.network", "networkRouter":"network.router", "networkWifi":"network.wifi", "networkPorts":"network.ports"}
+    readonly property var publicRoutes: {"alertDetail": "alerts.detail", "alerts": "alerts.inbox", "info": "device.info", "commands": "overlay.commands", "menu": "overlay.menu", "detail": "overlay.summary", "racingList": "racing.calendar", "racingDriver": "racing.driver.detail", "racingEvent": "racing.event.detail", "racingTiming": "racing.live", "racingSession": "racing.session.detail", "racingTable": "racing.standings", "services":"settings.services", "sportModules":"settings.sports", "themeManagement":"settings.appearance.management", "accountSettings": "settings.account", "appearance": "settings.appearance", "appearanceNotifications": "settings.appearance.notifications", "system": "settings.display", "settings": "settings.index", "integrations": "settings.integrations", "modules": "settings.modules", "notifications": "settings.notifications", "notificationCategories": "settings.notifications.categories", "notificationQuiet": "settings.notifications.quiet", "racingSettings": "settings.racing", "sources": "settings.sources", "sportSettings": "settings.sport", "sportList": "sport.fixtures", "sportDetail": "sport.match.detail", "sportTable": "sport.standings", "sportTeam": "sport.team.detail", "sportTeamPicker": "sport.team.picker", "casaDetail":"casa.detail", "casaSettings":"settings.casa", "casaList":"casa.inventory", "networkList":"network.inventory", "networkDetail":"network.detail", "networkSettings":"settings.network", "networkRouter":"network.router", "networkWifi":"network.wifi", "networkPorts":"network.ports"}
     readonly property string overlayContentId: publicRoutes[overlay] || ""
     function restoreInputFocus() { inputOwner.forceActiveFocus() }
     function hasCandidateSurface(surfaceId) {
@@ -131,9 +140,13 @@ Window {
         return !!descriptor && descriptor.apiVersion === 2
     }
     readonly property var negotiatedLayout: style.appearance && hasExternalSurface("shell.main") ? style.appearance.layout || null : null
+    readonly property bool builtinDashboardLayout: style.appearance && ["base","functional"].indexOf(style.appearance.themeId)>=0
     function pageGeometry(surfaceId) {
         const area = negotiatedLayout && hasExternalSurface(surfaceId) ? negotiatedLayout.content : null
-        return area ? Qt.rect(area.x,area.y,area.width,area.height) : Qt.rect(44,90,872,455)
+        if (area) return Qt.rect(area.x,area.y,area.width,area.height)
+        // External themes retain their calibrated fallback viewport.
+        if (builtinDashboardLayout) return Qt.rect(24,72,912,dashboardState && dashboardState.themeRecoveryError || themeService && themeService.status === "recovery" ? 520 : 552)
+        return Qt.rect(44,90,872,455)
     }
     // Compact shells reserve their header for every external overlay.
     function overlayGeometry(surfaceId) {
@@ -151,7 +164,7 @@ Window {
         if (!host || !host.active || !host.currentReady || host.readiness !== "ready" || host.contentId !== activeContentId) return
         presentedPageContentId = host.contentId
         presentedFamilyId = familyId; presentedViewName = viewName()
-        if (overlay === "") presentedNavigation = navigationSnapshot()
+        if (overlay === "") publishNavigation()
         if (pendingNavigationDirection) {
             const direction = pendingNavigationDirection, vertical = pendingNavigationVertical
             pendingNavigationDirection = 0
@@ -160,15 +173,27 @@ Window {
     }
     function presentOverlay() {
         if (overlayHost.active && overlayHost.currentReady && overlayHost.readiness === "ready" && overlayHost.currentSurfaceId === overlayHost.contentId)
-            presentedNavigation = navigationSnapshot()
+            publishNavigation()
+    }
+    function sameNavigation(left, right) {
+        const keys=Object.keys(left)
+        return keys.length === Object.keys(right).length && keys.every(key => left[key] === right[key])
+    }
+    function publishNavigation() {
+        const next=navigationSnapshot()
+        if (!sameNavigation(next,presentedNavigation)) presentedNavigation=next
     }
     function settledNavigation() {
+        const next=navigationSnapshot()
+        // Row focus changes do not change the shell's route. Avoid subscribing
+        // it to the detail adapter's transient readiness on every selection.
+        if (sameNavigation(next,presentedNavigation)) return presentedNavigation
         const page=contentLayer.children.find(host => host.active)
         const complete = overlay === "" ? presentedPageContentId === activeContentId && presentedFamilyId === familyId && presentedViewName === viewName() && !!page && page.currentReady && page.readiness === "ready" : !overlayHost.active || (overlayHost.currentReady && overlayHost.currentSurfaceId === overlayHost.contentId)
-        return !complete && presentedNavigation.familyId ? presentedNavigation : navigationSnapshot()
+        return !complete && presentedNavigation.familyId ? presentedNavigation : next
     }
     function navigationSnapshot() {
-        const mainPosition = familyId === "sports" ? 1 : (isRacing ? currentFamily.views.indexOf(racingView) : familyId === "sport" ? sportViews.indexOf(sportView) : (viewIndex[currentFamily.slot] || 0)) + 1
+        const mainPosition = familyId === "sports" ? sportHubIndex+1 : (isRacing ? currentFamily.views.indexOf(racingView) : familyId === "sport" ? sportViews.indexOf(sportView) : (viewIndex[currentFamily.slot] || 0)) + 1
         let scopeId = familyId, count = currentFamily.views.length, position = mainPosition, label = viewName()
         if (overlay !== "") {
             scopeId = overlayContentId; count = 1; position = 1; label = ""
@@ -191,9 +216,9 @@ Window {
     function shellGeometry() {
         const layout = negotiatedLayout
         function rectangle(area) { return Qt.rect(area.x,area.y,area.width,area.height) }
-        return {header:layout ? rectangle(layout.header) : Qt.rect(0,0,960,90),
-            content:pageGeometry(activeContentId),guide:layout ? rectangle(layout.guide) : Qt.rect(44,558,872,56),
-            sceneSafeRegions:layout ? layout.sceneSafeRegions.map(rectangle) : [Qt.rect(0,90,32,455),Qt.rect(928,90,32,455)]}
+        return {header:layout ? rectangle(layout.header) : Qt.rect(0,0,960,builtinDashboardLayout ? 56 : 90),
+            content:pageGeometry(activeContentId),guide:layout ? rectangle(layout.guide) : builtinDashboardLayout ? Qt.rect(0,0,0,0) : Qt.rect(44,558,872,56),
+            sceneSafeRegions:layout ? layout.sceneSafeRegions.map(rectangle) : builtinDashboardLayout ? [Qt.rect(880,8,56,48)] : [Qt.rect(0,90,32,455),Qt.rect(928,90,32,455)]}
     }
     function publicRows(rows) {
         return rows.map(row => {
@@ -214,13 +239,13 @@ Window {
         const settings = surfaceId.indexOf("settings.") === 0
         const rows = ["network.router","network.wifi","network.ports"].indexOf(surfaceId)>=0 ? [[4,"SCHEDE"],[6,"SCHEDE"],[2,networkMetricsSection==="history" ? "FINESTRA" : "SELEZIONA"],[8,networkMetricsSection==="history" ? "FINESTRA" : "SELEZIONA"],[5,networkMetricsSection==="history" ? "METRICA" : "APRI"],[7,"INDIETRO"],[1,"HOME"]] : surfaceId === "sport.hub" ? [[2,"DISCIPLINE"],[8,"DISCIPLINE"],[4,"ARGOMENTO"],[6,"ARGOMENTO"],[5,"APRI"],[7,"INDIETRO"],[1,"HOME"]] :
             page && ["sport","f1","motogp"].indexOf(familyId)>=0 ? [[4,"SCHEDE"],[6,"SCHEDE"],[2,"VISTA"],[8,"VISTA"],[5,"DETTAGLI"],[7,"INDICE SPORT"],[1,"HOME"]] :
-            surfaceId === "network.overview" || surfaceId === "network.devices" || surfaceId === "casa.overview" || surfaceId === "casa.devices" ? [[2,"SELEZIONA / SCHEDE"],[8,"SELEZIONA"],[4,"ARGOMENTO / VISTA"],[6,"ARGOMENTO / VISTA"],[5,"DETTAGLIO"],[7,"INDIETRO"],[1,"HOME"]] :
+            surfaceId === "network.overview" || surfaceId === "network.devices" || surfaceId === "casa.overview" || surfaceId === "casa.devices" ? [[2,"DASHBOARD"],[8,"DASHBOARD"],[4,"ARGOMENTO"],[6,"ARGOMENTO"],[5,"DETTAGLI"],[7,"INDIETRO"],[1,"HOME"]] :
             surfaceId === "network.detail" ? [[2,"SCORRI"],[8,"SCORRI"],[4,"SCHEDE"],[6,"SCHEDE"],[5,"PREFERITO"],[7,"INDIETRO"],[1,"HOME"]] :
             surfaceId === "casa.detail" ? [[2,"SCORRI"],[8,"SCORRI"],[7,"INDIETRO"],[1,"HOME"]] :
-            surfaceId === "account.usage" ? [[2,"SCORRI"],[8,"SCORRI"],[1,"HOME"],[3,"AVVISI"],[9,"MENU"]] :
+            surfaceId === "account.usage" ? [[4,"ARGOMENTO"],[6,"ARGOMENTO"],[5,"DETTAGLI"],[1,"HOME"],[3,"AVVISI"],[9,"MENU"]] :
             page ? [[2,"VISTA"],[8,"VISTA"],[4,"ARGOMENTO"],[6,"ARGOMENTO"],[5,"DETTAGLI"],[1,"HOME"],[3,"AVVISI"],[9,"MENU"]] :
             surfaceId === "overlay.commands" ? [[5,"CHIUDI GUIDA"],[7,"INDIETRO"],[1,"HOME"]] :
-            surfaceId === "overlay.summary" ? [[7,"INDIETRO"],[1,"HOME"]] :
+            surfaceId === "overlay.summary" ? [[2,"SCORRI"],[8,"SCORRI"],[7,"INDIETRO"],[1,"HOME"]] :
             surfaceId === "overlay.menu" || surfaceId === "sport.team.picker" ? [[2,"SELEZIONA"],[8,"SELEZIONA"],[5,"APRI"],[7,"INDIETRO"],[1,"HOME"]] :
             settings ? [[2,"SELEZIONA"],[8,"SELEZIONA"],[4,"REGOLA"],[6,"REGOLA"],[5,"CAMBIA"],[7,"INDIETRO"],[1,"HOME"]] :
             [[2,"SCORRI"],[8,"SCORRI"],[4,"SCHEDE"],[6,"SCHEDE"],[5,surfaceId === "sport.match.detail" ? sportDetailPage === 3 ? "SQUADRA" : "AGGIORNA" : "APRI"],[7,"INDIETRO"],[1,"HOME"]]
@@ -244,8 +269,10 @@ Window {
             keyMap:publicKeyMap(),firstRun:!!(dashboardState && dashboardState.firstRun)} }
         let rows = [], selected = 0, tabs = [], tabId = "", description = "", feedback = ""
         if (surfaceId === "settings.network") { rows=networkSettingRows; selected=networkSettingsIndex; description="Dispositivi preferiti e ordine"; feedback=network.error || "" }
+        else if (surfaceId === "network.inventory") { rows=networkFiltered; selected=Math.max(0,rows.findIndex(r=>r.id===networkSelectedId)); description=networkFilters[networkFilter] }
         else if (surfaceId.indexOf("network.") === 0) { rows=surfaceId === "network.detail" ? networkDetailRows : networkRows; selected=surfaceId === "network.detail" ? networkDetailIndex : Math.max(0,networkRows.findIndex(row => row.id === networkSelectedId)); if (surfaceId === "network.detail") { tabs=networkTabs; tabId=networkTabs[networkDetailTab] } else description=networkFilters[networkFilter] }
         else if (surfaceId === "settings.casa") { rows=casaSettingRows; selected=casaSettingsIndex; description="Dispositivi preferiti e ordine"; feedback=casa.error || "" }
+        else if (surfaceId === "casa.inventory") { rows=casaData.devices || [];selected=Math.max(0,rows.findIndex(r=>r.id===casaSelectedId));description="Sola consultazione · Smart Life" }
         else if (surfaceId.indexOf("casa.") === 0) { rows=surfaceId === "casa.detail" ? (casaSelected ? casaSelected.metrics : []) : casaRows; selected=surfaceId === "casa.detail" ? casaMetricIndex : Math.max(0,casaRows.findIndex(row => row.id === casaSelectedId)) }
         else if (surfaceId === "settings.sport") {
             rows=[{id:"favourite",title:"Squadra preferita",value:((sportData.favouriteTeam || {}).data || {}).name || sportData.favourite || "Nessuna"},
@@ -260,7 +287,7 @@ Window {
                 {id:"source",title:"Fonte dati",value:(racingStates[racingSettingsKind] || {}).source || ""}]; selected=racingSettingsIndex
         } else if (surfaceId.indexOf("settings.") === 0 && settingsPanel.active) {
             rows=settingsPanel.rows; selected=settingsPanel.selected; description=settingsPanel.description; feedback=settingsPanel.feedback
-        } else if (surfaceId === "sport.hub") { rows=sportHubRows;selected=sportHubIndex;description="Scegli una disciplina" }
+        } else if (surfaceId === "sport.hub") { rows=sportHubRows;selected=Math.max(0,sportHubRows.findIndex(row=>row.id===(sportHubSelectedId==="team" ? "sport" : sportHubSelectedId)));description="Dashboard Sport" }
         else if (surfaceId === "overlay.menu") { rows=menuItems; selected=menuIndex }
         else if (surfaceId === "device.info") { rows=deviceInfo.rows; selected=infoIndex; tabs=deviceInfo.tabs; tabId=tabs[infoPage] || "" }
         else if (surfaceId === "sport.team.picker") { rows=teamPickerRows; selected=teamPickerIndex }
@@ -296,7 +323,7 @@ Window {
         const sourceOperation=surfaceId === "settings.sources" && dashboardState ? dashboardState.sourceRefreshStates[(settingsPanel.sourceEntries[selected] || {}).target] : null
         const operationStatus=sourceOperation ? ({running:"pending",queued:"pending",succeeded:"completed",failed:"failed",refused:"failed",cooldown:"failed",unavailable:"failed"})[sourceOperation.status] || "idle" : status === "saving" || status === "working" ? "pending" : status === "error" || status === "recovery" ? "failed" : "idle"
         const selectedId=surfaceId==="network.overview" && networkOverviewSection==="tools" ? networkTools[networkToolIndex].id : surfaceId.indexOf("network.") === 0 ? networkSelectedId : surfaceId.indexOf("casa.") === 0 ? casaSelectedId : rows[selected] ? rows[selected].id : surfaceId.indexOf("home.") === 0 || surfaceId.indexOf("weather.") === 0 || surfaceId === "account.usage" ? surfaceId : ""
-        return {updatedAt:surfaceId === "device.info" ? deviceInfo.snapshot.updatedAt || null : null,networkOverviewSection:networkOverviewSection,networkTools:networkTools,rows:rows, networkDeviceRows:surfaceId.indexOf("network.")===0 ? networkRows : [], networkState:surfaceId.indexOf("network.") === 0 || surfaceId === "settings.network" ? network : null, networkDetailRows:surfaceId === "network.detail" ? networkDetailRows : [], casaState:surfaceId.indexOf("casa.") === 0 || surfaceId === "settings.casa" ? casa : null, selectedId:selectedId, selection:{selectedId:selectedId,index:surfaceId === "network.detail" ? networkDetailIndex : surfaceId === "casa.detail" ? casaMetricIndex : rows.length ? selected : -1,count:rows.length,tabId:tabId,
+        return {dashboardSummary:overlay==="" && dashboardViewId && dashboardState && typeof dashboardState.dashboardSummary === "function" ? (dashboardState.dashboardRevision, dashboardState.dashboardSummary(dashboardViewId,Math.floor(now.getTime()/5000)*5)) : null, updatedAt:surfaceId === "device.info" ? deviceInfo.snapshot.updatedAt || null : null,networkOverviewSection:networkOverviewSection,networkTools:networkTools,rows:rows, networkDeviceRows:surfaceId==="network.inventory" ? networkFiltered : surfaceId.indexOf("network.")===0 ? networkRows : [], networkState:surfaceId.indexOf("network.") === 0 || surfaceId === "settings.network" ? network : null, networkDetailRows:surfaceId === "network.detail" ? networkDetailRows : [], casaState:surfaceId.indexOf("casa.") === 0 || surfaceId === "settings.casa" ? casa : null, selectedId:selectedId, selection:{selectedId:selectedId,index:surfaceId === "overlay.summary" ? summaryIndex : surfaceId === "network.detail" ? networkDetailIndex : surfaceId === "casa.detail" ? casaMetricIndex : rows.length ? selected : -1,count:rows.length,tabId:tabId,
                 anchorId:surfaceId.indexOf("network.")===0 && networkTabsSelected ? "network.tabs" : surfaceId.indexOf("casa.")===0 && casaTabsSelected ? "casa.tabs" : surfaceId === "sport.match.detail" && sportDetailPage === 3 ? String(((fantasyData.teams || [])[fantasyTeamIndex] || {}).id || "") : ""},sectionId:surfaceId,
             families:families, currentFamilyId:macroFamilyId, currentViewId:activeContentId, route:overlay,
             navigation:{familyId:familyId,viewId:activeContentId,overlayId:overlayContentId,familyPosition:family+1,familyCount:families.length,
@@ -329,7 +356,7 @@ Window {
     }
     function publicAppearanceSetting(surface,row,direction) {
         const service=themeService,id=row.id
-        if (!service || service.status === "saving" || service.status === "working") return false
+        if (!service || service.themeOperation.busy || service.status === "saving" || service.status === "working") return false
         if (id === "appearance.apply") return service.apply()
         if (id === "appearance.cancel") return service.cancel()
         if (id === "appearance.reset") return service.resetDraft()
@@ -350,7 +377,7 @@ Window {
             const section=id === "appearance.palette" ? "paletteMode" : "motionMode"
             return service.setSection(section,choice(service.draft[section] || "auto"))
         }
-        if (id === "appearance.theme") return service.selectDraft(choice(service.draft.themeId))
+        if (id === "appearance.theme") return openThemeChooser()
         if (id === "appearance.revision") return service.stepRevision(direction)
         if (id === "appearance.textScale") return service.setToken("typography.textScale",Math.max(.85,Math.min(1.1,Math.round((style.textScale+direction*.05)*100)/100)))
         if (id === "appearance.cardRadius") return service.setToken("shape.radiusCard",Math.max(0,Math.min(24,style.radiusCard+direction*2)))
@@ -394,6 +421,13 @@ Window {
     function publicDispatch(context, action, target, arguments) {
         const args=arguments || {}, surface=context.contentId
         if (urgentEvent.id && surface !== "alerts.urgent") return false
+        if (themeOperation.busy && !urgentEvent.id) {
+            if (action === "navigation.home" || action === "navigation.back" || action === "navigation.menu" || action === "appearance.cancel") {
+                const position=action === "navigation.home" ? 1 : action === "navigation.menu" ? 9 : 7
+                activateKey(position); return true
+            }
+            return false
+        }
         if (themePreparing && !urgentEvent.id && !(surface === "overlay.menu" && overlay === "menu")) {
             if (action === "navigation.home") { home(); return true }
             if (action === "navigation.back" || action === "appearance.cancel") { themeService.cancel(); return true }
@@ -423,6 +457,7 @@ Window {
             if (action === "appearance.notificationPreview") { notificationPreviewMode=args.mode; return true }
             return false
         }
+        if (overlay==="" && ["sport.hub","casa.overview","casa.devices","network.overview","network.devices"].indexOf(surface)>=0 && action==="details.open") return openDashboardDetails()
         if (action === "network.metrics.section" && surface === "network.overview") { if (["summary","tools"].indexOf(target)<0) return false; networkOverviewSection=target; return true }
         if (["network.router","network.wifi","network.ports"].indexOf(surface)>=0) {
             if (action === "network.metrics.refresh") return dashboardState && dashboardState.refreshNetworkMetrics()
@@ -446,11 +481,11 @@ Window {
         if (surface === "settings.casa" && action.indexOf("casa.") === 0) return casaSettingsAction(action,target,args.direction || 1)
         if (surface === "settings.casa" && action === "details.open") return casaSettingsAction(action,target,1)
         if (surface.indexOf("casa.") === 0 && action === "details.open") {
-            if (!casaRows.some(row => row.id === target)) return false
+            if (!(casaData.devices || []).some(row => row.id === target)) return false
             openCasaDevice(target); return true
         }
         if (surface.indexOf("casa.") === 0 && action === "selection.select") {
-            if (!casaRows.some(row => row.id===target)) return false
+            if (!(casaData.devices || []).some(row => row.id===target)) return false
             casaSelectedId=target; return true
         }
         if (surface === "settings.casa" && action === "selection.select") { const i=casaSettingRows.findIndex(row => row.id===target); if (i<0) return false; casaSettingsIndex=i; return true }
@@ -568,6 +603,44 @@ Window {
     onNightChanged: Qt.callLater(function() { if (app.themeService) app.themeService.setVariant(app.night ? "night" : "day") })
     Timer { interval: 0; running: true; onTriggered: if (app.themeService) app.themeService.setVariant(app.night ? "night" : "day") }
     property date now: new Date()
+    readonly property bool casaHasEnvironment: (casaData.devices || []).some(d=>(d.metrics || []).some(m=>["va_temperature","temp_current","va_humidity","humidity_value","pir"].indexOf(m.code)>=0 && m.quality==="reported"))
+    readonly property var casaDashboardNames: casaHasEnvironment ? ["PREFERITI","AMBIENTE","DISPOSITIVI"] : ["PREFERITI","DISPOSITIVI"]
+    readonly property string dashboardViewId: familyId==="sports" ? "sport-"+sportHubSelectedId : familyId==="casa" ? "casa-"+casaDashboardNames[Math.min(viewIndex[6] || 0,casaDashboardNames.length-1)].toLowerCase() : familyId==="network" ? "rete-"+["traffico","iliadbox","dispositivi"][Math.min(viewIndex[7] || 0,2)] : familyId==="oggi" && viewIndex[0]===2 ? "oggi-giornata" : ""
+    property bool sportDashboardReturn: false
+    function openDashboardDetails() {
+        if (familyId==="sports") {
+            // Resolve the selected dashboard immediately, even while its new
+            // renderer is still incubating after a fast keypad move.
+            const summary=dashboardState ? dashboardState.dashboardSummary("sport-"+sportHubSelectedId,Math.floor(now.getTime()/5000)*5) : null
+            const eventId=summary ? summary.eventId : ""
+            const discipline=sportHubSelectedId
+            if (!openSportDiscipline(discipline)) return false
+            sportDashboardReturn=true
+            if (discipline==="sport") {
+                sportTeamDetail=false
+                const anchor=sportFixtures.find(m=>m.canonicalMatchId===eventId)
+                sportView=summary && summary.mode==="live" ? "IN CORSO" : anchor && anchor.status==="finished" ? "RISULTATI" : "PROSSIME"
+                openSportList(eventId)
+            } else if (discipline==="team") openTeam()
+            else if (summary && summary.mode==="timing") {
+                const names=Object.assign({},racingViewNames);names[discipline]="IN CORSO";racingViewNames=names
+                racingEventId=eventId;racingSessionId=summary.sessionId || "";racingTimingPage=0;racingInfoIndex=0
+                pushOverlay("racingTiming")
+            }
+            else if (summary && summary.mode==="results" && summary.sessionId && dashboardState) {
+                racingEventId=eventId;racingSessionId=summary.sessionId;racingDetailPage=0;racingResultIndex=0
+                dashboardState.selectRacing(discipline,eventId,racingSessionId);pushOverlay("racingSession")
+            }
+            else if (eventId && dashboardState) { racingEventId=eventId;racingSessionId="";racingEventPage=0;racingIndex=0;racingFocusedId="";dashboardState.selectRacing(discipline,eventId,"");pushOverlay("racingEvent") }
+            else openRacing()
+        } else if (familyId==="casa") pushOverlay("casaList")
+        else if (familyId==="network") {
+            if ((viewIndex[7] || 0)===2) pushOverlay("networkList")
+            else { openNetworkMetrics("network.router"); if ((viewIndex[7] || 0)===0) networkMetricsSection="history" }
+        } else pushOverlay("detail")
+        return true
+    }
+
     // Add a family only when its provider and screens are ready.
     readonly property var casa: dashboardState ? dashboardState.casaState : ({status:"unavailable",source:"Tuya / Smart Life",updatedAt:0,data:{}})
     readonly property var casaData: casa.data || ({})
@@ -588,6 +661,7 @@ Window {
         casaSettingsIndex=Math.min(casaSettingsIndex,Math.max(0,casaSettingRows.length-1))
     }
     onCasaRowsChanged: Qt.callLater(syncCasaSelection)
+    onCasaDashboardNamesChanged: { const i=viewIndex.slice();i[6]=Math.min(i[6] || 0,casaDashboardNames.length-1);viewIndex=i }
     onCasaSettingRowsChanged: Qt.callLater(syncCasaSelection)
     readonly property bool casaConsulted: familyId === "casa" && overlay === "" || overlay === "casaDetail" || overlay === "casaSettings"
     onCasaConsultedChanged: if (dashboardState) dashboardState.setCasaVisible(casaConsulted)
@@ -604,7 +678,7 @@ Window {
         if (action === "casa.favourite.move") return dashboardState.moveCasaFavourite(target,direction)
         if (action === "casa.config.reload") return dashboardState.reloadCasaConfig()
         if (action === "casa.polling.toggle") return dashboardState.toggleCasaPolling()
-        if (target === "casa.devices") { if (!(casaData.favourites || []).length) return false; familyId="casa"; const indices=viewIndex.slice(); indices[6]=1; viewIndex=indices; overlay=""; overlayStack=[]; return true }
+        if (target === "casa.devices") { if (!(casaData.favourites || []).length) return false; familyId="casa"; const indices=viewIndex.slice(); indices[6]=casaDashboardNames.length-1; viewIndex=indices; overlay=""; overlayStack=[]; pushOverlay("casaList"); return true }
         if (target === "settings.sources") { openSourceSettings("casa"); return true }
         return false
     }
@@ -620,14 +694,19 @@ Window {
     property string networkOverviewSection:"tools"
     property int networkToolIndex:0
     readonly property var networkRouterOverview: { const epoch=networkMetricsEpoch; return dashboardState ? dashboardState.networkMetricsView("router","","state",1,0,"") : ({}) }
+    readonly property var networkWifiOverview: { const epoch=networkMetricsEpoch; return dashboardState ? dashboardState.networkMetricsView("wifi","","radios",1,0,"") : ({}) }
+    readonly property var networkPortsOverview: { const epoch=networkMetricsEpoch; return dashboardState ? dashboardState.networkMetricsView("ports","","ports",1,0,"") : ({}) }
     readonly property var networkTools: {
         const rows=networkRouterOverview.rows || [], down=rows.find(r=>r.id==="wan:down"), up=rows.find(r=>r.id==="wan:up")
         const temperatures=rows.filter(r=>r.id.indexOf("temp")===0)
         const samples=[down,up].concat(temperatures).filter(Boolean)
+        const radios=(networkWifiOverview.rows || []).filter(r=>r.targetId && r.id!=="metrics.refresh")
+        const ports=(networkPortsOverview.rows || []).filter(r=>r.targetId && r.id!=="metrics.refresh")
+        const previousRadios=radios.some(r=>r.previous), previousPorts=ports.some(r=>r.previous)
         return [
         {id:"network.router",title:"iliadbox · traffico WAN",value:down && up ? down.value+" ↓ · "+up.value+" ↑" : "Traffico non disponibile",detail:[temperatures.map(r=>r.title+" "+r.value).join(" · ") || "Temperatura iliadbox non disponibile",samples.some(r=>r.previous) ? "Dati precedenti" : "",down ? "Traffico rilevato "+down.detail : ""].filter(Boolean).join(" · "),targetId:"network.router",previous:samples.some(r=>r.previous)},
-        {id:"network.wifi",title:"Wi-Fi",value:"APRI",detail:"Radio, associazioni e link",targetId:"network.wifi",previous:false},
-        {id:"network.ports",title:"Porte Ethernet",value:"APRI",detail:"Link, host e traffico condiviso",targetId:"network.ports",previous:false}]
+        {id:"network.wifi",title:"Wi-Fi",value:radios.length ? radios.length+" radio riportate" : "Lettura non disponibile",detail:[previousRadios ? "Catalogo precedente" : "",radios.length ? Array.from(new Set(radios.map(r=>r.value))).join(" · ") : networkWifiOverview.sourceText || "Radio, associazioni e link"].filter(Boolean).join(" · "),targetId:"network.wifi",previous:previousRadios || !radios.length},
+        {id:"network.ports",title:"Porte Ethernet",value:ports.length ? ports.length+" porte riportate" : "Lettura non disponibile",detail:[previousPorts ? "Catalogo precedente" : "",ports.length ? Array.from(new Set(ports.map(r=>r.value))).join(" · ") : networkPortsOverview.sourceText || "Link e traffico condiviso"].filter(Boolean).join(" · "),targetId:"network.ports",previous:previousPorts || !ports.length}]
     }
     property string networkMetricsSection:"state"
     property string networkWifiEntity:""
@@ -643,7 +722,7 @@ Window {
     readonly property string networkMetricsEntity:networkMetricsRoute==="wifi" ? networkWifiEntity : networkMetricsRoute==="ports" ? networkPortEntity : ""
     readonly property var networkMetricsTabs:networkMetricsRoute==="router" ? ["state","history"] : networkMetricsRoute==="wifi" ? ["radios","stations","detail"] : ["ports","hosts","history"]
     readonly property bool networkMetricsConsulted:networkMetricsRoute!=="" && !urgentEvent.id && !themePreparing
-    readonly property bool networkOverviewConsulted:familyId==="network" && (viewIndex[7] || 0)===0 && overlay==="" && networkOverviewSection==="tools" && !urgentEvent.id && !themePreparing
+    readonly property bool networkOverviewConsulted:familyId==="network" && (viewIndex[7] || 0)<2 && overlay==="" && !urgentEvent.id && !themePreparing
     readonly property var networkMetricsInterest:[networkMetricsConsulted ? networkMetricsRoute : networkOverviewConsulted ? "router" : "",networkMetricsEntity,networkMetricsConsulted ? networkMetricsSection : "state",networkMetricsHours,networkMetricsMetric,networkStationId]
     onNetworkMetricsInterestChanged: if (dashboardState) dashboardState.setNetworkMetricsInterest(networkMetricsInterest[0],networkMetricsInterest[1],networkMetricsInterest[2],networkMetricsInterest[3],networkMetricsInterest[4],networkMetricsInterest[5])
     readonly property var networkMetricsView: { const epoch=networkMetricsEpoch; return dashboardState ? dashboardState.networkMetricsView(networkMetricsRoute,networkMetricsEntity,networkMetricsSection,networkMetricsHours,networkMetricsMetric,networkStationId) : ({}) }
@@ -699,13 +778,13 @@ Window {
         if (action === "network.favourite.move") return dashboardState.moveNetworkFavourite(target,direction)
         if (action === "network.config.reload") return dashboardState.reloadNetworkConfig()
         if (action === "network.polling.toggle") return dashboardState.toggleNetworkPolling()
-        if (target === "network.devices") { if (!networkData.hasInventory) return false; familyId="network"; const indices=viewIndex.slice(); indices[7]=1; viewIndex=indices; overlay=""; overlayStack=[]; return true }
+        if (target === "network.devices") { if (!networkData.hasInventory) return false; familyId="network"; const indices=viewIndex.slice(); indices[7]=2; viewIndex=indices; overlay=""; overlayStack=[]; pushOverlay("networkList"); return true }
         if (target === "settings.sources") { openSourceSettings("network"); return true }
         return false
     }
     // Macroareas and provider slots are deliberately independent.
     readonly property var providerFamilies: [
-        {id:"sport",slot:3,name:"CALCIO",views:app.sportViews},
+        {id:"sport",slot:3,name:"SERIE A",views:app.sportViews},
         {id:"f1",slot:4,name:"FORMULA 1",views:app.racingViews("f1")},
         {id:"motogp",slot:5,name:"MOTOGP",views:app.racingViews("motogp")}
     ]
@@ -713,13 +792,13 @@ Window {
         {id:"oggi",slot:0,name:"OGGI",views:["ORA","OROLOGIO","GIORNATA"]},
         {id:"meteo",slot:1,name:"METEO",views:["ADESSO","PREVISIONI"]},
         {id:"account",slot:2,name:"ACCOUNT CHATGPT",views:["UTILIZZO"]},
-        {id:"sports",slot:3,name:"SPORT",views:["DISCIPLINE"]},
-        {id:"casa",slot:6,name:"CASA",views:["PREFERITI","DISPOSITIVI"]},
-        {id:"network",slot:7,name:"RETE",views:["PANORAMICA","DISPOSITIVI"]}
+        {id:"sports",slot:3,name:"SPORT",views:sportDisciplines.map(d=>d.name)},
+        {id:"casa",slot:6,name:"CASA",views:casaDashboardNames},
+        {id:"network",slot:7,name:"RETE",views:["TRAFFICO","ILIADBOX","DISPOSITIVI"]}
     ]
     readonly property var visibleModules: dashboardState ? dashboardState.visibleModules : ["oggi","meteo","account"]
     readonly property bool sportGroupVisible: dashboardState ? dashboardState.sportGroupVisible : false
-    readonly property var sportDisciplines: providerFamilies.filter(item => visibleModules.indexOf(item.id)>=0)
+    readonly property var sportDisciplines: providerFamilies.filter(item => visibleModules.indexOf(item.id)>=0).reduce((rows,item)=>rows.concat(item.id==="sport" ? [item,{id:"team",providerId:"sport",slot:3,name:"LA MIA SQUADRA",views:["LA MIA SQUADRA"]}] : [item]),[])
     readonly property var families: allFamilies.filter(item => item.id==="sports" ? sportGroupVisible && sportDisciplines.length>0 : visibleModules.indexOf(item.id)>=0)
     onFamiliesChanged: reconcileFamily()
     onSportDisciplinesChanged: {
@@ -745,12 +824,15 @@ Window {
     onFamilyIdChanged: sportOverviewInteracted=false
     property string sportHubSelectedId: "sport"
     readonly property int sportHubIndex: Math.max(0,sportDisciplines.findIndex(row=>row.id===sportHubSelectedId))
-    readonly property var sportHubRows: sportDisciplines.map(item=>{
-        const envelope=item.id==="sport" ? sport : racingStates[item.id] || {},data=envelope.data || {}
-        const match=item.id==="sport" ? (data.fixtures || []).filter(row=>row.kickoffUtc>=now.getTime()/1000).sort((a,b)=>a.kickoffUtc-b.kickoffUtc)[0] : (data.events || []).find(event=>event.start>=now.getTime()/1000) || null
-        const summary=item.id==="sport" && match ? (match.homeTeam || "")+" – "+(match.awayTeam || "") : match ? match.name || match.title || "Programma disponibile" : "Nessun appuntamento disponibile"
+    // The public hub rows describe the three providers. Dashboard navigation
+    // includes the separate favourite view through families and dashboardSummary.
+    readonly property var sportHubRows: providerFamilies.filter(item=>visibleModules.indexOf(item.id)>=0).map(item=>{
+        const kind=item.providerId || item.id
+        const envelope=kind==="sport" ? sport : racingStates[kind] || {},data=envelope.data || {}
+        const match=kind==="sport" ? (data.fixtures || []).filter(row=>row.kickoffUtc>=now.getTime()/1000).sort((a,b)=>a.kickoffUtc-b.kickoffUtc)[0] : (data.events || []).find(event=>event.start>=now.getTime()/1000) || null
+        const summary=kind==="sport" && match ? (match.homeTeam || "")+" – "+(match.awayTeam || "") : match ? match.name || match.title || "Programma disponibile" : "Nessun appuntamento disponibile"
         const status={active:"Aggiornato",stale:"Precedente",offline:"Offline · precedente",updating:"Aggiornamento",error:"Errore",unavailable:"Non disponibile"}[envelope.status] || "Non disponibile"
-        return {id:item.id,title:item.name,detail:summary+" · "+status+(envelope.updatedAt ? " · "+eventStamp(envelope.updatedAt) : ""),enabled:true,actionId:"details.open",targetId:item.id,iconId:"sport."+(item.id==="sport" ? "football" : item.id),source:{sourceId:item.id,sourceLabel:envelope.source || "",status:envelope.status || "unavailable",updatedAt:envelope.updatedAt || null,hasData:!!envelope.updatedAt,isStale:envelope.status!=="active"}}
+        return {id:item.id,title:item.name,detail:summary+" · "+status+(envelope.updatedAt ? " · "+eventStamp(envelope.updatedAt) : ""),enabled:true,actionId:"details.open",targetId:item.id,iconId:"sport."+(kind==="sport" ? "football" : kind),source:{sourceId:item.id,sourceLabel:envelope.source || "",status:envelope.status || "unavailable",updatedAt:envelope.updatedAt || null,hasData:!!envelope.updatedAt,isStale:envelope.status!=="active"}}
     })
     property var racingRouteStates: ({})
     function rememberDiscipline() {
@@ -762,7 +844,9 @@ Window {
     }
     function openSportDiscipline(id) {
         if (!sportGroupVisible || !sportDisciplines.some(item=>item.id===id)) return false
-        rememberDiscipline();sportHubSelectedId=id;familyId=id
+        rememberDiscipline();sportHubSelectedId=id
+        if (id==="team") sportView="LA MIA SQUADRA"
+        familyId=id==="team" ? "sport" : id
         if (isRacing) {
             const saved=racingRouteStates[id] || {}
             for (const key of ["racingEventId","racingSessionId","racingIndex","racingFocusedId","racingDetailPage","racingEventPage","racingInfoIndex","racingDriverId","racingDriverLive","racingDriverPage","racingDriverIndex","racingTimingPage","racingResultIndex","racingStandingTab"])
@@ -864,14 +948,15 @@ Window {
             const saved=Object.assign({},racingListBookmarks);saved[familyId+"|"+racingView]={id:racingFocusedId,index:racingIndex,tab:racingStandingTab,timingPage:racingTimingPage,infoIndex:racingInfoIndex};racingListBookmarks=saved
         }
     }
-    function openSportList() {
+    function openSportList(anchorId) {
+        const anchor=sportFixtures.find(row=>row.canonicalMatchId===anchorId)
         const source = sportView === "RISULTATI" ? sportData.lastFinished : sportView === "IN CORSO" ? sportOverviewMatches : sportData.upcoming
         const bookmark=sportListBookmarks[sportView]
-        const retained=bookmark && sportFixtures.find(row=>row.canonicalMatchId===bookmark.id && row.round===bookmark.round)
-        sportRound = retained ? bookmark.round : source && source.length ? source[0].round : ""
+        const retained=!anchor && bookmark && sportFixtures.find(row=>row.canonicalMatchId===bookmark.id && row.round===bookmark.round)
+        sportRound = anchor ? anchor.round || "" : retained ? bookmark.round : source && source.length ? source[0].round : ""
         sportFocusedId = ""; sportIndex = 0; sportListIndex = 0; sportTableIndex = 0
         pushOverlay("sportList")
-        const first = source && source.length ? sportRows.findIndex(m => m.canonicalMatchId === source[0].canonicalMatchId) : 0
+        const first = anchor ? sportRows.findIndex(m=>m.canonicalMatchId===anchorId) : source && source.length ? sportRows.findIndex(m => m.canonicalMatchId === source[0].canonicalMatchId) : 0
         sportIndex = retained ? Math.max(0,sportRows.findIndex(row=>row.canonicalMatchId===bookmark.id)) : Math.max(0, first)
         if (retained) sportFocusedId=bookmark.id
     }
@@ -998,6 +1083,7 @@ Window {
     property var selectedAlert: ({})
     onSelectedAlertChanged: alertScroll = 0
     onAlertIndexChanged: if (alertItems && alertItems[alertIndex]) alertFocusedId = alertItems[alertIndex].id
+    property int summaryIndex: 0
     property int accountIndex: 0
     property bool diagnostics: false
     property int frames: 0
@@ -1050,7 +1136,7 @@ Window {
         ? (dashboardState.brightnessMode === "manual" ? dashboardState.manualBrightness
            : (daytime ? dashboardState.dayBrightness : dashboardState.nightBrightness))
         : 100
-    readonly property var menuItems: ["Comandi", "Impostazioni", "Informazioni", "Diagnostica"]
+    readonly property var menuItems: ["Comandi", "Impostazioni", "Informazioni", "Diagnostica"].concat(["sports","sport","f1","motogp"].indexOf(familyId)>=0 ? [familyId==="sport" || familyId==="sports" && ["sport","team"].indexOf(sportHubSelectedId)>=0 ? "Altre partite" : "Calendario gare", "Classifica"] : [])
     readonly property var settingsItems: settingsPanel.entries.map(row => row.title)
 
     function two(value) { return (value < 10 ? "0" : "") + value }
@@ -1093,7 +1179,7 @@ Window {
         return "IN ATTESA"
     }
     function viewName() {
-        if (familyId === "sports") return "DISCIPLINE"
+        if (familyId === "sports") return (sportDisciplines[sportHubIndex] || {}).name || "SPORT"
         return isRacing ? racingView : familyId === "sport" ? sportView : currentFamily.views[viewIndex[currentFamily.slot] || 0]
     }
     function systemValue(index) {
@@ -1122,7 +1208,7 @@ Window {
         const slot = currentFamily.slot
         const count = currentFamily.views.length
         const current = isRacing ? currentFamily.views.indexOf(racingView) : familyId === "sport" ? currentFamily.views.indexOf(sportView) : (indices[slot] || 0)
-        indices[slot] = (current + direction + count) % count
+        indices[slot] = Math.max(0,Math.min(count-1,current+direction))
         viewIndex = indices
         if (isRacing) {
             const names = Object.assign({}, racingViewNames)
@@ -1134,6 +1220,7 @@ Window {
     function home() {
         pendingNavigationDirection = -1; pendingNavigationVertical = false
         notificationPreviewMode = ""
+        sportDashboardReturn=false
         if (themeService && themeService.editing) themeService.cancel()
         if (dashboardState) { dashboardState.clearSportTeamSelection(); dashboardState.clearFantacalcio() }
         sportTeamDetail = false
@@ -1149,6 +1236,10 @@ Window {
     property var settingsRouteSelections: ({})
     readonly property var sharedSettingsRoutes: ["appearance","appearanceNotifications","themeManagement","services","sportModules","integrations","accountSettings"]
     function pushOverlay(target) {
+        if (target==="detail") summaryIndex=0
+        settingsPanel.rememberSelectedRow()
+        if (target === "themeChooser" && themeService)
+            themeChoiceIndex=Math.max(0,themeService.themes.findIndex(row=>row.id===themeService.draft.themeId))
         if (sharedSettingsRoutes.indexOf(overlay)>=0) {
             const saved=Object.assign({},settingsRouteSelections);saved[overlay]=optionIndex;settingsRouteSelections=saved
         }
@@ -1157,9 +1248,11 @@ Window {
         stack.push(overlay)
         overlayStack = stack
         overlay = target
+        if (sharedSettingsRoutes.indexOf(target)>=0) settingsPanel.restoreSelectedRow()
         if ((target === "appearance" || target === "appearanceNotifications") && themeService && !themeService.editing) themeService.beginEdit()
     }
     function popOverlay() {
+        settingsPanel.rememberSelectedRow()
         rememberList()
         if ((overlay === "racingEvent" || overlay === "racingTiming") && dashboardState) dashboardState.clearRacingSelection(familyId)
         if (overlay === "sportDetail" && dashboardState) dashboardState.clearFantacalcio()
@@ -1170,10 +1263,12 @@ Window {
         const stack = overlayStack.slice()
         overlay = stack.length ? stack.pop() : ""
         overlayStack = stack
-        if (sharedSettingsRoutes.indexOf(overlay)>=0) optionIndex=settingsRouteSelections[overlay] || 0
+        if (!overlay && sportDashboardReturn) { sportDashboardReturn=false;familyId="sports" }
+        if (sharedSettingsRoutes.indexOf(overlay)>=0) { optionIndex=settingsRouteSelections[overlay] || 0;settingsPanel.restoreSelectedRow() }
         if (previous==="networkDetail" && networkMetricsRoute!=="" && networkMetricsLanReturnId) { networkSelectedId=networkMetricsLanReturnId;networkMetricsLanReturnId="" }
         if ((previous === "appearanceNotifications" || previous === "themeManagement") && overlay === "appearance") optionIndex = Math.max(0,settingsPanel.rows.findIndex(row=>row.target===previous || row.id===(previous==="appearanceNotifications" ? "appearance.notifications" : "appearance.management")))
-        if (["appearance","appearanceNotifications","themeManagement","system"].indexOf(previous)>=0 && ["appearance","appearanceNotifications","themeManagement","system"].indexOf(overlay)<0 && themeService && themeService.editing) themeService.cancel()
+        if (previous === "themeChooser" && overlay === "appearance") optionIndex=Math.max(0,settingsPanel.rows.findIndex(row=>row.id==="appearance.theme"))
+        if (["appearance","appearanceNotifications","themeManagement","themeChooser","system"].indexOf(previous)>=0 && ["appearance","appearanceNotifications","themeManagement","themeChooser","system"].indexOf(overlay)<0 && themeService && themeService.editing) themeService.cancel()
         if (previous === "racingDriver" && !racingDriverLive && dashboardState) dashboardState.selectRacing(familyId, racingEventId, racingSessionId)
         if (previous === "sportDetail") sportTeamDetail = false
         if (previous === "racingEvent" && overlay === "racingList") {
@@ -1195,6 +1290,16 @@ Window {
         else if (menuIndex === 1) { settingsIndex = 0; pushOverlay("settings") }
         else if (menuIndex === 2) { infoPage = 0; infoIndex = 0; pushOverlay("info") }
         else if (menuIndex === 3) { toggleDiagnostics(); overlay = ""; overlayStack = [] }
+        else if (menuIndex === 4 || menuIndex === 5) {
+            if (familyId==="sports") { if (!openSportDiscipline(sportHubSelectedId)) return;sportDashboardReturn=true }
+            if (familyId==="sport") {
+                sportView=menuIndex===5 ? "CLASSIFICA" : "PROSSIME"
+                if (menuIndex===5) openSportTable();else openSportList()
+            } else if (isRacing) {
+                const names=Object.assign({},racingViewNames);names[familyId]=menuIndex===5 ? "CLASSIFICA" : "PROGRAMMA";racingViewNames=names
+                openRacing()
+            }
+        }
     }
     function selectSettings() { settingsPanel.activate(1) }
     function openSourceSettings(source) {
@@ -1267,6 +1372,22 @@ Window {
                 dashboardState.dismissEvent(urgentEvent.id)
                 pushOverlay("alertDetail")
             }
+            return
+        }
+        if (themeOperation.busy) {
+            if (position === 1 || position === 7 || position === 9) {
+                if (!themeService.cancel()) themeExitRequested=position===1 ? "home" : position===9 ? "menu" : ""
+                else if (position===1) home()
+                else if (position===9) pushOverlay("menu")
+            }
+            return
+        }
+        if (overlay === "themeChooser") {
+            if (position===2 || position===8) themeChoiceIndex=Math.max(0,Math.min(themeService.themes.length-1,themeChoiceIndex+(position===2 ? -1 : 1)))
+            else if (position===5) activateThemeChoice(themeChoiceIndex)
+            else if (position===7) popOverlay()
+            else if (position===1) home()
+            else if (position===9) pushOverlay("menu")
             return
         }
         if (themePreparing && overlay !== "menu") {
@@ -1483,37 +1604,41 @@ Window {
             } else if (position === 5) { if (sportTeamDetail) dashboardState.selectTeamMatch(sportMatchId); else dashboardState.selectSportMatch(sportMatchId) }
             return
         }
+        if (overlay==="detail") {
+            const ctx=overlayHost.currentItem ? overlayHost.currentItem.context : null
+            const count=ctx && ctx.rows ? ctx.rows.count : 0
+            if (position===2 || position===8) summaryIndex=Math.max(0,Math.min(count-1,summaryIndex+(position===2 ? -1 : 1)))
+            return
+        }
+        if (overlay==="casaList" || overlay==="networkList") {
+            const rows=overlay==="casaList" ? casaData.devices || [] : networkFiltered
+            const id=overlay==="casaList" ? casaSelectedId : networkSelectedId
+            if (position===2 || position===8) {
+                const i=Math.max(0,Math.min(rows.length-1,Math.max(0,rows.findIndex(r=>r.id===id))+(position===2 ? -1 : 1)))
+                if (rows[i]) { if (overlay==="casaList") casaSelectedId=rows[i].id; else networkSelectedId=rows[i].id }
+            } else if (position===5 && rows.length) { const row=rows.find(r=>r.id===id) || rows[0]; if (overlay==="casaList") openCasaDevice(row.id);else openNetworkDevice(row.id) }
+            else if ((position===4 || position===6) && overlay==="networkList") networkFilter=(networkFilter+(position===4 ? -1 : 1)+networkFilters.length)%networkFilters.length
+            return
+        }
         if (overlay !== "") return
-        if (familyId === "sports") {
+        if (["sports","casa","network"].indexOf(familyId)>=0) {
             if (position===4 || position===6) navigateFamily(position===4 ? -1 : 1)
             else if (position===2 || position===8) {
-                const index=Math.max(0,Math.min(sportDisciplines.length-1,sportHubIndex+(position===2 ? -1 : 1)))
-                if (sportDisciplines[index]) sportHubSelectedId=sportDisciplines[index].id
-            } else if (position===5) openSportDiscipline((sportDisciplines[sportHubIndex] || {}).id || "")
+                if (familyId==="sports") {
+                    const i=Math.max(0,Math.min(sportDisciplines.length-1,sportHubIndex+(position===2 ? -1 : 1)))
+                    if (sportDisciplines[i] && sportDisciplines[i].id !== sportHubSelectedId) {
+                        pendingNavigationDirection = position===2 ? -1 : 1
+                        pendingNavigationVertical = true
+                        sportHubSelectedId=sportDisciplines[i].id
+                    }
+                    Qt.callLater(function(){presentPage(contentLayer.children.find(host=>host.active))})
+                } else navigateView(position===2 ? -1 : 1)
+            } else if (position===5) openDashboardDetails()
             return
         }
-        if (["sport","f1","motogp"].indexOf(familyId)>=0 && (position===4 || position===6)) {
-            navigateView(position===4 ? -1 : 1);return
-        }
-        if (familyId === "network") {
-            if (position === 4 || position === 6) { if (networkTabsSelected) navigateView(position===4 ? -1 : 1); else navigateFamily(position===4 ? -1 : 1) }
-            else if (networkOverviewSection==="tools" && (viewIndex[7] || 0)===0) { if (position===2 || position===8) { if (position===2 && networkToolIndex===0) networkTabsSelected=true;else { networkTabsSelected=false;networkToolIndex=Math.max(0,Math.min(2,networkToolIndex+(position===2 ? -1 : 1))) } } else if (position===5) { if (networkTabsSelected) networkOverviewSection="summary";else openNetworkMetrics(networkTools[networkToolIndex].id) } }
-            else if (position === 2 || position === 8) moveNetworkSelection(position===2 ? -1 : 1)
-            else if (position === 5) { if (networkTabsSelected) { if ((viewIndex[7] || 0)===0) networkOverviewSection=networkOverviewSection==="tools" ? "summary" : "tools";else networkFilter=(networkFilter+1)%networkFilters.length; } else if (networkSelectedId) openNetworkDevice(networkSelectedId) }
-            return
-        }
-        if (familyId === "casa") {
-            if (position === 4 || position === 6) { if (casaTabsSelected) navigateView(position===4 ? -1 : 1); else navigateFamily(position===4 ? -1 : 1) }
-            else if (position === 2 || position === 8) moveCasaSelection(position===2 ? -1 : 1)
-            else if (position === 5 && casaSelectedId) openCasaDevice(casaSelectedId)
-            return
-        }
+        if (["sport","f1","motogp"].indexOf(familyId)>=0 && (position===4 || position===6)) { navigateView(position===4 ? -1 : 1);return }
         if (position === 4) navigateFamily(-1)
         else if (position === 6) navigateFamily(1)
-        else if (currentFamily.id === "account") {
-            if (position === 2) accountIndex = Math.max(0, accountIndex - 1)
-            else if (position === 8) accountIndex = Math.min(Math.max(0, accountWindows.length - 2), accountIndex + 1)
-        }
         else if (position === 2) navigateView(-1)
         else if (position === 8) navigateView(1)
         else if (position === 5) {
@@ -1611,6 +1736,13 @@ Window {
     Connections {
         target: app.themeService
         function onSaveFinished(ok) { app.completePublicActions("save",ok,app.themeService.lastError) }
+        function onThemeActivationFinished(ok) {
+            const exit=app.themeExitRequested;app.themeExitRequested=""
+            if (exit==="home") app.home()
+            else if (exit==="menu") app.pushOverlay("menu")
+            else if (ok && app.overlay==="themeChooser") app.popOverlay()
+            settingsPanel.feedback=app.themeOperation.message || ""
+        }
         function onTransferFinished(ok,message) { app.completePublicActions("transfer",ok,ok ? "" : message) }
     }
     Connections {
@@ -1677,8 +1809,8 @@ Window {
 
     ShellHost { id: shellHost; z: app.negotiatedLayout && app.negotiatedLayout.guide.height === 0 ? 2 : 0; objectName: "shellHost"; controller: app; style: app.style; anchors.fill: parent; active: app.hasExternalSurface("shell.main") || app.hasCandidateSurface("shell.main"); renderActive: app.hasExternalSurface("shell.main"); interactive: active && app.overlay === "" && !app.urgentEvent.id }
     Rectangle { visible: !shellHost.currentItem || !shellHost.active; x: 0; y: 0; width: 960; height: 5; color: app.accent }
-    AppText { visible: !shellHost.currentItem || !shellHost.active; style: app.style; x: 44; y: 26; text: app.currentFamily.name + " · " + app.viewName(); color: app.style.accentTextOnCanvas; font.pixelSize: app.style.font35; font.weight: (true ) ? app.style.headingWeight : app.style.bodyWeight}
-    AppText { visible: !shellHost.currentItem || !shellHost.active; style: app.style; x: 790; y: 33; width: 125; horizontalAlignment: Text.AlignRight; text: (app.family + 1) + "/" + app.families.length + "  ·  " + ((app.isRacing ? app.currentFamily.views.indexOf(app.racingView) : app.familyId === "sport" ? app.sportViews.indexOf(app.sportView) : (app.viewIndex[app.currentFamily.slot] || 0)) + 1) + "/" + app.currentFamily.views.length; color: app.muted; font.pixelSize: app.style.font23 }
+    AppText { visible: !shellHost.currentItem || !shellHost.active; style: app.style; x: app.builtinDashboardLayout ? 24 : 44; y: app.builtinDashboardLayout ? 13 : 26; width: app.builtinDashboardLayout ? 840 : 730; elide:Text.ElideRight; text: app.currentFamily.name + " · " + app.viewName(); color: app.style.accentTextOnCanvas; font.pixelSize: app.builtinDashboardLayout ? app.style.font31 : app.style.font35; font.weight: (true ) ? app.style.headingWeight : app.style.bodyWeight}
+    AppText { visible: !app.builtinDashboardLayout && (!shellHost.currentItem || !shellHost.active); style: app.style; x: 790; y: 33; width: 125; horizontalAlignment: Text.AlignRight; text: (app.family + 1) + "/" + app.families.length + "  ·  " + ((app.isRacing ? app.currentFamily.views.indexOf(app.racingView) : app.familyId === "sport" ? app.sportViews.indexOf(app.sportView) : (app.viewIndex[app.currentFamily.slot] || 0)) + 1) + "/" + app.currentFamily.views.length; color: app.muted; font.pixelSize: app.style.font23 }
 
     Item {
         id: contentLayer
@@ -1693,10 +1825,10 @@ Window {
         PageHost { objectName:"sportHub";contentId:"sport.hub";controller:app;style:app.style;active:app.familyId==="sports";interactive:active && app.overlay==="" && !app.urgentEvent.id }
         PageHost { objectName: "sportTeamPanel"; contentId: "sport.team"; controller: app; style: app.style; active: app.familyId === "sport" && app.sportView === "LA MIA SQUADRA"; interactive: active && app.overlay === "" && !app.urgentEvent.id }
         PageHost { objectName: "sportPanel"; contentId: "sport.overview"; controller: app; style: app.style; active: app.familyId === "sport" && app.sportView !== "LA MIA SQUADRA"; interactive: active && app.overlay === "" && !app.urgentEvent.id }
-        PageHost { objectName:"casaOverview"; contentId:"casa.overview"; controller:app; style:app.style; active:app.familyId==="casa" && (app.viewIndex[6] || 0)===0; interactive:active && app.overlay==="" && !app.urgentEvent.id }
-        PageHost { objectName:"casaDevices"; contentId:"casa.devices"; controller:app; style:app.style; active:app.familyId==="casa" && (app.viewIndex[6] || 0)===1; interactive:active && app.overlay==="" && !app.urgentEvent.id }
-        PageHost { objectName:"networkOverview"; contentId:"network.overview"; controller:app; style:app.style; active:app.familyId==="network" && (app.viewIndex[7] || 0)===0; interactive:active && app.overlay==="" && !app.urgentEvent.id }
-        PageHost { objectName:"networkDevices"; contentId:"network.devices"; controller:app; style:app.style; active:app.familyId==="network" && (app.viewIndex[7] || 0)===1; interactive:active && app.overlay==="" && !app.urgentEvent.id }
+        PageHost { objectName:"casaOverview"; contentId:"casa.overview"; controller:app; style:app.style; active:app.familyId==="casa" && (app.viewIndex[6] || 0)<app.casaDashboardNames.length-1; interactive:active && app.overlay==="" && !app.urgentEvent.id }
+        PageHost { objectName:"casaDevices"; contentId:"casa.devices"; controller:app; style:app.style; active:app.familyId==="casa" && (app.viewIndex[6] || 0)===app.casaDashboardNames.length-1; interactive:active && app.overlay==="" && !app.urgentEvent.id }
+        PageHost { objectName:"networkOverview"; contentId:"network.overview"; controller:app; style:app.style; active:app.familyId==="network" && (app.viewIndex[7] || 0)<2; interactive:active && app.overlay==="" && !app.urgentEvent.id }
+        PageHost { objectName:"networkDevices"; contentId:"network.devices"; controller:app; style:app.style; active:app.familyId==="network" && (app.viewIndex[7] || 0)===2; interactive:active && app.overlay==="" && !app.urgentEvent.id }
         PageHost { objectName: "accountPanel"; contentId: "account.usage"; controller: app; style: app.style; active: app.familyId === "account"; interactive: active && app.overlay === "" && !app.urgentEvent.id }
     }
 
@@ -1709,13 +1841,13 @@ Window {
     onTeamTabChanged: animateTab()
     onRacingStandingTabChanged: animateTab()
     readonly property var notificationRegions: [smallBanner,largeBanner,detailHost,inboxHost,badgeHost,urgentHost].filter(host => host.show || host.exiting).reduce((regions,host) => regions.concat(host.context ? host.context.occupiedRegions : [Qt.rect(host.x,host.y,host.width,host.height)]),[])
-    SceneHost { id: sceneHost; controller: app; traceRecorder: app.traceRecorder; style: app.style; familyId: app.familyId; occupiedRegions: app.notificationRegions; enforceSafeRegions: !!app.negotiatedLayout; safeRegions: app.negotiatedLayout ? app.negotiatedLayout.sceneSafeRegions : []; notificationEvent: app.urgentEvent.id ? app.urgentEvent : app.bannerEvent; suspended: app.overlay !== "" || !!app.urgentEvent.id || app.night || app.quietActive }
+    SceneHost { id: sceneHost; controller: app; traceRecorder: app.traceRecorder; style: app.style; familyId: app.familyId; occupiedRegions: app.notificationRegions; enforceSafeRegions: !!app.negotiatedLayout || app.builtinDashboardLayout; safeRegions: app.negotiatedLayout ? app.negotiatedLayout.sceneSafeRegions : app.builtinDashboardLayout ? [Qt.rect(880,8,56,48)] : []; notificationEvent: app.urgentEvent.id ? app.urgentEvent : app.bannerEvent; suspended: app.overlay !== "" || !!app.urgentEvent.id || app.night || app.quietActive }
     onUrgentEventChanged: { if (traceRecorder) traceRecorder.traceEvent("notification.urgent",{eventId:String(urgentEvent.id || ""),eventRevision:String(urgentEvent.revision || ""),rank:urgentEvent.notificationRank || 0}); if (urgentEvent.id) { navigationMotion.settle(); tabMotion.settle() } }
 
-    Rectangle { visible: !shellHost.currentItem || !shellHost.active; x: 44; y: 558; width: 872; height: 2; color: app.style.divider }
-    AppText { visible: !shellHost.currentItem || !shellHost.active; style: app.style; x: 46; y: 578; text: ["sport","f1","motogp"].indexOf(app.familyId)>=0 ? "4/6  SCHEDE" : (app.familyId === "casa" && app.casaTabsSelected || app.familyId === "network" && app.networkTabsSelected) ? "4/6  VISTA" : "4/6  ARGOMENTO"; color: app.muted; font.pixelSize: app.style.font25 }
-    AppText { visible: !shellHost.currentItem || !shellHost.active; style: app.style; x: 351; y: 578; text: app.familyId === "sports" ? "2/8  DISCIPLINE" : app.familyId === "account" ? (app.accountWindows.length > 2 ? "2/8  SCORRI" : "") : (app.familyId === "casa" || app.familyId === "network") ? "2/8  SELEZIONA" : "2/8  VISTA"; color: app.muted; font.pixelSize: app.style.font25 }
-    AppText { visible: !shellHost.currentItem || !shellHost.active; style: app.style; x: 669; y: 578; text: app.familyId === "sports" ? "5  APRI" : app.familyId === "account" ? "9  MENU" : app.isRacing ? (app.racingView === "CLASSIFICA" ? "5 CLASSIFICA" : "5 APRI") : app.familyId === "sport" ? (app.sportView === "LA MIA SQUADRA" ? "5  SQUADRA" : app.sportView === "CLASSIFICA" ? "5  CLASSIFICA" : "5  PARTITE") : "5  DETTAGLI"; color: app.style.accentTextOnCanvas; font.pixelSize: app.style.font25 }
+    Rectangle { visible: !app.builtinDashboardLayout && (!shellHost.currentItem || !shellHost.active); x: 44; y: 558; width: 872; height: 2; color: app.style.divider }
+    AppText { visible: !app.builtinDashboardLayout && (!shellHost.currentItem || !shellHost.active); style: app.style; x: 46; y: 578; text: ["sport","f1","motogp"].indexOf(app.familyId)>=0 ? "4/6  SCHEDE" : (app.familyId === "casa" && app.casaTabsSelected || app.familyId === "network" && app.networkTabsSelected) ? "4/6  VISTA" : "4/6  ARGOMENTO"; color: app.muted; font.pixelSize: app.style.font25 }
+    AppText { visible: !app.builtinDashboardLayout && (!shellHost.currentItem || !shellHost.active); style: app.style; x: 351; y: 578; text: app.familyId === "sports" ? "2/8  DISCIPLINE" : app.familyId === "account" ? (app.accountWindows.length > 2 ? "2/8  SCORRI" : "") : (app.familyId === "casa" || app.familyId === "network") ? "2/8  SELEZIONA" : "2/8  VISTA"; color: app.muted; font.pixelSize: app.style.font25 }
+    AppText { visible: !app.builtinDashboardLayout && (!shellHost.currentItem || !shellHost.active); style: app.style; x: 669; y: 578; text: app.familyId === "sports" ? "5  APRI" : app.familyId === "account" ? "9  MENU" : app.isRacing ? (app.racingView === "CLASSIFICA" ? "5 CLASSIFICA" : "5 APRI") : app.familyId === "sport" ? (app.sportView === "LA MIA SQUADRA" ? "5  SQUADRA" : app.sportView === "CLASSIFICA" ? "5  CLASSIFICA" : "5  PARTITE") : "5  DETTAGLI"; color: app.style.accentTextOnCanvas; font.pixelSize: app.style.font25 }
 
     NotificationHost {
         id: badgeHost; z: 3; objectName: "unreadAlertsBadge"; contentId: "alerts.badge"; controller: app
@@ -1760,7 +1892,8 @@ Window {
     }
     OverlayHost { id: overlayHost; objectName: "overlayHost"; controller: app; style: app.style; contentId: app.overlayContentId.indexOf("alerts.") === 0 ? "" : app.overlayContentId; active: app.hasExternalSurface(contentId) || app.hasCandidateSurface(contentId); renderActive: app.hasExternalSurface(contentId); interactive: active && !app.urgentEvent.id }
     Rectangle { anchors.fill: parent; color: app.style.backgroundOverlay; visible: app.overlay === "alerts" || app.overlay === "alertDetail" }
-    ThemeLoading { controller: app }
+    ThemeChooser { anchors.fill:parent; controller:app; style:app.style; z:20 }
+    ThemeLoading { controller: app; z:21 }
     NotificationHost {
         id: inboxHost; z: 3; objectName: "alertsInbox"; contentId: "alerts.inbox"; controller: app
         show: app.overlay === "alerts" && !app.urgentEvent.id; preempted: !!app.urgentEvent.id; exitAllowed: false

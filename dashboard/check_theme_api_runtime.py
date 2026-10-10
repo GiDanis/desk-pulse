@@ -16,7 +16,7 @@ from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlComponent, QQmlEngine, QQmlExpression
 import PySide6
 
-from theme_api import (IMPORT_ROOT, PublicContextFactory, bootstrap_theme_api,
+from theme_api import (IMPORT_ROOT, PublicContextFactory, bootstrap_theme_api, normalize_legacy,
                        normalize_dto, runtime_typeinfo, weather_snapshot)
 from theme_contexts import CONTRACT, PUBLIC_TYPES, default_snapshot, complete_snapshot
 
@@ -30,6 +30,122 @@ class PublicApiTests(unittest.TestCase):
         self.factory = PublicContextFactory()
         self.errors = []
         self.factory.diagnostic.connect(lambda *args: self.errors.append(args))
+
+    def test_private_style_cache_owns_wrapper_until_context_release(self):
+        import weakref
+        from theme_api import object_snapshot
+        context = self.factory.create('shell.main')
+        style = QObject()
+        style.setProperty('textScale', 1.0)
+        payload = {'style': style, 'appearanceRevision': 7, 'viewportWidth': 960, 'viewportHeight': 640}
+        with patch('theme_api.object_snapshot', wraps=object_snapshot) as read:
+            self.assertTrue(self.factory.updateLegacy(context, payload))
+            self.assertTrue(self.factory.updateLegacy(context, payload))
+            self.assertEqual(read.call_count, 1)
+            payload['appearanceRevision'] = 8
+            self.assertTrue(self.factory.updateLegacy(context, payload))
+            self.assertEqual(read.call_count, 2)
+            payload['viewportWidth'] = 912
+            self.assertTrue(self.factory.updateLegacy(context, payload))
+            self.assertEqual(read.call_count, 3)
+            payload['style'] = QObject()
+            self.assertTrue(self.factory.updateLegacy(context, payload))
+            self.assertEqual(read.call_count, 4)
+            read.reset_mock()
+        owned = weakref.ref(payload['style'])
+        identity = id(context)
+        payload.clear()
+        self.assertIsNotNone(owned())
+        self.factory.release(context)
+        self.assertNotIn(identity, self.factory._normalization_cache)
+        self.assertIsNone(owned())
+
+    def test_initial_legacy_context_matches_validated_two_step_bridge(self):
+        for surface_id in CONTRACT.surfaces:
+            with self.subTest(surface=surface_id):
+                old = PublicContextFactory()
+                new = PublicContextFactory()
+                payload = {'active': True, 'interactive': True,
+                           'viewportWidth': 960, 'viewportHeight': 640,
+                           'motionMode': 'normal'}
+                expected = old.create(surface_id)
+                self.assertTrue(old.updateLegacy(expected, payload))
+                actual = new.createLegacy(surface_id, payload)
+                self.assertIsNotNone(actual)
+                snapshot = expected._snapshot()
+                if 'surfaceInstanceId' in snapshot:
+                    snapshot['surfaceInstanceId'] = actual.surfaceInstanceId
+                self.assertEqual(snapshot, actual._snapshot())
+                self.assertTrue(new.updateLegacy(actual, payload))
+                self.assertEqual(snapshot, actual._snapshot())
+
+    def test_initial_bridge_owns_rows_and_rejects_incomplete_publication(self):
+        payload = {'rows': [{'id': 'cpu', 'title': 'CPU', 'value': '1'}]}
+        context = self.factory.createLegacy('device.info', payload)
+        self.assertIsNotNone(context)
+        model = context.rows
+        row = model.get(0)
+        payload['rows'][0]['value'] = '2'
+        self.assertEqual(row.value.value, '1')
+        self.assertTrue(self.factory.updateLegacy(context, payload))
+        self.assertIs(context.rows, model)
+        self.assertIs(model.get(0), row)
+        self.assertEqual(row.value.value, '2')
+        generation = self.factory._generation
+        owned = set(self.factory._contexts)
+        invalid = {'rows': [{'id': 'same'}, {'id': 'same'}]}
+        self.assertIsNone(self.factory.createLegacy('device.info', invalid))
+        self.assertEqual(self.factory._generation, generation)
+        self.assertEqual(set(self.factory._contexts), owned)
+        self.assertIsNone(self.factory.createLegacy('missing.surface', {}))
+        self.factory.release(context)
+        self.assertNotIn(id(context), self.factory._normalization_cache)
+
+    def test_cached_rows_detect_mutation_and_never_alias_provider_input(self):
+        cache = {}
+        payload = {'rows': [{'id': 'cpu', 'title': 'CPU', 'value': '1'}]}
+        first = normalize_legacy('device.info', payload, cache)
+        payload['rows'][0]['value'] = '2'
+        second = normalize_legacy('device.info', payload, cache)
+        self.assertEqual(first['rows'][0]['value']['value'], '1')
+        self.assertEqual(second['rows'][0]['value']['value'], '2')
+
+    def test_private_delta_restores_data_after_public_update(self):
+        context = self.factory.create('device.info')
+        payload = {'rows': [{'id': 'cpu', 'title': 'CPU', 'value': '1'}]}
+        self.assertTrue(self.factory.updateLegacy(context, payload))
+        first_model = context.rows
+        self.assertTrue(self.factory.update(context, {'rows': [{'id': 'ram', 'title': 'RAM'}]}))
+        self.assertEqual(context.rows.get(0).id, 'ram')
+        self.assertTrue(self.factory.updateLegacy(context, payload))
+        self.assertIs(context.rows, first_model)
+        self.assertEqual(context.rows.get(0).id, 'cpu')
+        before = context._snapshot()
+        self.assertFalse(self.factory.update(context, {'rows': [{'id': 'cpu'}, {'id': 'cpu'}]}))
+        self.assertEqual(context._snapshot(), before)
+
+    def test_account_credits_preserve_zero_missing_and_unlimited(self):
+        self.assertIsNone(normalize_dto('AccountData', {})['credits'])
+        for raw in (0, '0', '12'):
+            credits = normalize_dto('AccountData', {'credits': {'unlimited': False, 'balance': raw}})['credits']
+            self.assertTrue(credits['balance']['available'])
+            self.assertEqual(credits['balance']['value'], raw)
+        for raw in ('', None):
+            credits = normalize_dto('AccountCredits', {'balance': raw})
+            self.assertFalse(credits['balance']['available'])
+        credits = normalize_dto('AccountCredits', {'unlimited': True})
+        self.assertTrue(credits['unlimited'])
+        self.assertFalse(credits['balance']['available'])
+        # Previously exported snapshots remain valid without the optional field.
+        older = default_snapshot('AccountData')
+        older.pop('credits')
+        CONTRACT.validate_snapshot('AccountData', older)
+
+    def test_account_backend_duration_and_legacy_alias_are_equivalent(self):
+        production = normalize_dto('AccountWindow', {'label': '5 ore', 'windowDurationMins': 300})
+        legacy = normalize_dto('AccountWindow', {'name': '5 ore', 'durationMins': 300})
+        self.assertEqual(production['label'], legacy['label'])
+        self.assertEqual(production['windowDurationMinutes'], legacy['windowDurationMinutes'])
 
     def test_every_surface_has_real_readonly_context(self):
         for surface_id, surface in CONTRACT.surfaces.items():

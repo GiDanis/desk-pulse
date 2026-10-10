@@ -34,34 +34,34 @@ try:
  for tab in range(4):
   if tab:h.expression('activateKey(6)');ready()
   view=item('device.info');expected=[r['title'] for r in h.expression('publicSurfacePayload("device.info")')['rows']]
-  assert expr(view,'rows.map(row=>row.title)')==expected
-  scrolling=view.findChild(QObject,'scrollingRows');assert scrolling
+  assert expr(view,'Format.info(context.rows).map(row=>row.title)')==expected
+  scrolling=view.findChild(QObject,'dashboardCards');assert scrolling
   assert expr(scrolling,'itemAtIndex(0).modelData.title')==expected[0]
   capture('info-'+str(tab));checks.append('Info '+str(tab)+' rendered rows match DTO')
  h.expression('activateKey(4)');h.expression('activateKey(4)');h.expression('activateKey(4)');ready()
  loader=as_value(host('device.info').property('currentLoader'));ctx=as_value(loader.findChild(QObject,'publicContextAdapter').property('publicContext'))
- ctx.requestAction('tabs.select','RISORSE',{});ready();assert expr(item('device.info'),'rows[0].title')=='Temperature'
- assert ctx.updatedAt==h.state.systemState['updatedAt'];assert expr(item('device.info'),'footer').startswith('Rilevato ')
- checks.append('Equal-count tab replacement via keys and public action; timestamp present')
+ ctx.requestAction('tabs.select','RISORSE',{});ready();assert expr(item('device.info'),'Format.info(context.rows)[0].title')=='Temperature'
+ assert ctx.updatedAt==h.state.systemState['updatedAt']
+ checks.append('Equal-count tab replacement via keys and public action; timestamp retained in public DTO')
  for sid in ['sport.hub','settings.index','casa.overview','casa.devices','network.overview','network.devices','network.router','network.wifi','network.ports','network.detail','settings.network']:
   setup(sid);capture(sid)
   if sid=='sport.hub':
-   view=item(sid);scrolling=view.findChild(QObject,'scrollingRows')
-   assert scrolling.property('count')==3
-   assert expr(scrolling,'contentHeight <= height'),('sport clipping',scrolling.property('contentHeight'),scrolling.property('height'))
-   assert view.property('footerText')==''
+   view=item(sid)
+   assert expr(view,'summary.cards.count')>0
+   assert expr(view,'bounds(0).height')==504
   if sid=='settings.index':
    for _ in range(5):h.expression('activateKey(8)')
-   ready();scrolling=item(sid).findChild(QObject,'scrollingRows');assert scrolling.property('contentY')>0
+   ready();scrolling=item(sid).findChild(QObject,'dashboardCards');assert scrolling.property('currentIndex')==5
+   assert expr(scrolling,'itemAtIndex(5).y-contentY+itemAtIndex(5).height<=height+.5')
    assert expr(scrolling,'itemAtIndex(5).y>=contentY && itemAtIndex(5).y+itemAtIndex(5).height<=contentY+height+0.5')
    capture('settings-last-selected')
   checks.append(sid+' captured without QML warnings')
  for scale in [1.1,1.0]:
   assert h.service.setToken('typography.textScale',scale);ready();setup('sport.hub')
-  scrolling=item('sport.hub').findChild(QObject,'scrollingRows');assert scrolling.property('count')==3
   h.expression('activateKey(8)');h.expression('activateKey(8)');ready()
-  assert expr(scrolling,'itemAtIndex(2).y>=contentY && itemAtIndex(2).y+itemAtIndex(2).height<=contentY+height+0.5')
-  capture('sport-scale-'+str(scale));checks.append('Last discipline visible at scale '+str(scale))
+  assert h.value('dashboardViewId')=='sport-motogp'
+  assert expr(item('sport.hub'),'bounds(0).height')==504
+  capture('sport-scale-'+str(scale));checks.append('Discipline dashboard contained at scale '+str(scale))
  assert not h.messages,h.messages
  assert not h.transport,h.transport
  report={'status':'passed','scope':'Synthetic real Main, not live providers or physical readability','platform':os.environ['QT_QPA_PLATFORM'],'windowSize':[h.window.width(),h.window.height()],'qt':qVersion(),'checks':checks,'themeDigest':valid['digest'],'palette':args.palette,'qmlWarnings':h.messages,'transportCalls':len(h.transport)}

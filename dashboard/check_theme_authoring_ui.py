@@ -90,13 +90,11 @@ assert before==after,'Import wrote preferences'
 key(Qt.Key_Escape)
 for _ in range(4):key(Qt.Key_Up)
 assert root.property('optionIndex')==2
-for _ in range(len(service.catalog.packs)+1):
-    if service.activeThemeId=='braun-rams':break
-    key(Qt.Key_Right);wait_ready(app,root)
+key(Qt.Key_5);assert root.property('overlay')=='themeChooser'
+root.setProperty('themeChoiceIndex',[row['id'] for row in service.themes].index('braun-rams'))
+key(Qt.Key_5);until(lambda:not service.themeOperation['busy']);wait_ready(app,root)
 assert service.activeThemeId=='braun-rams',service.lastError
 assert window.activeFocusItem().objectName()=='inputOwner'
-key(Qt.Key_Down)
-key(Qt.Key_5);wait_save(app,service)
 assert not service.editing
 assert ThemeService(store=store).activeThemeId=='braun-rams'
 key(Qt.Key_1);wait_ready(app,root);capture('home-day')

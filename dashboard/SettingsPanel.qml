@@ -9,12 +9,12 @@ Item {
     property StyleFacade style: Theme
     required property var dashboard
     readonly property var entries: [
-        {title:"Schermo",detail:"Luminosità, orari e dimensione testo",target:"system"},
-        {title:"Aspetto",detail:"Tema, palette e movimento",target:"appearance"},
-        {title:"Moduli e Home",detail:"Argomenti visibili e riepiloghi",target:"modules"},
-        {title:"Avvisi",detail:"Interruzioni, silenzio e soglie",target:"notifications"},
-        {title:"Servizi collegati",detail:"Account dal PC, Casa e Rete",target:"services"},
-        {title:"Dati e aggiornamenti",detail:"Ultima lettura ed esito delle fonti",target:"sources"}
+        {title:"Schermo",detail:dashboard.systemValue(1)+" · Testo "+Math.round(root.style.textScale*100)+"%",target:"system"},
+        {title:"Aspetto",detail:themeService ? (themeService.themes.find(t=>t.id===themeService.savedThemeId) || {}).name || "Tema corrente" : "Tema corrente",target:"appearance"},
+        {title:"Moduli e Home",detail:dashboard.families.length+" argomenti visibili · riepiloghi Home",target:"modules"},
+        {title:"Avvisi",detail:backend && backend.quietHoursEnabled ? "Silenzio "+quietRange : "Fascia silenzio disattivata",target:"notifications"},
+        {title:"Servizi collegati",detail:"Account "+sourceDetail(dashboard.account),target:"services"},
+        {title:"Dati e aggiornamenti",detail:"Meteo "+sourceDetail(dashboard.weather),target:"sources"}
     ]
     readonly property var serviceEntries: [
         {id:"service.account",title:"Account ChatGPT",detail:"Dati ricevuti dal PC · stato e rilettura",target:"sources",source:"account"},
@@ -84,8 +84,8 @@ Item {
         {title: "Giorno dalle", value: dashboard.systemValue(5), detail: "Orario condiviso con il tema automatico"},
         {title: "Notte dalle", value: dashboard.systemValue(6), detail: "Orario condiviso con il tema automatico"},
         {id:"appearance.textScale",title:"Dimensione testo",value:Math.round(root.style.textScale*100)+"%",detail:supportsAdjustment("textScale") ? "Anteprima · salva oppure annulla" : "Dimensione gestita dal tema",enabled:supportsAdjustment("textScale")},
-        {id:"appearance.apply",title:"Salva testo",value:"SALVA",detail:"Conserva la dimensione al riavvio",enabled:!!themeService && themeService.editing && themeService.readyToApply},
-        {id:"appearance.cancel",title:"Annulla anteprima",value:"ANNULLA",detail:"Torna alla dimensione salvata",enabled:!!themeService && themeService.editing}
+        {id:"appearance.apply",title:"Salva testo",value:"SALVA",detail:"Conserva la dimensione al riavvio",enabled:!!themeService && themeService.dirty && themeService.readyToApply},
+        {id:"appearance.cancel",title:"Annulla anteprima",value:"ANNULLA",detail:"Torna alla dimensione salvata",enabled:!!themeService && themeService.dirty}
     ] : section === "notifications" ? notificationEntries : section === "notificationQuiet" ? [
         {title: "Silenzio programmato", value: backend && backend.quietHoursEnabled ? "ATTIVO" : "DISATTIVO", detail: "Durante la fascia, i banner non compaiono", setting: 0},
         {title: "Dalle", value: dashboard.notificationValue(1), detail: "Inizio incluso · passi di 15 minuti", setting: 1, enabled: backend && backend.quietHoursEnabled},
@@ -109,11 +109,11 @@ Item {
     readonly property var simpleAppearanceRows: themeService ? [
         {title:"Palette", value:({auto:"AUTOMATICA",day:"GIORNO",night:"NOTTE"})[themeService.draft.paletteMode || "auto"],detail:supportsAdjustment("paletteMode") ? "Automatico segue gli orari del dispositivo" : "Palette gestita dal tema",enabled:supportsAdjustment("paletteMode")},
         {title:"Movimento", value:({normal:"NORMALE",reduced:"RIDOTTO",off:"DISATTIVO"})[themeService.draft.motionMode],detail:"Animazioni del tema e della scena"},
-        {title:"Tema",value:(themeService.themes.find(t => t.id === themeService.draft.themeId) || {}).name || themeService.draft.themeId,detail:catalogTheme.coverageSummary || "4/6 sceglie · anteprima prima del salvataggio"},
+        {title:"Tema",value:(themeService.themes.find(t => t.id === themeService.draft.themeId) || {}).name || themeService.draft.themeId,detail:catalogTheme.coverageSummary || "Scegli dalla lista · attivazione e salvataggio",target:"themeChooser"},
         {title:"Dimensione testo",value:Math.round(root.style.textScale*100)+"%",detail:supportsAdjustment("textScale") ? "Piccolo adattamento della leggibilità" : "Dimensione definita dal tema",enabled:supportsAdjustment("textScale")},
         {title:"Versione del tema",value:Theme.appearance.themeVersion,detail:"4/6 sceglie una revisione installata"},
-        {title:"Applica e salva",value:themeService.status === "saving" ? "SALVATAGGIO…" : "SALVA",detail:"Conserva il tema al prossimo avvio",enabled:themeService.readyToApply},
-        {title:"Annulla anteprima",value:"RIPRISTINA",detail:"Torna al tema salvato",enabled:themeService.status !== "saving"},
+        {title:"Applica e salva",value:themeService.status === "saving" ? "SALVATAGGIO…" : "SALVA",detail:"Conserva il tema al prossimo avvio",enabled:themeService.dirty && themeService.readyToApply},
+        {title:"Annulla anteprima",value:"RIPRISTINA",detail:"Torna al tema salvato",enabled:themeService.dirty && themeService.status !== "saving"},
         {title:"Importa temi",value:"IMPORTA",detail:"Pacchetti locali ricevuti dal PC"},
         {title:"Esporta tema",value:"ESPORTA",detail:"Pacchetto completo per un altro dispositivo"},
         {title:"Personalizzazione avanzata",value:"APRI",detail:"Editor di compatibilità · la composizione si crea nel tema"}
@@ -131,8 +131,8 @@ Item {
         {title: "Carattere numeri", value: root.style.numbersFamily || "PREDEFINITO", detail: "Orologi e dati numerici · indipendente dall'interfaccia"},
         {title: "Transizioni", value: recipeName((Theme.motion["navigate.family"] || {}).recipe) || "—", detail: "Scorrimento, dissolvenza o cambio immediato"},
         {title: "Scena di prova", value: Theme.appearance && Theme.appearance.scene.enabled ? "ATTIVA" : "DISATTIVA", detail: "Attore geometrico persistente · si sospende con avvisi e notte"},
-        {title: "Applica e salva", value: themeService.status === "saving" ? "SALVATAGGIO…" : "SALVA", detail: "La bozza diventa la preferenza al prossimo avvio", enabled: themeService.readyToApply},
-        {title: "Annulla bozza", value: "RIPRISTINA", detail: "Torna all'ultimo aspetto salvato", enabled: themeService.status !== "saving"},
+        {title: "Applica e salva", value: themeService.status === "saving" ? "SALVATAGGIO…" : "SALVA", detail: "La bozza diventa la preferenza al prossimo avvio", enabled: themeService.dirty && themeService.readyToApply},
+        {title: "Annulla bozza", value: "RIPRISTINA", detail: "Torna all'ultimo aspetto salvato", enabled: themeService.dirty && themeService.status !== "saving"},
         {title: "Ripristina Base", value: "BOZZA", detail: "Azzera solo la personalizzazione dell'aspetto"},
         {title: "Rileggi catalogo", value: "AGGIORNA", detail: "Pacchetti importati · errori visibili, Base sempre disponibile"},
         {title: "Carattere orologio", value: root.style.displayFamily || "PREDEFINITO", detail: "Famiglia del display grande · indipendente da testo e numeri"},
@@ -141,7 +141,7 @@ Item {
         {title: "Avvisi", detail: "Composizioni, testo, forme e animazioni · anteprima isolata", target: "appearanceNotifications"},
         {title:"Personalizzazione rapida",value:"TORNA",detail:"Tema, palette, testo e movimento"}
     ].map((row,index)=>Object.assign({},row,{id:index===20 ? "appearance.simple" : PublicSettingsRows.canonicalSections["settings.appearance"][index]}))
-        .filter(row=>["appearance.textScale","appearance.import","appearance.export","appearance.reload"].indexOf(row.id)<0)
+        .filter(row=>["appearance.textScale","appearance.import","appearance.export","appearance.reload","appearance.palette","appearance.motion","appearance.theme"].indexOf(row.id)<0)
         .concat([{id:"appearance.management",title:"Gestione temi",detail:"Importa, esporta e revisioni",target:"themeManagement"}]) : []
     readonly property var notificationModes: ["small","large","urgent","badge","inbox","detail"]
     readonly property var notificationLabels: ["PICCOLO","GRANDE","URGENTE","BADGE","ELENCO","DETTAGLIO"]
@@ -169,7 +169,7 @@ Item {
         {title:"Fonte sintetica",value:notificationMetrics.showSource?"VISIBILE":"NASCOSTA",detail:"Nel dettaglio può essere regolata separatamente"},
         {title:"Animazione entrata",value:notificationMode === "urgent"?"IMMEDIATA":recipeName((Theme.motion[notificationMotionPrefix+".enter"] || {}).recipe),detail:"Rispetta Normale / Ridotto / Disattivo",enabled:notificationMode !== "urgent"},
         {title:"Animazione uscita",value:notificationMode === "urgent"?"IMMEDIATA":recipeName((Theme.motion[notificationMotionPrefix+".exit"] || {}).recipe),detail:"Testo e stile restano coerenti durante l'uscita",enabled:notificationMode !== "urgent"},
-        {title:"Applica e salva",value:"SALVA",detail:"Salva tutta la bozza Aspetto",enabled:themeService.readyToApply},
+        {title:"Applica e salva",value:"SALVA",detail:"Salva tutta la bozza Aspetto",enabled:themeService.dirty && themeService.readyToApply},
         {title:"Ripristina avvisi del tema",value:"BOZZA",detail:"Rimuove soltanto gli override delle notifiche"},
         {title:"Torna ad Aspetto",value:"APRI",detail:"Conserva la bozza · 7 torna"}
     ]) : []
@@ -223,7 +223,7 @@ Item {
         const actionIndex=PublicSettingsRows.simpleAppearanceIds.indexOf((simpleAppearanceRows[selected] || {}).id)
         if (actionIndex === 0) accepted=service.setSection("paletteMode",cycle(["auto","day","night"],service.draft.paletteMode || "auto",direction))
         else if (actionIndex === 1) accepted=service.setSection("motionMode",cycle(["normal","reduced","off"],service.draft.motionMode,direction))
-        else if (actionIndex === 2) accepted=service.selectDraft(cycle(service.themes.map(t => t.id),service.draft.themeId,direction))
+        else if (actionIndex === 2) accepted=dashboard.openThemeChooser()
         else if (actionIndex === 3) accepted=service.setToken("typography.textScale",Math.max(.85,Math.min(1.1,Math.round((root.style.textScale+direction*.05)*100)/100)))
         else if (actionIndex === 4) accepted=service.stepRevision(direction)
         else if (actionIndex === 5) accepted=service.apply()
@@ -239,7 +239,7 @@ Item {
         if (!service.editing && actionIndex !== 15) service.beginEdit()
         if (actionIndex === 0) service.setSection("paletteMode",cycle(["auto","day","night"],service.draft.paletteMode || "auto",direction))
         else if (actionIndex === 1) service.setSection("motionMode",cycle(["normal","reduced","off"],service.draft.motionMode,direction))
-        else if (actionIndex === 2) service.selectDraft(cycle(service.themes.map(t => t.id),service.draft.themeId,direction))
+        else if (actionIndex === 2) dashboard.openThemeChooser()
         else if (actionIndex === 3) service.setSection("presentations",Object.assign({},service.draft.overrides.presentations || {},{"home.now":cycle(homePresentations,Theme.presentations["home.now"],direction)}))
         else if (actionIndex === 4) service.setToken("typography.textScale",Math.max(.85,Math.min(1.1,Math.round((root.style.textScale + direction * .05)*100)/100)))
         else if (actionIndex === 5) {
@@ -268,7 +268,7 @@ Item {
     readonly property int visibleRowCount: 3
     readonly property int pageStart: Math.floor(selected / visibleRowCount) * visibleRowCount
     readonly property string heading: ({settings: "IMPOSTAZIONI", appearance: "ASPETTO", appearanceNotifications: "ASPETTO / AVVISI", system: "SCHERMO", modules: "MODULI E HOME", notifications: "AVVISI", services:"SERVIZI COLLEGATI", sportModules:"SPORT E HOME", themeManagement:"GESTIONE TEMI", notificationQuiet: "NOTIFICHE / FASCIA SILENZIO", notificationCategories: "NOTIFICHE / AVVISI A SCHERMO", accountSettings: "ACCOUNT CHATGPT", integrations: "SPORT", sources: "DATI E AGGIORNAMENTI"})[section] || ""
-    readonly property string description: section === "settings" ? "Scegli un gruppo" : section === "themeManagement" ? "Trasferimenti e revisioni dei temi" : section === "services" ? "Stato e opzioni dei collegamenti" : section === "sportModules" ? "Discipline visibili e riepiloghi Home" : section === "system" ? "Luminosità salvata subito · testo in anteprima da salvare" : section === "sources" ? "Aggiornamento manuale · attesa minima 30 secondi tra richieste" : section === "notifications" ? "Categorie, fascia silenzio e soglie Account" : section === "notificationQuiet" ? "Gli urgenti restano visibili per le categorie abilitate" : section === "notificationCategories" ? "Disattivare una categoria non cancella l'elenco Avvisi" : section === "accountSettings" ? "Preferenze salvate · soglie separate dall'acquisto di crediti" : (section === "appearance" || section === "appearanceNotifications") ? "Anteprima · Applica e salva, oppure 7 per annullare" : "Preferenze salvate automaticamente"
+    readonly property string description: section === "settings" ? "Scegli un gruppo" : section === "themeManagement" ? "Trasferimenti e revisioni dei temi" : section === "services" ? "Stato e opzioni dei collegamenti" : section === "sportModules" ? "Discipline visibili e riepiloghi Home" : section === "system" ? themeService && themeService.dirty ? "Luminosità salvata · dimensione testo da salvare" : "Luminosità salvata automaticamente · dimensione testo" : section === "sources" ? "Aggiornamento manuale · attesa minima 30 secondi tra richieste" : section === "notifications" ? "Categorie, fascia silenzio e soglie Account" : section === "notificationQuiet" ? "Gli urgenti restano visibili per le categorie abilitate" : section === "notificationCategories" ? "Disattivare una categoria non cancella l'elenco Avvisi" : section === "accountSettings" ? "Preferenze salvate · soglie separate dall'acquisto di crediti" : (section === "appearance" || section === "appearanceNotifications") ? themeService && themeService.dirty ? "Regolazioni in anteprima · salva oppure annulla" : "Aspetto salvato · scegli il tema dalla lista" : "Preferenze salvate automaticamente"
     readonly property string explanation: section === "notifications" ? "Gli avvisi ricevuti restano consultabili da 3 AVVISI.\nLe soglie si regolano qui da Soglie Account." : section === "notificationQuiet" ? (backend && backend.quietHoursEnabled ? quietRange + " · " + (quietActive ? "silenzio in corso" : "fuori fascia") : "Fascia disattivata · nessuna pausa oraria") + "\nLe categorie disattivate restano nascoste anche fuori fascia." : section === "notificationCategories" ? "Meteo/Account consentiti: banner fuori fascia, urgenti sempre.\nMeteo/Account nascosti: restano nell'elenco 3 AVVISI." : ""
     property string feedback: ""
     property string feedbackSource: ""
@@ -283,6 +283,28 @@ Item {
     }
     onSectionChanged: { feedback = ""; feedbackSource = ""; if (["appearance","appearanceNotifications","themeManagement"].indexOf(section)<0) advancedAppearance=false }
 
+    property var selectedIdentities: ({})
+    function rowIdentity(row,index) {
+        return row.id || PublicSettingsRows.identity(dashboard.publicRoutes[section] || "",row,index,{families:dashboard.allFamilies,advancedAppearance:advancedAppearance}) || row.target || row.title
+    }
+    function rememberSelectedRow() {
+        if (!active || !rows[selected]) return
+        const saved=Object.assign({},selectedIdentities);saved[section]=rowIdentity(rows[selected],selected);selectedIdentities=saved
+    }
+    function restoreSelectedRow() {
+        if (!active || !rows.length) return
+        const id=selectedIdentities[section]
+        const index=id ? rows.findIndex((row,i)=>rowIdentity(row,i)===id) : -1
+        setSelected(index>=0 ? index : Math.max(0,Math.min(rows.length-1,selected)))
+    }
+    property string lastRowsRoute: ""
+    property string lastRowIds: ""
+    onRowsChanged: {
+        const ids=rows.map((row,i)=>rowIdentity(row,i)).join("|")
+        const restore=section===lastRowsRoute && ids!==lastRowIds && !!lastRowIds
+        lastRowsRoute=section;lastRowIds=ids
+        if (restore) restoreSelectedRow()
+    }
     function setSelected(index) {
         if (section === "settings") dashboard.settingsIndex = index
         else if (section === "modules") dashboard.modulesIndex = index
@@ -294,6 +316,7 @@ Item {
         else dashboard.optionIndex = index
         feedback = ""
         feedbackSource = ""
+        rememberSelectedRow()
     }
     function activate(direction) {
         if (!backend || !rows.length) return
@@ -343,29 +366,63 @@ Item {
         else if (position === 5 || (position === 4 || position === 6) && ["settings", "services", "integrations", "notifications", "sources"].indexOf(section) < 0 && !rows[selected].target) activate(position === 4 ? -1 : 1)
         return true
     }
-    AppIcon { style: root.style; z: 1; x: 870; y: 29; iconId: "system.settings"; opticalSize: 32 }
-    Rectangle { anchors.fill: parent; color: root.style.backgroundOverlay }
-    AppText { style: root.style; x: 44; y: root.rows.length <= 2 ? 334 : 410; width: 872; height: 66; visible: root.explanation !== ""; text: root.explanation; color: root.style.textSecondary; font.pixelSize: root.style.font22; lineHeight: 1.35 }
-    AppText { style: root.style; x: 44; y: 30; width: 872; text: root.heading; color: root.style.accentTextOnOverlay; font.pixelSize: root.style.font45; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
-    AppText { style: root.style; x: 44; y: 84; width: 872; text: root.description; color: root.style.textSecondary; font.pixelSize: root.style.font26; elide: Text.ElideRight }
-    Repeater {
-        model: root.rows.slice(root.pageStart, root.pageStart + root.visibleRowCount)
-        delegate: SelectableRow { style: root.style; selectedState: selectedRow;
-            required property var modelData
-            required property int index
-            readonly property int rowIndex: root.pageStart + index
-            readonly property bool selectedRow: rowIndex === root.selected
-            objectName: root.section + "Row" + rowIndex
-            x: 44; y: 132 + index * (348 / root.visibleRowCount); width: 872; height: 348 / root.visibleRowCount - 10; radius: root.style.radiusRow
-            color: selectedRow ? root.style.surfaceFocused : root.style.surface
-            border.color: selectedRow ? root.style.focusIndicator : root.style.border; border.width: selectedRow ? root.style.focusWidth : root.style.hairlineWidth
-            AppText { style: root.style; x: 20; y: 10; width: 485; text: modelData.title; color: modelData.enabled === false ? root.style.textSecondary : root.style.textPrimary; font.pixelSize: root.style.font36; font.weight: (selectedRow) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
-            AppText { style: root.style; x: 20; y: parent.height - 42; width: 825; text: modelData.detail || ""; color: root.style.textSecondary; font.pixelSize: root.style.font26; elide: Text.ElideRight }
-            AppText { style: root.style; x: 515; y: 13; width: 334; horizontalAlignment: Text.AlignRight; text: modelData.value || "›"; color: modelData.enabled === false ? root.style.textSecondary : selectedRow ? root.style.accentTextOnFocused : root.style.textPrimary; font.pixelSize: root.style.font32; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight }
-            MouseArea { anchors.fill: parent; onClicked: { root.setSelected(parent.rowIndex); root.activate(1) } }
+    readonly property string visibleFeedback: ((section === "appearance" || section === "appearanceNotifications" || section === "system") && themeService ? themeService.lastError : "") || feedback
+    function iconFor(target) {
+        return ({system:"system.display",appearance:"system.display",modules:"system.modules",notifications:"system.alerts",services:"system.services",sources:"system.refresh"})[target] || "system.settings"
+    }
+    Rectangle { anchors.fill:parent; color:root.style.background }
+    Rectangle { anchors.fill:parent; color:root.style.backgroundOverlay }
+    AppText {style:root.style;x:24;y:13;text:"Impostazioni";font.pixelSize:root.style.font31;color:root.style.textPrimary}
+    AppIcon {style:root.style;x:894;y:13;iconId:"system.settings";opticalSize:30}
+    Rectangle {x:24;y:55;width:912;height:1;color:root.style.border}
+    AppText {style:root.style;x:24;y:76;width:912;visible:root.section!=="settings";text:root.heading;font.pixelSize:root.style.font37;color:root.style.textPrimary;font.weight:root.style.headingWeight;elide:Text.ElideRight}
+    AppText {style:root.style;x:24;y:122;width:912;visible:root.section!=="settings";text:root.description;font.pixelSize:root.style.font22;color:root.style.textSecondary;elide:Text.ElideRight}
+    Item {
+        x:24;y:72;width:912;height:552;visible:root.section==="settings"
+        Repeater {model:root.section==="settings" ? root.rows : []
+            delegate:SelectableRow {
+                required property var modelData
+                required property int index
+                style:root.style;selectedState:index===root.selected
+                objectName:"settingsRow"+index
+                x:(index%2)*462;y:Math.floor(index/2)*188;width:450;height:176;radius:root.style.radiusCard
+                color:selectedState ? root.style.surfaceFocused : root.style.surface
+                border.color:selectedState ? root.style.focusIndicator : root.style.border
+                border.width:selectedState ? root.style.focusWidth : root.style.hairlineWidth
+                AppIcon {style:root.style;x:20;y:20;iconId:root.iconFor(modelData.target);opticalSize:32}
+                AppText {style:root.style;x:66;y:17;width:366;text:modelData.title;font.pixelSize:root.style.font31;color:root.style.textPrimary;font.weight:root.style.headingWeight;elide:Text.ElideRight}
+                AppText {style:root.style;x:20;y:70;width:410;height:90;text:modelData.detail;font.pixelSize:root.style.font22;color:root.style.textSecondary;wrapMode:Text.WordWrap;maximumLineCount:3;elide:Text.ElideRight}
+                MouseArea {anchors.fill:parent;onClicked:{root.setSelected(parent.index);root.activate(1)}}
+            }
         }
     }
-    AppText { style: root.style; x: 44; y: 499; width: 872; text: ((root.section === "appearance" || root.section === "appearanceNotifications") && root.themeService ? root.themeService.lastError : "") || root.feedback || (root.rows.length ? (root.selected + 1) + "/" + root.rows.length + " · " : "") + (root.section === "settings" || root.section === "integrations" || root.section === "notifications" || root.rows[root.selected] && root.rows[root.selected].target && root.section !== "sources" ? "2/8 SELEZIONA · 5 APRI" : root.section === "sources" ? "2/8 SELEZIONA · 5 AGGIORNA" : "2/8 SELEZIONA · 4/6 REGOLA · 5 CAMBIA"); color: root.style.textSecondary; font.pixelSize: root.style.font21; elide: Text.ElideRight }
-    Rectangle { x: 44; y: 548; width: 872; height: 1; color: root.style.border }
-    KeyGuide { style: root.style; x: 44; y: 571; color: root.style.accentTextOnOverlay; font.pixelSize: root.style.font25 }
+    ListView {
+        id:settingsList
+        objectName:"settingsList"
+        x:24;y:164;width:912
+        height:460-(root.visibleFeedback ? 36 : 0)-(root.explanation ? 64 : 0)
+        visible:root.section!=="settings";clip:true;spacing:12;boundsBehavior:Flickable.StopAtBounds
+        model:visible ? root.rows : []
+        currentIndex:root.selected
+        onCurrentIndexChanged:Qt.callLater(function(){settingsList.positionViewAtIndex(settingsList.currentIndex,ListView.Contain)})
+        onCountChanged:Qt.callLater(function(){settingsList.positionViewAtIndex(settingsList.currentIndex,ListView.Contain)})
+        readonly property real rowStep:Math.max(112*root.style.textScale,(height+12)/Math.min(4,Math.max(1,count)))
+        delegate:SelectableRow {
+            required property var modelData
+            required property int index
+            style:root.style;selectedState:index===root.selected
+            objectName:root.section+"Row"+index
+            width:settingsList.width-(settingsList.contentHeight>settingsList.height ? 10 : 0);height:settingsList.rowStep-12;radius:root.style.radiusRow
+            color:selectedState ? root.style.surfaceFocused : root.style.surface
+            border.color:selectedState ? root.style.focusIndicator : root.style.border
+            border.width:selectedState ? root.style.focusWidth : root.style.hairlineWidth
+            AppText {style:root.style;x:18;y:10;width:parent.width-358;text:modelData.title;font.pixelSize:root.style.font31;color:modelData.enabled===false ? root.style.textSecondary : root.style.textPrimary;font.weight:selectedState ? root.style.headingWeight : root.style.bodyWeight;elide:Text.ElideRight}
+            AppText {style:root.style;x:parent.width-324;y:13;width:306;horizontalAlignment:Text.AlignRight;text:modelData.value || "›";font.pixelSize:root.style.font26;color:modelData.enabled===false ? root.style.textSecondary : root.style.textPrimary;elide:Text.ElideRight}
+            AppText {style:root.style;x:18;y:parent.height-50;width:parent.width-36;height:44;text:modelData.detail || "";font.pixelSize:root.style.font21;color:root.style.textSecondary;wrapMode:Text.WordWrap;maximumLineCount:2;elide:Text.ElideRight}
+            MouseArea {anchors.fill:parent;enabled:modelData.enabled!==false;onClicked:{root.setSelected(parent.index);root.activate(1)}}
+        }
+        Rectangle {anchors.right:parent.right;width:4;y:settingsList.visibleArea.yPosition*settingsList.height;height:Math.max(18,settingsList.visibleArea.heightRatio*settingsList.height);radius:2;color:root.style.accent;visible:settingsList.contentHeight>settingsList.height;opacity:0.65}
+    }
+    AppText {style:root.style;x:24;y:settingsList.y+settingsList.height+8;width:912;height:56;visible:!!root.explanation && root.section!=="settings";text:root.explanation;font.pixelSize:root.style.font20;color:root.style.textSecondary;wrapMode:Text.WordWrap;maximumLineCount:2;elide:Text.ElideRight}
+    AppText {style:root.style;x:24;y:592;width:912;height:32;visible:!!root.visibleFeedback && root.section!=="settings";text:root.visibleFeedback;font.pixelSize:root.style.font22;color:root.style.textSecondary;elide:Text.ElideRight}
 }

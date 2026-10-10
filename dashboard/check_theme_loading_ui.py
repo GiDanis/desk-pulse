@@ -89,7 +89,66 @@ wait_ready(app,root);until(lambda:service.readyToApply)
 assert not loading.property('visible')
 assert service.apply();wait_save(app,service)
 assert service.lifecycle.read()['active']['digest']==revision['digest']
+# The direct chooser covers the whole automatic transaction. Deliberately
+# delayed test bundle exercises cancellation and urgent priority independently
+# of normal preflight (which correctly rejects this bundle).
+assert service.activateTheme('base')
+until(lambda:not service.themeOperation['busy']);wait_ready(app,root)
+from PySide6.QtQml import QQmlExpression,QQmlEngine
+def expression(code):
+    expr=QQmlExpression(QQmlEngine.contextForObject(root),root,code);expr.evaluate()
+    assert not expr.hasError(),expr.error().toString()
+def open_delayed():
+    expression('pushOverlay("appearance");openThemeChooser()')
+    root.setProperty('themeChoiceIndex',[row['id'] for row in service.themes].index(revision['id']))
+    press(Qt.Key_5)
+    until(lambda:service.themeOperation['busy'] and as_value(home.property('pendingLoader')) is not None)
+    until(lambda:loading.property('visible'))
+    assert service.savedThemeId=='base' and service.lifecycle.read()['pending']
+    generation=service.candidateAppearance['generation']
+    press(Qt.Key_5);press(Qt.Key_8)
+    assert service.candidateAppearance['generation']==generation,'duplicate input restarted candidate'
+    return generation
+for key,route in ((Qt.Key_7,'themeChooser'),(Qt.Key_1,''),(Qt.Key_9,'menu')):
+    generation=open_delayed();press(key);wait_ready(app,root)
+    assert root.property('overlay')==route
+    assert not service.themeOperation['busy'] and service.savedThemeId=='base'
+    assert service.lifecycle.read()['pending'] is None and not service.candidateAppearance
+    service.reportCandidate(generation,'home.now',True,'')
+    assert service.activeThemeId=='base','late confirmation changed cancelled selection'
+    expression('home()');wait_ready(app,root)
+open_delayed()
+events.set_demo_scenario('urgente');until(lambda:bool(as_value(root.property('urgentEvent')).get('id')))
+assert not loading.property('visible') and service.themeOperation['busy']
+press(Qt.Key_7);until(lambda:not as_value(root.property('urgentEvent')).get('id'))
+assert service.themeOperation['busy'],'urgent dismiss must not cancel activation'
+press(Qt.Key_7);wait_ready(app,root)
+expression('home()');wait_ready(app,root)
+open_delayed()
+until(lambda:not service.themeOperation['busy'],timeout=7)
+assert service.themeOperation['phase']=='failed' and service.savedThemeId=='base'
+assert service.lifecycle.read()['pending'] is None
+wait_ready(app,root)
+# Exit requests arriving while a real settings worker is running are deferred.
+from unittest.mock import patch
+from theme_service import SaveJob
+original_save=SaveJob.run
+def slow_save(job):
+    time.sleep(.25);return original_save(job)
+expression('home();pushOverlay("appearance");openThemeChooser()')
+root.setProperty('themeChoiceIndex',[row['id'] for row in service.themes].index('functional'))
+with patch.object(SaveJob,'run',slow_save):
+    press(Qt.Key_5)
+    until(lambda:service._pending is not None)
+    press(Qt.Key_9)
+    assert service.themeOperation['busy'] and root.property('overlay')=='themeChooser'
+    assert root.property('themeExitRequested')=='menu'
+    service._theme_operation_timeout();service.heartbeat(True)
+    assert json.loads(service.lifecycle.health_path.read_text())['ready'] is False
+    until(lambda:not service.themeOperation['busy'])
+assert root.property('overlay')=='menu' and service.savedThemeId=='functional'
+wait_ready(app,root)
 assert not messages,messages
-report={'status':'passed','qt':__import__('PySide6.QtCore',fromlist=['qVersion']).qVersion(),'backend':os.environ['QT_QPA_PLATFORM'],'checks':['application-owned-loading-feedback','delay-avoids-flash','old-theme-retained-until-ready','focus-preserved','navigation-held-while-loading','menu-remains-available-without-cancelling','urgent-preempts-loading','urgent-dismiss-does-not-cancel-theme','cancel-returns-committed-theme','ready-removes-loading-before-frame-apply'],'qmlWarnings':messages,'testOnlyPreflightBypass':True}
+report={'status':'passed','qt':__import__('PySide6.QtCore',fromlist=['qVersion']).qVersion(),'backend':os.environ['QT_QPA_PLATFORM'],'checks':['application-owned-loading-feedback','delay-avoids-flash','old-theme-retained-until-ready','focus-preserved','navigation-held-while-loading','menu-remains-available-without-cancelling','urgent-preempts-loading','urgent-dismiss-does-not-cancel-theme','cancel-returns-committed-theme','ready-removes-loading-before-frame-apply','chooser-auto-cancel-home-menu','duplicate-input-and-late-confirmation','auto-urgent-priority','auto-renderer-timeout-rolls-back','menu-deferred-during-save','slow-save-withdraws-readiness-without-racing-worker'],'qmlWarnings':messages,'testOnlyPreflightBypass':True}
 if args.output:args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(report,indent=2)+'\n')
 print(json.dumps(report));window.close();engine.deleteLater();app.processEvents();events.close();private.cleanup()

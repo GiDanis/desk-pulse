@@ -139,7 +139,7 @@ def main_proof():
         assert by_id['appearance.motion']['enabled'] is True
         settings.setProperty('advancedAppearance',True);harness.pump(20)
         rows=as_value(settings.property('advancedAppearanceRows'))
-        assert rows[0]['enabled'] is False and 'appearance.textScale' not in {row['id'] for row in rows}
+        assert {'appearance.palette','appearance.motion','appearance.theme','appearance.textScale'}.isdisjoint({row['id'] for row in rows}), rows
         assert not harness.messages,harness.messages
         print('main-settings-adjustments-passed')
     finally: harness.close()

@@ -229,8 +229,8 @@ function canonicalize(surface,rows,options) {
             } else if (["appearance.advanced","appearance.simple","appearance.notifications","appearance.back","notifications.visual.reset"].indexOf(id) >= 0) row.actionId="settings.activate"
             else if (id === "appearance.palette") setChoice(row,choices(["auto","day","night"],["Automatica","Giorno","Notte"]),(options.draft || {}).paletteMode || "auto")
             else if (id === "appearance.motion") setChoice(row,choices(["normal","reduced","off"],["Normale","Ridotto","Disattivo"]),(options.draft || {}).motionMode || "off")
-            else if (id === "appearance.theme") { setChoice(row,(options.themes || []).map(function(theme) { return {id:theme.id,label:theme.name,value:theme.id} }),(options.draft || {}).themeId);row.control="theme"
-                if (selectedCatalogTheme && selectedCatalogTheme.coverageSummary) { row.detail=selectedCatalogTheme.coverageSummary;row.description=selectedCatalogTheme.coverageSummary }
+            else if (id === "appearance.theme") { setChoice(row,(options.themes || []).map(function(theme) { return {id:theme.id,label:theme.name,value:theme.id} }),(options.draft || {}).themeId);row.control="theme";row.actionId="settings.activate"
+                row.detail=row.detail || "Scegli dalla lista · attivazione e salvataggio";row.description=row.detail
             }
             else if (id === "appearance.textScale") setNumber(row,.85,1.1,.05,tokens["typography.textScale"])
             else if (id === "appearance.cardRadius") setNumber(row,0,24,2,tokens["shape.radiusCard"])

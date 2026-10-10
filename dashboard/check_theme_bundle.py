@@ -78,6 +78,28 @@ class BundleTests(unittest.TestCase):
             self.manager.verify_revision(revision)
         self.assertEqual(self.manager.list_revisions(), [])
 
+    def test_renderer_lease_reuses_only_unchanged_integrity(self):
+        from unittest.mock import patch
+        lifecycle = LifecycleManager(self.root / 'data')
+        revision = self.installed()
+        manager = lifecycle.bundle_manager
+        with patch.object(manager, 'verify_revision', wraps=manager.verify_revision) as checked:
+            first = lifecycle.acquire(revision)
+            second = lifecycle.acquire(revision)
+            self.assertEqual(checked.call_count, 1)
+            lifecycle.release(first)
+            lifecycle.release(second)
+            path = Path(revision['payload']) / 'qml/Home.qml'
+            old = path.stat()
+            # Same size and restored mtime must not bypass revalidation.
+            data = path.read_bytes()
+            path.write_bytes(data.replace(b'Item', b'Itam', 1))
+            os.utime(path, ns=(old.st_atime_ns, old.st_mtime_ns))
+            with self.assertRaises(ThemeError):
+                lifecycle.acquire(revision)
+            self.assertEqual(checked.call_count, 2)
+            self.assertFalse(list(lifecycle.leases_root.glob('*.json')))
+
     def test_resources_revision_aware_and_tamper_guard(self):
         revision = self.installed()
         resolver = self.manager.resources

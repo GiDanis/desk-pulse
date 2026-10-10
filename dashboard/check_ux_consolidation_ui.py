@@ -34,7 +34,7 @@ def main():
                 assert image.save(str(args.capture_dir / (name + '.png')))
 
         assert [x['id'] for x in h.value('families')] == ['oggi', 'meteo', 'account', 'sports', 'casa', 'network']
-        assert [x['id'] for x in h.value('sportDisciplines')] == ['sport', 'f1', 'motogp']
+        assert [x['id'] for x in h.value('sportDisciplines')] == ['sport', 'team', 'f1', 'motogp']
         press(1)
         for _ in range(3):
             press(6)
@@ -42,37 +42,30 @@ def main():
         assert h.expression('navigationSnapshot().familyId') == 'sports'
         capture('sport-index')
         h.reset_effects()
-        press(8)
-        press(5)
-        assert h.value('familyId') == 'f1'
-        press(6)
-        saved_view = h.expression('racingView')
-        assert h.expression('navigationSnapshot().familyId') == 'sports'
-        h.root.setProperty('racingIndex', 2)
-        selected_event=h.expression('racingRows[2].id')
-        h.root.setProperty('racingFocusedId', selected_event)
+        press(8);press(8);press(5)
+        assert h.value('familyId') == 'f1' and h.value('overlay') in ('racingEvent','racingList')
+        event=h.value('racingEventId')
         press(7)
         assert h.value('familyId') == 'sports' and h.value('sportHubSelectedId') == 'f1'
-        press(8)
-        press(5)
-        assert h.value('familyId') == 'motogp' and h.value('racingIndex') == 0
-        press(7)
-        press(2)
-        press(5)
-        assert h.value('familyId') == 'f1' and h.expression('racingView') == saved_view
-        assert h.value('racingFocusedId') == selected_event
-        assert not any(h.effects.values()) and not h.transport, (h.effects, h.transport)
-        results.append('single-sport-carousel-keypad-back-and-independent-branch-memory-without-provider-io')
+        press(8);press(5)
+        assert h.value('familyId') == 'motogp' and h.value('overlay') in ('racingEvent','racingList')
+        press(7);press(2);press(5)
+        assert h.value('familyId') == 'f1' and h.value('racingEventId') == event
+        assert not h.transport, h.transport
+        results.append('sport-dashboard-primary-event-details-and-origin-return')
+        # Retained provider lists keep selection on an ordinary detail round trip.
+        h.root.setProperty('sportDashboardReturn',False)
+        h.root.setProperty('overlay','');h.root.setProperty('overlayStack',[])
+        h.root.setProperty('racingViewNames',{'f1':'PROGRAMMA','motogp':'PROGRAMMA'})
         press(5)
         h.root.setProperty('racingIndex',2)
         selected_event=h.expression('racingRows[2].id')
+        h.root.setProperty('racingFocusedId',selected_event)
+        press(5);press(7)
+        assert h.expression('racingRows[racingIndex].id')==selected_event
         press(7);press(7)
         assert h.value('familyId')=='sports'
-        press(5);press(5)
-        assert h.expression('racingRows[racingIndex].id')==selected_event
-        press(7)
-        results.append('discipline-list-selection-restored-after-index-round-trip')
-        press(7)
+        results.append('discipline-list-selection-restored-after-detail-round-trip')
         h.state.toggleModuleVisibility('f1')
         h.wait_ready()
         assert 'f1' not in [x['id'] for x in h.value('sportDisciplines')]

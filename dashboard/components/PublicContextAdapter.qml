@@ -126,6 +126,13 @@ Item {
     onPayloadChanged: scheduleRefresh()
     function initialize() {
         if (!factory || !publicEnabled || publicContext) return
+        // Private bridge: build the validated initial tree once. Older factories
+        // retain the default-then-update path, including invalid-payload recovery.
+        if (typeof factory.createLegacy === "function") {
+            const snapshot = payload
+            publicContext = factory.createLegacy(surfaceId,snapshot,adapter)
+            if (publicContext) { heldPayload = snapshot; valid = true; return }
+        }
         publicContext = factory.create(surfaceId,adapter)
         refresh()
     }

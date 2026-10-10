@@ -90,9 +90,9 @@ def verify():
                 assert context.navigation.familyPosition == harness.value('family') + 1
                 assert context.navigation.viewId == harness.value('activeContentId')
                 assert context.navigation.viewCount > 0 and context.navigation.viewPosition > 0
-                assert context.layout.header.height == 90
-                assert context.layout.content.width == 872 and context.layout.content.height == 455
-                assert context.layout.guide.y == 558
+                assert context.layout.header.height == 56
+                assert context.layout.content.width == 912 and context.layout.content.height == 552
+                assert context.layout.guide.height == 0
                 assert context.uiStatus.urgent == bool(harness.value('urgentEvent').get('id'))
                 assert context.uiStatus.night == harness.value('night')
                 checks.append('actualShellNavigationLayoutAndStatus')

@@ -1,130 +1,58 @@
 import QtQuick
 import "themes"
 import "components"
-
 Item {
-    id: root
-    property StyleFacade style: Theme
+    id:root
+    property StyleFacade style:Theme
     required property var dashboard
-    readonly property var account: dashboard.account
-    readonly property var accountInfo: dashboard.accountData
-    readonly property bool hasData: dashboard.accountWindows.length > 0
-    readonly property bool current: account.status === "active"
-    readonly property real highestUsage: hasData ? Math.max.apply(null, dashboard.accountWindows.map(w => w.usedPercent)) : 0
-
-    function two(value) { return value < 10 ? "0" + value : "" + value }
-    function stamp(seconds) {
-        if (!seconds) return "—"
-        const d = new Date(seconds * 1000)
-        return two(d.getDate()) + "/" + two(d.getMonth() + 1) + " " + two(d.getHours()) + ":" + two(d.getMinutes())
-    }
+    readonly property var account:dashboard.account
+    readonly property var accountInfo:dashboard.accountData
+    readonly property var windows:dashboard.accountWindows.slice(dashboard.accountIndex,dashboard.accountIndex+2)
+    readonly property bool current:account.status==="active"
+    readonly property real usageTop:112
+    readonly property real usageHeight:height-usageTop-120
+    function stamp(seconds) { return seconds===null || seconds===undefined ? "—" : Qt.formatDateTime(new Date(seconds*1000),"dd/MM hh:mm") }
     function duration(minutes) {
-        if (minutes % 10080 === 0) return (minutes / 10080) + " sett."
-        if (minutes % 1440 === 0) return (minutes / 1440) + " giorni"
-        if (minutes % 60 === 0) return (minutes / 60) + " ore"
-        return minutes + " min"
+        if (typeof minutes!=="number" || !isFinite(minutes)) return "Durata non disponibile"
+        if (minutes%10080===0 && minutes>0) return minutes/10080+" sett."
+        if (minutes%1440===0 && minutes>0) return minutes/1440+" giorni"
+        if (minutes%60===0 && minutes>0) return minutes/60+" ore"
+        return minutes+" min"
     }
-    function usageColor(used) {
-        if (!current) return root.style.textSecondary
-        if (used >= dashboard.accountCriticalPercent) return root.style.accountCriticalOnCard
-        if (used >= dashboard.accountWarningPercent) return root.style.warningOnCard
-        return root.style.accentTextOnCard
-    }
-
+    function used(row) { return typeof row.usedPercent==="number" && isFinite(row.usedPercent) ? row.usedPercent : null }
+    function usageColor(value) { return !current || value===null ? style.textSecondary : value>=dashboard.accountCriticalPercent ? style.accountCriticalOnCard : value>=dashboard.accountWarningPercent ? style.warningOnCard : style.accentTextOnCard }
     Rectangle {
-        x: 0; y: 0; width: 872; height: 88; radius: root.style.radiusRow
-        color: root.style.surface; border.color: root.style.border
-        AppText { style: root.style; x: 20; y: 11; text: "PIANO"; color: root.style.textSecondary; font.pixelSize: root.style.font21; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
-        AppText { style: root.style;
-            x: 20; y: 35; width: 290
-            text: root.accountInfo.plan ? String(root.accountInfo.plan).toUpperCase() : "NON DISPONIBILE"
-            color: root.style.textPrimary; font.pixelSize: root.accountInfo.plan ? root.style.font36 : root.style.font27; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight
-        }
-        AppText { style: root.style;
-            x: 332; y: 17; width: 518; horizontalAlignment: Text.AlignRight
-            text: root.current ? "AGGIORNATO · " + root.stamp(root.account.updatedAt) :
-                  root.account.status === "stale" ? "NON AGGIORNATO · " + root.stamp(root.account.updatedAt) :
-                  root.account.status === "unavailable" ? "ACCOUNT NON DISPONIBILE" : "ERRORE DATI ACCOUNT"
-            color: root.current ? root.style.accentTextOnCard : root.style.warningOnCard
-            font.pixelSize: root.style.font22; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight
-        }
-        AppText { style: root.style;
-            x: 332; y: 49; width: 518; horizontalAlignment: Text.AlignRight
-            text: "Fonte: " + root.account.source
-            color: root.style.textSecondary; font.pixelSize: root.style.font21
-        }
-    }
-
-    AppText { style: root.style; x: 0; y: 103; text: "UTILIZZO DEL PIANO"; color: root.style.accentTextOnCard; font.pixelSize: root.style.font24; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
-    AppText { style: root.style;
-        x: 575; y: 105; width: 297; horizontalAlignment: Text.AlignRight
-        visible: root.hasData && (dashboard.accountWindows.length > 2 || root.current && root.highestUsage >= dashboard.accountWarningPercent)
-        text: root.current && root.highestUsage >= dashboard.accountCriticalPercent ?
-                  "QUASI ESAURITO" + (dashboard.accountWindows.length > 2 ? " · 2/8" : "") :
-              root.current && root.highestUsage >= dashboard.accountWarningPercent ?
-                  "UTILIZZO ELEVATO" + (dashboard.accountWindows.length > 2 ? " · 2/8" : "") :
-              "2/8 SCORRI · " + (dashboard.accountIndex + 1) + "/" + (dashboard.accountWindows.length - 1)
-        color: root.current && root.highestUsage >= dashboard.accountWarningPercent
-               ? root.usageColor(root.highestUsage) : root.style.textSecondary
-        font.pixelSize: root.style.font19; font.weight: (root.current && root.highestUsage >= dashboard.accountWarningPercent) ? root.style.headingWeight : root.style.bodyWeight
+        width:root.width;height:96;radius:root.style.radiusRow;color:root.style.surface;border.color:root.style.border
+        AppText { style:root.style;x:20;y:11; text:"PIANO";color:root.style.textSecondary;font.pixelSize:root.style.font21;font.weight:root.style.headingWeight }
+        AppText { style:root.style;x:20;y:40;width:parent.width*0.36;height:42;text:root.accountInfo.plan || "NON DISPONIBILE";color:root.style.textPrimary;font.pixelSize:root.style.font30;font.weight:root.style.headingWeight;elide:Text.ElideRight }
+        AppText { style:root.style;x:parent.width*0.40;y:15;width:parent.width*0.60-20;horizontalAlignment:Text.AlignRight;text:root.current ? "AGGIORNATO · "+root.stamp(root.account.updatedAt) : root.account.status==="stale" || root.account.status==="offline" ? "DATI PRECEDENTI · "+root.stamp(root.account.updatedAt) : root.account.status==="updating" ? "AGGIORNAMENTO · ULTIMA LETTURA "+root.stamp(root.account.updatedAt) : "ACCOUNT NON DISPONIBILE";color:root.current ? root.style.accentTextOnCard : root.style.warningOnCard;font.pixelSize:root.style.font21;elide:Text.ElideRight }
+        AppText { style:root.style;x:parent.width*0.40;y:52;width:parent.width*0.60-20;horizontalAlignment:Text.AlignRight;text:"Fonte: "+root.account.source;color:root.style.textSecondary;font.pixelSize:root.style.font21 }
     }
     Repeater {
-        model: root.hasData ? dashboard.accountWindows.slice(dashboard.accountIndex, dashboard.accountIndex + 2) : []
-        delegate: Rectangle {
+        model:root.windows
+        delegate:Rectangle {
             required property var modelData
             required property int index
-            x: 0; y: 134 + index * 102; width: 872; height: 94; radius: root.style.radiusRow
-            color: root.style.surface; border.color: root.style.border
-            AppText { style: root.style;
-                x: 18; y: 11; width: 590
-                text: modelData.label + " · " + root.duration(modelData.windowDurationMins)
-                color: root.style.textPrimary; font.pixelSize: root.style.font27; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight; elide: Text.ElideRight
+            readonly property var used:root.used(modelData)
+            x:index*(width+16);y:root.usageTop;width:root.windows.length===1 ? root.width : (root.width-16)/2;height:root.usageHeight;radius:root.style.radiusCard;color:root.style.surface;border.color:root.style.border
+            AppText { style:root.style;x:20;y:14;width:parent.width-40;height:58;text:modelData.label || modelData.name || root.duration(modelData.windowDurationMins===undefined ? modelData.durationMins : modelData.windowDurationMins);color:root.style.textPrimary;font.pixelSize:root.style.font27;font.weight:root.style.headingWeight;wrapMode:Text.WordWrap;maximumLineCount:2;elide:Text.ElideRight }
+            AppText { style:root.style;x:20;y:82;width:parent.width-40;text:parent.used===null ? "—" : parent.used+"%";color:root.usageColor(parent.used);font.pixelSize:root.style.font65;font.weight:root.style.headingWeight }
+            AppText { style:root.style;x:20;y:164;width:parent.width-40;text:parent.used===null ? "Utilizzo non disponibile" : "Utilizzato";color:root.style.textSecondary;font.pixelSize:root.style.font22 }
+            Rectangle { x:20;y:parent.height-80;width:parent.width-40;height:10;radius:4;color:root.style.border
+                Rectangle { width:parent.width*(parent.parent.used===null ? 0 : Math.max(0,Math.min(100,parent.parent.used))/100);height:parent.height;radius:4;color:root.usageColor(parent.parent.used) }
             }
-            AppText { style: root.style;
-                x: 18; y: 49
-                text: "Ripristino " + root.stamp(modelData.resetsAt)
-                color: root.style.textSecondary; font.pixelSize: root.style.font21
-            }
-            AppText { style: root.style;
-                x: 605; y: 12; width: 248; horizontalAlignment: Text.AlignRight
-                text: modelData.usedPercent + "% usato"
-                color: root.usageColor(modelData.usedPercent)
-                font.pixelSize: root.style.font26; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight
-            }
-            Rectangle { x: 606; y: 63; width: 246; height: 13; radius: root.style.radiusButton; color: root.style.border }
-            Rectangle {
-                x: 606; y: 63; width: 246 * Math.min(100, modelData.usedPercent) / 100
-                height: 13; radius: root.style.radiusButton; color: root.usageColor(modelData.usedPercent)
-            }
+            AppText { style:root.style;x:20;y:parent.height-53;width:parent.width-40;height:45;text:modelData.resetsAt===null || modelData.resetsAt===undefined ? "Reset non disponibile" : "Ripristino "+root.stamp(modelData.resetsAt);color:root.style.textSecondary;font.pixelSize:root.style.font22;wrapMode:Text.WordWrap;maximumLineCount:2 }
         }
     }
-    AppText { style: root.style;
-        visible: !root.hasData; x: 0; y: 155; width: 850
-        text: root.account.error || "Dati di utilizzo non ancora disponibili"
-        color: root.style.textPrimary; font.pixelSize: root.style.font30; wrapMode: Text.WordWrap
-    }
-
+    AppText { style:root.style;visible:root.windows.length===0;y:root.usageTop;width:root.width;text:root.account.error || "Dati di utilizzo non ancora disponibili";color:root.style.textPrimary;font.pixelSize:root.style.font30;wrapMode:Text.WordWrap }
     Rectangle {
-        x: 0; y: 342; width: 423; height: 76; radius: root.style.radiusRow
-        color: root.style.surface; border.color: root.style.border
-        AppText { style: root.style; x: 18; y: 8; text: "CREDITI DISPONIBILI"; color: root.style.textSecondary; font.pixelSize: root.style.font20; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
-        AppText { style: root.style;
-            x: 18; y: 34
-            text: !root.hasData || !root.accountInfo.credits ? "DATO NON DISPONIBILE" :
-                  root.accountInfo.credits.unlimited ? "ILLIMITATI" :
-                  root.accountInfo.credits.balance !== "" ? root.accountInfo.credits.balance : "DATO NON DISPONIBILE"
-            color: root.style.textPrimary; font.pixelSize: root.style.font26; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight
-        }
+        x:0;y:root.height-104;width:(root.width-16)/2;height:104;radius:root.style.radiusRow;color:root.style.surface;border.color:root.style.border
+        AppText { style:root.style;x:20;y:12;width:parent.width-40;text:"CREDITI DISPONIBILI";color:root.style.textSecondary;font.pixelSize:root.style.font20;font.weight:root.style.headingWeight }
+        AppText { style:root.style;x:20;y:52;width:parent.width-40;text:!root.accountInfo.credits ? "DATO NON DISPONIBILE" : root.accountInfo.credits.unlimited ? "ILLIMITATI" : root.accountInfo.credits.balance===null || root.accountInfo.credits.balance===undefined || root.accountInfo.credits.balance==="" ? "DATO NON DISPONIBILE" : String(root.accountInfo.credits.balance);color:root.style.textPrimary;font.pixelSize:root.style.font27;font.weight:root.style.headingWeight;elide:Text.ElideRight }
     }
     Rectangle {
-        x: 449; y: 342; width: 423; height: 76; radius: root.style.radiusRow
-        color: root.style.surface; border.color: root.style.border
-        AppText { style: root.style; x: 18; y: 8; text: "RESET DEL LIMITE"; color: root.style.textSecondary; font.pixelSize: root.style.font20; font.weight: (true ) ? root.style.headingWeight : root.style.bodyWeight}
-        AppText { style: root.style;
-            x: 18; y: 34
-            text: !root.hasData || root.accountInfo.resetCredits === null || root.accountInfo.resetCredits === undefined
-                  ? "DATO NON DISPONIBILE" : root.accountInfo.resetCredits + " disponibili"
-            color: root.style.textPrimary; font.pixelSize: root.style.font26; font.weight: (true) ? root.style.headingWeight : root.style.bodyWeight
-        }
+        x:(root.width+16)/2;y:root.height-104;width:(root.width-16)/2;height:104;radius:root.style.radiusRow;color:root.style.surface;border.color:root.style.border
+        AppText { style:root.style;x:20;y:12;width:parent.width-40;text:"RESET DEL LIMITE";color:root.style.textSecondary;font.pixelSize:root.style.font20;font.weight:root.style.headingWeight }
+        AppText { style:root.style;x:20;y:52;width:parent.width-40;text:root.accountInfo.resetCredits===null || root.accountInfo.resetCredits===undefined ? "DATO NON DISPONIBILE" : root.accountInfo.resetCredits+" disponibili";color:root.style.textPrimary;font.pixelSize:root.style.font27;font.weight:root.style.headingWeight;elide:Text.ElideRight }
     }
 }

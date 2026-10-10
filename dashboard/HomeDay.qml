@@ -1,16 +1,12 @@
 import QtQuick
 import "themes"
 import "components"
-
 Item {
-    id: visualRoot
-    property StyleFacade style: Theme
+    id:visualRoot
+    property StyleFacade style:Theme
     required property var dashboard
-    width: 872; height: 455
-    AppText { style: visualRoot.style; y: 3; text: dashboard.dateText(); color: visualRoot.style.textPrimary; font.pixelSize: visualRoot.style.font46 }
-    AppText { style: visualRoot.style; y: 86; text: "IL TEMPO OGGI"; color: visualRoot.style.accentTextOnCanvas; font.pixelSize: visualRoot.style.font25; font.weight: (true ) ? visualRoot.style.headingWeight : visualRoot.style.bodyWeight}
-    AppText { style: visualRoot.style; y: 127; width: 860; text: dashboard.weatherData.temperature ? dashboard.weatherData.temperature + "  " + dashboard.weatherData.description : "Meteo non disponibile"; color: visualRoot.style.textPrimary; font.pixelSize: visualRoot.style.font69; elide: Text.ElideRight }
-    AppText { style: visualRoot.style; y: 246; text: dashboard.weatherStatus(); color: visualRoot.style.textSecondary; font.pixelSize: visualRoot.style.font27 }
-    AppText { style: visualRoot.style; y: 309; text: dashboard.hasEvent ? "PROSSIMO · " + dashboard.nextEvent.title + " · " + (dashboard.nextEvent.when || dashboard.eventWhen(dashboard.nextEvent)) : ""; color: visualRoot.style.accentTextOnCanvas; font.pixelSize: visualRoot.style.font30 }
-    AppText { style: visualRoot.style; y: 388; text: "6  METEO  →"; color: visualRoot.style.textSecondary; font.pixelSize: visualRoot.style.font26 }
+    width:872;height:455
+    AppText { style:visualRoot.style;y:3;width:parent.width;text:dashboard.dateText();color:visualRoot.style.textPrimary;font.pixelSize:visualRoot.style.font46;elide:Text.ElideRight }
+    InfoCard { style:visualRoot.style;x:0;y:94;width:parent.width;height:dashboard.hasEvent ? parent.height-267 : parent.height-94;heading:"IL TEMPO OGGI";value:dashboard.weatherData.temperature || "Meteo non disponibile";detail:(dashboard.weatherData.description || "")+" · "+dashboard.weatherStatus();compact:!dashboard.weatherData.temperature }
+    InfoCard { style:visualRoot.style;x:0;y:parent.height-157;width:parent.width;height:157;visible:dashboard.hasEvent;heading:"PROSSIMO EVENTO";value:dashboard.nextEvent.title || "";detail:dashboard.nextEvent.when || dashboard.eventWhen(dashboard.nextEvent);compact:true }
 }

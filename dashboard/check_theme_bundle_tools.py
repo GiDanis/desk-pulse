@@ -64,6 +64,16 @@ class ToolTests(unittest.TestCase):
         self.assertTrue(manifest['sdkSha256'])
         self.assertTrue((destination / 'PROMPT.md').is_file())
 
+    def test_linter_uses_qt68_supported_levels_and_zero_warning_budget(self):
+        from unittest.mock import patch
+        from types import SimpleNamespace
+        with patch('theme_bundle_tools.subprocess.run', return_value=SimpleNamespace(returncode=0,stdout='',stderr='')) as run:
+            result=lint_project(EXAMPLE,executable=__file__)
+        self.assertEqual(result['status'],'passed')
+        command=run.call_args.args[0]
+        self.assertEqual(command[command.index('--unresolved-type')+1],'warning')
+        self.assertEqual(command[command.index('-W')+1],'0')
+
     def test_missing_linter_not_fake_pass(self):
         from unittest.mock import patch
         with patch('theme_bundle_tools.find_qmllint', return_value=None): result = lint_project(EXAMPLE)
