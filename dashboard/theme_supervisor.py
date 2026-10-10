@@ -34,8 +34,8 @@ def _stop(process):
         process.wait()
 
 
-def supervise(command, data_root, *, startup_timeout=30.0, heartbeat_timeout=15.0):
-    if startup_timeout <= 0 or heartbeat_timeout <= 0:
+def supervise(command, data_root, *, startup_timeout=30.0, heartbeat_timeout=15.0, transition_timeout=20.0):
+    if startup_timeout <= 0 or heartbeat_timeout <= 0 or transition_timeout <= 0:
         raise ValueError('timeout positivo richiesto')
     lifecycle = LifecycleManager(data_root)
     # An interrupted activation never executes its bundle at the next boot.
@@ -61,6 +61,8 @@ def supervise(command, data_root, *, startup_timeout=30.0, heartbeat_timeout=15.
     seen_health = False
     last_health_timestamp = None
     last_health_at = None
+    readiness_lost_at = None
+    transitioning = False
     failure = None
     try:
         while process.poll() is None:
@@ -75,17 +77,24 @@ def supervise(command, data_root, *, startup_timeout=30.0, heartbeat_timeout=15.
                 timestamp = health.get('time')
                 if current_pid and same_process and type(timestamp) in (int, float):
                     age = time.time() - timestamp
-                    if health.get('ready') is True and age >= 0 and age < heartbeat_timeout:
-                        seen_health = True
+                    if age >= 0 and age < heartbeat_timeout:
                         if timestamp != last_health_timestamp:
                             last_health_timestamp, last_health_at = timestamp, now
-                    if seen_health and last_health_at is not None and now - last_health_at > heartbeat_timeout:
-                        failure = 'GUI heartbeat scaduto/readiness persa'
-                        break
+                        transitioning = health.get('transition') is True
+                        if health.get('ready') is True:
+                            seen_health = True
+                            readiness_lost_at = None
+                        elif seen_health and readiness_lost_at is None:
+                            readiness_lost_at = now
             except (OSError, ThemeError):
                 pass
             if seen_health and last_health_at is not None and now - last_health_at > heartbeat_timeout:
                 failure = 'GUI heartbeat assente'
+                break
+            # Fresh GUI pulses prove liveness, not a usable committed renderer.
+            # Changing a generation cannot renew this bounded readiness grace.
+            if readiness_lost_at is not None and now - readiness_lost_at > (transition_timeout if transitioning else heartbeat_timeout):
+                failure = 'GUI heartbeat scaduto/readiness persa'
                 break
             if not seen_health and now - started > startup_timeout:
                 failure = 'GUI startup/readiness timeout'
@@ -114,13 +123,14 @@ def main(argv=None):
     parser.add_argument('--data-root', type=Path, required=True)
     parser.add_argument('--startup-timeout', type=float, default=30)
     parser.add_argument('--heartbeat-timeout', type=float, default=15)
+    parser.add_argument('--transition-timeout', type=float, default=20)
     parser.add_argument('command', nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
     command = args.command[1:] if args.command[:1] == ['--'] else args.command
     if not command:
         parser.error('comando GUI richiesto dopo --')
     return supervise(command, args.data_root, startup_timeout=args.startup_timeout,
-                     heartbeat_timeout=args.heartbeat_timeout)
+                     heartbeat_timeout=args.heartbeat_timeout,transition_timeout=args.transition_timeout)
 
 
 if __name__ == '__main__':

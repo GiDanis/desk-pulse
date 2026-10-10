@@ -9,6 +9,7 @@ from copy import deepcopy
 import hashlib
 import os
 import math
+import logging
 from pathlib import Path
 import shutil
 import stat
@@ -47,6 +48,7 @@ class LifecycleManager:
         self.root = Path(data_root).resolve()
         self.root.mkdir(parents=True, exist_ok=True)
         self.path = self.root / 'theme-activation.json'
+        self.history_path = self.root / 'theme-activation-history.json'
         # Heartbeats are ephemeral IPC, not durable settings. On the kiosk
         # /tmp is tmpfs (also shared by supervisor/child with PrivateTmp).
         # Avoid one atomic fsync/write to the SD card every second, while the
@@ -112,6 +114,16 @@ class LifecycleManager:
         require(revision.get('preflight', {}).get('status') == 'passed', 'activation', 'preflight runtime richiesto prima di applicare')
         return candidate
 
+    def _record(self, state, event, **details):
+        """Bounded durable diagnostics; a history failure cannot undo a commit."""
+        try:
+            history = read_json(self.history_path) if self.history_path.exists() else []
+            if not isinstance(history,list): history=[]
+            history.append({'event':event,'time':time.time(),'generation':state['generation'],**details})
+            atomic_json(self.history_path,history[-64:])
+        except (OSError,ThemeError,ValueError):
+            logging.getLogger(__name__).warning('Cronologia tema non salvata',exc_info=True)
+
     def begin(self, candidate, overrides=None):
         """Durably mark candidate before invoking any of its QML."""
         candidate = self._available(candidate)
@@ -124,6 +136,7 @@ class LifecycleManager:
             state['pending'] = {'ticket': ticket, 'candidate': candidate, 'previous': deepcopy(state['active']),
                                 'overrides': deepcopy(overrides or {}), 'phase': 'preparing', 'startedAt': time.time()}
             atomic_json(self.path, state)
+            self._record(state,'begin',previous=state['active'],candidate=candidate,phase='preparing')
             return {'ticket': ticket, 'generation': state['generation'], 'candidate': candidate,
                     'previous': deepcopy(state['active'])}
 
@@ -134,6 +147,7 @@ class LifecycleManager:
             require(state['pending'] is not None and state['pending']['ticket'] == ticket, 'activation.ticket', 'candidato superato')
             state['pending']['phase'] = 'ready'
             atomic_json(self.path, state)
+            self._record(state,'ready',candidate=state['pending']['candidate'],phase='ready')
 
     def commit(self, ticket, frame_ack):
         require(isinstance(frame_ack, dict) and frame_ack.get('coherent') is True and frame_ack.get('presented') is True,
@@ -152,6 +166,7 @@ class LifecycleManager:
             state['pending'] = None
             state['lastRecovery'] = None
             atomic_json(self.path, state)
+            self._record(state,'commit',previous=state['previous'],selected=candidate)
             return deepcopy(state)
 
     def cancel(self, ticket):
@@ -160,9 +175,11 @@ class LifecycleManager:
             if state['pending'] is None:
                 return deepcopy(state)
             require(state['pending']['ticket'] == ticket, 'activation.ticket', 'candidato superato')
+            candidate=deepcopy(state['pending']['candidate'])
             state['pending'] = None
             state['generation'] += 1
             atomic_json(self.path, state)
+            self._record(state,'cancel',candidate=candidate,selected=state['active'])
             return deepcopy(state)
 
     def recover(self, reason='avvio interrotto', *, failed_active=False):
@@ -180,6 +197,7 @@ class LifecycleManager:
                 state = self._default()
                 state['lastRecovery'] = {'failed': {'kind': 'corruptJournal'}, 'selected': deepcopy(BASE), 'reason': str(error)[:500]}
                 atomic_json(self.path, state)
+                self._record(state,'recover',**state['lastRecovery'])
                 return {'recovered': True, 'selection': deepcopy(BASE), 'failed': {'kind': 'corruptJournal'}, 'reason': str(error)[:500]}
             pending = state['pending']
             if pending is None and not failed_active:
@@ -204,6 +222,7 @@ class LifecycleManager:
             state['generation'] += 1
             state['lastRecovery'] = {'failed': failed, 'selected': fallback, 'reason': str(reason)[:500]}
             atomic_json(self.path, state)
+            self._record(state,'recover',phase=pending['phase'] if pending else 'committed',**state['lastRecovery'])
             return {'recovered': True, 'selection': deepcopy(fallback), 'failed': failed, 'reason': str(reason)[:500]}
 
     def set_global_adjustments(self, values):
@@ -257,7 +276,7 @@ class LifecycleManager:
         with manager_lock(self.root):
             # Verification and protection are one operation relative to GC.
             # No collector may delete this revision between these two steps.
-            self.bundle_manager.verify_revision(identity)
+            self.bundle_manager._verify_for_lease(identity)
             atomic_json(self.leases_root / (token + '.json'), {'leaseVersion': 1, 'revision': identity,
                         'owner': str(owner)[:80], 'pid': os.getpid(), 'processStart': process_token(os.getpid())})
         return token
@@ -346,11 +365,12 @@ class LifecycleManager:
                 removed.append(selection(revision))
             return {'active':identity, 'removed':removed, 'retained':retained, 'recovery':deepcopy(BASE)}
 
-    def heartbeat(self, *, ready=True, generation=None):
+    def heartbeat(self, *, ready=True, generation=None, transition=False):
         """Invoke from a discrete GUI timer, never from a worker/render thread."""
         state = self.read()
         record = {'healthVersion': 1, 'pid': os.getpid(), 'processStart': process_token(os.getpid()),
                   'time': time.time(), 'ready': bool(ready), 'generation': state['generation'] if generation is None else generation,
-                  'selection': state['active'], 'pending': state['pending']['candidate'] if state['pending'] else None}
+                  'selection': state['active'], 'pending': state['pending']['candidate'] if state['pending'] else None,
+                  'transition': bool(transition)}
         atomic_json(self.health_path, record)
         return record

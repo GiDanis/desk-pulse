@@ -17,9 +17,14 @@
         "home.day"
       ],
       "file": "presentations/home-day.qml",
-      "apiVersion": 1,
+      "apiVersion": 2,
       "fallback": true,
-      "name": "builtin.home.day"
+      "name": "builtin.home.day",
+      "contextApi": "page2",
+      "dataDomains": [
+        "weather",
+        "nextEvent"
+      ]
     },
     {
       "id": "builtin.weather.now",
@@ -192,10 +197,7 @@
       "file": "presentations/casa-overview.qml",
       "apiVersion": 2,
       "fallback": true,
-      "name": "Casa · overview",
-      "dataDomains": [
-        "casa"
-      ]
+      "name": "Casa · overview"
     },
     {
       "id": "builtin.casa.devices",
@@ -205,10 +207,7 @@
       "file": "presentations/casa-devices.qml",
       "apiVersion": 2,
       "fallback": true,
-      "name": "Casa · devices",
-      "dataDomains": [
-        "casa"
-      ]
+      "name": "Casa · devices"
     },
     {
       "id": "builtin.casa.detail",
@@ -218,10 +217,7 @@
       "file": "presentations/casa-detail.qml",
       "apiVersion": 2,
       "fallback": true,
-      "name": "Casa · detail",
-      "dataDomains": [
-        "casa"
-      ]
+      "name": "Casa · detail"
     },
     {
       "id": "builtin.settings.casa",
@@ -231,22 +227,16 @@
       "file": "presentations/settings-casa.qml",
       "apiVersion": 2,
       "fallback": true,
-      "name": "Casa · casa",
-      "dataDomains": [
-        "casa"
-      ]
+      "name": "Casa · casa"
     },
     {
       "id": "builtin.casa.overview.rows",
       "contentIds": [
         "casa.overview"
       ],
-      "file": "presentations/casa-overview-rows.qml",
+      "file": "presentations/casa-overview.qml",
       "apiVersion": 2,
-      "name": "Casa · righe ampie",
-      "dataDomains": [
-        "casa"
-      ]
+      "name": "Casa · righe ampie"
     },
     {
       "id": "builtin.home.clock",
@@ -315,7 +305,7 @@
       "contentIds": [
         "network.overview"
       ],
-      "file": "presentations/network-overview-rows.qml",
+      "file": "presentations/network-overview.qml",
       "apiVersion": 2,
       "name": "Rete · righe ampie",
       "dataDomains": [
@@ -409,6 +399,39 @@
       "apiVersion": 2,
       "fallback": true,
       "name": "Sport · discipline"
+    },
+    {
+      "id": "builtin.casa.inventory",
+      "contentIds": [
+        "casa.inventory"
+      ],
+      "file": "presentations/CasaInventory.qml",
+      "apiVersion": 2,
+      "fallback": true,
+      "name": "casa.inventory",
+      "contextApi": "overlay1"
+    },
+    {
+      "id": "builtin.network.inventory",
+      "contentIds": [
+        "network.inventory"
+      ],
+      "file": "presentations/NetworkInventory.qml",
+      "apiVersion": 2,
+      "fallback": true,
+      "name": "network.inventory",
+      "contextApi": "overlay1"
+    },
+    {
+      "id": "builtin.overlay.summary",
+      "contentIds": [
+        "overlay.summary"
+      ],
+      "file": "presentations/TopicDetails.qml",
+      "apiVersion": 2,
+      "fallback": true,
+      "name": "Dettagli argomento",
+      "contextApi": "overlay1"
     }
   ]
 }

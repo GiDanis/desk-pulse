@@ -1,9 +1,3 @@
 import QtQuick
-import ".."
-import "../themes"
-
-HomeDay {
-    required property var context
-    dashboard: context.controller
-    style: context.style
-}
+import SmartPC.ThemeApi 2.7
+TopicDashboard { required property PageContext context;ctx:context }

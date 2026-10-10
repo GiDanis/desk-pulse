@@ -259,7 +259,7 @@ class ThemeCatalog:
         for row in self.presentations.values():
             if row.get('fallback'):
                 for content in row['contentIds']:
-                    if content.startswith('alerts.'): resolved['presentations'].setdefault(content,row['id'])
+                    if content.startswith('alerts.') or content in ('casa.inventory', 'network.inventory', 'overlay.summary'): resolved['presentations'].setdefault(content,row['id'])
         if required-set(resolved['presentations']): raise ThemeError('presentations','contenuti obbligatori mancanti')
         for content,identifier_p in resolved['presentations'].items():
             if not isinstance(identifier_p,str): raise ThemeError('presentations.'+content,'ID richiesto')

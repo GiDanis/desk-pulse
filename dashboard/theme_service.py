@@ -12,7 +12,7 @@ from theme_core import ThemeError
 from theme_runtime import make_catalog, preflight
 from theme_bundle import BundleManager, atomic_json
 from theme_lifecycle import LifecycleManager, BASE, selection_key
-from theme_api import PublicContextFactory
+from theme_api import PublicContextFactory, _plain as plain_qml_value
 from theme_trace_hooks import recorder_for, trace_span, trace_operation, trace_generation
 
 
@@ -146,6 +146,8 @@ class ThemeService(QObject):
     candidateChanged = Signal()
     frameStateChanged = Signal()
     transferFinished = Signal(bool,str)
+    themeOperationChanged = Signal()
+    themeActivationFinished = Signal(bool)
 
     def __init__(self, parent=None, *, store=None, root=None, trace=None):
         super().__init__(parent)
@@ -157,7 +159,15 @@ class ThemeService(QObject):
         self.bundles = BundleManager(self.store.parent,app_root=self._root)
         self.lifecycle = LifecycleManager(self.store.parent,app_root=self._root)
         self._activation = None; self._activation_frame = False; self._gui_ready = False
+        self._auto_apply = False; self._auto_saved = False; self._theme_timed_out = False
+        self._theme_operation = {'busy':False,'phase':'idle','message':''}
+        self._theme_deadline = QTimer(self)
+        self._theme_deadline.setSingleShot(True)
+        self._theme_deadline.setInterval(18000)
+        self._theme_deadline.timeout.connect(self._theme_operation_timeout)
         self._leases = {}; self._api_factory = PublicContextFactory(self)
+        self._lease_fonts = {}
+        self._lease_font_catalog = None
         self._bundle_metadata_cache = OrderedDict()
         self.catalog = make_catalog(self.store,self._root,trace=trace)
         settings = QSettings('SmartPC', 'Dashboard')
@@ -237,6 +247,11 @@ class ThemeService(QObject):
             self._activation_frame=True
         self.frameStateChanged.emit()
         self.editorChanged.emit()
+        if self._auto_apply:
+            if self._auto_saved:
+                self._finish_theme_operation(True)
+            else:
+                QTimer.singleShot(0, self._apply_selected_theme)
 
     @Slot()
     @Slot(bool)
@@ -248,7 +263,8 @@ class ThemeService(QObject):
             self._activation_frame=False
             self.frameStateChanged.emit()
             self.editorChanged.emit()
-        self.lifecycle.heartbeat(ready=self._gui_ready)
+        transitioning = bool(self._candidate or self._auto_apply or self._activation and not self._activation_frame)
+        self.lifecycle.heartbeat(ready=self._gui_ready and not self._theme_timed_out, transition=transitioning)
         health_key=selection_key(self._committed.get('bundleRevision',BASE))
         if health_key != self._latest_health_key:
             self._latest_health_key=health_key; self._latest_verified_ticks=0
@@ -340,7 +356,22 @@ class ThemeService(QObject):
         pin={'id':identity['revision'].split('@')[0],'version':identity['revision'].split('@')[1].split('#')[0],'digest':identity['digest']}
         token=self.lifecycle.acquire(pin,'renderer')
         try:
-            digests={asset.get('sha256') for asset in self.catalog.resolve(pin['id'])['assets'] if asset['type']=='font'} if getattr(self.catalog,'bundle_revisions',{}).get(pin['id'])==pin else set()
+            if self._lease_font_catalog is not self.catalog:
+                self._lease_fonts.clear()
+                self._lease_font_catalog = self.catalog
+            key = selection_key(pin)
+            entry = self._lease_fonts.get(key)
+            # Catalog assets are immutable between reloads. Check file identity
+            # before reusing font digests; changed files take the full resolver.
+            if entry is None or entry[1] != self._font_file_stamp(entry[2]):
+                assets = self.catalog.resolve(pin['id'])['assets'] if getattr(self.catalog,'bundle_revisions',{}).get(pin['id'])==pin else []
+                fonts = [asset for asset in assets if asset['type']=='font']
+                files = tuple(Path(asset['file']) for asset in fonts)
+                entry = ({asset.get('sha256') for asset in fonts}, self._font_file_stamp(files), files)
+                if len(self._lease_fonts) >= 8:
+                    self._lease_fonts.pop(next(iter(self._lease_fonts)))
+                self._lease_fonts[key] = entry
+            digests=entry[0]
             FontRegistry.update('host:'+token,digests,trace=self._trace)
             self._leases[token]=True
         except Exception:
@@ -348,6 +379,12 @@ class ThemeService(QObject):
             self.lifecycle.release(token)
             raise
         return token
+
+    @staticmethod
+    def _font_file_stamp(files):
+        return tuple((str(path), info.st_dev, info.st_ino, info.st_size,
+                      info.st_mtime_ns, info.st_ctime_ns)
+                     for path in files for info in [path.stat()])
 
     @Slot(str)
     def releaseRevision(self, token):
@@ -513,6 +550,8 @@ class ThemeService(QObject):
         FontRegistry.update(self._font_owner, needed,trace=self._trace)
         if recorder_for(self._trace) is not None: self._trace.published(self._revision)
         self.changed.emit()
+        if self._auto_apply and self._pending is None:
+            self._update_theme_operation(phase='presenting',message='Verifica della nuova schermata…')
 
     @Property('QVariantMap',notify=candidateChanged)
     def candidateAppearance(self): return deepcopy(self._candidate or {})
@@ -528,7 +567,10 @@ class ThemeService(QObject):
     @Slot('QStringList')
     def setPreparedContents(self, contents):
         """Selected notification renderers participate even while hidden/prewarmed."""
-        self._prepared_contents = set(contents)
+        prepared = set(contents)
+        if prepared == self._prepared_contents:
+            return
+        self._prepared_contents = prepared
         if self._candidate is not None:
             candidate = deepcopy(self._candidate_config)
             self._restart_candidate(candidate)
@@ -562,6 +604,8 @@ class ThemeService(QObject):
         if recorder is not None: recorder.record('candidate.ack',generation=generation,contentId=content,ok=ok,reason=reason)
         if reason != 'accepted': return
         self._awaiting_contents.remove(content)
+        if self._auto_apply:
+            self._update_theme_operation(completed=self._theme_operation.get('total',0)-len(self._awaiting_contents))
         if ok and self._awaiting_contents: return
         candidate = self._candidate_config
         prepared = (deepcopy(self._candidate),set(self._staged_fonts))
@@ -582,6 +626,80 @@ class ThemeService(QObject):
             self._staged_fonts = set()
             FontRegistry.update(self._font_owner,self._active_fonts,trace=self._trace)
         self.editorChanged.emit()
+        if not ok and self._auto_apply:
+            self._fail_theme_operation(message or 'La nuova schermata non è disponibile')
+
+    @Property('QVariantMap', notify=themeOperationChanged)
+    def themeOperation(self): return deepcopy(self._theme_operation)
+
+    @Property(bool, notify=editorChanged)
+    def dirty(self): return self._draft is not None and self._draft != self._committed
+
+    def _update_theme_operation(self, **values):
+        self._theme_operation.update(values)
+        self.themeOperationChanged.emit()
+
+    @Slot(str, result=bool)
+    def activateTheme(self, identifier):
+        if self._auto_apply or self._candidate is not None or self._pending is not None or self._operation_pending:
+            return False
+        if identifier not in self.catalog.packs:
+            self._error='Tema non disponibile'; self.editorChanged.emit(); return False
+        if not self.editing: self.beginEdit()
+        self._auto_apply=True; self._auto_saved=False; self._theme_timed_out=False
+        self._theme_operation={'busy':True,'phase':'preparing','targetId':identifier,
+            'targetName':self._theme_metadata(identifier).get('name',identifier),
+            'message':'Preparazione delle schermate…','completed':0,'total':0,
+            'palette':deepcopy(self._snapshot.get('tokens',{})),
+            'motionMode':self._visible.get('motionMode','off')}
+        self.themeOperationChanged.emit()
+        self._theme_deadline.start()
+        if (identifier == self._committed['themeId'] and not self.dirty
+                and not self.lifecycle.read().get('lastRecovery')):
+            self._finish_theme_operation(True)
+            return True
+        if not self.selectDraft(identifier):
+            self._fail_theme_operation(self._error)
+            return False
+        if self._candidate:
+            self._update_theme_operation(total=len(self._awaiting_contents),completed=0)
+        else:
+            self._update_theme_operation(phase='presenting',message='Verifica della nuova schermata…')
+        QTimer.singleShot(0,self._apply_selected_theme)
+        return True
+
+    def _apply_selected_theme(self):
+        if not self._auto_apply or self._auto_saved or self._pending is not None:
+            return
+        if self._candidate is not None or not self._gui_ready or not self.readyToApply:
+            return
+        self._update_theme_operation(phase='saving',message='Salvataggio delle preferenze…')
+        if not self.apply(): self._fail_theme_operation(self._error)
+
+    def _finish_theme_operation(self, ok, message=''):
+        self._auto_apply=False; self._auto_saved=False; self._theme_timed_out=False; self._theme_deadline.stop()
+        name=self._theme_operation.get('targetName','Tema')
+        self._update_theme_operation(busy=False,phase='completed' if ok else 'failed',
+            message=name+' attivo' if ok else message)
+        self.themeActivationFinished.emit(ok)
+
+    def _fail_theme_operation(self, message):
+        self._auto_apply=False; self._auto_saved=False
+        if self._pending is None: self.cancel()
+        self._status='error'; self._error=message
+        self._finish_theme_operation(False,message+' · Tema precedente ripristinato')
+        self.editorChanged.emit()
+
+    def _theme_operation_timeout(self):
+        if not self._auto_apply: return
+        if self._pending is None and not self._auto_saved:
+            self._fail_theme_operation('Tempo massimo di attivazione superato')
+        else:
+            # Never race an in-flight durable write with a second writer. Fresh
+            # pulses now withdraw readiness so the external watchdog bounds a
+            # hung worker/final frame; a late valid save can still finish safely.
+            self._theme_timed_out=True
+            self._update_theme_operation(message='Attivazione lenta · verifica di sicurezza in corso…')
 
     @Slot(str,str,result=bool)
     @trace_operation("recoverVisual")
@@ -623,6 +741,8 @@ class ThemeService(QObject):
     def revision(self): return self._revision
     @Property(str,notify=changed)
     def activeThemeId(self): return self._snapshot['themeId']
+    @Property(str,notify=editorChanged)
+    def savedThemeId(self): return self._committed['themeId']
     @Property(str,notify=editorChanged)
     def status(self): return self._status
     @Property(str,notify=editorChanged)
@@ -698,6 +818,7 @@ class ThemeService(QObject):
     def setToken(self, path, value):
         if self._draft is None or self._pending is not None or self._operation_pending: return False
         if path=='typography.textScale' and not self._guard_adjustment('textScale'): return False
+        value=plain_qml_value(value)
         candidate = deepcopy(self._draft); candidate['overrides'].setdefault('tokens',{})[path] = value
         return self._change(candidate)
 
@@ -706,6 +827,7 @@ class ThemeService(QObject):
     def setTokens(self, values):
         if self._draft is None or self._pending is not None or self._operation_pending: return False
         if 'typography.textScale' in values and not self._guard_adjustment('textScale'): return False
+        values=plain_qml_value(values)
         candidate = deepcopy(self._draft)
         candidate['overrides'].setdefault('tokens',{}).update(values)
         return self._change(candidate)
@@ -743,6 +865,7 @@ class ThemeService(QObject):
     def setSection(self, section, value):
         if self._draft is None or self._pending is not None or self._operation_pending: return False
         if section=='paletteMode' and not self._guard_adjustment('paletteMode'): return False
+        value=plain_qml_value(value)
         candidate = deepcopy(self._draft)
         if section in ('motionMode','paletteMode'): candidate[section] = value
         elif section in ('presentations','motion','scene','iconOverrides','iconSetId'): candidate['overrides'][section] = value
@@ -770,7 +893,10 @@ class ThemeService(QObject):
                 identifier=snapshot['presentations'].get(content)
                 return snapshot['presentationRegistry'].get(identifier,{}).get('rendererKey',identifier)
             contents |= {content for content in ('shell.main', 'scene.main') if content in resolved['presentations'] and (content != 'scene.main' or resolved['scene']['enabled'])}
-            changed = {content for content in contents if identity(resolved,content) != identity(self._snapshot,content)}
+            # An optional shell/scene can disappear when returning to Base. It
+            # must be retired after publish, not loaded as an undefined renderer.
+            changed = {content for content in contents if content in resolved['presentations']
+                       and identity(resolved,content) != identity(self._snapshot,content)}
             if candidate.get('bundleRevision') or self._visible.get('bundleRevision'):
                 self._begin_activation(candidate)
             self._draft = candidate
@@ -782,6 +908,7 @@ class ThemeService(QObject):
                     self._trace.cleared(self._candidate['generation'],outcome='superseded')
                 self._candidate = resolved; self._candidate_config = deepcopy(candidate)
                 self._awaiting_contents = set(changed)
+                if self._auto_apply: self._update_theme_operation(total=len(changed),completed=0)
                 # Fonts needed by both current and staged visuals remain registered until commit/cancel.
                 self._staged_fonts = needed
                 FontRegistry.update(self._font_owner,needed | self._active_fonts,trace=self._trace)
@@ -806,6 +933,8 @@ class ThemeService(QObject):
     @trace_operation("cancel")
     def cancel(self):
         if self._pending is not None: return False
+        if self._auto_apply:
+            self._finish_theme_operation(False,'Cambio annullato · Tema precedente conservato')
         # Shutdown also calls cancel. With no preview there is nothing to
         # republish: creating loaders while the Qt event loop exits is unsafe.
         if self._draft is None and self._candidate is None and self._activation is None:
@@ -904,4 +1033,11 @@ class ThemeService(QObject):
             self._publish(self._committed)
         self._pending = None; self._pending_profiles=None; self._status = 'ready' if ok else 'error'; self._error = message
         self.editorChanged.emit(); self.saveFinished.emit(ok)
+        if self._auto_apply:
+            if ok:
+                self._auto_saved=True; self._gui_ready=False
+                self._update_theme_operation(phase='finishing',message='Verifica finale della schermata…')
+                self.frameStateChanged.emit()
+            else:
+                self._finish_theme_operation(False,message+' · Tema precedente ripristinato')
         return ok
