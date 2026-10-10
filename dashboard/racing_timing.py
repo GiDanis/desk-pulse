@@ -53,7 +53,9 @@ def f1_date(value, offset):
         return None
     if timestamp(value):
         return timestamp(value)
-    if isinstance(offset, str) and len(offset) >= 6:
+    if isinstance(offset, str):
+        # SignalR uses unsigned offsets such as "08:00:00" as well as +08:00.
+        offset = offset if offset.startswith(("+", "-")) else "+" + offset
         return timestamp(value + offset[:6])
     return None
 
@@ -384,6 +386,7 @@ def moto_timing(raw, snapshot, acquired, now, verified=False):
         return result
     # Validate against a category-filtered broadcast session in the same GP/date.
     candidates = []
+    session_events = {}
     for event in snapshot.get("events", []):
         if event.get("shortName") != head.get("event_shortname"):
             continue
@@ -404,6 +407,7 @@ def moto_timing(raw, snapshot, acquired, now, verified=False):
                 ]
             ):
                 candidates.append(s)
+                session_events[s["id"]] = event
     # Unknown A/R codes are not guessed. A verified broadcast with explicit
     # STARTED/IN_PROGRESS can authorize activity independently of that code.
     active_session = next(
@@ -425,6 +429,10 @@ def moto_timing(raw, snapshot, acquired, now, verified=False):
         and head.get("session_status_id") not in ("N", "F")
     )
     result["isLive"] = bool(result["active"] and verified)
+    if active_session:
+        event = session_events[active_session["id"]]
+        result.update(eventId=event["id"], sessionId=active_session["id"],
+                      meeting=event["name"], start=active_session["start"])
     for ident, row in mapping(raw.get("rider")).items():
         row = mapping(row)
         pos = number(row.get("pos"))

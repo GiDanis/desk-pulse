@@ -740,18 +740,18 @@ def refresh(client, kind, year, previous=None):
         ]:
             try:
                 round_id = "last"
-                if kind2 == "SPR":
-                    sprint_events = [
+                if kind2 in ("Q", "SPR"):
+                    completed_events = [
                         e
                         for e in snapshot["events"]
                         if any(
-                            s["kind"] == "SPR" and s["start"] and s["start"] < now
+                            s["kind"] == kind2 and s["start"] and s["start"] < now
                             for s in e["sessions"]
                         )
                     ]
-                    if not sprint_events:
+                    if not completed_events:
                         continue
-                    round_id = sprint_events[-1]["round"]
+                    round_id = completed_events[-1]["round"]
                 raw, at = client.get(
                     JOLPICA
                     + str(year)
@@ -762,7 +762,7 @@ def refresh(client, kind, year, previous=None):
                     + ".json?limit=100"
                 )
                 snapshot["detailAt"] = at
-                apply_f1_results(snapshot, raw, kind2)
+                apply_f1_results(snapshot, raw, kind2, round_id if round_id != "last" else None)
             except (ProviderError, ValueError, KeyError, TypeError, AttributeError):
                 errors.append("Ultimi risultati parziali")
     else:
@@ -829,6 +829,30 @@ def refresh(client, kind, year, previous=None):
     snapshot["partialError"] = " · ".join(set(errors))
     validate(snapshot, kind)
     return snapshot
+
+
+def bind_timing(snapshot, timing):
+    """Bind provider timing to exactly one calendar session, including delays."""
+    timing = timing.copy()
+    if not snapshot or snapshot.get("kind") != "f1":
+        return timing
+    timing.pop("eventId", None)
+    timing.pop("sessionId", None)
+    kinds = {"Practice 1": "FP1", "Practice 2": "FP2", "Practice 3": "FP3",
+             "Qualifying": "Q", "Sprint Qualifying": "SQ", "Sprint Shootout": "SQ",
+             "Sprint": "SPR", "Race": "RAC"}
+    start = timing.get("start")
+    if snapshot and snapshot.get("kind") == "f1" and start:
+        candidates = [(e, s) for e in snapshot["events"] for s in e["sessions"]
+                      if e["name"].casefold() == timing.get("meeting", "").casefold()
+                      and s["kind"] == kinds.get(timing.get("name")) and s.get("start")
+                      and abs(s["start"] - start) <= 6 * 3600]
+        if len(candidates) == 1:
+            event, session = candidates[0]
+            timing.update(eventId=event["id"], sessionId=session["id"])
+    if not timing.get("sessionId"):
+        timing.update(active=False, isLive=False)
+    return timing
 
 
 def present(snapshot, now, *, from_cache=False):

@@ -25,6 +25,7 @@ from motorsport_core import (
     read_cache,
     save_cache,
     present,
+    bind_timing,
 )
 from racing_timing import F1Timing, moto_timing
 from racing_details import load_driver
@@ -310,7 +311,7 @@ class MotorsportService(QObject):
         )
         if self._from_cache or self._error or self._offline:
             live.update(active=False, isLive=False)
-        data["live"] = live
+        data["live"] = bind_timing(self._snapshot, live) if self._timing else live
         at = self._snapshot.get("fetchedAt", 0) if self._snapshot else 0
         status = (
             "offline"

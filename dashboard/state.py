@@ -64,6 +64,7 @@ def _saved_bool(settings: QSettings, key: str, default: bool = True) -> bool:
 
 
 class DashboardState(QObject):
+    dashboardChanged = Signal()
     weatherChanged = Signal()
     accountChanged = Signal()
     sportChanged = Signal()
@@ -89,6 +90,13 @@ class DashboardState(QObject):
         self._system = system
         self._account = account
         self._events = events
+        self._dashboard_revision = 0
+        self._dashboard_cache = {}
+        for signal, domain in ((self.weatherChanged, 'weather'), (self.sportChanged, 'sport'),
+                               (self.racingChanged, 'racing'), (self.casaChanged, 'casa'),
+                               (self.networkChanged, 'network'), (self.networkMetricsChanged, 'network'),
+                               (self.eventChanged, 'events')):
+            signal.connect(lambda d=domain: self._invalidate_dashboards(d))
         self._sport = sport
         self._racing = racing or {}
         self._source_refresh_states: dict[str, dict] = {}
@@ -177,6 +185,56 @@ class DashboardState(QObject):
         weather.changed.connect(self.weatherChanged)
         account.changed.connect(self.accountChanged)
         system.changed.connect(self.systemChanged)
+
+    def _invalidate_dashboards(self, domain=None):
+        self._dashboard_revision += 1
+        prefixes = {'weather': ('oggi-',), 'events': ('oggi-',), 'sport': ('sport-sport', 'sport-team'),
+                    'racing': ('sport-f1', 'sport-motogp'), 'casa': ('casa-',), 'network': ('rete-',)}
+        if domain not in prefixes:
+            self._dashboard_cache.clear()
+        else:
+            for key in tuple(self._dashboard_cache):
+                if key[0].startswith(prefixes[domain]):
+                    self._dashboard_cache.pop(key)
+        self.dashboardChanged.emit()
+
+    @Property(int, notify=dashboardChanged)
+    def dashboardRevision(self):
+        return self._dashboard_revision
+
+    @Slot(str, float, result='QVariantMap')
+    def dashboardSummary(self, view_id, epoch):
+        """Small immutable projection; no provider tree roundtrip through QML."""
+        from dashboard_summary import build_summary
+        from theme_api import weather_snapshot
+        # Provider signals evict only their own projections. The public global
+        # revision still notifies QML, which can reuse unrelated cached views.
+        key = (view_id, int(epoch // 5))
+        if key in self._dashboard_cache:
+            return self._dashboard_cache[key]
+        payload, model = {}, {}
+        if view_id.startswith('sport-'):
+            kind = view_id.removeprefix('sport-')
+            payload['dashboardSport' if kind in ('sport', 'team') else 'dashboardRacing'] = self.sportState if kind in ('sport', 'team') else self._racing[kind].moduleState if kind in self._racing else {}
+        elif view_id.startswith('casa-'):
+            model['casa'] = self.casaState
+        elif view_id.startswith('rete-'):
+            payload['networkState'] = self.networkState
+            payload['dashboardRouter'] = self.networkMetricsView('router', '', 'state', 1, 0, '')
+            if view_id == 'rete-iliadbox':
+                payload['dashboardWifi'] = self.networkMetricsView('wifi', '', 'radios', 1, 0, '')
+                payload['dashboardPorts'] = self.networkMetricsView('ports', '', 'ports', 1, 0, '')
+            elif view_id == 'rete-traffico':
+                payload['dashboardHistory'] = self.networkMetricsView('router', '', 'history', 1, 0, '')
+        elif view_id == 'oggi-giornata':
+            envelope = self.weatherState
+            model['weather'] = {**envelope, 'data':weather_snapshot(envelope)}
+            model['nextEvent'] = self.nextRelevantEvent
+        result = build_summary(view_id, payload, model, epoch)
+        if len(self._dashboard_cache) >= 32:
+            self._dashboard_cache.pop(next(iter(self._dashboard_cache)))
+        self._dashboard_cache[key] = result
+        return result
 
     @Property("QVariantMap", notify=weatherChanged)
     def weatherState(self) -> dict[str, Any]:
