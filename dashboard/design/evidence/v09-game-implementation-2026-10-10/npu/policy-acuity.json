@@ -1,0 +1,100 @@
+{
+    "MetaData": {
+        "Name": "SmartPC frozen pilot",
+        "AcuityVersion": "6",
+        "Platform": "tensorflow",
+        "Org_Platform": "onnx"
+    },
+    "Layers": {
+        "attach_action/out0_0": {
+            "name": "attach_action/out0",
+            "op": "output",
+            "parameters": {},
+            "inputs": [
+                "@action_1:out0"
+            ],
+            "outputs": [
+                "out0"
+            ]
+        },
+        "action_1": {
+            "name": "action",
+            "op": "tanh",
+            "parameters": {
+                "hyperbolic_tan_scale_a": 1.0,
+                "hyperbolic_tan_scale_b": 1.0
+            },
+            "inputs": [
+                "@a0_2:out0"
+            ],
+            "outputs": [
+                "out0"
+            ]
+        },
+        "a0_2": {
+            "name": "a0",
+            "op": "fullconnect",
+            "parameters": {
+                "weights": 2,
+                "bias": true,
+                "regularize": false,
+                "axis": 1
+            },
+            "inputs": [
+                "@h_3:out0"
+            ],
+            "outputs": [
+                "out0"
+            ]
+        },
+        "h_3": {
+            "name": "h",
+            "op": "tanh",
+            "parameters": {
+                "hyperbolic_tan_scale_a": 1.0,
+                "hyperbolic_tan_scale_b": 1.0
+            },
+            "inputs": [
+                "@h0_4:out0"
+            ],
+            "outputs": [
+                "out0"
+            ]
+        },
+        "h0_4": {
+            "name": "h0",
+            "op": "fullconnect",
+            "parameters": {
+                "weights": 16,
+                "bias": true,
+                "regularize": false,
+                "axis": 1
+            },
+            "inputs": [
+                "@observation_5:out0"
+            ],
+            "outputs": [
+                "out0"
+            ]
+        },
+        "observation_5": {
+            "name": "observation",
+            "op": "input",
+            "parameters": {
+                "size": "",
+                "channels": 1,
+                "shape": [
+                    1,
+                    32
+                ],
+                "is_scalar": false,
+                "type": "float32"
+            },
+            "inputs": [],
+            "outputs": [
+                "out0"
+            ]
+        }
+    },
+    "quantize_info": {}
+}

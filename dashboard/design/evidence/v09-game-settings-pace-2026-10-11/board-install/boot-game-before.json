@@ -1,0 +1,267 @@
+{
+  "bootId": "01401820-6018-4c08-b857-50a55425679f",
+  "drivers": [
+    {
+      "id": "4286280758fa417ab7c1268de13b8637",
+      "name": "Pilota 1",
+      "number": 1,
+      "profile": {
+        "algorithm": "evolution",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-32-v1",
+        "population": 8,
+        "rollout": 64,
+        "seed": 1,
+        "traffic": false,
+        "version": 1
+      },
+      "policy": null,
+      "checkpoint": "6b45c42eaaf69db7587cf164624fb4ab36ecce06b09444dda9e9ba2e85dbf8a4",
+      "steps": 520,
+      "seconds": 0.2766386940002121,
+      "created": "2026-10-11T16:19:55.982291+00:00",
+      "policy_profile": null,
+      "candidate": "db7e588c5497616a1c752af633dc9131c9fb04eed851a61bcd055590d56be6b1",
+      "curriculum": {
+        "baseline": null,
+        "champion": null,
+        "evaluationVersion": "paired-10-v1",
+        "evaluations": [],
+        "pending": null,
+        "phase": "control",
+        "phaseUpdates": 0,
+        "reliableWindows": 0,
+        "rewardVersion": "control-pace-1",
+        "round": 0,
+        "updates": 0,
+        "version": 1
+      },
+      "trained": false
+    },
+    {
+      "id": "4b0bd702af894e6895ba4dcd09b00d4e",
+      "name": "Pilota 2",
+      "number": 2,
+      "profile": {
+        "algorithm": "ppo",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-32-v1",
+        "population": 8,
+        "rollout": 64,
+        "seed": 2,
+        "traffic": false,
+        "version": 1
+      },
+      "policy": null,
+      "checkpoint": "10e53eda7233d920f6442d118fbe55bf14ae418e868faf923e2ba65c70535196",
+      "steps": 448,
+      "seconds": 0.3233923089946984,
+      "created": "2026-10-11T16:19:55.982793+00:00",
+      "policy_profile": null,
+      "candidate": "194ba59f95a378fa571c0501c3ca1d7efb750b14b03aa93d553975c75fd834c5",
+      "curriculum": {
+        "baseline": null,
+        "champion": null,
+        "evaluationVersion": "paired-10-v1",
+        "evaluations": [],
+        "pending": null,
+        "phase": "control",
+        "phaseUpdates": 0,
+        "reliableWindows": 0,
+        "rewardVersion": "control-pace-1",
+        "round": 0,
+        "updates": 0,
+        "version": 1
+      },
+      "trained": false
+    },
+    {
+      "id": "6151f06ebde5404581971b97fd877653",
+      "name": "Pilota 3",
+      "number": 3,
+      "profile": {
+        "algorithm": "neat",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-32-v1",
+        "population": 8,
+        "rollout": 64,
+        "seed": 3,
+        "traffic": false,
+        "version": 1
+      },
+      "policy": null,
+      "checkpoint": "11c7e8825a33b299c31ff3131620e1a28242ab160128450f8b201e8cf542e85d",
+      "steps": 432,
+      "seconds": 0.3431090990025041,
+      "created": "2026-10-11T16:19:55.982996+00:00",
+      "policy_profile": null,
+      "candidate": "1950b072b1539fb343c47af2c7d52ad8f2940f81e088cb87b8694f75c2baab4c",
+      "curriculum": {
+        "baseline": null,
+        "champion": null,
+        "evaluationVersion": "paired-10-v1",
+        "evaluations": [],
+        "pending": null,
+        "phase": "control",
+        "phaseUpdates": 0,
+        "reliableWindows": 0,
+        "rewardVersion": "control-pace-1",
+        "round": 0,
+        "updates": 0,
+        "version": 1
+      },
+      "trained": false
+    }
+  ],
+  "races": [
+    {
+      "id": "84ffb7626fd047bcb824ac12808eaeb2",
+      "mode": "gara",
+      "status": "complete",
+      "created": "2026-10-11T16:20:01.517002+00:00",
+      "updated": "2026-10-11T16:20:06.508602+00:00",
+      "payload": {
+        "configuration": {
+          "action": "steer-throttle-brake-v1",
+          "condition": {
+            "grip_factor": 1.0,
+            "id": "dry"
+          },
+          "decisionHz": 60,
+          "observation": "race-32-v1",
+          "physics": "f1-2",
+          "substeps": 2,
+          "surface": {
+            "grip": 0.95,
+            "id": "asphalt",
+            "rolling": 0.015
+          },
+          "tire": {
+            "grip_factor": 1.0,
+            "id": "standard"
+          },
+          "track": {
+            "half_straight": 36.0,
+            "id": "oval-1",
+            "name": "Ovale",
+            "radius": 31.0,
+            "revision": 1,
+            "road_width": 10.0
+          },
+          "vehicle": {
+            "brake_force": 10000.0,
+            "corner_stiffness": 38000.0,
+            "drive_force": 6500.0,
+            "id": "standard-1",
+            "length": 4.4,
+            "mass": 1200.0,
+            "max_steer": 0.52,
+            "power": 85000.0,
+            "steer_rate": 1.8,
+            "wheelbase": 2.65,
+            "width": 1.8,
+            "yaw_inertia": 1700.0
+          }
+        },
+        "events": [],
+        "grid": [
+          "b6466d31c879461cbd340b08d4fb1076",
+          "e08d2294e2ff4bec94d4ebf77ea9e136"
+        ],
+        "participants": [
+          {
+            "id": "b6466d31c879461cbd340b08d4fb1076",
+            "name": "Fixture gara 1",
+            "number": 5,
+            "policy": "feb23650a240f696f2fbf3a588250cfbb80e43a9ee820150dff3c653a32494dc",
+            "profile": {
+              "algorithm": "evolution",
+              "episodeSeconds": 60,
+              "epochs": 4,
+              "gamma": 0.995,
+              "hidden": 16,
+              "learningRate": 0.0003,
+              "mutation": 0.15,
+              "observation": "race-32-v1",
+              "population": 32,
+              "rollout": 256,
+              "seed": 5,
+              "traffic": false,
+              "version": 1
+            }
+          },
+          {
+            "id": "e08d2294e2ff4bec94d4ebf77ea9e136",
+            "name": "Fixture gara 2",
+            "number": 6,
+            "policy": "15db94277a68a92b7c4fa25245937548a831e7f67c89012e22853a92bda8a904",
+            "profile": {
+              "algorithm": "evolution",
+              "episodeSeconds": 60,
+              "epochs": 4,
+              "gamma": 0.995,
+              "hidden": 16,
+              "learningRate": 0.0003,
+              "mutation": 0.15,
+              "observation": "race-32-v1",
+              "population": 32,
+              "rollout": 256,
+              "seed": 6,
+              "traffic": false,
+              "version": 1
+            }
+          }
+        ],
+        "results": [
+          {
+            "finishTime": null,
+            "id": "b6466d31c879461cbd340b08d4fb1076",
+            "lap": 0,
+            "position": 2,
+            "progress": 2.7592919770994513,
+            "speed": 0.0,
+            "status": "ritirato",
+            "x": 2.7893997619674202,
+            "y": -27.942520544259594,
+            "yaw": 0.5818979137038826
+          },
+          {
+            "finishTime": null,
+            "id": "e08d2294e2ff4bec94d4ebf77ea9e136",
+            "lap": 0,
+            "position": 1,
+            "progress": 4.605079482922633,
+            "speed": 0.0,
+            "status": "ritirato",
+            "x": 4.620971519107223,
+            "y": -28.321147710758357,
+            "yaw": 1.2278374813608823
+          }
+        ],
+        "rules": {
+          "contacts": "retirement",
+          "finishWindowSeconds": 30,
+          "laps": 3,
+          "limitSeconds": 300,
+          "version": "race-1"
+        },
+        "scope": "c67bdde71079018dd23f2a7442987cd9ba36ae8176c571bab04a2ceb1ae9ea28"
+      }
+    }
+  ]
+}

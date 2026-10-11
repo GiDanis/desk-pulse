@@ -1,0 +1,27 @@
+{
+  "samples": 512,
+  "maxActionError": 9.829240245184945e-05,
+  "medianSeconds": 6.3126e-05,
+  "p95Seconds": 8.6084e-05,
+  "cold": "coldSeconds 0.004571237 samples 512\n",
+  "target": "VIP9000NANODI_PID0X1000003B",
+  "policySha256": "c29104e05a09f41499c611dcc851aab6fa3cee15fc76383a57dadab286437ae3",
+  "nbgSha256": "6cc41e3e632d9f77329e18dd2249d82506f12c94e4e52e101388edebbddfa84c",
+  "cpu": {
+    "1": {
+      "medianSeconds": 4.225000157020986e-05,
+      "p95Seconds": 4.3083357741124925e-05
+    },
+    "2": {
+      "medianSeconds": 8.425100531894714e-05,
+      "p95Seconds": 8.597370106144808e-05
+    },
+    "4": {
+      "medianSeconds": 0.00016712599608581513,
+      "p95Seconds": 0.00017037600628100336
+    }
+  },
+  "selectedRuntime": "CPU",
+  "reason": "For the measured 32-16-2 policy, CPU inference is faster than native NPU host-copy/flush/run/readback. No game NPU engine enabled.",
+  "scope": "512 numeric parity vectors for one frozen learned policy. Does not qualify multi-policy NPU racing or closed-loop NPU driving."
+}
