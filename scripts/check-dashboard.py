@@ -115,6 +115,7 @@ def main():
                 "SMARTPC_THEME_TRACE_OUTPUT",
                 "SMARTPC_SPORT_OFFLINE",
                 "SMARTPC_RACING_OFFLINE",
+                "SMARTPC_FOOTBALL_CONFIG",
             ):
                 environment.pop(key, None)
             try:

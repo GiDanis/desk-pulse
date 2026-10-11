@@ -14,7 +14,7 @@ os.environ["XDG_CONFIG_HOME"] = tempfile.mkdtemp(prefix="smartpc-check-")
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 os.environ.setdefault("QT_QUICK_BACKEND", "software")
 
-from PySide6.QtCore import QObject, QDate, QDateTime, QTime, QTimer, QUrl, Signal, QEventLoop  # noqa: E402
+from PySide6.QtCore import QObject, QDate, QDateTime, QTime, QTimer, QUrl, Signal, QEventLoop, QEvent  # noqa: E402
 from PySide6.QtGui import QGuiApplication  # noqa: E402
 from PySide6.QtQml import QQmlApplicationEngine  # noqa: E402
 from PySide6.QtQuick import QQuickWindow  # noqa: E402
@@ -89,7 +89,7 @@ def main() -> None:
     assert window.property("family") == 1
     assert visible_screen() == "weatherNow"
     press(8, True)
-    assert window.property("viewIndex").toVariant() == [0, 1, 0, 0, 0, 0, 0, 0]
+    assert window.property("viewIndex").toVariant() == [0, 1, 0, 0, 0, 0, 0, 0, 0]
     assert visible_screen() == "weatherForecast"
     press(4, True)
     assert window.property("family") == 0
@@ -103,7 +103,7 @@ def main() -> None:
     press(2, True)
     assert visible_screen() == "homeNow"
     press(6, True)
-    assert window.property("viewIndex").toVariant() == [0, 1, 0, 0, 0, 0, 0, 0]
+    assert window.property("viewIndex").toVariant() == [0, 1, 0, 0, 0, 0, 0, 0, 0]
     press(5)
     press(9)
     press(3)
@@ -292,8 +292,14 @@ def main() -> None:
     account_snapshot = {"status": "active", "updatedAt": stamp, "data": {"windows": [
         {"label": "Codex", "usedPercent": 84, "windowDurationMins": 300, "resetsAt": stamp + 3600}]}}
     events.ingest_account(account_snapshot, 80, 95)
-    assert events.eventState["inbox"][0]["priority"] == 1
-    assert window.property("unreadAlertCount") == 1 and unread_badge.isVisible()
+    assert events.eventState["inbox"][0]["priority"] == 2
+    assert events.eventState["inbox"][0]["notificationRank"] == 2
+    assert window.property("unreadAlertCount") == 1
+    assert events.eventState["visibleBanner"]["title"] == "Uso Codex: 84%"
+    warning_loop = QEventLoop()
+    QTimer.singleShot(8500, warning_loop.quit)
+    warning_loop.exec()
+    assert unread_badge.isVisible()
     press(8)
     assert visible_screen() == "homeClock" and unread_badge.isVisible()
     press(8)
@@ -360,6 +366,13 @@ def main() -> None:
             service._poll_timer.stop()
             service._banner_timer.stop()
             service._engine.close()
+    # Tear down QML while Python services and the application still exist.
+    # Relying on local-variable destruction aborts Qt 6.8 on the board.
+    events.close();account.close();weather.close()
+    state.appearance.cancel()
+    window.close();engine.deleteLater()
+    application.sendPostedEvents(None,QEvent.Type.DeferredDelete)
+    application.processEvents()
     print("QML, both banners, unread Home badge, cached offline restart and notification settings: PASS")
 
 

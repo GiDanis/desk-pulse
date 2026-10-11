@@ -399,7 +399,7 @@ class HTTPClient:
 def validate_snapshot(snapshot: dict, *, require_time=True):
     if not isinstance(snapshot, dict) or snapshot.get('competitionId') not in COMPETITIONS:
         raise ValueError('Formato cache Sport non valido')
-    if snapshot.get('provider') not in ('fotmob', 'espn') or not re.fullmatch(r'\d{4}/\d{4}', snapshot.get('season', '')):
+    if snapshot.get('provider') not in ('fotmob', 'espn', 'bsd') or not re.fullmatch(r'\d{4}/\d{4}', snapshot.get('season', '')):
         raise ValueError('Fonte/stagione cache Sport non valida')
     if require_time and (timestamp(snapshot.get('fetchedAt')) is None or snapshot['fetchedAt'] > time.time() + 300):
         raise ValueError('Data cache Sport non valida')

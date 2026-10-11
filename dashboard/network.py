@@ -11,6 +11,7 @@ from PySide6.QtCore import QObject, Property, QRunnable, QThreadPool, QTimer, Si
 from iliadbox import IliadboxClient, NetworkError, load_config
 from module_state import module_state
 from network_metrics import MetricsStore, cap_collect, projected, FAST_INTERVAL, demo_caps
+from network_events import NetworkEvents
 from network_core import NetworkStore, INTERVAL, acquire, demo_snapshot, display, empty, local_info, text
 
 
@@ -68,8 +69,13 @@ class NetworkService(QObject):
         self._metric_errors = 0
         self._pending_preference = None
         self._pending_refresh = False
+        self._event_pending = False
+        self._events = NetworkEvents(self)
+        self._events.invalidated.connect(self._event_invalidated)
+        self._events.changed.connect(self.changed)
+        self._auto = auto_refresh
         self._timer = QTimer(self)
-        self._timer.setInterval(5000)
+        self._timer.setSingleShot(True)
         self._timer.timeout.connect(self._tick)
         if not demo:
             # Initialization precedes QML loading. User reloads run in the worker.
@@ -79,7 +85,7 @@ class NetworkService(QObject):
                 self._error = str(e)
                 logging.getLogger(__name__).warning('Rete locale [%s]: %s',e.kind,e)
             if auto_refresh:
-                self._timer.start()
+                self._timer.start(1)
                 if self.client and self._snapshot['preferences']['polling']:
                     QTimer.singleShot(0, lambda: self.refresh())
 
@@ -165,6 +171,7 @@ class NetworkService(QObject):
                 self._preference(pending)
             elif self._pending_refresh:
                 self._pending_refresh=False;self.refresh()
+            self._schedule_tick()
             return
         ok = error is None
         if ok:
@@ -199,10 +206,25 @@ class NetworkService(QObject):
         self.metricsChanged.emit()
         if self._pending_refresh:
             self._pending_refresh=False;self.refresh()
+        self._schedule_tick()
+
+    def _schedule_tick(self):
+        if self._auto and not self._closed:
+            self._timer.start(1)
+
+    def _event_invalidated(self):
+        if not self._closed:
+            self._event_pending = True
+            self._tick()
 
     def _tick(self):
         if self._closed or self._demo:
             return
+        allowed = self._auto and self.client and not self._halted and self._snapshot['preferences']['polling']
+        self._events.ensure(self.client.config if self.client else None, bool(allowed and self.transport is None))
+        if self._event_pending and allowed and not self._busy and self.monotonic() - self._last_attempt >= 30:
+            self._event_pending = False
+            self._next = self.monotonic()
         age = self.clock() - self._snapshot['checkedAt']
         if self._status == 'active' and (age >= INTERVAL or age < -5):
             self._status = 'stale'
@@ -212,6 +234,18 @@ class NetworkService(QObject):
         elif not self._busy and self.client and not self._halted and self._snapshot['preferences']['polling'] and self._interest[0] and self.monotonic()>=self._metrics_next:
             self.refreshMetrics()
         if self._interest[0]:self.metricsChanged.emit()
+        current = self.monotonic()
+        deadlines = [current + 300]
+        if allowed and not self._busy:
+            deadlines.append(max(current + 0.01, self._next))
+            if self._interest[0]:
+                deadlines.append(max(current + 0.01, self._metrics_next))
+            if self._event_pending:
+                deadlines.append(max(current + 0.01, self._last_attempt + 30))
+        if self._status == 'active':
+            deadlines.append(current + max(0.01, INTERVAL - age))
+        if self._auto:
+            self._timer.start(max(1, int((min(deadlines) - current) * 1000)))
 
     @Slot(str, str, str, int, int, str)
     def setMetricsInterest(self, route, entity, section, hours, metric, station):
@@ -222,6 +256,7 @@ class NetworkService(QObject):
             self._interest=value
             self._metrics_next=self._interest_due()
             self.metricsChanged.emit()
+            self._schedule_tick()
 
     def _metric_key(self):
         route,entity,section,hours,metric,station=self._interest
@@ -343,6 +378,7 @@ class NetworkService(QObject):
     def moduleState(self):
         data = display(self._snapshot, self._status, self.clock())
         data['polling']=data['polling'] and not self._halted
+        data['eventStatus'] = self._events.status
         data.update(configured=self.client is not None or self._demo, hasInventory=bool(self._snapshot['checkedAt']), busy=self._busy, feedback=self._error, modeText='Demo · dati simulati' if self._demo else 'Autorizzazione da verificare · aggiornamenti sospesi' if self._halted else 'Lettura automatica ogni 5 minuti' if data['polling'] else 'Raccolta sospesa · aggiornamento manuale disponibile')
         return module_state(status=self._status, source='iliadbox' + (' (demo)' if self._demo else ''), updated_at=self._snapshot['checkedAt'], data=data, error=self._error)
 
@@ -354,5 +390,6 @@ class NetworkService(QObject):
     def close(self):
         self._closed = True
         self._timer.stop()
+        self._events.close()
         self._stop.set()
         self._pool.waitForDone(6500)

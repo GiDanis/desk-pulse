@@ -83,9 +83,9 @@ class AccountService(QObject):
         self._watcher.directoryChanged.connect(self._on_fs_changed)
 
         self._timer = QTimer(self)
-        self._timer.setInterval(60_000)
+        self._timer.setSingleShot(True)
         self._timer.timeout.connect(lambda: self.refresh(force=False))
-        self._timer.start()
+        self.refresh(force=False)
 
     def _setup_watcher(self) -> None:
         if self._path.exists() and str(self._path) not in self._watcher.files():
@@ -131,6 +131,10 @@ class AccountService(QObject):
         if state != self._state:
             self._state = state
             self.changed.emit()
+        delay = 300.0
+        if state["status"] == "active":
+            delay = min(delay, max(0.001, state["updatedAt"] + MAX_AGE_SECONDS + 0.001 - time.time()))
+        self._timer.start(max(1, int(delay * 1000)))
         if force:
             ok = state["status"] in ("active", "stale")
             message = ("Cache riletta · dati precedenti dal PC" if state["status"] == "stale" else

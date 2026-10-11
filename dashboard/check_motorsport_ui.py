@@ -310,7 +310,7 @@ def main():
     assert value("overlay") == "settings"
     window.setProperty("settingsIndex",2)
     press(5)
-    window.setProperty("modulesIndex",6)
+    window.setProperty("modulesIndex",len(value("allFamilies")))
     press(5)
     window.setProperty("optionIndex",5)
     assert value("overlay") == "sportModules"

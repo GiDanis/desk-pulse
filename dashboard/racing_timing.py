@@ -248,6 +248,10 @@ class F1Timing(QObject):
         self._topics = TOPICS[:]
         self._buffer = ""
         self._failures = 0
+        self._publish = QTimer(self)
+        self._publish.setSingleShot(True)
+        self._publish.setInterval(150)
+        self._publish.timeout.connect(self.changed)
         self.socket = QWebSocket()
         self.socket.connected.connect(self._opened)
         self.socket.textMessageReceived.connect(self._message)
@@ -293,6 +297,7 @@ class F1Timing(QObject):
         )
 
     def _message(self, value):
+        revision = self.state.revision
         if len(value) + len(self._buffer) > 1_000_000:
             self.socket.abort()
             return
@@ -345,6 +350,8 @@ class F1Timing(QObject):
                     self.socket.abort()
         except (ValueError, TypeError, AttributeError):
             self.socket.abort()
+        if self.state.revision != revision and not self._publish.isActive():
+            self._publish.start()
 
     def _failed(self, *_):
         self.socket.abort()
@@ -365,6 +372,8 @@ class F1Timing(QObject):
                 self.socket.abort()
 
     def close(self):
+        self._publish.stop()
+        self._ping.stop()
         self.ensure(False)
 
 

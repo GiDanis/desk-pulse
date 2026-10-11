@@ -37,7 +37,7 @@ DEMO_WEATHER = {
 MIN_BRIGHTNESS = 20
 MAX_BRIGHTNESS = 100
 BRIGHTNESS_STEP = 5
-TOGGLEABLE_MODULES = ("meteo", "account", "sport", "f1", "motogp", "casa", "network")
+TOGGLEABLE_MODULES = ("meteo", "account", "sport", "f1", "motogp", "casa", "network", "game")
 
 
 def _account_threshold(name: str, default: int) -> int:
@@ -83,7 +83,7 @@ class DashboardState(QObject):
     eventChanged = Signal()
 
     def __init__(self, weather: QObject, system: QObject, account: QObject,
-                 events: EventService | None = None, demo: bool = False, sport: QObject | None = None, racing=None, trace=None, casa=None, network=None) -> None:
+                 events: EventService | None = None, demo: bool = False, sport: QObject | None = None, racing=None, trace=None, casa=None, network=None, game=None) -> None:
         super().__init__()
         self.settingsChanged.connect(self.modulesChanged)
         self._weather = weather
@@ -100,6 +100,7 @@ class DashboardState(QObject):
         self._sport = sport
         self._racing = racing or {}
         self._source_refresh_states: dict[str, dict] = {}
+        self._game = game
         self._network = network
         if network is not None:
             network.changed.connect(self.networkChanged)
@@ -178,6 +179,10 @@ class DashboardState(QObject):
             sport.changed.connect(self.sportChanged)
             if events is not None:
                 sport.eventsChanged.connect(lambda values: events.publish_snapshot("sport", values))
+                if hasattr(sport, "footballEventsChanged"):
+                    sport.footballEventsChanged.connect(lambda values: events.publish_snapshot("football", values))
+                    sport._football.interruptionsChanged.connect(lambda enabled: events.set_category_silenced("serie_a", not enabled))
+                    events.set_category_silenced("serie_a", not sport._serie_a_enabled)
         for kind, service in self._racing.items():
             service.changed.connect(self.racingChanged)
             if events is not None:
@@ -528,13 +533,17 @@ class DashboardState(QObject):
         return self._theme_recovery_error
 
     @Property(QObject, constant=True)
+    def game(self):
+        return self._game
+
+    @Property(QObject, constant=True)
     def appearance(self):
         return self._appearance
 
     @Property("QVariantList", notify=modulesChanged)
     def visibleModules(self) -> list[str]:
         return ["oggi"] + [module_id for module_id in TOGGLEABLE_MODULES
-                           if self._module_visible[module_id] and (module_id != "sport" or self._sport is not None) and (module_id not in ("f1","motogp") or module_id in self._racing) and (module_id != "casa" or self.casaAvailable) and (module_id != "network" or self.networkAvailable)]
+                           if self._module_visible[module_id] and (module_id != "sport" or self._sport is not None) and (module_id not in ("f1","motogp") or module_id in self._racing) and (module_id != "casa" or self.casaAvailable) and (module_id != "network" or self.networkAvailable) and (module_id != "game" or self._game is not None)]
 
     @Property(bool, notify=modulesChanged)
     def sportGroupVisible(self):
@@ -579,6 +588,11 @@ class DashboardState(QObject):
     def markEventSeen(self, event_id: str) -> None:
         if self._events:
             self._events.markSeen(event_id)
+
+    @Slot()
+    def toggleEventHistory(self) -> None:
+        if self._events:
+            self._events.toggleHistory()
 
     @Slot(bool)
     def setBannerAvailable(self, available: bool) -> None:

@@ -33,6 +33,7 @@ class AppServer:
         self._next_id = 0
         self._read_buffer = b""
         self._pending: list[dict[str, Any]] = []
+        self.notifications: list[dict[str, Any]] = []
         try:
             self.call("initialize", {"clientInfo": {
                 "name": "smartpc_account", "title": "SmartPC Account", "version": "0.4.0",
@@ -77,6 +78,9 @@ class AppServer:
         while time.monotonic() < deadline:
             response = self._read_message(deadline)
             if response.get("id") != request_id:
+                if response.get("method") == "account/rateLimits/updated":
+                    self.notifications.append(response)
+                    self.notifications = self.notifications[-100:]
                 continue
             if "error" in response:
                 # App-server error details can include account information. Do not log them.
@@ -91,6 +95,55 @@ class AppServer:
         except subprocess.TimeoutExpired:
             self.process.kill()
             self.process.wait(timeout=2)
+
+    def notification(self, deadline: float) -> dict[str, Any]:
+        if self.notifications:
+            return self.notifications.pop(0)
+        return self._read_message(deadline)
+
+
+def merge_limits(previous: dict[str, Any], notification: dict[str, Any]) -> dict[str, Any]:
+    """An update to one bucket is not a replacement of every account limit."""
+    from copy import deepcopy
+    result = deepcopy(previous)
+    params = notification.get("params") or {}
+    bucket = params.get("rateLimits")
+    if not isinstance(bucket, dict):
+        return result
+    identity = bucket.get("limitId")
+    if not isinstance(identity, str) or not identity:
+        return result  # An unscoped delta requires a complete read.
+    buckets = result.setdefault("rateLimitsByLimitId", {})
+    if not isinstance(buckets, dict):
+        return deepcopy(previous)
+    existing = buckets.get(identity)
+    buckets[identity] = dict(existing or {}, **bucket)
+    return result
+
+
+def watch(server: AppServer, account: dict[str, Any], limits: dict[str, Any], host: str, identity: Path) -> None:
+    """Optional persistent helper; ten-minute reads recover missed notifications."""
+    previous = None
+    reconcile = time.monotonic()
+    while True:
+        now = time.monotonic()
+        force = now >= reconcile
+        if force:
+            limits = server.call("account/rateLimits/read")
+            reconcile = time.monotonic() + 600
+        snapshot = normalize(account, limits, int(time.time()))
+        if force or snapshot["data"] != previous:
+            publish(snapshot, host, identity)
+            previous = snapshot["data"]
+        try:
+            message = server.notification(min(reconcile, time.monotonic() + 30))
+        except TimeoutError:
+            continue
+        if message.get("method") == "account/rateLimits/updated":
+            merged = merge_limits(limits, message)
+            if merged == limits:
+                reconcile = time.monotonic()
+            limits = merged
 
 
 def normalize(account_result: dict[str, Any], limits_result: dict[str, Any], now: int) -> dict[str, Any]:
@@ -120,6 +173,7 @@ def normalize(account_result: dict[str, Any], limits_result: dict[str, Any], now
             if not isinstance(duration, (int, float)) or duration <= 0:
                 continue
             windows.append({
+                "id": f"{bucket_id}:{kind}",
                 "label": str(label)[:50], "usedPercent": round(float(used), 1),
                 "windowDurationMins": int(duration),
                 "resetsAt": int(resets_at) if isinstance(resets_at, (int, float)) and resets_at > 0 else 0,
@@ -195,6 +249,7 @@ def main() -> int:
     parser.add_argument("--host", default=os.environ.get("SMARTPC_ACCOUNT_HOST", "smartpc@192.168.1.179"))
     parser.add_argument("--identity", type=Path, default=Path.home() / ".ssh/smartpc_ed25519")
     parser.add_argument("--codex-bin", default=os.environ.get("SMARTPC_CODEX_BIN") or find_codex())
+    parser.add_argument("--watch", action="store_true", help="Ascolta aggiornamenti; riconcilia ogni 10 minuti")
     args = parser.parse_args()
     if not args.codex_bin:
         print("Codex CLI non trovato", file=sys.stderr)
@@ -208,6 +263,8 @@ def main() -> int:
         else:
             limits = server.call("account/rateLimits/read")
             snapshot = normalize(account, limits, int(time.time()))
+            if args.watch:
+                watch(server, account, limits, args.host, args.identity)
     except AccountUnavailable:
         snapshot = unavailable_snapshot("Accesso ChatGPT da ripristinare sul PC")
     except (OSError, TimeoutError, ValueError, RuntimeError) as exc:

@@ -22,6 +22,7 @@ from PySide6.QtCore import (
 from module_state import module_state
 from sport_team import FavouriteTeamService
 from fantacalcio import FantacalcioService
+from football import FootballService
 from sport_team_core import league_fallback
 from sport_core import (
     GoalTracker,
@@ -119,6 +120,7 @@ class SportService(QObject):
     changed = Signal()
     refreshFinished = Signal(bool, str)
     eventsChanged = Signal(object)
+    footballEventsChanged = Signal(object)
 
     def __init__(
         self,
@@ -189,6 +191,11 @@ class SportService(QObject):
         self._team.changed.connect(self._sync_fantasy)
         self._sync_team()
         self._auto_refresh = auto_refresh
+        self._football = FootballService(self, auto_refresh=auto_refresh)
+        self._football.eventsChanged.connect(self.footballEventsChanged)
+        self._serie_a_enabled = str(self._settings.value("notifications/serieAEnabled", "true")).lower() == "true"
+        self._football.set_enabled(self._serie_a_enabled)
+        self._football.changed.connect(self._football_changed)
         self._closed = False
         self._timer = QTimer(self)
         self._timer.setSingleShot(True)
@@ -198,8 +205,21 @@ class SportService(QObject):
         self._age_timer.setInterval(15000)
         self._age_timer.timeout.connect(self._age_changed)
         self._age_timer.start()
+        if self._football.snapshot:
+            self._football_changed()
         if auto_refresh:
-            QTimer.singleShot(0, lambda: self.refresh())
+            if not self._football.feed:
+                QTimer.singleShot(0, lambda: self.refresh())
+
+    def _football_changed(self):
+        if self._football.snapshot and self._season == season_for(time.time()):
+            self._snapshot = deepcopy(self._football.snapshot)
+            self._from_cache = not self._football.status.startswith("attiva") and not self._football.status.startswith("solo dati")
+            self._error = "" if not self._from_cache else "Fonte BSD non aggiornata · ultimi dati conservati"
+            self._sync_team()
+            self._sync_fantasy()
+            self._publish_events()
+        self.changed.emit()
 
     def _age_changed(self):
         self.changed.emit()
@@ -224,6 +244,9 @@ class SportService(QObject):
             selectedMatchId=self._selected_id,
             detailLoading=bool(self._worker and self._selected_id),
             requestCount=dict(self._client.request_count),
+            footballConfigured=bool(self._football.feed),
+            footballStatus=self._football.status,
+            serieAEnabled=self._serie_a_enabled,
         )
         team = self._team.moduleState
         if self._favourite and not team["data"].get("name"):
@@ -335,6 +358,7 @@ class SportService(QObject):
         self._age_timer.stop()
         self._team.close()
         self._fantasy.close()
+        self._football.close()
 
     @Property("QVariantMap", notify=changed)
     def moduleState(self):
@@ -365,7 +389,7 @@ class SportService(QObject):
         return module_state(
             status=status,
             source={"fotmob": "FotMob", "espn": "ESPN"}.get(
-                data.get("provider"), "FotMob / ESPN"
+                data.get("provider"), "BSD" if data.get("provider") == "bsd" else "FotMob / ESPN"
             ),
             updated_at=fetched,
             data=data,
@@ -376,6 +400,10 @@ class SportService(QObject):
     def refresh(self, detail_only=False):
         if self._closed or self._worker:
             return False
+        if self._football.feed and self._season == season_for(time.time()):
+            match = next((v for v in (self._snapshot or {}).get('fixtures', []) if v['canonicalMatchId'] == self._selected_id), {})
+            detail_id = int(match['providerMatchId']) if detail_only and match.get('provider') == 'bsd' else None
+            return self._football.refresh(detail_id)
         now = time.time()
         current = season_for(now)
         if current != self._seasons[0]:
@@ -525,6 +553,12 @@ class SportService(QObject):
 
     @Slot()
     def toggleGoals(self):
+        if self._football.feed:
+            self._serie_a_enabled = not self._serie_a_enabled
+            self._settings.setValue("notifications/serieAEnabled", self._serie_a_enabled)
+            self._settings.sync()
+            self._football.set_enabled(self._serie_a_enabled)
+            return
         if not self._verified:
             return
         self._goals_enabled = not self._goals_enabled

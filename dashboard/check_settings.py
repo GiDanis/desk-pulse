@@ -110,7 +110,7 @@ def setting(title):
     if title == "Account ChatGPT":
         window.setProperty("notificationIndex",2);press(5)
     elif title == "Sport":
-        window.setProperty("modulesIndex",6);press(5)
+        window.setProperty("modulesIndex",len(value("allFamilies")));press(5)
         window.setProperty("optionIndex",3)
 
 

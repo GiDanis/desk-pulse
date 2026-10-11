@@ -117,6 +117,9 @@ class Worker(QRunnable):
             pass  # Do not report a second failure through a deleted Qt signal.
 
 
+from racing_events import RacingEvents
+
+
 class MotorsportService(QObject):
     changed = Signal()
     refreshFinished = Signal(bool, str)
@@ -165,15 +168,16 @@ class MotorsportService(QObject):
         )
         self._timing = F1Timing(self) if kind == "f1" else None
         if self._timing:
-            self._timing.changed.connect(self.changed)
+            self._timing.changed.connect(self._tick)
         self._timer = QTimer(self)
         self._timer.setSingleShot(True)
         self._timer.timeout.connect(lambda: self.refresh())
         self._age = QTimer(self)
-        self._age.setInterval(1000 if kind == "f1" else 15000)
+        self._age.setSingleShot(True)
         self._age.timeout.connect(self._tick)
-        self._age.start()
+        self._age.start(15000)
         self._last_live_signature = None
+        self._racing_events = RacingEvents(kind)
         self._view_snapshot = None
         self._view = None
         self._view_until = 0
@@ -220,21 +224,9 @@ class MotorsportService(QObject):
 
     def _near(self):
         now = time.time()
-        return bool(
-            self._year == self._years[0]
-            and self._snapshot
-            and any(
-                e.get("end")
-                and min(
-                    [s["start"] for s in e["sessions"] if s["start"]]
-                    or [e["start"] or float("inf")]
-                )
-                - 3600
-                <= now
-                <= e["end"] + 86400
-                for e in self._snapshot["events"]
-            )
-        )
+        return bool(self._year == self._years[0] and self._snapshot and any(
+            s.get("start") and -900 <= now - s["start"] <= 3 * 3600
+            for e in self._snapshot["events"] for s in e["sessions"]))
 
     def _tick(self):
         now = time.time()
@@ -279,6 +271,17 @@ class MotorsportService(QObject):
                 self.changed.emit()
         else:
             self.changed.emit()
+        self._publish_home()
+        deadlines = [now + 60]
+        if self._timing:
+            deadlines += [v for v in (self._timing.state.receivedAt + 30.001,
+                                      self._timing.state.dataAt + 90.001) if v > now]
+        for e in (self._snapshot or {}).get("events", []):
+            for session in e["sessions"]:
+                start = session.get("start")
+                if start:
+                    deadlines += [v for v in (start - 2700, start - 900, start + 10800, start + 21600) if v > now]
+        self._age.start(max(1, int((min(deadlines) - now) * 1000)))
 
     @Property("QVariantMap", notify=changed)
     def moduleState(self):
@@ -468,6 +471,11 @@ class MotorsportService(QObject):
                     "showOnHome": True,
                 }
             ]
+        messages = None
+        if self._timing:
+            messages = self._timing.state.topics.get("RaceControlMessages", {}).get("Messages")
+        live = data.get("live", {}) if state["status"] in ("active", "updating") else {}
+        values += self._racing_events.update(live, time.time(), messages)
         self.eventsChanged.emit(values)
 
     @Slot()

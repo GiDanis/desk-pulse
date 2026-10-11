@@ -93,7 +93,7 @@ Item {
     ] : section === "notificationCategories" ? [
         {title: "Avvisi Meteo", value: backend && backend.weatherInterruptions ? "CONSENTITI" : "NASCOSTI", detail: "Banner e urgenti · scelta valida a qualsiasi ora", setting: 3},
         {title: "Avvisi Account", value: backend && backend.accountInterruptions ? "CONSENTITI" : "NASCOSTI", detail: "Banner e urgenti · scelta valida a qualsiasi ora", setting: 4}
-    ].concat(backend && backend.sportAvailable ? [{title: "Notifiche gol", value: dashboard.sportData.liveVerified ? (dashboard.sportData.goalsEnabled ? "ATTIVE" : "DISATTIVE") : "DA COLLAUDARE", detail: dashboard.sportData.liveVerified ? "Banner della squadra preferita · rispettano la fascia silenzio" : "Disponibili dopo il collaudo durante una partita", sportSetting: 2, enabled: !!dashboard.sportData.liveVerified}] : []) : section === "accountSettings" ? [
+    ].concat(backend && backend.sportAvailable ? [{title: "Avvisi tutta Serie A", value: dashboard.sportData.footballConfigured ? (dashboard.sportData.serieAEnabled ? "CONSENTITI" : "NASCOSTI") : dashboard.sportData.liveVerified ? (dashboard.sportData.goalsEnabled ? "ATTIVE" : "DISATTIVE") : "DA CONFIGURARE", detail: dashboard.sportData.footballConfigured ? dashboard.sportData.footballStatus : "Fonte gratuita BSD · configura il token privato", sportSetting: 2, enabled: !!dashboard.sportData.footballConfigured || !!dashboard.sportData.liveVerified}] : []) : section === "accountSettings" ? [
         {title: "Avviso di utilizzo", value: dashboard.accountWarningPercent + "%", detail: "Prima soglia · voce nell'elenco Avvisi"},
         {title: "Utilizzo critico", value: dashboard.accountCriticalPercent + "%", detail: "Soglia superiore · banner secondo le Notifiche"}
     ] : []

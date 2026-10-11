@@ -58,7 +58,9 @@ try:
   checks.append(sid+' captured without QML warnings')
  for scale in [1.1,1.0]:
   assert h.service.setToken('typography.textScale',scale);ready();setup('sport.hub')
-  h.expression('activateKey(8)');h.expression('activateKey(8)');ready()
+  h.root.setProperty('sportHubSelectedId','sport')
+  for _ in range(h.expression('sportDisciplines.findIndex(row=>row.id==="motogp")')):h.expression('activateKey(8)')
+  ready()
   assert h.value('dashboardViewId')=='sport-motogp'
   assert expr(item('sport.hub'),'bounds(0).height')==504
   capture('sport-scale-'+str(scale));checks.append('Discipline dashboard contained at scale '+str(scale))

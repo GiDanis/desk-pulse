@@ -359,9 +359,10 @@ Item {
             }
             // Loading and presentation readiness have independent watchdogs.
             Timer {
-                // Cold committed renderers contend with initial providers and
-                // shader/font setup on the board. Swaps keep the 3s watchdog.
-                interval: !host.currentItem && candidate.serviceGeneration === 0 ? 8000 : 3000
+                // Cold boot can exceed 8s while loaders, providers and shaders
+                // contend on the board. Keep a bounded 15s cold load budget;
+                // swaps and presentation readiness retain their 3s watchdogs.
+                interval: !host.currentItem && candidate.serviceGeneration === 0 ? 15000 : 3000
                 running: candidate.active && candidate.status === Loader.Loading
                 onTriggered: candidate.fail("Timeout caricamento " + candidate.presentationId)
             }
