@@ -133,7 +133,9 @@ class LegacyHarness:
         self.casa=CasaService(auto_refresh=False,demo=True,clock=lambda:self.now)
         from network import NetworkService
         self.network=NetworkService(auto_refresh=False,demo=True,clock=lambda:self.now)
-        self.state=DashboardState(self.weather,self.system,self.account,self.events,sport=self.sport,racing=self.racing,casa=self.casa,network=self.network)
+        from game import GameService
+        self.game=GameService(base/"state/game") if profile.get("game") else None
+        self.state=DashboardState(self.weather,self.system,self.account,self.events,sport=self.sport,racing=self.racing,casa=self.casa,network=self.network,game=self.game)
         self.state.markCommandsSeen();self.state._quiet_enabled=False;self.events.set_quiet(False,0,1)
         self.state._night_mode=profile['variant'];self.state._brightness_mode='manual';self.state._manual_brightness=100
         self.service=self.state.appearance
@@ -345,6 +347,17 @@ class LegacyHarness:
             if case['variant'] in ('normal','reduced','off'):assert mode==case['variant']
             if case['variant']=='canvas':assert host.property('canvasScene') and renderer=='fixture.canvas','canvas variant not actually instantiated'
             if case['variant']=='paused':assert host.property('suspended') and actor.property('paused')
+        elif sid.startswith('game.'):
+            assert self.game is not None and not self.game._process
+            if sid in ('game.menu','game.driver.details'):
+                host=self.root.findChild(QObject,'overlayHost')
+                assert host and host.property('readiness')=='ready' and host.property('visible'),sid
+            else:
+                assert self.value('activeContentId')==sid
+                name={'game.track':'gameTrack','game.leaderboard':'gameLeaderboard','game.progress':'gameProgress'}[sid]
+                host=self.root.findChild(QObject,name)
+                assert host and host.property('readiness')=='ready' and host.property('visible'),sid
+            return
         elif sid in ('settings.casa','casa.detail','casa.inventory','settings.network','network.detail','network.inventory'):
             host=self.root.findChild(QObject,'overlayHost')
             assert host and host.property('readiness')=='ready' and host.property('visible'),sid
@@ -357,6 +370,7 @@ class LegacyHarness:
             components=[obj for obj in self.root.findChildren(QObject) if obj.metaObject().className().startswith(source+'_') and obj.metaObject().indexOfProperty('dashboard')>=0]
             assert len(components)==1 and components[0].property('visible') and components[0].property('width')>0 and components[0].property('height')>0,(sid,'legacy component not exposed',source)
     def close(self):
+        if self.game:self.game.close()
         from PySide6.QtCore import QThreadPool,qInstallMessageHandler
         self.events.close();self.sport.close();self.network.close();self.casa.close()
         for service in self.racing.values():service.close()

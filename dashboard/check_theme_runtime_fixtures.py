@@ -45,7 +45,7 @@ def child(profile,cases):
     import PySide6
     harness=None;results=[]
     try:
-        harness=LegacyHarness(base,profile)
+        harness=LegacyHarness(base,{**profile,'game':any(case['family']=='game' for case in cases)})
         for case in cases:
             try:results.append(harness.run_case(case))
             except Exception as error:

@@ -7745,6 +7745,124 @@
       ],
       "additionalProperties": false
     },
+    "GameContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "game": {
+          "type": "object",
+          "readOnly": true
+        },
+        "scene": {
+          "type": "object",
+          "readOnly": true
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "readOnly": true
+        },
+        "selectedIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "section": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "game",
+        "scene",
+        "rows",
+        "selectedIndex",
+        "section"
+      ],
+      "additionalProperties": false
+    },
     "CommandModel": {
       "type": "array",
       "items": {

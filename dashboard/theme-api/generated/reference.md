@@ -4,7 +4,7 @@
 
 Generated from the four canonical JSON documents. Do not edit generated files.
 
-API fingerprint: `6a4b6d171301326282df99081df402c9aa9adb89aeafb879ad38b665b9c2b4c0`
+API fingerprint: `47c6e120b722660036c700911b3d5f6d0683372633528dfd362df55b05db6fc0`
 
 This fingerprint is independent from the schema-1 registry fingerprint.
 
@@ -74,6 +74,11 @@ This fingerprint is independent from the schema-1 registry fingerprint.
 | settings.appearance.management | SettingsContext 1 | overlay | themeManagement | navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.view.step, selection.move, selection.select, settings.activate, settings.adjust |
 | casa.inventory | CasaContext 1 | overlay | casaList | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.tab.select, navigation.view.step, selection.move, selection.select |
 | network.inventory | NetworkContext 1 | overlay | networkList | details.open, navigation.back, navigation.family.step, navigation.home, navigation.inbox, navigation.menu, navigation.tab.select, navigation.view.step, network.filter.step, selection.move, selection.select |
+| game.track | GameContext 1 | page | — | navigation.back, navigation.home, navigation.menu, navigation.inbox, navigation.family.step, navigation.view.step, details.open, game.start, game.pause, game.observe, game.display, game.mode, game.configure, game.driver.select, game.driver.create, game.participant, game.option.step, game.option.activate, selection.move, selection.select |
+| game.leaderboard | GameContext 1 | page | — | navigation.back, navigation.home, navigation.menu, navigation.inbox, navigation.family.step, navigation.view.step, details.open, game.start, game.pause, game.observe, game.display, game.mode, game.configure, game.driver.select, game.driver.create, game.participant, game.option.step, game.option.activate, selection.move, selection.select |
+| game.progress | GameContext 1 | page | — | navigation.back, navigation.home, navigation.menu, navigation.inbox, navigation.family.step, navigation.view.step, details.open, game.start, game.pause, game.observe, game.display, game.mode, game.configure, game.driver.select, game.driver.create, game.participant, game.option.step, game.option.activate, selection.move, selection.select |
+| game.menu | GameContext 1 | overlay | gameMenu | navigation.back, navigation.home, navigation.menu, navigation.inbox, navigation.family.step, navigation.view.step, details.open, game.start, game.pause, game.observe, game.display, game.mode, game.configure, game.driver.select, game.driver.create, game.participant, game.option.step, game.option.activate, selection.move, selection.select |
+| game.driver.details | GameContext 1 | overlay | gameDetails | navigation.back, navigation.home, navigation.menu, navigation.inbox, navigation.family.step, navigation.view.step, details.open, game.start, game.pause, game.observe, game.display, game.mode, game.configure, game.driver.select, game.driver.create, game.participant, game.option.step, game.option.activate, selection.move, selection.select |
 
 ## Contexts
 
@@ -652,6 +657,31 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | rows | SportDisciplineModel | required / non-null | {} |
 | selection | SelectionState | required / non-null | {} |
 | description | string | required / non-null | {} |
+
+Method `requestAction(string, string, legacyMap) → ActionResult`.
+
+### GameContext
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| contentId | string | required / non-null | {} |
+| contextVersion | int | required / non-null | {"const": 1} |
+| surfaceInstanceId | string | required / non-null | {} |
+| appearanceRevision | int | required / non-null | {"minimum": 0} |
+| dataRevision | int | required / non-null | {"minimum": 0} |
+| style | ThemeStyle | required / non-null | {} |
+| lifecycle | SurfaceLifecycle | required / non-null | {} |
+| viewport | Rect | required / non-null | {} |
+| safeArea | Rect | required / non-null | {} |
+| commands | CommandModel | required / non-null | {} |
+| actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
+| game | legacyMap | required / non-null | {} |
+| scene | legacyMap | required / non-null | {} |
+| rows | array | required / non-null | {"items": "legacyMap"} |
+| selectedIndex | int | required / non-null | {"minimum": 0} |
+| section | string | required / non-null | {} |
 
 Method `requestAction(string, string, legacyMap) → ActionResult`.
 
@@ -1853,6 +1883,17 @@ The runtime broker also checks lifecycle, generation and private router availabi
 | network.metrics.refresh | required | {} |
 | network.metrics.window | required | {"direction": {"type": "int", "enum": [-1, 1]}} |
 | network.metrics.metric | required | {"direction": {"type": "int", "enum": [-1, 1]}} |
+| game.start | optional | {} |
+| game.pause | optional | {} |
+| game.observe | optional | {"direction": {"type": "int", "enum": [-1, 1]}} |
+| game.display | optional | {"direction": {"type": "int", "enum": [-1, 1]}} |
+| game.option.step | optional | {"direction": {"type": "int", "enum": [-1, 1]}} |
+| game.option.activate | required | {} |
+| game.driver.select | required | {} |
+| game.participant | required | {} |
+| game.mode | optional | {"mode": {"type": "string", "enum": ["impara", "gara", "prova", "campione"]}} |
+| game.configure | optional | {"profile": {"type": "legacyMap"}} |
+| game.driver.create | optional | {"name": {"type": "string", "maxLength": 40}} |
 
 ## Semantic roles
 

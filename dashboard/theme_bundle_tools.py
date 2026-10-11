@@ -152,7 +152,7 @@ def write_full_kit(destination, *, profile=None):
             if not path.is_file() or path.is_symlink() or '__pycache__' in relative.parts:
                 continue
             public_ca = relative.as_posix() == 'resources/iliadbox-ca.pem'
-            allowed = public_ca or (len(relative.parts) == 1 and (path.suffix in {'.py', '.qml', '.sh'} or path.name == 'smartpc-theme')) or relative.parts[0] in SDK_DIRS
+            allowed = public_ca or (len(relative.parts) == 1 and (path.suffix in {'.py', '.qml', '.sh'} or path.name in ('smartpc-theme','game-neat-config.txt','requirements-game.txt'))) or relative.parts[0] in SDK_DIRS
             if not allowed or not public_ca and path.suffix not in SDK_SUFFIXES and path.name not in ('qmldir', 'smartpc-theme'):
                 continue
             target = sdk / relative; target.parent.mkdir(parents=True, exist_ok=True)

@@ -49,10 +49,10 @@ class ContractTests(unittest.TestCase):
 
     def test_coverage_and_not_runtime_availability(self):
         c = self.contract
-        self.assertEqual(len(c.surfaces), 62)
-        self.assertEqual(c.check_source_coverage()['routes'], 42)
+        self.assertEqual(len(c.surfaces), 67)
+        self.assertEqual(c.check_source_coverage()['routes'], 44)
         self.assertEqual(c.check_source_coverage()['applicationOwnedRoutes'], ['themeChooser'])
-        self.assertEqual(c.check_source_coverage()['registeredContents'], 30)
+        self.assertEqual(c.check_source_coverage()['registeredContents'], 35)
         self.assertFalse(c.metadata()['runtimeModuleVerified'])
         self.assertEqual(c.metadata()['availability'], 'contractOnly')
 
@@ -185,7 +185,7 @@ class ContractTests(unittest.TestCase):
         root = self.clone()
         with (root / 'Main.qml').open('a') as f:
             f.write("\n// pushOverlay('fake')\n/* overlay === 'fake' */\nproperty string explanation: \"pushOverlay('fake')\"\n")
-        self.assertEqual(ThemeApiContract(root).check_source_coverage()['routes'], 42)
+        self.assertEqual(ThemeApiContract(root).check_source_coverage()['routes'], 44)
 
     def test_unknown_dynamic_route_requires_inventory(self):
         root = self.clone()

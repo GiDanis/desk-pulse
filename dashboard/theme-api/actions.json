@@ -3,7 +3,7 @@
   "module": {
     "uri": "SmartPC.ThemeApi",
     "major": 2,
-    "minor": 7
+    "minor": 8
   },
   "apiState": "implemented",
   "actions": {
@@ -966,6 +966,247 @@
             -1,
             1
           ]
+        }
+      },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "game.start": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "game.pause": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "game.observe": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {
+        "direction": {
+          "type": "int",
+          "enum": [
+            -1,
+            1
+          ]
+        }
+      },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "game.display": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {
+        "direction": {
+          "type": "int",
+          "enum": [
+            -1,
+            1
+          ]
+        }
+      },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "game.option.step": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {
+        "direction": {
+          "type": "int",
+          "enum": [
+            -1,
+            1
+          ]
+        }
+      },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "game.option.activate": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "game.driver.select": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "game.participant": {
+      "target": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "game.mode": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "impara",
+            "gara",
+            "prova",
+            "campione"
+          ]
+        }
+      },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "game.configure": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {
+        "profile": {
+          "type": "legacyMap"
+        }
+      },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "game.driver.create": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {
+        "name": {
+          "type": "string",
+          "maxLength": 40
         }
       },
       "metadata": {
