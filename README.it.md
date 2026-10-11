@@ -35,7 +35,9 @@ Il rilascio **v0.8.0** introduce il modulo **Rete Locale (LAN Hub)** per router 
 
 ---
 
-**Candidata installata: 0.8.7-rc.3 · 10 ottobre 2026.** Sport dà priorità alle partite in corso con dati freschi e al timing della sessione. Le qualifiche concluse restano visibili con gli ultimi tempi; 5 apre l’evento mostrato. Apple Calm 1.6.2 e preferenze conservati, tre temi verificati su EGLFS. [Fix Sport e limiti di verifica](dashboard/design/v087-sport-live-fix-report.md).
+**Candidata installata: 0.9.0-rc.3 · 11 ottobre 2026.** Gioco con piloti persistenti, menu descritto senza legenda, Controllo/Passo, valutazioni abbinate, campione verificato e Progressi dei tempi. Theme API 2.8 / 67 superfici / Apple Calm 1.6.2; manifest 545 file, backup e reboot verificati, 44 preferenze e piloti precedenti conservati. Cinque seed Evoluzione: tempi migliori del primo campione, 49/50 arrivi finali; nuovo reward sperimentale. Traffico, PPO/NEAT e gate fisici restano da qualificare. [Consegna e limiti](dashboard/design/v09-game-settings-pace-report.md) · [MasterPlan 2.53](dashboard/design/release-masterplan.md).
+
+**Precedente candidata 0.8.7-rc.3 · 10 ottobre 2026.** Sport dà priorità alle partite in corso con dati freschi e al timing della sessione. Le qualifiche concluse restano visibili con gli ultimi tempi; 5 apre l’evento mostrato. Apple Calm 1.6.2 e preferenze conservati, tre temi verificati su EGLFS. [Fix Sport e limiti di verifica](dashboard/design/v087-sport-live-fix-report.md).
 
 **Precedente candidata 0.8.7-rc.2 · 10 ottobre 2026.** Apple Calm 1.6.2 attivo, Theme API 2.7 invariata. Riaperture con cache limitata, dati mirati e contesti inizializzati una volta; palette, font, icone e informazioni conservati, dissolvenze brevi da 100 ms. Nel confronto software EGLFS con motion off: Serie A mediana 466 → 138 ms, Casa 153 → 71 ms, Rete 249 → 111 ms. Tre temi, 515 file, backup, 40 preferenze e personalizzazioni verificati dopo reboot reale. Primi ingressi, Impostazioni e feedback fisico conservano gate residui. [Consegna e limiti](dashboard/design/v087-opening-implementation-report.md) · [MasterPlan](dashboard/design/release-masterplan.md).
 
