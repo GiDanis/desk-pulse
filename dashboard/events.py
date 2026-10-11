@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import math
+import hashlib
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -13,7 +14,7 @@ from zoneinfo import ZoneInfo
 from PySide6.QtCore import QObject, Property, QRunnable, QThreadPool, QTimer, Signal, Slot
 
 from event_core import EventEngine
-from weather_alerts import BulletinProvider, BulletinSnapshot, default_bulletin_cache_path
+from weather_alerts import BulletinProvider, BulletinSnapshot, OfficialRevisionIndex, default_bulletin_cache_path
 
 ROME = ZoneInfo("Europe/Rome")
 
@@ -58,7 +59,7 @@ class EventService(QObject):
         cache_path = (None if str(store_path) == ":memory:" else
                       default_bulletin_cache_path() if path is None else
                       Path(store_path).parent / "dpc-bulletin.json")
-        self._alert_provider = BulletinProvider(cache_path)
+        self._alert_provider = BulletinProvider(cache_path, revision_index=OfficialRevisionIndex() if auto_refresh else None)
         self._engine.prune()
         self._last_prune = time.time()
         self._quiet_enabled = True
@@ -78,6 +79,7 @@ class EventService(QObject):
         self._banner_pending = False
         self._presentation_acknowledgement = False
         self._banner_available = False
+        self._history_mode = False
         self._snapshot: dict[str, Any] = {}
 
         cached = self._alert_provider.load(time.time())
@@ -100,9 +102,8 @@ class EventService(QObject):
         self._banner_timer.timeout.connect(self._finish_banner)
 
         self._tick_timer = QTimer(self)
-        self._tick_timer.setInterval(60_000)
+        self._tick_timer.setSingleShot(True)
         self._tick_timer.timeout.connect(self._tick)
-        self._tick_timer.start()
 
         self._poll_timer = QTimer(self)
         self._poll_timer.setInterval(30 * 60_000)
@@ -148,16 +149,19 @@ class EventService(QObject):
             self._engine.prune(now)
             self._last_prune = now
         snapshot = self._engine.snapshot(now=now, quiet=self._is_quiet(now),
-                                         silenced_categories=self._silenced_categories)
-        active_ids = {item["id"] for item in snapshot["inbox"]}
+                                         silenced_categories=self._silenced_categories, history=self._history_mode)
+        latest = self._engine.lookup(self._banner.get("id", ""), now)
+        if self._banner and not self._banner_pending and latest and latest.get("notificationRank", 0) > self._banner.get("notificationRank", 0):
+            self._banner = {}
+            self._banner_timer.stop()
         if self._banner and self._banner_pending:
-            latest = next((item for item in snapshot['inbox'] if item['id'] == self._banner['id']), {})
             self._banner = latest if latest.get('priority') == 2 and not latest.get('upcoming') else {}
             if not self._banner: self._banner_pending = False
         if self._banner and ((not self._banner_pending and time.monotonic() >= self._banner_until)
                              or (self._banner_pending and not self._banner_available)
                              or self._banner["expiresAt"] <= now or snapshot["urgent"]
-                             or self._banner["id"] not in active_ids or self._is_quiet(now)
+                             or not latest or not self._banner_available or self._is_quiet(now)
+                             or self._banner.get("bannerUntil", self._banner["expiresAt"]) <= now
                              or self._banner["category"] in self._silenced_categories):
             self._banner = {}
             self._banner_pending = False
@@ -169,7 +173,7 @@ class EventService(QObject):
             if not self._banner_pending:
                 self._start_banner()
             snapshot = self._engine.snapshot(now=now, quiet=self._is_quiet(now),
-                                             silenced_categories=self._silenced_categories)
+                                             silenced_categories=self._silenced_categories, history=self._history_mode)
         snapshot["visibleBanner"] = self._banner
         snapshot["bannerPending"] = self._banner_pending
         snapshot["sourceStatus"] = self._source_status
@@ -180,6 +184,20 @@ class EventService(QObject):
         if snapshot != self._snapshot:
             self._snapshot = snapshot
             self.changed.emit()
+        deadline = self._engine.next_deadline(now)
+        if self._quiet_enabled:
+            local = datetime.fromtimestamp(now, ROME)
+            for day in (0, 1):
+                for minute in (self._quiet_start, self._quiet_end):
+                    boundary = (local + timedelta(days=day)).replace(hour=minute // 60, minute=minute % 60, second=0, microsecond=0).timestamp()
+                    if boundary > now:
+                        deadline = min(deadline, boundary)
+        self._tick_timer.start(max(1, int((deadline - now) * 1000) + 1))
+
+    @Slot()
+    def toggleHistory(self) -> None:
+        self._history_mode = not self._history_mode
+        self._tick()
 
     @Property("QVariantMap", notify=changed)
     def eventState(self) -> dict[str, Any]:
@@ -200,6 +218,8 @@ class EventService(QObject):
 
     @Slot(bool)
     def setBannerAvailable(self, available: bool) -> None:
+        if self._banner_available == available:
+            return
         self._banner_available = available
         self._tick()
 
@@ -268,20 +288,29 @@ class EventService(QObject):
             duration = window.get("windowDurationMins")
             duration = int(duration) if type(duration) in (int, float) and math.isfinite(duration) else 0
             label = str(window.get("label") or "Codex")[:40]
-            priority = 2 if used >= critical else 1
+            legacy_id = f"account:{index}:{duration}:{int(reset_at)}"
+            window_key = str(window.get("id") or label)
+            identity = hashlib.sha256(window_key.encode()).hexdigest()[:16]
+            event_id = f"account:{identity}:{duration}:{int(reset_at)}"
+            old = self._engine.lookup(legacy_id, now)
+            if old.get("title", "").startswith(f"Uso {label}:"):
+                self._engine.migrate_identity(legacy_id, event_id, "account")
+            priority = 2
+            rank = 3 if used >= critical else 2
             events.append({
                 "version": 1,
-                "id": f"account:{index}:{duration}:{int(reset_at)}",
+                "id": event_id,
                 "source": "account",
                 "sourceLabel": "Account ChatGPT",
                 "category": "account",
                 "priority": priority,
+                "notificationRank": rank,
                 "title": f"Uso {label}: {used:.0f}%",
                 "detail": f"Finestra di {duration} minuti · Account ChatGPT",
                 "issuedAt": updated,
                 "startsAt": min(updated, now),
                 "expiresAt": expires,
-                "revision": str(int(updated)),
+                "revision": str(rank),
                 "sourceUrl": "",
                 "showOnHome": False,
             })

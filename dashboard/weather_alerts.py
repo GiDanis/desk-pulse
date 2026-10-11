@@ -39,6 +39,34 @@ def _read(url: str, maximum: int, timeout: int = 25) -> bytes:
     return data
 
 
+class OfficialRevisionIndex:
+    """Small official GitHub commit metadata; full DPC page remains a fallback."""
+    base = "https://api.github.com/repos/pcm-dpc/DPC-Bollettini-Criticita-Idrogeologica-Idraulica"
+
+    def __init__(self):
+        self.sha = ""
+        self.key = ""
+
+    def latest(self):
+        commits = json.loads(_read(self.base + "/commits?path=files&per_page=1", 50000))
+        sha = commits[0]["sha"]
+        if not isinstance(sha, str) or not re.fullmatch(r"[a-f0-9]{40}", sha):
+            raise ValueError("Revisione DPC non valida")
+        if sha == self.sha and self.key:
+            return self.key
+        commit = json.loads(_read(self.base + "/commits/" + sha, 200000))
+        files = commit.get("files", [])
+        if len(files) >= 300:
+            raise ValueError("Revisione DPC incompleta")
+        keys = [match.group(1) for value in files if isinstance(value, dict)
+                for match in [re.match(r"files/(?:preview/|topojson/|xml/)?(\d{8}_\d{4})(?:[_.])", value.get("filename", ""))]
+                if match and value.get("status") != "removed"]
+        if not keys:
+            raise ValueError("Revisione senza bollettino individuabile")
+        self.sha, self.key = sha, max(keys)
+        return self.key
+
+
 def _level(text: Any) -> tuple[int, str]:
     if not isinstance(text, str):
         raise ValueError("Livello allerta assente")
@@ -95,6 +123,7 @@ def normalize_bulletin(wrapper: dict[str, Any], maps: dict[str, dict[str, Any]],
             "startsAt": starts_at,
             "expiresAt": expires_at,
             "revision": bulletin_key,
+            "noticeRevision": f"{highest[1]}:{','.join(risks)}:{int(starts_at)}:{int(expires_at)}",
             "sourceUrl": BULLETIN_PAGE,
             "showOnHome": True,
         })
@@ -123,8 +152,9 @@ class BulletinSnapshot:
 class BulletinProvider:
     """Keep the last validated Angri bulletin, separate from delivery state."""
 
-    def __init__(self, cache_path: Path | None) -> None:
+    def __init__(self, cache_path: Path | None, *, revision_index=None) -> None:
         self.cache_path = cache_path
+        self.revision_index = revision_index
         self._payload: dict[str, Any] | None = None
 
     @staticmethod
@@ -204,8 +234,15 @@ class BulletinProvider:
 
     def refresh(self, now: float) -> BulletinSnapshot:
         cached = self.load(now)
-        page = _read(BULLETIN_PAGE, 2_000_000).decode("utf-8", errors="replace")
-        keys = re.findall(r"files/xml/(\d{8}_\d{4})\.zip", page)
+        keys = []
+        if self.revision_index:
+            try:
+                keys = [self.revision_index.latest()]
+            except (OSError, ValueError, KeyError, IndexError, TypeError):
+                pass
+        if not keys:
+            page = _read(BULLETIN_PAGE, 2_000_000).decode("utf-8", errors="replace")
+            keys = re.findall(r"files/xml/(\d{8}_\d{4})\.zip", page)
         if not keys:
             raise ValueError("Bollettino ufficiale non individuato")
         key = max(keys)

@@ -40,7 +40,7 @@ ViewHost {
             sourceItems: host.preview ? host.previewItems : host.show ? host.controller.alertItems : []
             selectedEventId: host.preview ? "preview" : host.controller.alertFocusedId
             unreadCount: host.preview ? host.previewUnreadCount : host.controller.unreadAlertCount
-            sourceStatus: host.preview ? "Demo · nessuna fonte esterna" : host.controller.events.sourceStatus || "in attesa"
+            sourceStatus: host.preview ? "Demo · nessuna fonte esterna" : (host.controller.events.historyMode ? "Storico 7 giorni" : "Recenti") + " · " + (host.controller.events.interruptionStatus || "")
             scrollOffset: host.preview ? 0 : host.controller.alertScroll
             actionHandler: function(action, identifier, argument) { return host.controller.notificationAction(host.mode,action,identifier,argument) }
             occupiedRegions: host.currentItem && host.currentItem.occupiedRegions ?

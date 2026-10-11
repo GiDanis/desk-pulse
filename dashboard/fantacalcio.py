@@ -83,6 +83,8 @@ class FantacalcioService(QObject):
         self.worker = None
         self.failures = 0
         self.last_manual = 0
+        self.requested_key = ""
+        self.requested_match = ""
         self.offline = os.environ.get("SMARTPC_SPORT_OFFLINE", "").lower() in (
             "1",
             "true",
@@ -113,19 +115,19 @@ class FantacalcioService(QObject):
             self.error = ""
             self.cache_error = ""
             self.failures = 0
+            self.requested_key = ""
         self.changed.emit()
         current_page = self.display_page()
         if (
             self.auto
             and key
+            and (self.requested_key != key or self.requested_match != self.match.get("canonicalMatchId", ""))
             and (
                 live_window(self.match)
                 or self.match.get("status") in ("live", "half_time", "finished")
             )
             and (
                 not current_page
-                or self.from_cache
-                and not current_page.get("provisional")
                 or time.time() - current_page["fetchedAt"] >= self.interval()
             )
         ):
@@ -215,6 +217,8 @@ class FantacalcioService(QObject):
         )
         w.signals.finished.connect(self._finished)
         self.worker = w
+        self.requested_key = self.key
+        self.requested_match = self.match.get("canonicalMatchId", "")
         QThreadPool.globalInstance().start(w)
         self.changed.emit()
 
@@ -256,16 +260,9 @@ class FantacalcioService(QObject):
             self.error = "Aggiornamento voti non riuscito."
             self.failures += 1
         self.changed.emit()
-        if self.auto and self.key:
-            retry = (
-                max(
-                    getattr(error, "retry_after", 0),
-                    min(900, 60 * 2 ** min(self.failures, 4)),
-                )
-                if error
-                else self.interval()
-            )
-            self.timer.start(int(min(retry, 86400) * 1000))
+        if self.auto and self.key and self.requested_match != self.match.get("canonicalMatchId", ""):
+            self.set_match(self.match)
+        # Acquisition is on opening/manual refresh only, including after failures.
 
     def clear(self):
         changed = bool(self.match or self.key or self.page is not None or
@@ -274,6 +271,8 @@ class FantacalcioService(QObject):
         self.timer.stop()
         self.match = {}
         self.key = ""
+        self.requested_key = ""
+        self.requested_match = ""
         self.page = None
         self.live_page = None
         self.from_cache = False

@@ -24,7 +24,7 @@ Item {
             color: selected ? root.style.noticeFocusedSurface : root.style.surfaceColor
             radius: root.style.noticeRadius; border.color: selected ? root.style.noticeAccent : root.style.noticeBorder; border.width: selected ? root.context.style.focusWidth : root.style.noticeBorderWidth
             NotificationText { id: title; focused: parent.selected; style: root.style; role: "title"; x: root.style.padding; y: 8; width: parent.width-2*x; text: (modelData.seen ? "" : "●  ")+modelData.title; maximumLineCount: 1; elide: Text.ElideRight }
-            NotificationText { focused: parent.selected; style: root.style; x: root.style.padding; y: title.y+title.height+Math.min(10,root.style.gap); width: parent.width-2*x; height: Math.max(0,parent.height-y-8); text: modelData.detail; maximumLineCount: 1; elide: Text.ElideRight }
+            NotificationText { focused: parent.selected; style: root.style; x: root.style.padding; y: title.y+title.height+Math.min(10,root.style.gap); width: parent.width-2*x; height: Math.max(0,parent.height-y-8); text: (modelData.cancelled ? "Revocato · " : modelData.expired ? "Scaduto · " : "")+modelData.detail; maximumLineCount: 1; elide: Text.ElideRight }
             MouseArea { anchors.fill: parent; onClicked: { root.context.requestAction("selectEvent",modelData.id); root.context.requestAction("openDetails",modelData.id) } }
         }
     }

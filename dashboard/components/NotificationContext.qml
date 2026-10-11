@@ -37,12 +37,12 @@ QtObject {
         mode === "detail" ? ["scrollDetails","back","home"] : ["openInbox","home"]
     readonly property var commandHints: preview ? [{key:7,label:"TORNA"},{key:4,label:"MODALITÀ"},{key:6,label:"MODALITÀ"}] :
         mode === "urgent" ? [{key:5,label:"DETTAGLI"},{key:7,label:"CHIUDI"},{key:1,label:"HOME"}] :
-        mode === "inbox" ? [{key:2,label:"SU"},{key:8,label:"GIÙ"},{key:5,label:"APRI"},{key:7,label:"INDIETRO"}] :
+        mode === "inbox" ? [{key:4,label:"RECENTI/STORICO"},{key:2,label:"SU"},{key:8,label:"GIÙ"},{key:5,label:"APRI"},{key:7,label:"INDIETRO"}] :
         mode === "detail" ? [{key:2,label:"SU"},{key:8,label:"GIÙ"},{key:7,label:"INDIETRO"},{key:1,label:"HOME"}] : [{key:3,label:"AVVISI"}]
     readonly property string guideText: commandHints.map(hint => hint.key + " " + hint.label).join("     ")
     readonly property string sourceText: "Fonte: " + (event.sourceLabel || event.source || "—") +
         " · Emesso " + formatStamp(event.issuedAt)
-    readonly property string validityText: "Valido fino al " + formatStamp(event.expiresAt)
+    readonly property string validityText: (event.cancelled ? "Revocato · " : event.expired ? "Scaduto · " : "Valido fino al ") + formatStamp(event.expiresAt)
     readonly property string iconId: event.category === "weather" || event.source === "weather-alert" ? "notification.weather" :
         event.category === "account" ? "notification.account" : "notification.default"
     function formatStamp(value) { return value ? new Date(value*1000).toLocaleString(Qt.locale("it_IT"),"dd/MM hh:mm") : "—" }

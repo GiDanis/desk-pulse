@@ -15,6 +15,7 @@ from typing import Any
 
 
 HISTORY_SECONDS = 7 * 86400
+MAX_PENDING_BANNERS = 20
 
 
 def validate_event(value: dict[str, Any]) -> dict[str, Any]:
@@ -55,6 +56,14 @@ def validate_event(value: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("Invalid event source label")
     event["revision"] = str(event.get("revision", ""))[:100]
     event["showOnHome"] = event.get("showOnHome") is True
+    until = event.get("bannerUntil", event["expiresAt"])
+    if type(until) not in (int, float) or not math.isfinite(until) or until < event["startsAt"]:
+        raise ValueError("Invalid banner deadline")
+    event["bannerUntil"] = min(until, event["expiresAt"])
+    notice_revision = event.get("noticeRevision", "")
+    if not isinstance(notice_revision, str) or len(notice_revision) > 100:
+        raise ValueError("Invalid notification revision")
+    event["noticeRevision"] = notice_revision
     return event
 
 
@@ -84,6 +93,8 @@ class EventEngine:
         columns = {row["name"] for row in self.db.execute("PRAGMA table_info(events)")}
         if "rank" not in columns:
             self.db.execute("ALTER TABLE events ADD COLUMN rank INTEGER NOT NULL DEFAULT 0")
+        if "skipped_level" not in columns:
+            self.db.execute("ALTER TABLE events ADD COLUMN skipped_level INTEGER NOT NULL DEFAULT 0")
         self.db.execute("UPDATE events SET rank=priority WHERE rank=0")
         self.db.execute("CREATE INDEX IF NOT EXISTS events_expires ON events(expires_at)")
         self.db.execute("CREATE TABLE IF NOT EXISTS source_revisions (source TEXT PRIMARY KEY, revision TEXT NOT NULL)")
@@ -95,6 +106,12 @@ class EventEngine:
             return row["revision"]
         return max((str(json.loads(row["payload"]).get("revision", "")) for row in
                     self.db.execute("SELECT payload FROM events WHERE source=?", (source,))), default="")
+
+    def migrate_identity(self, old_id: str, new_id: str, source: str) -> None:
+        """Keep delivery/read state when a provider gains stable window IDs."""
+        with self.db:
+            if not self.db.execute("SELECT 1 FROM events WHERE id=?", (new_id,)).fetchone():
+                self.db.execute("UPDATE events SET id=? WHERE id=? AND source=?", (new_id, old_id, source))
 
     def replace_source(self, source: str, values: list[dict[str, Any]], *, revision: str | None = None) -> bool:
         """Apply one *valid* provider snapshot atomically, including cancellations."""
@@ -125,9 +142,10 @@ class EventEngine:
                     self.db.execute("""UPDATE events SET priority=?, rank=?, starts_at=?, expires_at=?,
                         payload=?, cancelled=0 WHERE id=?""",
                         (event["priority"], event["notificationRank"], event["startsAt"], event["expiresAt"], payload, event["id"]))
-                    if old["cancelled"]:
+                    previous_revision = json.loads(old["payload"]).get("noticeRevision", "")
+                    if old["cancelled"] or (previous_revision and event["noticeRevision"] and previous_revision != event["noticeRevision"]):
                         self.db.execute("""UPDATE events SET notified_level=0, dismissed_level=0,
-                            seen=0 WHERE id=?""", (event["id"],))
+                            skipped_level=0, seen=0 WHERE id=?""", (event["id"],))
                     changed = True
             active = self.db.execute("SELECT id FROM events WHERE source=? AND cancelled=0", (source,)).fetchall()
             for row in active:
@@ -149,28 +167,60 @@ class EventEngine:
         event.setdefault("bannerSize", "small")
         event["seen"] = bool(row["seen"])
         event["upcoming"] = row["starts_at"] > now
+        event["cancelled"] = bool(row["cancelled"])
+        event["expired"] = row["expires_at"] <= now
+        event["presented"] = row["notified_level"] >= row["rank"]
+        event["deliveryState"] = ("revocato" if row["cancelled"] else "scaduto" if event["expired"]
+                                  else "presentato" if event["presented"] else "solo elenco · coda piena" if row["skipped_level"] >= row["rank"]
+                                  else "solo elenco · fuori tempo" if event.get("bannerUntil", row["expires_at"]) <= now
+                                  else "in attesa")
         return event
 
     def snapshot(self, *, now: float | None = None, quiet: bool = False,
-                 silenced_categories: frozenset[str] = frozenset()) -> dict[str, Any]:
+                 silenced_categories: frozenset[str] = frozenset(), history: bool = False) -> dict[str, Any]:
         current = time.time() if now is None else now
         rows = self._rows(current)
         urgent = next((self._display(row, current) for row in rows
                        if row["starts_at"] <= current and row["priority"] == 3
                        and json.loads(row["payload"])["category"] not in silenced_categories
                        and row["dismissed_level"] < row["rank"]), {})
-        banner = next((self._display(row, current) for row in rows
+        pending = [row for row in rows
                        if not quiet and row["starts_at"] <= current and row["priority"] == 2
+                       and json.loads(row["payload"]).get("bannerUntil", row["expires_at"]) > current
                        and json.loads(row["payload"])["category"] not in silenced_categories
-                       and row["notified_level"] < row["rank"]), {})
+                       and row["notified_level"] < row["rank"] and row["skipped_level"] < row["rank"]]
+        pending.sort(key=lambda row: (-row["rank"], json.loads(row["payload"])["issuedAt"], row["id"]))
+        if len(pending) > MAX_PENDING_BANNERS:
+            with self.db:
+                self.db.executemany("UPDATE events SET skipped_level=MAX(skipped_level,rank) WHERE id=?",
+                                    [(row["id"],) for row in pending[MAX_PENDING_BANNERS:]])
+            pending = pending[:MAX_PENDING_BANNERS]
+            rows = self._rows(current)
+        banner = self._display(pending[0], current) if pending else {}
         future = sorted((row for row in rows if row["starts_at"] > current
                          and json.loads(row["payload"]).get("showOnHome")),
                         key=lambda row: (row["starts_at"], -row["priority"]))
         next_event = self._display(future[0], current) if future else {}
-        inbox = [self._display(row, current) for row in rows[:20]]
+        visible = self.db.execute("""SELECT * FROM events WHERE expires_at>=?
+            ORDER BY starts_at DESC, id LIMIT 200""", (current - HISTORY_SECONDS,)).fetchall() if history else rows[:100]
+        inbox = [self._display(row, current) for row in visible]
         return {"urgent": urgent, "banner": banner, "inbox": inbox,
-                "unreadCount": sum(not row["seen"] for row in rows[:20]),
-                "nextRelevantEvent": next_event}
+                "unreadCount": sum(not row["seen"] for row in rows),
+                "nextRelevantEvent": next_event, "historyMode": history,
+                "queueCount": len(pending), "queuedEvents": [self._display(row, current) for row in pending[:20]],
+                "interruptionStatus": "silenzio" if quiet else "attive"}
+
+    def lookup(self, event_id: str, now: float) -> dict[str, Any]:
+        row = self.db.execute("SELECT * FROM events WHERE id=? AND cancelled=0 AND expires_at>?",
+                              (event_id, now)).fetchone()
+        return self._display(row, now) if row else {}
+
+    def next_deadline(self, now: float) -> float:
+        deadlines = [now + 300]  # Bounded recovery for wall-clock/time-zone changes.
+        for row in self._rows(now):
+            deadlines.extend(value for value in (row["starts_at"], row["expires_at"],
+                             json.loads(row["payload"]).get("bannerUntil", row["expires_at"])) if value > now)
+        return min(deadlines)
 
     def mark_notified(self, event_id: str) -> None:
         with self.db:

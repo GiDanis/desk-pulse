@@ -165,6 +165,36 @@ for scenario,mode in [('banner','small'),('banner grande','large'),('urgente','u
     events.set_demo_scenario('nessuno'); wait(180)
 report['cases'].append('three_themes_visible_notifications_preserve_delivery_focus_deadline')
 
+# Ordinary notices remain visible during consultation, preserving the route and
+# focus. Editors defer pending delivery; one missing format uses the other host.
+for theme_id in ('base','functional','personal.sample'):
+    select(theme_id)
+    execute('pushOverlay("info")')
+    value=event('consult-'+theme_id)
+    events.publish_snapshot('probe',[value]); until(lambda:not events.eventState['bannerPending'] and bool(events.eventState['visibleBanner']))
+    assert root.property('overlay')=='info' and hosts['small'].property('show')
+    assert window.activeFocusItem().objectName()=='inputOwner'
+    execute('notificationAction("small","openInbox",bannerEvent.id,null)')
+    assert root.property('overlay')=='alerts'
+    execute('activateKey(6)'); assert events.eventState['historyMode']
+    execute('activateKey(4)'); assert not events.eventState['historyMode']
+    execute('popOverlay()'); execute('popOverlay()')
+    events.publish_snapshot('probe',[])
+select('base')
+execute('pushOverlay("appearance")')
+events.publish_snapshot('probe',[event('deferred-editor')]);wait()
+assert not events.eventState['visibleBanner']
+assert events._engine.snapshot()['banner']['id']=='deferred-editor'
+execute('popOverlay()');until(lambda:not events.eventState['bannerPending'] and bool(events.eventState['visibleBanner']))
+events.publish_snapshot('probe',[])
+saved_small_item=as_value(hosts['small'].property('currentItem'))
+hosts['small'].setProperty('currentItem',None);until(lambda:not as_value(hosts['small'].property('currentItem')))
+events.publish_snapshot('probe',[event('format-fallback')]);until(lambda:not events.eventState['bannerPending'] and bool(events.eventState['visibleBanner']))
+assert hosts['large'].property('show') and not hosts['small'].property('show')
+events.publish_snapshot('probe',[]);hosts['small'].setProperty('currentItem',saved_small_item);wait_ready(app,root)
+report['cases'].append('consultation_editor_deferral_history_and_format_fallback')
+
+
 # A transparent entry frame cannot deliver the event; the native tween survives
 # the appearance revision and ends with exactly the original delivery deadline.
 service.beginEdit();assert service.setSection('motion',{'banner.small.enter':{'recipe':'builtin.fade','durationMs':200,'distancePx':20,'easing':'outCubic','opacityFrom':0}})
