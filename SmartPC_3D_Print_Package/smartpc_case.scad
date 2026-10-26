@@ -161,21 +161,19 @@ module base_common_cutouts() {
     // Correct physical orientation (Component & heatsink/fan side UP, ports facing REAR wall):
     // 1. Dual USB-C Bay: Power In (X=25.01mm) + DisplayPort Video Out (X=37.58mm)
     //    Aligned directly with Hagibis Dock Host Port!
-    //    Continuous 28.0 x 8.2mm stadium bay + 30.4 x 9.8mm outer lead-in counterbore
-    //    allows any standard USB-C cable overmolding to fit effortlessly and plug in flush.
-    port_z = floor_t + standoff_h + pcb_t + 1.6; // 9.2mm (PCB connector centerline)
+    //    Extra-tall 10.4mm vertical opening (spans Z=3.6 to 14.0mm) + 29.0mm wide bay
+    //    gives massive clearance for any bulky USB-C cable heads, adapters, or angled plugs.
+    port_z = 8.8; // Centered to provide generous 10.4mm vertical through-clearance
     usb_bay_x = (pcb_x + 11.01 + pcb_x + 23.58) / 2; // 31.30mm
 
     translate([usb_bay_x, case_d, port_z]) {
-        rounded_rect_slot(w=28.0, h=8.2, depth=3*wall_t, r=2.0);
-        rounded_rect_slot(w=30.4, h=9.8, depth=2.0, r=2.2);
+        rounded_rect_slot(w=29.0, h=10.4, depth=3*wall_t, r=2.2);
     }
 
     // 2. Mini-HDMI Port (Center X = pcb_x + 52.60 = 66.60mm)
-    //    15.0 x 8.2mm through-opening + 17.4 x 9.8mm outer lead-in counterbore
+    //    Extra-tall 10.4mm vertical opening x 15.5mm wide
     translate([pcb_x + 52.60, case_d, port_z]) {
-        rounded_rect_slot(w=15.0, h=8.2, depth=3*wall_t, r=2.0);
-        rounded_rect_slot(w=17.4, h=9.8, depth=2.0, r=2.2);
+        rounded_rect_slot(w=15.5, h=10.4, depth=3*wall_t, r=2.2);
     }
 
     // --- REAR EXHAUST VENTILATION (Thermal exhaust away from user) ---
