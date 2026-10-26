@@ -5,9 +5,9 @@
 ========================================================================
 
 Questo archivio contiene i file ottimizzati per lo SmartPC:
-1. `smartpc_base_style1_deluxe.stl` — Base Deluxe SE/30 Studio (REVISIONATA con porte corrette e allineamento USB-C)
-2. `smartpc_base_style1_classic.stl` — Base Classic Mac SE alternativa (REVISIONATA)
-3. `smartpc_lid_incline6deg.stl` — Coperchio Inclinato 6° rinforzato (CONFERMATO - Incastro Dock Hagibis)
+1. `smartpc_base_style1_deluxe.stl` — Base Deluxe SE/30 Studio (REVISIONATA con porte corrette, allineamento USB-C, fermi angolari smussati a 45° e icone vintage)
+2. `smartpc_base_style1_classic.stl` — Base Classic Mac SE alternativa (REVISIONATA con medesime migliorie)
+3. `smartpc_lid_incline6deg.stl` — Coperchio Inclinato 6° rinforzato (CONFERMATO e già stampato - Incastro Dock Hagibis)
 4. `smartpc_case.scad` — Codice sorgente master parametrico OpenSCAD aggiornato
 5. `smartpc_bottom_plate.step` / `.dxf` — Piastra opzionale di fondo
 
@@ -21,19 +21,33 @@ La scheda Orange Pi Zero 3W si monta all'interno della base con:
 
 Guardando il RETRO del case dall'esterno (da sinistra verso destra):
 1. USB-C Power (Alimentazione 5V): a SINISTRA (X = 25.0 mm)
+   -> Sormontata da icona vintage incisa a bassorilievo: ⚡ FULMINE / POWER
 2. USB-C DisplayPort Video Output: al CENTRO-SINISTRA (X = 37.6 mm)
+   -> Sormontata da icona vintage incisa a bassorilievo: 🖥️ MONITOR CLASSICO MACINTOSH
    -> PERFETTAMENTE ALLINEATA in verticale con la porta USB-C HOST del monitor Hagibis!
    -> Consente l'uso di un ponticello USB-C corto (5-10 cm o adattatore a U a 180°) perfettamente dritto.
 3. Mini-HDMI: a DESTRA (X = 66.6 mm)
+   -> Sormontata da badge tipografico vintage inciso a bassorilievo: [HDMI]
 
 APERTURE CAVI EXTRA-LARGE (ALTEZZA MAGGIORATA A 10.4 mm):
 - Vano Unificato Dual USB-C: apertura passante continua 29.0 x 10.4 mm (da Z=3.6 a 14.0 mm).
   Fornisce oltre 3.2 mm di spazio sopra e 4.0 mm sotto il connettore: entra a battuta qualsiasi cavo USB-C spesso, connettore rinforzato o adattatore a U/90°.
 - Vano Mini-HDMI: apertura passante 15.5 x 10.4 mm.
 - Parete di separazione solida tra vano USB e HDMI: oltre 13.0 mm di resina piena.
+- Profondità incisione icone: 0.45 mm su parete da 1.6 mm (lascia 1.15 mm di resina piena retrostante, zero rischi di fessurazione o bandiere rosse DFM).
 
 ------------------------------------------------------------------------
-2. ISTRUZIONI PER LA RISTAMPA DELLA SOLA PARTE INFERIORE (JLC3DP)
+2. INSERIMENTO SCHEDA TOOL-LESS CON SMUSSI A 45°
+------------------------------------------------------------------------
+- NESSUNA VITE PER LA SCHEDA (Drop-in a scivolamento guidato):
+  La scheda Orange Pi Zero 3W si appoggia semplicemente dall'alto senza viti:
+  - 4 perni di centraggio conici integrati da 2.6 mm alla base e 1.8 mm in punta guidano i fori del PCB.
+  - 4 fermi a squadra angolari e laterali con SMUSSO D'INVITO A 45° sul labbro superiore (da Z=7.8 a 6.8 mm).
+    Lo smusso a 45° funge da imbuto meccanico: la scheda scivola e si auto-centra istantaneamente nella sua sede senza impuntarsi su nessuno spigolo vivo.
+  - Il fondo del case è perfettamente solido e liscio, privo dei fori delle viti per la scheda (maggiore estetica, rigidità e pulizia).
+
+------------------------------------------------------------------------
+3. ISTRUZIONI PER LA RISTAMPA DELLA SOLA PARTE INFERIORE (JLC3DP)
 ------------------------------------------------------------------------
 Poiché il coperchio superiore è già stampato e verificato, basta caricare su JLC3DP SOLO:
 - File da stampare: `smartpc_base_style1_deluxe.stl`
@@ -44,15 +58,11 @@ PARAMETRI DI ORDINAZIONE:
 - Color: Natural White (compatibile con il coperchio già stampato)
 - Finish: Standard
 - Sanding: YES (per rimuovere i supporti)
-- Infill / Wall: 100% Solid (spessori pareti rinforzati >= 1.7 mm, conformi a tutte le linee guida DFM)
+- Infill / Wall: 100% Solid (spessori pareti rinforzati >= 1.6 mm, conformi a tutte le linee guida DFM)
 
 ------------------------------------------------------------------------
-3. MONTAGGIO TOOL-LESS DELLA SCHEDA E VITERIA
+4. CHIUSURA E VITERIA DEL CASE
 ------------------------------------------------------------------------
-- NESSUNA VITE PER LA SCHEDA (Drop-in a incastro perfetto):
-  La scheda Orange Pi Zero 3W si appoggia semplicemente dall'alto:
-  I 4 perni di centraggio conici integrati da 2.6 mm entrano nei 4 fori del PCB, mentre le 4 guide angolari a L fasciano i bordi della scheda.
-  Il fondo del case è liscio e chiuso, privo dei fori delle viti per la scheda.
 - 4x Viti M2.5 x 16-18 mm: serrano il coperchio superiore dal fondo del case (passando attraverso le sedi dei piedini)
 - 4x Gommini adesivi antiscivolo da 8 mm nelle apposite sedi svasate angolari sul fondo
 ========================================================================

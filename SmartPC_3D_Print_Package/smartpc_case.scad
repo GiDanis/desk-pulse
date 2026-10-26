@@ -176,6 +176,39 @@ module base_common_cutouts() {
         rounded_rect_slot(w=15.5, h=10.4, depth=3*wall_t, r=2.2);
     }
 
+    // --- VINTAGE DEBOSSED REAR I/O ICONS (Authentic Macintosh Style) ---
+    // Deboss depth: 0.45mm into outer rear wall (leaves 1.15mm solid resin, zero DFM issues)
+    // Z position: 15.7mm (centered between port cutout top Z=14.0 and base top Z=17.5)
+    deboss_d = 0.45;
+    icon_z = 15.7;
+
+    // 1. Power Port: Lightning Bolt Pictogram (above X = 25.01mm)
+    translate([pcb_x + 11.01, case_d - deboss_d/2 + 0.05, icon_z])
+        rotate([90, 0, 0])
+        linear_extrude(height=deboss_d + 0.1, center=true)
+        scale([0.7, 0.7, 1])
+        polygon(points=[
+            [-0.3, 1.4], [0.9, 0.1], [0.1, 0.1], [0.5, -1.4],
+            [-0.9, -0.1], [-0.1, -0.1]
+        ]);
+
+    // 2. Video / Host Port: Classic CRT Monitor Pictogram (above X = 37.58mm)
+    translate([pcb_x + 23.58, case_d - deboss_d/2 + 0.05, icon_z])
+        rotate([90, 0, 0])
+        linear_extrude(height=deboss_d + 0.1, center=true) {
+            difference() {
+                square([3.0, 2.1], center=true);
+                square([2.1, 1.3], center=true);
+            }
+            translate([0, -1.2]) square([1.4, 0.5], center=true);
+        }
+
+    // 3. Mini-HDMI Port: "HDMI" Typographic Badge (above X = 66.60mm)
+    translate([pcb_x + 52.60, case_d - deboss_d/2 + 0.05, icon_z])
+        rotate([90, 0, 0])
+        linear_extrude(height=deboss_d + 0.1, center=true)
+        text("HDMI", size=1.6, font="Liberation Sans:style=Bold", halign="center", valign="center");
+
     // --- REAR EXHAUST VENTILATION (Thermal exhaust away from user) ---
     // Right exhaust bank (to the right of Mini-HDMI, X=84.0mm)
     // Ample solid margins: 4.45mm to Mini-HDMI, 4.95mm to rear-right lid pillar
@@ -233,31 +266,69 @@ module base_internal_pillars() {
             cylinder(d1=2.6, d2=1.8, h=1.4);
     }
 
-    // 2. Corner Retaining Guides (Hug PCB 4 outer corners with 0.25mm sliding clearance)
-    clr = 0.25; // 0.25mm clearance
+    // 2. Corner Retaining Guides with 45° Lead-in Funnel Chamfers
+    clr = 0.25; // 0.25mm sliding clearance
     gw = 1.6;   // 1.6mm solid wall (> 1.5mm DFM standard)
     gh = standoff_h + 1.8; // 5.3mm tall (reaches Z=7.8mm, cradling the PCB top edge)
 
-    // Front-Left L-Corner Guide Stop
+    // Front-Left L-Corner Guide Stop (45° lead-in chamfers on inner top edges)
     translate([pcb_x - clr, pcb_y - clr, floor_t]) {
-        translate([-gw, -gw, 0]) cube([6.0 + gw, gw, gh]);
-        translate([-gw, -gw, 0]) cube([gw, 6.0 + gw, gh]);
+        difference() {
+            union() {
+                translate([-gw, -gw, 0]) cube([6.0 + gw, gw, gh]);
+                translate([-gw, -gw, 0]) cube([gw, 6.0 + gw, gh]);
+            }
+            // 45° lead-in chamfers funneling PCB into position
+            translate([0, 0, gh])
+                rotate([45, -45, 0])
+                cube([2.0, 2.0, 2.0], center=true);
+            translate([3.0, 0, gh])
+                rotate([45, 0, 0])
+                cube([8.0, 1.4, 1.4], center=true);
+            translate([0, 3.0, gh])
+                rotate([0, 45, 0])
+                cube([1.4, 8.0, 1.4], center=true);
+        }
     }
 
-    // Front-Right L-Corner Guide Stop
+    // Front-Right L-Corner Guide Stop (45° lead-in chamfers on inner top edges)
     translate([pcb_x + pcb_w + clr, pcb_y - clr, floor_t]) {
-        translate([-6.0, -gw, 0]) cube([6.0 + gw, gw, gh]);
-        translate([0, -gw, 0]) cube([gw, 6.0 + gw, gh]);
+        difference() {
+            union() {
+                translate([-6.0, -gw, 0]) cube([6.0 + gw, gw, gh]);
+                translate([0, -gw, 0]) cube([gw, 6.0 + gw, gh]);
+            }
+            // 45° lead-in chamfers funneling PCB into position
+            translate([0, 0, gh])
+                rotate([45, 45, 0])
+                cube([2.0, 2.0, 2.0], center=true);
+            translate([-3.0, 0, gh])
+                rotate([45, 0, 0])
+                cube([8.0, 1.4, 1.4], center=true);
+            translate([0, 3.0, gh])
+                rotate([0, -45, 0])
+                cube([1.4, 8.0, 1.4], center=true);
+        }
     }
 
-    // Rear-Left Side Guide Stop (along left edge at rear)
+    // Rear-Left Side Guide Stop (45° lead-in chamfer facing +X)
     translate([pcb_x - clr - gw, pcb_y + pcb_d - 6.0, floor_t]) {
-        cube([gw, 6.0 + clr, gh]);
+        difference() {
+            cube([gw, 6.0 + clr, gh]);
+            translate([gw, (6.0 + clr)/2, gh])
+                rotate([0, 45, 0])
+                cube([1.4, 8.0, 1.4], center=true);
+        }
     }
 
-    // Rear-Right Side Guide Stop (along right edge at rear)
+    // Rear-Right Side Guide Stop (45° lead-in chamfer facing -X)
     translate([pcb_x + pcb_w + clr, pcb_y + pcb_d - 6.0, floor_t]) {
-        cube([gw, 6.0 + clr, gh]);
+        difference() {
+            cube([gw, 6.0 + clr, gh]);
+            translate([0, (6.0 + clr)/2, gh])
+                rotate([0, -45, 0])
+                cube([1.4, 8.0, 1.4], center=true);
+        }
     }
 
     // Lid screw pillars (OD 8.8mm, ID 2.8mm, stops exactly at rebate shelf base_h - reb_depth)
