@@ -68,7 +68,8 @@ heatsink_h = 11.8;  // Official aluminum heatsink + 2006 fan height
 standoff_h = 3.5;   // Standoff height for bottom components clearance
 
 // Board Placement (Rear-aligned for direct port accessibility)
-pcb_x = 11.5;
+// pcb_x = 14.0 aligns Orange Pi Zero 3W USB-C Video/DP port directly with Hagibis Dock Host port!
+pcb_x = 14.0;
 pcb_y = case_d - wall_t - pcb_d - 0.5; // Rear-aligned with wall
 
 // 4x PCB Mounting Holes (58.0mm x 23.0mm spacing)
@@ -115,6 +116,17 @@ module horizontal_capsule_cut(length, height, depth) {
     }
 }
 
+module rounded_rect_slot(w, h, depth, r=2.0) {
+    rotate([90, 0, 0])
+    linear_extrude(height=depth, center=true)
+    hull() {
+        translate([-w/2 + r, -h/2 + r]) circle(r=r);
+        translate([ w/2 - r, -h/2 + r]) circle(r=r);
+        translate([ w/2 - r,  h/2 - r]) circle(r=r);
+        translate([-w/2 + r,  h/2 - r]) circle(r=r);
+    }
+}
+
 module capsule_slot_side(length, height, depth) {
     rotate([0, 90, 0])
     linear_extrude(height=depth, center=true)
@@ -146,44 +158,35 @@ module base_common_cutouts() {
         rounded_box(case_w - 2*reb_x, case_d - reb_x - reb_y_front, reb_depth + 1, corner_r - 0.5);
 
     // --- REAR I/O PORTS ---
-    // 1. Mini-HDMI (Center X = pcb_x + 12.4)
-    translate([pcb_x + 12.4, case_d, floor_t + standoff_h + pcb_t + 2.5]) {
-        cube([11.8, 3*wall_t, 6.2], center=true);
-        translate([0, wall_t/2 + 0.6, 0])
-            cube([13.2, wall_t + 1, 7.8], center=true);
+    // Correct physical orientation (Component & heatsink/fan side UP, ports facing REAR wall):
+    // 1. Dual USB-C Bay: Power In (X=25.01mm) + DisplayPort Video Out (X=37.58mm)
+    //    Aligned directly with Hagibis Dock Host Port!
+    //    Continuous 28.0 x 8.2mm stadium bay + 30.4 x 9.8mm outer lead-in counterbore
+    //    allows any standard USB-C cable overmolding to fit effortlessly and plug in flush.
+    port_z = floor_t + standoff_h + pcb_t + 1.6; // 9.2mm (PCB connector centerline)
+    usb_bay_x = (pcb_x + 11.01 + pcb_x + 23.58) / 2; // 31.30mm
+
+    translate([usb_bay_x, case_d, port_z]) {
+        rounded_rect_slot(w=28.0, h=8.2, depth=3*wall_t, r=2.0);
+        rounded_rect_slot(w=30.4, h=9.8, depth=2.0, r=2.2);
     }
 
-    // 2. USB-C 1 - OTG (Center X = pcb_x + 41.4)
-    translate([pcb_x + 41.4, case_d, floor_t + standoff_h + pcb_t + 2.5]) {
-        cube([10.5, 3*wall_t, 6.0], center=true);
-        translate([0, wall_t/2 + 0.6, 0])
-            cube([12.0, wall_t + 1, 7.5], center=true);
+    // 2. Mini-HDMI Port (Center X = pcb_x + 52.60 = 66.60mm)
+    //    15.0 x 8.2mm through-opening + 17.4 x 9.8mm outer lead-in counterbore
+    translate([pcb_x + 52.60, case_d, port_z]) {
+        rounded_rect_slot(w=15.0, h=8.2, depth=3*wall_t, r=2.0);
+        rounded_rect_slot(w=17.4, h=9.8, depth=2.0, r=2.2);
     }
 
-    // 3. USB-C 2 - Host (Center X = pcb_x + 55.4)
-    translate([pcb_x + 55.4, case_d, floor_t + standoff_h + pcb_t + 2.5]) {
-        cube([10.5, 3*wall_t, 6.0], center=true);
-        translate([0, wall_t/2 + 0.6, 0])
-            cube([12.0, wall_t + 1, 7.5], center=true);
-    }
-
-    // --- 1. REAR EXHAUST VENTILATION (Thermal exhaust away from user) ---
-    // Right exhaust bank (to the right of USB-C 2)
+    // --- REAR EXHAUST VENTILATION (Thermal exhaust away from user) ---
+    // Right exhaust bank (to the right of Mini-HDMI, X=84.0mm)
+    // Ample solid margins: 4.45mm to Mini-HDMI, 4.95mm to rear-right lid pillar
     for (rz = [5.5, 9.0, 12.5]) {
-        translate([88.0, case_d, rz])
+        translate([84.0, case_d, rz])
             rotate([90, 0, 0])
             hull() {
-                translate([-6.5, 0]) cylinder(d=1.5, h=3*wall_t, center=true);
-                translate([ 6.5, 0]) cylinder(d=1.5, h=3*wall_t, center=true);
-            }
-    }
-    // Left exhaust bank (to the left of Mini-HDMI)
-    for (rz = [5.5, 9.0, 12.5]) {
-        translate([11.0, case_d, rz])
-            rotate([90, 0, 0])
-            hull() {
-                translate([-4.0, 0]) cylinder(d=1.5, h=3*wall_t, center=true);
-                translate([ 4.0, 0]) cylinder(d=1.5, h=3*wall_t, center=true);
+                translate([-4.25, 0]) cylinder(d=1.5, h=3*wall_t, center=true);
+                translate([ 4.25, 0]) cylinder(d=1.5, h=3*wall_t, center=true);
             }
     }
 

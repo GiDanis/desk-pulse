@@ -1,59 +1,54 @@
 ========================================================================
    SMARTPC HARDWARE - PACCHETTO DEFINITIVO DI PRODUZIONE
    Orange Pi Zero 3W (Dissipatore Attivo) + Dock Hagibis 3.5" IPS
-   Stampa 3D SLA Resina (Base + Coperchio 6°) & Taglio Lamiera Laser
+   Stampa 3D SLA Resina (Base Deluxe v1 + Coperchio 6° v3)
 ========================================================================
 
-Questo archivio contiene TUTTI i file per realizzare lo SmartPC:
-1. `smartpc_base_style1_deluxe.stl` — Base Deluxe SE/30 (Stampa 3D SLA)
-2. `smartpc_base_style1_classic.stl` — Base Classic Mac SE alternativa (Stampa 3D SLA)
-3. `smartpc_lid_incline6deg.stl` — Coperchio Inclinato 6° rinforzato (Stampa 3D SLA)
-4. `smartpc_bottom_plate.step` — Modello 3D solido per JLCPCB Sheet Metal
-5. `smartpc_bottom_plate.dxf` — Disegno vettoriale 2D per JLCPCB Sheet Metal
-6. `smartpc_case.scad` — Codice sorgente master parametrico OpenSCAD
+Questo archivio contiene i file ottimizzati per lo SmartPC:
+1. `smartpc_base_style1_deluxe.stl` — Base Deluxe SE/30 Studio (REVISIONATA con porte corrette e allineamento USB-C)
+2. `smartpc_base_style1_classic.stl` — Base Classic Mac SE alternativa (REVISIONATA)
+3. `smartpc_lid_incline6deg.stl` — Coperchio Inclinato 6° rinforzato (CONFERMATO - Incastro Dock Hagibis)
+4. `smartpc_case.scad` — Codice sorgente master parametrico OpenSCAD aggiornato
+5. `smartpc_bottom_plate.step` / `.dxf` — Piastra opzionale di fondo
 
 ------------------------------------------------------------------------
-1. ISTRUZIONI STAMPA 3D (JLC3DP / SLA)
+1. ORIENTAMENTO SCHEDA E PORTE POSTERIORI (REVISIONE CORRETTA)
 ------------------------------------------------------------------------
-Carica i file STL su JLC3DP:
-- Base: `smartpc_base_style1_deluxe.stl`
-- Coperchio: `smartpc_lid_incline6deg.stl`
+La scheda Orange Pi Zero 3W si monta all'interno della base con:
+- Lato componenti, CPU e dissipatore/ventola rivolti VERSO L'ALTO (verso il coperchio)
+- Pettine GPIO a 40 pin rivolto VERSO IL FRONTE della scocca (Y=0)
+- Connettori I/O rivolti VERSO IL RETRO della scocca (Y=77mm)
+
+Guardando il RETRO del case dall'esterno (da sinistra verso destra):
+1. USB-C Power (Alimentazione 5V): a SINISTRA (X = 25.0 mm)
+2. USB-C DisplayPort Video Output: al CENTRO-SINISTRA (X = 37.6 mm)
+   -> PERFETTAMENTE ALLINEATA in verticale con la porta USB-C HOST del monitor Hagibis!
+   -> Consente l'uso di un ponticello USB-C corto (5-10 cm o adattatore a U a 180°) perfettamente dritto.
+3. Mini-HDMI: a DESTRA (X = 66.6 mm)
+
+APERTURE CAVI MAGGIORATE:
+- Vano Unificato Dual USB-C: apertura passante 28.0 x 8.2 mm con svasatura/tasca esterna da 30.4 x 9.8 mm (profondità 1.0 mm).
+  Permette a QUALSIASI connettore USB-C (anche con testa in plastica/metallo spessa o cavi intrecciati) di entrare a battuta completa senza ostacoli.
+- Vano Mini-HDMI: apertura passante 15.0 x 8.2 mm con svasatura esterna da 17.4 x 9.8 mm.
+
+------------------------------------------------------------------------
+2. ISTRUZIONI PER LA RISTAMPA DELLA SOLA PARTE INFERIORE (JLC3DP)
+------------------------------------------------------------------------
+Poiché il coperchio superiore è già stampato e verificato, basta caricare su JLC3DP SOLO:
+- File da stampare: `smartpc_base_style1_deluxe.stl`
 
 PARAMETRI DI ORDINAZIONE:
-- Technology: SLA
-- Material: LEDO 6060 Resin
-- Color: Natural White (Bianco latte/avorio vintage Mac originale)
-- Finish: NO (Standard)
-- Sanding: SÌ (YES - per rimuovere i segni dei supporti)
-- Thread: NO (le viti M2.5 si autofilettano nei fori guida da 2.3mm)
+- Technology: SLA (Stereolithography)
+- Material: LEDO 6060 Resin (o Imagine Black Resin se desiderato scuro)
+- Color: Natural White (compatibile con il coperchio già stampato)
+- Finish: Standard
+- Sanding: YES (per rimuovere i supporti)
+- Infill / Wall: 100% Solid (spessori pareti rinforzati >= 1.7 mm, conformi a tutte le linee guida DFM)
 
 ------------------------------------------------------------------------
-2. ISTRUZIONI TAGLIO LAMIERA (JLCPCB SHEET METAL)
+3. VITERIA E MONTAGGIO
 ------------------------------------------------------------------------
-Carica su JLCPCB Sheet Metal:
-- 3D File: `smartpc_bottom_plate.step`
-- 2D Drawing: `smartpc_bottom_plate.dxf`
-
-PARAMETRI DI ORDINAZIONE:
-- Material: Stainless Steel 304 (Acciaio Inossidabile) o Alluminio 6061
-- Thickness: 1.5 mm
-- Surface Finish: Brushed (Satinato spazzolato)
-- Deburring: YES
-- Countersink: YES (4 fori angolari M2.5 svasati a 90°)
-- Funzione: Zavorra da 96g sul fondo, stabilità e dissipazione passiva
-
-------------------------------------------------------------------------
-3. VITERIA E HARDWARE DI MONTAGGIO
-------------------------------------------------------------------------
-- 4x Viti M2.5 x 16-18 mm a testa svasata piana (entrano a filo nella piastra di metallo e chiudono il coperchio)
-- 4x Viti M2.5 x 8 mm (per fissare l'Orange Pi Zero 3W al dissipatore attivo)
-- 4x Gommini adesivi antiscivolo da 8 mm di diametro (nelle 4 sedi della piastra)
-- 1x Pad termico da 1.5 mm (opzionale, tra retro PCB Orange Pi e piastra inox)
-
-------------------------------------------------------------------------
-4. CAVETTI POSTERIORI CONSIGLIATI
-------------------------------------------------------------------------
-- Video: Cavo Mini-HDMI to Mini-HDMI corto da 10-15 cm (piatto a nastro FPV o con connettore a 90°/180°)
-- Dati/Hub: Cavo USB-C to USB-C corto da 10-15 cm a U (180°)
-- Alimentazione: Alimentatore USB-C da 5V / 3A nella porta Power dell'Orange Pi
+- 4x Viti M2.5 x 6-8 mm a testa svasata: bloccano l'Orange Pi Zero 3W sulle colonnine interne
+- 4x Viti M2.5 x 16-18 mm: serrano il coperchio superiore dal fondo del case
+- 4x Gommini adesivi antiscivolo da 8 mm nelle apposite sedi svasate sul fondo
 ========================================================================
