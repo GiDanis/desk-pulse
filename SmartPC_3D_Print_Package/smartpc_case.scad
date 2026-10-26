@@ -206,14 +206,6 @@ module base_common_cutouts() {
         }
     }
 
-    // PCB screw holes (M2.5 countersunk from bottom, 1.2mm depth -> 1.3mm floor remaining > 1.2mm)
-    for (pos = mount_holes) {
-        translate([pos[0], pos[1], -1]) {
-            cylinder(d=2.8, h=floor_t + standoff_h + 2);
-            cylinder(d=5.4, h=1.2 + 1);
-        }
-    }
-
     // Lid fastening screw holes (M2.5 countersunk from bottom)
     // Coaxial with rubber foot pockets (Apple/Mac style: rubber feet conceal screws flush!)
     // Completely eliminates the 0.08mm overlap warning (DFM Point B)
@@ -229,12 +221,43 @@ module base_common_cutouts() {
 }
 
 module base_internal_pillars() {
-    // PCB Standoff pillars (OD 5.6mm, ID 2.8mm -> wall thickness 1.4mm > 1.2mm)
+    // --- TOOL-LESS DROP-IN PCB RETENTION SYSTEM (Corner Guides + Self-Centering Locating Pins) ---
+    // 1. 4x Solid Standoff Pillars with Integrated Self-Centering Locating Pins (No bottom screws needed!)
     for (pos = mount_holes) {
-        difference() {
-            translate([pos[0], pos[1], floor_t]) cylinder(d=5.6, h=standoff_h);
-            translate([pos[0], pos[1], floor_t - 0.5]) cylinder(d=2.8, h=standoff_h + 1);
-        }
+        // Base standoff pillar (shelf at Z = floor_t + standoff_h = 6.0mm)
+        translate([pos[0], pos[1], floor_t])
+            cylinder(d=5.6, h=standoff_h);
+        // Integrated conical self-centering locating pin (enters PCB 2.8mm hole)
+        // Base diameter 2.6mm, tip diameter 1.8mm, height 1.4mm (safe within 1.6mm PCB thickness)
+        translate([pos[0], pos[1], floor_t + standoff_h])
+            cylinder(d1=2.6, d2=1.8, h=1.4);
+    }
+
+    // 2. Corner Retaining Guides (Hug PCB 4 outer corners with 0.25mm sliding clearance)
+    clr = 0.25; // 0.25mm clearance
+    gw = 1.6;   // 1.6mm solid wall (> 1.5mm DFM standard)
+    gh = standoff_h + 1.8; // 5.3mm tall (reaches Z=7.8mm, cradling the PCB top edge)
+
+    // Front-Left L-Corner Guide Stop
+    translate([pcb_x - clr, pcb_y - clr, floor_t]) {
+        translate([-gw, -gw, 0]) cube([6.0 + gw, gw, gh]);
+        translate([-gw, -gw, 0]) cube([gw, 6.0 + gw, gh]);
+    }
+
+    // Front-Right L-Corner Guide Stop
+    translate([pcb_x + pcb_w + clr, pcb_y - clr, floor_t]) {
+        translate([-6.0, -gw, 0]) cube([6.0 + gw, gw, gh]);
+        translate([0, -gw, 0]) cube([gw, 6.0 + gw, gh]);
+    }
+
+    // Rear-Left Side Guide Stop (along left edge at rear)
+    translate([pcb_x - clr - gw, pcb_y + pcb_d - 6.0, floor_t]) {
+        cube([gw, 6.0 + clr, gh]);
+    }
+
+    // Rear-Right Side Guide Stop (along right edge at rear)
+    translate([pcb_x + pcb_w + clr, pcb_y + pcb_d - 6.0, floor_t]) {
+        cube([gw, 6.0 + clr, gh]);
     }
 
     // Lid screw pillars (OD 8.8mm, ID 2.8mm, stops exactly at rebate shelf base_h - reb_depth)
