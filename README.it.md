@@ -35,15 +35,18 @@ Il rilascio **v0.8.0** introduce il modulo **Rete Locale (LAN Hub)** per router 
 
 ---
 
-**Candidata installata: 0.9.0-rc.3 · 11 ottobre 2026.** Gioco con piloti persistenti, menu descritto senza legenda, Controllo/Passo, valutazioni abbinate, campione verificato e Progressi dei tempi. Theme API 2.8 / 67 superfici / Apple Calm 1.6.2; manifest 545 file, backup e reboot verificati, 44 preferenze e piloti precedenti conservati. Cinque seed Evoluzione: tempi migliori del primo campione, 49/50 arrivi finali; nuovo reward sperimentale. Traffico, PPO/NEAT e gate fisici restano da qualificare. [Consegna e limiti](dashboard/design/v09-game-settings-pace-report.md) · [MasterPlan 2.53](dashboard/design/release-masterplan.md).
+**Candidata installata: 0.10.0-rc.2 · 27 ottobre 2026.** Scena **Acquario Calm** a tutto schermo con 2 specie locali e 6 pesci, icona dedicata Apple Calm 1.6.5, 69 superfici (Theme API 2.13), timing di animazione misurato a ~60 callback/s in locale senza dipendenze cloud. Include chiusura funzionale completa di Auto / Gioco (v0.9.4-rc.3), orario comune `HH:mm` persistente in alto a destra, filtro di luminosità/notte e ottimizzazione globale delle prestazioni. [Report chiusura Acquario](dashboard/design/v010-aquarium-completion-report.md) · [MasterPlan 3.27](dashboard/design/release-masterplan.md).
 
-**Precedente candidata 0.8.7-rc.3 · 10 ottobre 2026.** Sport dà priorità alle partite in corso con dati freschi e al timing della sessione. Le qualifiche concluse restano visibili con gli ultimi tempi; 5 apre l’evento mostrato. Apple Calm 1.6.2 e preferenze conservati, tre temi verificati su EGLFS. [Fix Sport e limiti di verifica](dashboard/design/v087-sport-live-fix-report.md).
+**Traguardo precedente: v0.9.4-rc.3 — Chiusura funzionale Auto / Gioco (25 ottobre 2026).** Fine gara proporzionata alle qualifiche, gare a 4 auto simultanee su tre giri, piloti persistenti (Maestro, Crono, Memoria, Linea, Tattico) e checkpoint atomici isolati. Fase Gioco conclusa ed entrata in manutenzione. [Report e ricevuta](dashboard/design/v094-game-functional-closure-report.md).
 
-**Precedente candidata 0.8.7-rc.2 · 10 ottobre 2026.** Apple Calm 1.6.2 attivo, Theme API 2.7 invariata. Riaperture con cache limitata, dati mirati e contesti inizializzati una volta; palette, font, icone e informazioni conservati, dissolvenze brevi da 100 ms. Nel confronto software EGLFS con motion off: Serie A mediana 466 → 138 ms, Casa 153 → 71 ms, Rete 249 → 111 ms. Tre temi, 515 file, backup, 40 preferenze e personalizzazioni verificati dopo reboot reale. Primi ingressi, Impostazioni e feedback fisico conservano gate residui. [Consegna e limiti](dashboard/design/v087-opening-implementation-report.md) · [MasterPlan](dashboard/design/release-masterplan.md).
+**Traguardo precedente: v0.9.4-rc.1 — Barra comune con orologio persistente (22 ottobre 2026).** Orario `HH:mm` sempre visibile in alto a destra su tutte le schermate tramite `ShellContext.clock`; filtro dimmer esteso a barra, avvisi e transizioni. [Report](dashboard/design/v094-header-clock-report.md).
+
+**Traguardo precedente: v0.9.3-rc.1 — Ottimizzazioni di sistema (21 ottobre 2026).** Aperture overlay sotto i 100 ms, DTO a singolo passaggio, sintonizzazione priorità CPU/nice e limiti di memoria. [Report](dashboard/design/v093-implementation-report.md).
 
 ## 📸 Gli Spazi di Lavoro
 
-Un carosello a 6 spazi di lavoro fluidi, navigabili in orizzontale e verticale:
+Un carosello a 8 spazi di lavoro fluidi, navigabili in orizzontale (4/6) e in verticale (2/8):
+*Oggi ↔ Meteo ↔ Account ChatGPT ↔ Sport ↔ Casa ↔ Rete locale ↔ Gioco ↔ Acquario*
 
 | **Orologio Ambient & Shell di Sistema** | **Meteo Live & Previsioni a 3 Giorni** |
 |:---:|:---:|

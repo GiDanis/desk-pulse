@@ -1,5 +1,13 @@
 # DeskPulse OS ⚡
 
+**Current installed candidate: 0.10.0-rc.2 (27 October 2026).** Fullscreen ambient **Acquario Calm** with 2 local species and 6 fish, dedicated Apple Calm 1.6.5 theme with custom icon, 69 presentation surfaces (Theme API 2.13), and verified 60 callback/s animation timing without cloud dependencies. Includes complete functional closure of Auto / Gioco (v0.9.4-rc.3), persistent HH:mm top-right clock across all screens, night dimming filter, and systemwide performance tuning. [Aquarium delivery report](dashboard/design/v010-aquarium-completion-report.md) · [Release MasterPlan 3.27](dashboard/design/release-masterplan.md).
+
+**Previous milestone: v0.9.4-rc.3 — Auto / Gioco functional closure (25 October 2026).** Proportionate race finish and qualification parity; 4-car simultaneous races, persistent drivers (Maestro, Crono, Memoria, Linea, Tattico), and isolated atomic checkpoints. Gioco phase functionally closed and entered maintenance. [Report and receipt](dashboard/design/v094-game-functional-closure-report.md).
+
+**Previous milestone: v0.9.4-rc.1 — Common Header Clock & Dimming (22 October 2026).** Persistent `HH:mm` clock in top-right across all surfaces via `ShellContext.clock`; screenwide dimming filter for dark mode. [Report](dashboard/design/v094-header-clock-report.md).
+
+**Previous milestone: v0.9.3-rc.1 — Whole-System Performance (21 October 2026).** Sub-100ms overlay opening latencies, single-pass DTOs, CPU affinity/nice tuning, and memory bounds. [Implementation report](dashboard/design/v093-implementation-report.md).
+
 <p align="center">
   <b>The Open-Source Ambient Operating System for Desk Displays & Single Board Computers.</b>
   <br>
@@ -12,7 +20,7 @@
   <a href="https://www.qt.io/"><img src="https://img.shields.io/badge/Compositor-Qt%206%20%7C%20QML%20EGLFS-41CD52?style=for-the-badge&logo=qt&logoColor=white" alt="Qt 6 QML"></a>
   <img src="https://img.shields.io/badge/Display-Hagibis%20960%C3%97640%20%40%2060Hz-00C49F?style=for-the-badge" alt="Hagibis Display">
   <img src="https://img.shields.io/badge/Graphics-Hardware%20OpenGL-8A2BE2?style=for-the-badge" alt="Hardware OpenGL">
-  <img src="https://img.shields.io/badge/24h%20Soak%20Test-Passed%20(0%20Crashes)-success?style=for-the-badge" alt="24h Stability">
+  <img src="https://img.shields.io/badge/v0.9.3%20Extended%20Qualification-Pending-lightgrey?style=for-the-badge" alt="v0.9.3 extended qualification pending">
   <a href="https://github.com/GiDanis/desk-pulse/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-informational?style=for-the-badge" alt="MIT License"></a>
 </p>
 
@@ -42,7 +50,13 @@ Instead of treating the board as a desktop computer running a slow browser kiosk
 
 ---
 
-**Current installed candidate: 0.9.0-rc.3 (11 October 2026).** Gioco (AI Learning Drivers simulation) with persistent drivers, described settings menu without permanent legends, Control/Pace progression, paired evaluations, verified champion promotion, and lap time progress charts. Theme API 2.8 with 67 surfaces, Apple Calm 1.6.2; manifest 545 files, verified reboot, 44 preferences and driver models preserved. Five Evolution seeds tested (49/50 valid finishes, lap time improvements over initial champion). [Game delivery report](dashboard/design/v09-game-settings-pace-report.md) · [MasterPlan 2.53](dashboard/design/release-masterplan.md).
+**Current installed candidate: 0.10.0-rc.2 (27 October 2026).** Fullscreen ambient **Acquario Calm** with 2 local species and 6 fish, dedicated Apple Calm 1.6.5 theme with custom icon, 69 presentation surfaces (Theme API 2.13), and verified 60 callback/s animation timing without cloud dependencies. Includes complete functional closure of Auto / Gioco (v0.9.4-rc.3), persistent HH:mm top-right clock across all screens, night dimming filter, and systemwide performance tuning. [Aquarium delivery report](dashboard/design/v010-aquarium-completion-report.md) · [Release MasterPlan 3.27](dashboard/design/release-masterplan.md).
+
+**Previous candidate: 0.9.4-rc.3 (25 October 2026).** Proportionate race finish and qualification parity; 4-car simultaneous races, persistent drivers (Maestro, Crono, Memoria, Linea, Tattico), and isolated atomic checkpoints. Gioco phase functionally closed and entered maintenance. [Report and receipt](dashboard/design/v094-game-functional-closure-report.md).
+
+**Previous candidate: 0.9.4-rc.1 (22 October 2026).** Common header with persistent `HH:mm` clock in top-right across all surfaces via `ShellContext.clock`; screenwide dimming filter for dark mode. [Report](dashboard/design/v094-header-clock-report.md).
+
+**Previous candidate: 0.9.3-rc.1 (21 October 2026).** Whole-system performance tuning: sub-100ms overlay opening latencies, single-pass DTOs, CPU affinity/nice tuning, and memory bounds. [Implementation report](dashboard/design/v093-implementation-report.md).
 
 **Previous candidate 0.8.7-rc.3 (10 October 2026).** Sport dashboards prioritize fresh in-progress matches and session timing. Completed qualifying remains visible with its latest timing; key 5 opens the displayed event. Apple Calm 1.6.2 and preferences preserved, three themes checked on EGLFS. [Sport fix and validation limits](dashboard/design/v087-sport-live-fix-report.md).
 
@@ -338,9 +352,11 @@ DeskPulse OS includes the verified kernel fix in [`os/kernel-patches/`](os/kerne
 - [x] **v0.8.0:** **Local Network (LAN Hub) & 3D Print Enclosure** — Freebox/Iliadbox router discovery, 39+ host inventory, 4 favorite tiles, IPv4/IPv6 telemetry, Theme API 2.3 (53 surfaces), and turnkey 3D printable desk enclosure CAD package.
 - [x] **v0.8.1:** **Network Metrics, RRD History & Refined 3D Enclosure** — Iliadbox/Internet, Wi-Fi and Ethernet views with qualified metrics and 1h/24h RRD history graphs; Theme API 2.4 (56 surfaces); 6° inclined ergonomic lid and convective cooling louvers. [Delivery report](dashboard/design/v081-implementation-report.md).
 - [x] **v0.8.3:** **Unified Sport Hub, Task-Based Settings & Theme Engine 2.5** — Consolidated 6-workspace carousel, task-oriented settings, 60 presentation surfaces, Apple Calm 1.3.1 space optimization, and worker persistence. [Delivery report](dashboard/design/v083-implementation-report.md).
-- [ ] **v0.9:** Animated companion and Cozy profile.
-- [ ] **v0.10:** Companion memory and validated AI scene planning.
-- [ ] **v1.0:** Integrated reliability, installation, upgrades and recovery.
+- [x] **v0.9:** **Gioco / AI Learning Drivers** — Persistent AI pilots, 2D oval physics simulation, Evolution / PPO / NEAT / SAC / TD3 engines, race modes, driving school, and functional closure (v0.9.4-rc.3).
+- [x] **v0.10:** **Acquario Calm & Common Header** — Ambient fullscreen 2D aquarium with local species, ~60 callback/s FrameAnimation clock, persistent top-right HH:mm clock across all views, night dimming filter, Theme API 2.13 (69 surfaces) and Apple Calm 1.6.5.
+- [ ] **v0.11:** Animated Companion & Cozy profile.
+- [ ] **v0.12:** Companion memory and validated AI scene planning.
+- [ ] **v1.1:** Integrated reliability, installation, upgrades and recovery.
 
 ---
 
