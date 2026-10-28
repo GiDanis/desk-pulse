@@ -1,0 +1,12 @@
+[Unit]
+Description=Release the boot display before the SmartPC kiosk
+After=plymouth-start.service systemd-user-sessions.service
+Before=smartpc-dashboard.service
+ConditionPathExists=/run/plymouth/pid
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/usr/bin/plymouth quit
+TimeoutStartSec=20
+RemainAfterExit=yes

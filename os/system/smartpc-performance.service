@@ -1,0 +1,16 @@
+[Unit]
+Description=Qualified SmartPC fast-cluster performance policy
+After=systemd-modules-load.service
+Before=smartpc-dashboard.service
+ConditionPathExists=/sys/devices/system/cpu/cpufreq/policy6/scaling_governor
+
+[Service]
+Type=oneshot
+RuntimeDirectory=smartpc-performance
+RuntimeDirectoryMode=0700
+ExecCondition=/usr/local/libexec/smartpc-performance check
+ExecStart=/usr/local/libexec/smartpc-performance apply
+ExecStop=/usr/local/libexec/smartpc-performance restore
+RemainAfterExit=yes
+NoNewPrivileges=true
+PrivateTmp=true

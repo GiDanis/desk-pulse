@@ -44,7 +44,7 @@ def cached(cache, key, raw, build):
 def stats(rows):
     ordered = sorted(rows)
     return {'n': len(rows), 'median_ms': statistics.median(ordered),
-            'p95_ms': ordered[int((len(ordered)-1)*.95)], 'max_ms': max(ordered)} if rows else None
+            'p95_ms': ordered[__import__('math').ceil(len(ordered)*.95)-1], 'max_ms': max(ordered)} if rows else None
 
 class Keypad(QObject):
     keyPressed = Signal(int)
@@ -87,7 +87,7 @@ try:
             row.update(canonicalMatchId='performance-'+str(i), round=str(i//10+1),
                        kickoffUtc=h.now+3600+i*7200, status='scheduled', homeScore=None, awayScore=None)
             fixtures.append(row)
-        h.sport._snapshot['fixtures'] = fixtures
+        h.sport._snapshot = dict(h.sport._snapshot, fixtures=fixtures)
         h.sport.changed.emit()
         h.wait_ready()
         h.pump(50)

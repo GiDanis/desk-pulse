@@ -1,6 +1,7 @@
 [Unit]
 Description=SmartPC fullscreen dashboard
-After=systemd-user-sessions.service
+Wants=smartpc-display-handoff.service
+After=systemd-user-sessions.service smartpc-display-handoff.service
 Conflicts=display-manager.service
 Before=display-manager.service
 StartLimitIntervalSec=0
