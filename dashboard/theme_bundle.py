@@ -120,7 +120,7 @@ def sync_directory(path):
         os.close(descriptor)
 
 
-def atomic_json(path, value):
+def atomic_json(path, value, *, durable=True):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     handle, temporary = tempfile.mkstemp(prefix='.' + path.name + '-', dir=path.parent)
@@ -128,9 +128,9 @@ def atomic_json(path, value):
         with os.fdopen(handle, 'wb') as stream:
             stream.write(canonical_bytes(value) + b'\n')
             stream.flush()
-            os.fsync(stream.fileno())
+            if durable:os.fsync(stream.fileno())
         os.replace(temporary, path)
-        sync_directory(path.parent)
+        if durable:sync_directory(path.parent)
     finally:
         if os.path.exists(temporary):
             os.unlink(temporary)
@@ -265,7 +265,7 @@ def effective_manifest(value, surfaces):
             {'network.router','network.wifi','network.ports'},
             {'sport.hub','settings.services','settings.sports','settings.appearance.management'},
             {'casa.inventory'}, {'network.inventory'},
-            {'game.track','game.leaderboard','game.progress','game.menu','game.driver.details'}]
+            {'game.track','game.leaderboard','game.progress','game.menu','game.driver.details'}, {'game.driver'}, {'aquarium.main'}]
     missing=set(surfaces)-known
     if missing and missing <= set.union(*groups) and all(not (group & missing) or group <= missing for group in groups):
         coverage['fallbacks']=sorted(set(coverage['fallbacks']) | missing)
@@ -875,6 +875,41 @@ class BundleManager:
             except (OSError, ThemeError):
                 continue
         return sorted(result, key=lambda r: (r['id'], semver(r['version']), r['digest']))
+
+    def inventory(self, *, verified_revisions=()):
+        """Administrative rows only: never register or execute bundle renderers.
+
+        Called on catalog refresh, not by QML getters. Invalid packages remain
+        visible even when they cannot enter the executable catalog.
+        """
+        result = []
+        verified={revision_key(row):row for row in verified_revisions}
+        for descriptor in sorted((self.root / 'theme-bundles').glob('*/*/revision.json')):
+            row = {'id': descriptor.parent.parent.name, 'name': descriptor.parent.parent.name,
+                   'version': '', 'digest': '', 'selectable': False, 'state': 'invalid',
+                   'reason': '', 'failedAt': None, 'installed': True}
+            try:
+                revision = read_json(descriptor)
+                revision_key(revision)
+                require(self._revision_path(revision) == descriptor.parent, 'revision', 'percorso identità incoerente')
+                row.update({key: revision[key] for key in ('id', 'version', 'digest')})
+                checked = verified.get(revision_key(revision)) or self.verify_revision(revision)
+                row['name'] = str(checked['manifest'].get('name', row['id']))[:120]
+                marker = self.root / 'theme-quarantine' / (row['digest'] + '.json')
+                if marker.exists():
+                    incident = read_json(marker)
+                    require(isinstance(incident,dict), 'quarantine', 'record incidente non valido')
+                    row.update(state='blocked', reason=str(incident.get('reason', 'Errore precedente'))[:500],
+                               failedAt=incident.get('time') if type(incident.get('time')) in (int,float)
+                               and math.isfinite(incident['time']) else None)
+                elif not isinstance(checked.get('preflight'),dict) or checked['preflight'].get('status') != 'passed':
+                    row['reason']='Compatibilità runtime non verificata; importa una revisione verificata'
+                else:
+                    row.update(state='available', selectable=True)
+            except (OSError, ThemeError, ValueError, TypeError, KeyError) as error:
+                row['reason'] = str(error)[:500]
+            result.append(row)
+        return result
 
     def register_catalog(self, catalog, revision):
         revision = self.verify_revision(revision)

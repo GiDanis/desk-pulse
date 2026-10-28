@@ -215,7 +215,8 @@ class LifecycleManager:
                 state['failureCounts'][key] = state['failureCounts'].get(key, 0) + 1
                 # Do not move leased files; a marker excludes future selection.
                 atomic_json(self.root / 'theme-quarantine' / (failed['digest'] + '.json'),
-                            {'revision': failed, 'reason': str(reason)[:500], 'failures': state['failureCounts'][key]})
+                            {'revision': failed, 'reason': str(reason)[:500],
+                             'time': time.time(), 'failures': state['failureCounts'][key]})
             state['active'] = deepcopy(fallback)
             state['previous'] = deepcopy(BASE)
             state['pending'] = None
@@ -224,6 +225,56 @@ class LifecycleManager:
             atomic_json(self.path, state)
             self._record(state,'recover',phase=pending['phase'] if pending else 'committed',**state['lastRecovery'])
             return {'recovered': True, 'selection': deepcopy(fallback), 'failed': failed, 'reason': str(reason)[:500]}
+
+    def verify_quarantined(self, identity, preflight, *, cancelled=None):
+        """Verify an isolated copy, then readmit only the unchanged incident.
+
+        The lease protects against GC. The manager lock is released throughout
+        the subprocess check so a stuck renderer cannot block GUI recovery.
+        Selection/preferences are never changed by verification.
+        """
+        identity = selection(identity)
+        require(identity != BASE, 'verification', 'revisione distribuita richiesta')
+        marker = self.root / 'theme-quarantine' / (identity['digest'] + '.json')
+        token = self.acquire(identity, owner='isolated-verification')
+        try:
+            with tempfile.TemporaryDirectory(prefix='smartpc-theme-recheck-') as temporary:
+                with manager_lock(self.root):
+                    state = self.read()
+                    require(state['pending'] is None, 'verification', 'attivazione in corso')
+                    incident = marker.read_bytes()
+                    require(selection(read_json(marker)['revision']) == identity,
+                            'verification', 'incidente riferito a una revisione diversa')
+                    generation = state['generation']
+                    revision = self.bundle_manager.verify_revision(identity)
+                    payload = Path(temporary) / 'payload'
+                    shutil.copytree(revision['payload'], payload)
+                from theme_bundle import validate_project
+                checked = validate_project(payload, self.bundle_manager.app_root, check_integrity=True)
+                require(checked['digest'] == identity['digest'], 'verification', 'copia non conforme')
+                report = preflight(payload, checked['manifest'], checked['registry'])
+                require(isinstance(report, dict) and report.get('status') == 'passed',
+                        'verification', 'Verifica isolata fallita: ' + str(report.get('error', '') if isinstance(report, dict) else report)[:400])
+                with manager_lock(self.root):
+                    state = self.read()
+                    require(not cancelled or not cancelled(), 'verification', 'Verifica annullata')
+                    require(state['pending'] is None and state['generation'] == generation,
+                            'verification', 'stato cambiato durante la verifica; riprovare')
+                    require(marker.read_bytes() == incident, 'verification', 'nuovo errore durante la verifica')
+                    self.bundle_manager.verify_revision(identity)
+                    # Persist evidence before removing the exclusion. A crash
+                    # before unlink leaves the revision safely blocked.
+                    archive = self.root / 'theme-reports' / ('recheck-' + uuid.uuid4().hex + '.json')
+                    atomic_json(archive, {'revision': identity, 'time': time.time(),
+                                'incident': read_json(marker), 'verification': report,
+                                'productionActivation': False})
+                    marker.unlink()
+                    sync_directory(marker.parent)
+                    self._record(state, 'readmitted', revision=identity, report=archive.name,
+                                 scope='isolatedRenderers', productionActivation=False)
+                    return {'revision': identity, 'report': str(archive), 'verification': report}
+        finally:
+            self.release(token)
 
     def set_global_adjustments(self, values):
         require(isinstance(values, dict) and not set(values) - {'paletteMode', 'textScale', 'motionMode'}, 'adjustments', 'adattamenti globali non validi')
@@ -365,12 +416,18 @@ class LifecycleManager:
                 removed.append(selection(revision))
             return {'active':identity, 'removed':removed, 'retained':retained, 'recovery':deepcopy(BASE)}
 
-    def heartbeat(self, *, ready=True, generation=None, transition=False):
+    def heartbeat(self, *, ready=True, generation=None, transition=False, context=None):
         """Invoke from a discrete GUI timer, never from a worker/render thread."""
         state = self.read()
         record = {'healthVersion': 1, 'pid': os.getpid(), 'processStart': process_token(os.getpid()),
                   'time': time.time(), 'ready': bool(ready), 'generation': state['generation'] if generation is None else generation,
                   'selection': state['active'], 'pending': state['pending']['candidate'] if state['pending'] else None,
                   'transition': bool(transition)}
-        atomic_json(self.health_path, record)
+        if context:
+            record['context'] = {key:str(context[key])[:160] for key in
+                                 ('surfaceId','rendererId','themeRevision','qtVersion','phase') if key in context}
+        # Liveness is ephemeral and process-token bound. fsync can stall the
+        # very GUI thread being monitored when the filesystem is busy. Durable
+        # activation/checkpoint journals continue using atomic_json's default.
+        atomic_json(self.health_path, record, durable=False)
         return record

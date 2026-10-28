@@ -12,7 +12,10 @@ def make_catalog(store, root, selected=None, trace=None):
     catalog=ThemeCatalog(store,root=root,trace=trace)
     manager=BundleManager(Path(store).parent,app_root=root)
     latest={}
-    verified=manager.list_revisions()
+    all_revisions=manager.list_revisions(include_quarantined=True)
+    catalog.bundle_inventory=manager.inventory(verified_revisions=all_revisions)
+    verified=[revision for revision in all_revisions if not revision['quarantined']
+              and isinstance(revision.get('preflight'),dict) and revision['preflight'].get('status')=='passed']
     # The editor consumes this immutable identity index. Resource verification
     # stays at catalog reload/selection; reading a QML property does no file I/O.
     catalog.installed_bundle_revisions=[{key:revision[key] for key in ('id','version','digest')} for revision in verified]
@@ -30,9 +33,12 @@ def make_catalog(store, root, selected=None, trace=None):
         except (ThemeError,OSError) as error:
             catalog.packs.pop(revision['id'],None)
             catalog.errors.append(str(error))
+            for row in catalog.bundle_inventory:
+                if row['digest']==revision['digest']:
+                    row.update(state='invalid',selectable=False,reason=str(error)[:500])
     return catalog
 
-def preflight(payload, manifest, registry):
+def preflight(payload, manifest, registry, *, cancelled=None):
     """Separate process: a blocked visual cannot block import or the kiosk GUI."""
     from PySide6.QtCore import qVersion
     if semver(qVersion())<semver(manifest['qtMinimum']):
@@ -44,7 +50,24 @@ def preflight(payload, manifest, registry):
             # The matrix exercises every covered surface 18 times. A complete
             # theme must not hit the five-surface starter's fixed time budget.
             timeout=max(90,min(600,12*len(manifest['coverage']['surfaces'])))
-            result=subprocess.run(command,capture_output=True,text=True,env=env,timeout=timeout)
+            if cancelled is None:
+                result=subprocess.run(command,capture_output=True,text=True,env=env,timeout=timeout)
+            else:
+                import time
+                with subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,env=env) as process:
+                    deadline=time.monotonic()+timeout
+                    while True:
+                        if cancelled() or time.monotonic()>=deadline:
+                            process.terminate()
+                            try: process.communicate(timeout=3)
+                            except subprocess.TimeoutExpired: process.kill(); process.communicate()
+                            return {'status':'failed','error':'Verifica annullata' if cancelled() else 'Tempo massimo di verifica superato'}
+                        try:
+                            stdout,stderr=process.communicate(timeout=.2)
+                            result=subprocess.CompletedProcess(command,process.returncode,stdout,stderr)
+                            break
+                        except subprocess.TimeoutExpired:
+                            pass
             report=json.loads(result.stdout)
             if result.returncode or report.get('status')!='passed':
                 return {'status':'failed','error':'Preflight Qt fallito','diagnostics':report,'stderr':result.stderr[-6000:]}

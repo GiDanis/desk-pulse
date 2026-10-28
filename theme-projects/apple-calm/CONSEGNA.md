@@ -1,5 +1,17 @@
 # Apple Calm — consegne
 
+## Revisione 1.6.5 · 26 ottobre 2026
+
+Installata con core0.10.0-rc.2. Glifo Acquario per barra e impostazioni; 1.080 celle dei60 glifi precedenti identiche. Preflight1.098 combinazioni PC/ARM, Main/EGLFS e rientri con il tema salvato passati. Nuovo supplemento120s: 59.965 callback/s, p95 17.90 ms. 682 hash core, dati/opzioni e profili degli altri temi conservati, GUI pronta/NRestarts=0 e nessun reboot OS. [Chiusura e ricevuta](../../dashboard/design/v010-aquarium-completion-report.md). La durata30min precedente resta attribuita alla1.6.4; candidata non promossa stabile.
+
+## Revisione 1.6.4 · 22 ottobre 2026
+
+Installata e **attiva** con core **0.9.4-rc.1 / Theme API 2.12**, digest `d67dccb9bf336273afa9f9cd1b2c23bc9fbe2947f04274f9dfa97a2ac56e0e28`. Orologio HH:mm persistente nella barra, Quiete/Ripristino conservati sotto l’ora; il filtro del core oscura uniformemente la GUI. Matrice PC di 1.098 casi e prova Main EGLFS nei tre temi; preferenze, database e artefatti personali conservati. Nessun reboot OS. [Report e ricevuta](../../dashboard/design/v094-header-clock-report.md).
+
+## Revisione 1.6.3 · 16 ottobre 2026
+
+Installata e **selezionabile**, con Base conservato attivo, su **SmartPC 0.9.0-rc.19 / Theme API 2.11**. Digest `faf3e0032162416a471c8122d320709f47b71df0667b042816fffa4e3b452d62`. MiniHistory e NetworkHistoryChart sospendono il lavoro nascosto e riprendono dai dati correnti, con pixel visibili invariati e clear del dato assente verificato. Il core mostra quarantena/errori e offre verifica isolata/annullabile senza attivazione implicita; uscire dalle impostazioni invariate evita una nuova pubblicazione dell’aspetto. Matrici PC/ARM da 1.098 casi, prove native EGLFS e confronti dei componenti superati. Soak di 30 minuti sul core finale con digest grafico preliminare e supplemento sul payload finale distinti nel report. 608 hash conformi, tutte le 44 preferenze, sei piloti e 3.191 artefatti conservati; GUI pronta, NRestarts=0, nessun reboot OS o training di produzione. Vecchia 1.6.2 in quarantena conservata; causa del SIGSEGV storico e qualifica prolungata/ottica ancora aperte. [Report, ricevuta e limiti](../../dashboard/design/apple-calm-recovery-performance-report.md).
+
 ## Revisione 1.6.2 · 10 ottobre 2026
 
 Installata e attiva con **SmartPC 0.8.7-rc.2 / Theme API 2.7**. Palette, font, icone e layout conservati; dominio team mirato e motion breve da 100 ms per navigazione/ingresso. Core con cache alla chiusura, rilascio dei renderer al cambio tema e contesti inizializzati una volta. Digest `29f17b2dcf54ae37024426b1f3a9d6177f62d7c930ab26308d2381b8cc8cd8d4`. 1.098 combinazioni native, Main nei tre temi, impostazioni/cache e confronti EGLFS qualificati; 515 file, 40 preferenze e personalizzazioni conservati dopo reboot reale, GUI pronta, pending nullo, servizio active/running con NRestarts=0, nessun warning QML rilevato. Backup `/var/backups/smartpc-before-v087-opening-20261010T123037Z`; prove `/var/lib/smartpc-dashboard/v087-opening-proof/`. Residui del freddo, selettore, Impostazioni e collaudo fisico documentati. [Risultati completi](../../dashboard/design/v087-opening-implementation-report.md).

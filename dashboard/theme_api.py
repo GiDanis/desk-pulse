@@ -24,6 +24,8 @@ IMPORT_ROOT = Path(__file__).parent / 'qml'
 
 def bootstrap_theme_api(engine):
     """Shared app/preview/test bootstrap; registration occurs in dependency order."""
+    from game_presentation import register_presentation_clock
+    register_presentation_clock()
     engine.addImportPath(str(IMPORT_ROOT))
     return {'uri': 'SmartPC.ThemeApi', 'major': 2, 'minor': CONTRACT.surfaces_document['module']['minor'],
             'apiFingerprint': CONTRACT.fingerprint, 'runtimeModuleVerified': True}
@@ -559,6 +561,7 @@ class PublicContextFactory(QObject):
         self._request_counter = 0
         self._session = uuid.uuid4().hex[:12]
         self._normalization_cache = {}
+        self._game_sources = {}
 
     @Property(str, constant=True)
     def apiFingerprint(self):
@@ -645,6 +648,12 @@ class PublicContextFactory(QObject):
         return context
 
     def _forget(self, identity):
+        source = self._game_sources.pop(identity, None)
+        if source:
+            try:
+                source[0].sceneChanged.disconnect(source[1])
+            except (RuntimeError, TypeError):
+                pass
         self._contexts.pop(identity, None)
         self._normalization_cache.pop(identity, None)
         for request_id, entry in tuple(self._pending.items()):
@@ -724,6 +733,10 @@ class PublicContextFactory(QObject):
         try:
             cache = self._normalization_cache[id(context)]
             snapshot = normalize_legacy(context.contentId, payload, cache, validate=False)
+            # The owned scene uses a separate private input. Static/lifecycle
+            # refreshes must retain it, including when the renderer is hidden.
+            if id(context) in self._game_sources and 'scene' not in payload:
+                snapshot.pop('scene', None)
             if 'surfaceInstanceId' in snapshot:
                 snapshot['surfaceInstanceId'] = context.surfaceInstanceId
             if 'lifecycle' in snapshot:
@@ -740,10 +753,37 @@ class PublicContextFactory(QObject):
             if accepted:
                 cache['committed-fields'] = {name: (value, context._snapshots.get(name))
                                              for name, value in snapshot.items()}
+                if id(context) in self._game_sources:
+                    self._game_sources[id(context)][1]()
             return accepted
         except (ContractError, TypeError, ValueError, OverflowError) as error:
             self.diagnostic.emit(getattr(error, 'code', 'api.value.invalid'), str(error))
             return False
+
+    @Slot(QObject, QObject, result=bool)
+    def bindGameScene(self, context, service):
+        """Host-only lane; renderers still receive the validated public map.
+
+        Avoid the Python -> JS -> Python round trip and repeated static
+        normalization on every scene. The ordinary atomic validator remains.
+        """
+        identity = id(context)
+        if identity not in self._contexts or context.contentId != 'game.track':
+            return False
+        if identity in self._game_sources:
+            return self._game_sources[identity][0] is service
+        if service is None or not hasattr(service, 'sceneChanged'):
+            return False
+
+        def publish():
+            if identity not in self._contexts or not context._runtime_state.get('active'):
+                return
+            self.update(context, {'scene': service.scene})
+
+        service.sceneChanged.connect(publish)
+        self._game_sources[identity] = (service, publish)
+        publish()
+        return True
 
     def _result(self, accepted=False, request_id='', status='rejected', error=''):
         return {'accepted': accepted, 'requestId': request_id, 'status': status, 'errorCode': error}

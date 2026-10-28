@@ -19,7 +19,7 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parent
 EXAMPLE = ROOT / 'examples/bundles/studio-ambient'
-SDK_DIRS = {'components', 'presentations', 'themes', 'icons', 'motion', 'scenes',
+SDK_DIRS = {'components', 'presentations', 'themes', 'icons', 'motion', 'scenes', 'assets',
             'theme-api', 'fixtures', 'extensions', 'qml', 'examples', 'authoring'}
 SDK_SUFFIXES = {'.py', '.qml', '.js', '.json', '.qmltypes', '.md', '.svg', '.ttf', '.otf',
                 '.png', '.jpg', '.html', '.base64', '.txt', '.sh'}

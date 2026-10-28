@@ -107,6 +107,21 @@ def supervise(command, data_root, *, startup_timeout=30.0, heartbeat_timeout=15.
         if not stopped:
             # systemd/operator shutdown is signalled to this supervisor. Any
             # unsolicited GUI exit, even Qt.quit() with code 0, can loop a theme.
+            # Bounded failure context, never provider data or environment secrets.
+            # Diagnostics must not prevent the independent recovery path.
+            try:
+                from theme_bundle import atomic_json
+                from version import VERSION
+                report_root=lifecycle.root/'theme-reports'
+                health=read_json(lifecycle.health_path) if lifecycle.health_path.exists() else {}
+                if health.get('pid') != process.pid: health={}
+                report={'time':time.time(),'coreVersion':VERSION,'guiPid':process.pid,
+                        'exitCode':code,'reason':failure or 'GUI exit; theme causality unverified',
+                        'health':health}
+                atomic_json(report_root/('gui-failure-'+str(time.time_ns())+'.json'),report)
+                for old in sorted(report_root.glob('gui-failure-*.json'))[:-10]: old.unlink()
+            except (OSError,ThemeError,ValueError):
+                pass
             result = lifecycle.recover(failure or 'processo GUI terminato con codice ' + str(code), failed_active=True)
             print(json.dumps({'supervisor': 'recovered', **result}), file=sys.stderr, flush=True)
             # Restart remains the responsibility of systemd, avoiding a tight loop.

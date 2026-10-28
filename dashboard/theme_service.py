@@ -4,9 +4,10 @@ from collections import OrderedDict
 import json
 import os
 import time
+import threading
 from pathlib import Path
 
-from PySide6.QtCore import QObject, Property, QRunnable, QSettings, QStandardPaths, QThreadPool, QTimer, Signal, Slot
+from PySide6.QtCore import QObject, Property, QRunnable, QSettings, QStandardPaths, QThreadPool, QTimer, Signal, Slot, qVersion
 from PySide6.QtGui import QFontDatabase, QGuiApplication, QImageReader
 from theme_core import ThemeError
 from theme_runtime import make_catalog, preflight
@@ -94,6 +95,22 @@ class PackJob(QRunnable):
             self.result.finished.emit(False,str(error))
 
 
+class VerifyThemeJob(QRunnable):
+    def __init__(self, store, root, identity, result, cancelled):
+        super().__init__()
+        self.store=store; self.root=root; self.identity=deepcopy(identity); self.result=result
+        self.cancelled=cancelled
+
+    def run(self):
+        try:
+            manager=LifecycleManager(self.store.parent,app_root=self.root)
+            manager.verify_quarantined(self.identity,
+                lambda *args:preflight(*args,cancelled=self.cancelled.is_set),cancelled=self.cancelled.is_set)
+            self.result.finished.emit(True,'Verifica isolata riuscita. Il tema è disponibile; scegli Attiva per applicarlo.')
+        except (ThemeError,OSError,ValueError,KeyError,TypeError) as error:
+            self.result.finished.emit(False,'Tema ancora bloccato: '+str(error))
+
+
 class FontRegistry:
     """QFontDatabase is process-wide. Deduplicate by asset digest, retire unused IDs."""
     entries = {}
@@ -148,6 +165,7 @@ class ThemeService(QObject):
     transferFinished = Signal(bool,str)
     themeOperationChanged = Signal()
     themeActivationFinished = Signal(bool)
+    themeVerificationFinished = Signal(bool)
 
     def __init__(self, parent=None, *, store=None, root=None, trace=None):
         super().__init__(parent)
@@ -192,6 +210,9 @@ class ThemeService(QObject):
         self._save_result.finished.connect(self._saved)
         self._pack_result = SaveResult(self)
         self._pack_result.finished.connect(self._pack_finished)
+        self._verify_result = SaveResult(self)
+        self._verify_result.finished.connect(self._verify_finished)
+        self._verification_cancel=None
         if recorder_for(self._trace) is not None:
             self._trace.bind_service(self)
         # Recovery is required even before the first appearance preference has
@@ -264,7 +285,11 @@ class ThemeService(QObject):
             self.frameStateChanged.emit()
             self.editorChanged.emit()
         transitioning = bool(self._candidate or self._auto_apply or self._activation and not self._activation_frame)
-        self.lifecycle.heartbeat(ready=self._gui_ready and not self._theme_timed_out, transition=transitioning)
+        self.lifecycle.heartbeat(ready=self._gui_ready and not self._theme_timed_out, transition=transitioning,
+                                 context={'surfaceId':self._active_content,'themeRevision':self._revision,
+                                          'rendererId':self._snapshot.get('presentations',{}).get(self._active_content,''),
+                                          'qtVersion':qVersion(),
+                                          'phase':self._theme_operation.get('phase',self._status)})
         health_key=selection_key(self._committed.get('bundleRevision',BASE))
         if health_key != self._latest_health_key:
             self._latest_health_key=health_key; self._latest_verified_ticks=0
@@ -757,6 +782,53 @@ class ThemeService(QObject):
     def themes(self):
         selected=self._draft or self._committed
         return [self._theme_metadata(identifier,selected if identifier==selected['themeId'] else None) for identifier in self.catalog.packs]
+
+    @Property('QVariantList',notify=editorChanged)
+    def themeInventory(self):
+        rows=[dict(row,selectable=True,state='active' if row['id']==self.activeThemeId else 'available',
+                   reason='',failedAt=None,installed=True) for row in self.themes]
+        by_id={row['id']:row for row in rows}
+        for revision in getattr(self.catalog,'bundle_inventory',[]):
+            row=by_id.get(revision['id'])
+            if row is None:
+                row=dict(revision,revisions=[])
+                rows.append(row); by_id[row['id']]=row
+            row.setdefault('revisions',[]).append(deepcopy(revision))
+            if not row['selectable'] and revision['state']=='blocked':
+                row.update({key:revision[key] for key in ('version','digest','state','reason','failedAt')})
+        return rows
+
+    @Slot(str,result=bool)
+    def verifyTheme(self, identifier):
+        if self._operation_pending or self._auto_apply or self._candidate is not None or self._pending is not None:
+            return False
+        rows=[row for row in getattr(self.catalog,'bundle_inventory',[])
+              if row['id']==identifier and row['state']=='blocked']
+        if not rows:
+            self._error='Nessuna revisione bloccata da verificare'; self.editorChanged.emit(); return False
+        from theme_bundle import semver
+        row=max(rows,key=lambda item:(semver(item['version']),item['digest']))
+        identity={key:row[key] for key in ('id','version','digest')}
+        self._operation_pending=True
+        self._verification_cancel=threading.Event()
+        self._update_theme_operation(busy=True,phase='verifying',targetId=identifier,
+                                     targetName=row['name'],message='Verifica isolata del tema…',
+                                     palette=deepcopy(self._snapshot.get('tokens',{})),
+                                     motionMode=self._visible.get('motionMode','off'))
+        self.editorChanged.emit()
+        QThreadPool.globalInstance().start(VerifyThemeJob(self.store,self._root,identity,self._verify_result,self._verification_cancel))
+        return True
+
+    @Slot(bool,str)
+    def _verify_finished(self, ok, message):
+        self._operation_pending=False
+        self._verification_cancel=None
+        if ok and not self.reloadCatalog():
+            ok=False; message='Verifica terminata; catalogo non disponibile: '+self._error
+        self._error='' if ok else message
+        self._update_theme_operation(busy=False,phase='verified' if ok else 'error',message=message)
+        self.editorChanged.emit()
+        self.themeVerificationFinished.emit(ok)
     @Property('QVariantMap',notify=editorChanged)
     def selectedTheme(self):
         configuration=self._draft or self._committed
@@ -933,12 +1005,22 @@ class ThemeService(QObject):
     @trace_operation("cancel")
     def cancel(self):
         if self._pending is not None: return False
+        if self._verification_cancel is not None:
+            self._verification_cancel.set()
+            self._update_theme_operation(message='Annullamento della verifica…')
+            return False
         if self._auto_apply:
             self._finish_theme_operation(False,'Cambio annullato · Tema precedente conservato')
         # Shutdown also calls cancel. With no preview there is nothing to
         # republish: creating loaders while the Qt event loop exits is unsafe.
         if self._draft is None and self._candidate is None and self._activation is None:
             return True
+        if self._candidate is None and self._activation is None and self._visible == self._committed:
+            # Opening settings starts a draft even when no value is changed.
+            # Discarding that draft must not publish a new appearance revision
+            # and rebuild every renderer/context on an ordinary Home/Menu exit.
+            self._draft = None; self._draft_profiles = None
+            self._error = ''; self.editorChanged.emit(); return True
         self._clear_candidate(trace_outcome='cancelled')
         self._cancel_activation()
         self._draft = None; self._draft_profiles=None

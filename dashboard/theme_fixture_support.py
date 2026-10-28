@@ -20,7 +20,7 @@ CORPUS=ROOT/'fixtures/theme-runtime'
 
 def isolate_process():
     """All settings, cache, state, transfers and DB are private before Qt imports."""
-    private=tempfile.TemporaryDirectory(prefix='smartpc-runtime-fixture-')
+    private=tempfile.TemporaryDirectory(prefix='smartpc-runtime-fixture-',dir=os.environ.get('SMARTPC_TEST_DATA_TMP'))
     base=Path(private.name).resolve()
     for key,name in [('XDG_CONFIG_HOME','config'),('XDG_DATA_HOME','data'),('XDG_CACHE_HOME','cache'),('XDG_STATE_HOME','state')]:
         os.environ[key]=str(base/name);(base/name).mkdir()
@@ -134,8 +134,10 @@ class LegacyHarness:
         from network import NetworkService
         self.network=NetworkService(auto_refresh=False,demo=True,clock=lambda:self.now)
         from game import GameService
-        self.game=GameService(base/"state/game") if profile.get("game") else None
-        self.state=DashboardState(self.weather,self.system,self.account,self.events,sport=self.sport,racing=self.racing,casa=self.casa,network=self.network,game=self.game)
+        self.game=GameService(base/"state/game",async_metadata=os.environ.get('SMARTPC_TEST_ASYNC_METADATA')=='1',process_backend=profile.get('gameBackend','spawn')) if profile.get("game") else None
+        from aquarium import AquariumService
+        self.aquarium=AquariumService()
+        self.state=DashboardState(self.weather,self.system,self.account,self.events,sport=self.sport,racing=self.racing,casa=self.casa,network=self.network,game=self.game,aquarium=self.aquarium)
         self.state.markCommandsSeen();self.state._quiet_enabled=False;self.events.set_quiet(False,0,1)
         self.state._night_mode=profile['variant'];self.state._brightness_mode='manual';self.state._manual_brightness=100
         self.service=self.state.appearance
@@ -171,6 +173,10 @@ class LegacyHarness:
         assert not self.sport._worker,'positive-control worker did not finish'
         self.root.setProperty('overlay','');self.root.setProperty('overlayStack',[]);self.root.setProperty('familyId','oggi');self.wait_ready()
         self.positive_control={'providerDelegationViaQKeyEvent':True,'networkDenied':True}
+        if self.game and self.game._async_metadata:
+            deadline=time.monotonic()+15
+            while not self.game._drivers and time.monotonic()<deadline:self.pump(5)
+            assert self.game._drivers,'async game metadata readiness timeout'
         self.reset_effects()
 
     def value(self,name):
@@ -263,8 +269,24 @@ class LegacyHarness:
                 if variant=='canvas':
                     # App-registered example renderer, not a theme-provided public API implementation.
                     assert self.service.setSection('scene',{'enabled':True,'renderer':'fixture.canvas'})
+            elif family=='aquarium':
+                from aquarium_catalog import load_catalog
+                # Deterministic visual variants; asynchronous delivery is
+                # exercised separately by check_aquarium_ui.py.
+                self.root.setProperty('familyId','oggi');self.pump(30)
+                self.aquarium._catalog=None if variant in ('loading','error') else load_catalog()
+                self.aquarium._loading=variant=='loading'
+                self.aquarium._error='Risorsa fixture assente' if variant=='error' else ''
+                self.aquarium._publish()
+                assert self.service.setSection('motionMode',variant if variant in ('reduced','off') else 'normal')
+                if variant=='night':assert self.service.setSection('paletteMode','night')
+                if variant=='urgent':self.events.set_demo_scenario('urgente')
+        # Publish a new owned revision, just like a completed provider worker.
+        self.sport._snapshot=dict(self.sport._snapshot)
         self.sport.changed.emit()
         for name,value in case['initialProperties'].items():assert self.root.setProperty(name,value),(name,value)
+        if case['surfaceId']=='aquarium.main' and case['variant']=='paused':
+            self.pump(100);assert self.aquarium.pause()
         if self.value('overlay'):self.root.setProperty('overlayStack',['','menu'])
         if case['id']=='overlay.commands:firstRun':self.state._first_run=True;self.state.settingsChanged.emit()
         if case['surfaceId']=='racing.driver.detail' and case['variant']=='liveTiming':
@@ -347,6 +369,19 @@ class LegacyHarness:
             if case['variant'] in ('normal','reduced','off'):assert mode==case['variant']
             if case['variant']=='canvas':assert host.property('canvasScene') and renderer=='fixture.canvas','canvas variant not actually instantiated'
             if case['variant']=='paused':assert host.property('suspended') and actor.property('paused')
+        elif sid=='aquarium.main':
+            host=self.root.findChild(QObject,'aquariumPage')
+            deadline=time.monotonic()+5
+            while host and not host.property('currentReady') and time.monotonic()<deadline:self.pump(5)
+            assert host and host.property('readiness')=='ready' and host.property('currentReady'),sid
+            assert host.property('width')==960 and host.property('height')==640,sid
+            snapshot=self.aquarium.snapshot;variant=case['variant']
+            assert snapshot['status']==('loading' if variant=='loading' else 'error' if variant=='error' else 'ready'),(variant,snapshot['status'])
+            if variant in ('paused','urgent'):assert snapshot['requestedPlayback']=='paused'
+            if variant in ('reduced','off'):assert snapshot['effectivePlayback']=='static'
+            if variant=='overlay':assert 'overlay' in snapshot['suspendReasons']
+            if variant=='night':assert self.service.resolvedAppearance['variant']=='night'
+            return
         elif sid.startswith('game.'):
             assert self.game is not None and not self.game._process
             if sid in ('game.menu','game.driver.details'):
@@ -354,28 +389,36 @@ class LegacyHarness:
                 assert host and host.property('readiness')=='ready' and host.property('visible'),sid
             else:
                 assert self.value('activeContentId')==sid
-                name={'game.track':'gameTrack','game.leaderboard':'gameLeaderboard','game.progress':'gameProgress'}[sid]
+                name={'game.track':'gameTrack','game.leaderboard':'gameLeaderboard','game.progress':'gameProgress','game.driver':'gameDriver'}[sid]
                 host=self.root.findChild(QObject,name)
                 assert host and host.property('readiness')=='ready' and host.property('visible'),sid
             return
-        elif sid in ('settings.casa','casa.detail','casa.inventory','settings.network','network.detail','network.inventory'):
+        elif sid in ('settings.casa','casa.detail','casa.inventory','settings.network','network.detail','network.inventory','network.router','network.wifi','network.ports','network.history'):
             host=self.root.findChild(QObject,'overlayHost')
             assert host and host.property('readiness')=='ready' and host.property('visible'),sid
+            if sid in ('network.router','network.wifi','network.ports','network.history'):
+                assert host.property('contentId')==sid and host.property('currentReady'),sid
         elif sid.startswith('settings.') and sid not in ('settings.sport','settings.racing'):
             assert self.expression('settingsPanel.active && settingsPanel.rows.length > 0'),sid
         elif sid=='shell.main':assert self.window.width()==960 and self.window.height()==640
         else:assert self.value('overlay')==case['initialProperties'].get('overlay'),sid
-        if sid not in names and sid not in ('shell.main','scene.main','settings.casa','casa.detail','casa.inventory','settings.network','network.detail','network.inventory'):
+        if sid not in names and sid not in ('shell.main','scene.main','settings.casa','casa.detail','casa.inventory','settings.network','network.detail','network.inventory','network.router','network.wifi','network.ports','network.history'):
             source={'device.info':'DeviceInfo','sport.team.detail':'SportTeamOverlay','sport.team.picker':'SportTeamOverlay'}.get(sid, 'MotorsportOverlay' if sid.startswith('racing.') or sid=='settings.racing' else 'SportOverlay' if sid.startswith('sport.') or sid=='settings.sport' else 'SettingsPanel' if sid.startswith('settings.') else 'DashboardOverlay')
             components=[obj for obj in self.root.findChildren(QObject) if obj.metaObject().className().startswith(source+'_') and obj.metaObject().indexOfProperty('dashboard')>=0]
             assert len(components)==1 and components[0].property('visible') and components[0].property('width')>0 and components[0].property('height')>0,(sid,'legacy component not exposed',source)
     def close(self):
+        self.aquarium.close()
         if self.game:self.game.close()
-        from PySide6.QtCore import QThreadPool,qInstallMessageHandler
+        from PySide6.QtCore import QThreadPool,qInstallMessageHandler,QCoreApplication,QEvent
         self.events.close();self.sport.close();self.network.close();self.casa.close()
         for service in self.racing.values():service.close()
         self.window.close();self.engine.deleteLater();self.pump(20)
         assert QThreadPool.globalInstance().waitForDone(3000),'fixture worker teardown timeout'
+        # processEvents alone does not drain DeferredDelete outside app.exec().
+        # Release QML renderer/resource leases while the private files and
+        # diagnostic handler still exist, before TemporaryDirectory cleanup.
+        QCoreApplication.sendPostedEvents(None,QEvent.Type.DeferredDelete)
+        assert not self.messages,self.messages
         self.stack.close();qInstallMessageHandler(self.previous_handler)
 
 

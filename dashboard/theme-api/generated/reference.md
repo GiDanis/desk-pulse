@@ -4,7 +4,7 @@
 
 Generated from the four canonical JSON documents. Do not edit generated files.
 
-API fingerprint: `47c6e120b722660036c700911b3d5f6d0683372633528dfd362df55b05db6fc0`
+API fingerprint: `1106f292d7d4c4b25723aec56680fc529c56d382c8703b39b2e06e547d903177`
 
 This fingerprint is independent from the schema-1 registry fingerprint.
 
@@ -79,6 +79,8 @@ This fingerprint is independent from the schema-1 registry fingerprint.
 | game.progress | GameContext 1 | page | — | navigation.back, navigation.home, navigation.menu, navigation.inbox, navigation.family.step, navigation.view.step, details.open, game.start, game.pause, game.observe, game.display, game.mode, game.configure, game.driver.select, game.driver.create, game.participant, game.option.step, game.option.activate, selection.move, selection.select |
 | game.menu | GameContext 1 | overlay | gameMenu | navigation.back, navigation.home, navigation.menu, navigation.inbox, navigation.family.step, navigation.view.step, details.open, game.start, game.pause, game.observe, game.display, game.mode, game.configure, game.driver.select, game.driver.create, game.participant, game.option.step, game.option.activate, selection.move, selection.select |
 | game.driver.details | GameContext 1 | overlay | gameDetails | navigation.back, navigation.home, navigation.menu, navigation.inbox, navigation.family.step, navigation.view.step, details.open, game.start, game.pause, game.observe, game.display, game.mode, game.configure, game.driver.select, game.driver.create, game.participant, game.option.step, game.option.activate, selection.move, selection.select |
+| game.driver | GameContext 1 | page | — | navigation.back, navigation.home, navigation.menu, navigation.inbox, navigation.family.step, navigation.view.step, details.open, game.start, game.pause, game.observe, game.display, game.mode, game.configure, game.driver.select, game.driver.create, game.participant, game.option.step, game.option.activate, selection.move, selection.select |
+| aquarium.main | AquariumContext 1 | page | — | navigation.back, navigation.home, navigation.menu, navigation.inbox, navigation.family.step, aquarium.pause, aquarium.resume |
 
 ## Contexts
 
@@ -155,6 +157,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | navigation | NavigationSnapshot | required / non-null | {} |
 | layout | ShellLayout | required / non-null | {} |
 | uiStatus | UiStatus | required / non-null | {} |
+| clock | ClockState | optional / non-null | {} |
 
 Method `requestAction(string, string, legacyMap) → ActionResult`.
 
@@ -682,6 +685,27 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | rows | array | required / non-null | {"items": "legacyMap"} |
 | selectedIndex | int | required / non-null | {"minimum": 0} |
 | section | string | required / non-null | {} |
+
+Method `requestAction(string, string, legacyMap) → ActionResult`.
+
+### AquariumContext
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| contentId | string | required / non-null | {} |
+| contextVersion | int | required / non-null | {"const": 1} |
+| surfaceInstanceId | string | required / non-null | {} |
+| appearanceRevision | int | required / non-null | {"minimum": 0} |
+| dataRevision | int | required / non-null | {"minimum": 0} |
+| style | ThemeStyle | required / non-null | {} |
+| lifecycle | SurfaceLifecycle | required / non-null | {} |
+| viewport | Rect | required / non-null | {} |
+| safeArea | Rect | required / non-null | {} |
+| commands | CommandModel | required / non-null | {} |
+| actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
+| aquarium | AquariumSnapshot | required / non-null | {} |
 
 Method `requestAction(string, string, legacyMap) → ActionResult`.
 
@@ -1781,6 +1805,57 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | detailRows | DashboardCardModel | required / non-null | {} |
 | chart | NetworkChart | optional / nullable | {} |
 
+### AquariumSpecies
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| id | string | required / non-null | {} |
+| atlasUrl | string | required / non-null | {} |
+| atlasWidth | int | required / non-null | {"minimum": 0} |
+| atlasHeight | int | required / non-null | {"minimum": 0} |
+| referenceSize | real | required / non-null | {"minimum": 0} |
+| speed | real | required / non-null | {"minimum": 0} |
+| tailFrequency | real | required / non-null | {"minimum": 0} |
+| bodyRect | Rect | required / non-null | {} |
+| tailRect | Rect | required / non-null | {} |
+| finRect | Rect | required / non-null | {} |
+| referenceRect | Rect | required / non-null | {} |
+| tailAnchor | Point | required / non-null | {} |
+| tailPivot | Point | required / non-null | {} |
+| finAnchor | Point | required / non-null | {} |
+| finPivot | Point | required / non-null | {} |
+| spriteUrl | string | required / non-null | {} |
+
+### AquariumInstance
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| id | string | required / non-null | {} |
+| speciesId | string | required / non-null | {} |
+| depth | int | required / non-null | {"minimum": 0, "maximum": 2} |
+| phase | real | required / non-null | {"minimum": 0, "maximum": 1} |
+| startX | real | required / non-null | {"minimum": 0, "maximum": 1} |
+| startY | real | required / non-null | {"minimum": 0, "maximum": 1} |
+
+### AquariumSnapshot
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| sessionId | string | required / non-null | {} |
+| configurationRevision | int | required / non-null | {"minimum": 0} |
+| assetRevision | string | required / non-null | {} |
+| status | string | required / non-null | {"enum": ["idle", "loading", "ready", "error"]} |
+| errorCode | string | required / non-null | {} |
+| errorText | string | required / non-null | {} |
+| requestedPlayback | string | required / non-null | {"enum": ["playing", "paused"]} |
+| effectivePlayback | string | required / non-null | {"enum": ["suspended", "running", "static", "error"]} |
+| suspendReasons | array | required / non-null | {"items": "string", "maxItems": 16} |
+| environmentId | string | required / non-null | {} |
+| seed | int | required / non-null | {"minimum": 0, "maximum": 2147483647} |
+| backgroundUrl | string | required / non-null | {} |
+| species | array | required / non-null | {"items": "AquariumSpecies", "maxItems": 8} |
+| instances | array | required / non-null | {"items": "AquariumInstance", "maxItems": 16} |
+
 ## Models
 
 | Model | Row type | Identity |
@@ -1891,9 +1966,11 @@ The runtime broker also checks lifecycle, generation and private router availabi
 | game.option.activate | required | {} |
 | game.driver.select | required | {} |
 | game.participant | required | {} |
-| game.mode | optional | {"mode": {"type": "string", "enum": ["impara", "gara", "prova", "campione"]}} |
+| game.mode | optional | {"mode": {"type": "string", "enum": ["impara", "gara", "prova", "campione", "qualifica", "impara_infinito", "impara_sorpasso"]}} |
 | game.configure | optional | {"profile": {"type": "legacyMap"}} |
 | game.driver.create | optional | {"name": {"type": "string", "maxLength": 40}} |
+| aquarium.pause | optional | {} |
+| aquarium.resume | optional | {} |
 
 ## Semantic roles
 

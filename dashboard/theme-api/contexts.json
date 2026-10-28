@@ -3,7 +3,7 @@
   "module": {
     "uri": "SmartPC.ThemeApi",
     "major": 2,
-    "minor": 8
+    "minor": 13
   },
   "apiState": "implemented",
   "privateHandles": [
@@ -3112,6 +3112,200 @@
           "required": false
         }
       }
+    },
+    "AquariumSpecies": {
+      "fields": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "atlasUrl": {
+          "type": "string",
+          "readOnly": true
+        },
+        "atlasWidth": {
+          "type": "int",
+          "readOnly": true,
+          "minimum": 0
+        },
+        "atlasHeight": {
+          "type": "int",
+          "readOnly": true,
+          "minimum": 0
+        },
+        "referenceSize": {
+          "type": "real",
+          "readOnly": true,
+          "minimum": 0
+        },
+        "speed": {
+          "type": "real",
+          "readOnly": true,
+          "minimum": 0
+        },
+        "tailFrequency": {
+          "type": "real",
+          "readOnly": true,
+          "minimum": 0
+        },
+        "bodyRect": {
+          "type": "Rect",
+          "readOnly": true
+        },
+        "tailRect": {
+          "type": "Rect",
+          "readOnly": true
+        },
+        "finRect": {
+          "type": "Rect",
+          "readOnly": true
+        },
+        "referenceRect": {
+          "type": "Rect",
+          "readOnly": true
+        },
+        "tailAnchor": {
+          "type": "Point",
+          "readOnly": true
+        },
+        "tailPivot": {
+          "type": "Point",
+          "readOnly": true
+        },
+        "finAnchor": {
+          "type": "Point",
+          "readOnly": true
+        },
+        "finPivot": {
+          "type": "Point",
+          "readOnly": true
+        },
+        "spriteUrl": {
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "AquariumInstance": {
+      "fields": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "speciesId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "depth": {
+          "type": "int",
+          "readOnly": true,
+          "minimum": 0,
+          "maximum": 2
+        },
+        "phase": {
+          "type": "real",
+          "readOnly": true,
+          "minimum": 0,
+          "maximum": 1
+        },
+        "startX": {
+          "type": "real",
+          "readOnly": true,
+          "minimum": 0,
+          "maximum": 1
+        },
+        "startY": {
+          "type": "real",
+          "readOnly": true,
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "AquariumSnapshot": {
+      "fields": {
+        "sessionId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "configurationRevision": {
+          "type": "int",
+          "readOnly": true,
+          "minimum": 0
+        },
+        "assetRevision": {
+          "type": "string",
+          "readOnly": true
+        },
+        "status": {
+          "type": "string",
+          "readOnly": true,
+          "enum": [
+            "idle",
+            "loading",
+            "ready",
+            "error"
+          ]
+        },
+        "errorCode": {
+          "type": "string",
+          "readOnly": true
+        },
+        "errorText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "requestedPlayback": {
+          "type": "string",
+          "readOnly": true,
+          "enum": [
+            "playing",
+            "paused"
+          ]
+        },
+        "effectivePlayback": {
+          "type": "string",
+          "readOnly": true,
+          "enum": [
+            "suspended",
+            "running",
+            "static",
+            "error"
+          ]
+        },
+        "suspendReasons": {
+          "type": "array",
+          "readOnly": true,
+          "items": "string",
+          "maxItems": 16
+        },
+        "environmentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "seed": {
+          "type": "int",
+          "readOnly": true,
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "backgroundUrl": {
+          "type": "string",
+          "readOnly": true
+        },
+        "species": {
+          "type": "array",
+          "readOnly": true,
+          "items": "AquariumSpecies",
+          "maxItems": 8
+        },
+        "instances": {
+          "type": "array",
+          "readOnly": true,
+          "items": "AquariumInstance",
+          "maxItems": 16
+        }
+      }
     }
   },
   "models": {
@@ -3516,6 +3710,11 @@
         "uiStatus": {
           "type": "UiStatus",
           "readOnly": true
+        },
+        "clock": {
+          "type": "ClockState",
+          "readOnly": true,
+          "required": false
         }
       },
       "methods": {
@@ -4436,6 +4635,26 @@
         },
         "section": {
           "type": "string",
+          "readOnly": true
+        }
+      },
+      "methods": {
+        "requestAction": {
+          "parameters": [
+            "string",
+            "string",
+            "legacyMap"
+          ],
+          "result": "ActionResult"
+        }
+      }
+    },
+    "AquariumContext": {
+      "version": 1,
+      "extends": "SurfaceContext",
+      "fields": {
+        "aquarium": {
+          "type": "AquariumSnapshot",
           "readOnly": true
         }
       },

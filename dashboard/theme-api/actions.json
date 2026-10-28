@@ -3,7 +3,7 @@
   "module": {
     "uri": "SmartPC.ThemeApi",
     "major": 2,
-    "minor": 8
+    "minor": 13
   },
   "apiState": "implemented",
   "actions": {
@@ -1160,7 +1160,10 @@
             "impara",
             "gara",
             "prova",
-            "campione"
+            "campione",
+            "qualifica",
+            "impara_infinito",
+            "impara_sorpasso"
           ]
         }
       },
@@ -1209,6 +1212,42 @@
           "maxLength": 40
         }
       },
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "aquarium.pause": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {},
+      "metadata": {
+        "requestId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "required": false
+        }
+      },
+      "result": "ActionResult",
+      "authorizesRuntimeDispatch": false
+    },
+    "aquarium.resume": {
+      "target": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 128
+      },
+      "arguments": {},
       "metadata": {
         "requestId": {
           "type": "string",

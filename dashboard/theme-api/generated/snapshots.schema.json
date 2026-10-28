@@ -4884,6 +4884,254 @@
       ],
       "additionalProperties": false
     },
+    "AquariumSpecies": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "atlasUrl": {
+          "type": "string",
+          "readOnly": true
+        },
+        "atlasWidth": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "atlasHeight": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "referenceSize": {
+          "type": "number",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "speed": {
+          "type": "number",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "tailFrequency": {
+          "type": "number",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "bodyRect": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "tailRect": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "finRect": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "referenceRect": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "tailAnchor": {
+          "$ref": "#/$defs/Point",
+          "readOnly": true
+        },
+        "tailPivot": {
+          "$ref": "#/$defs/Point",
+          "readOnly": true
+        },
+        "finAnchor": {
+          "$ref": "#/$defs/Point",
+          "readOnly": true
+        },
+        "finPivot": {
+          "$ref": "#/$defs/Point",
+          "readOnly": true
+        },
+        "spriteUrl": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "atlasUrl",
+        "atlasWidth",
+        "atlasHeight",
+        "referenceSize",
+        "speed",
+        "tailFrequency",
+        "bodyRect",
+        "tailRect",
+        "finRect",
+        "referenceRect",
+        "tailAnchor",
+        "tailPivot",
+        "finAnchor",
+        "finPivot",
+        "spriteUrl"
+      ],
+      "additionalProperties": false
+    },
+    "AquariumInstance": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "speciesId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "depth": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "readOnly": true
+        },
+        "phase": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "readOnly": true
+        },
+        "startX": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "readOnly": true
+        },
+        "startY": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "speciesId",
+        "depth",
+        "phase",
+        "startX",
+        "startY"
+      ],
+      "additionalProperties": false
+    },
+    "AquariumSnapshot": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "configurationRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "assetRevision": {
+          "type": "string",
+          "readOnly": true
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "idle",
+            "loading",
+            "ready",
+            "error"
+          ],
+          "readOnly": true
+        },
+        "errorCode": {
+          "type": "string",
+          "readOnly": true
+        },
+        "errorText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "requestedPlayback": {
+          "type": "string",
+          "enum": [
+            "playing",
+            "paused"
+          ],
+          "readOnly": true
+        },
+        "effectivePlayback": {
+          "type": "string",
+          "enum": [
+            "suspended",
+            "running",
+            "static",
+            "error"
+          ],
+          "readOnly": true
+        },
+        "suspendReasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "readOnly": true
+        },
+        "environmentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647,
+          "readOnly": true
+        },
+        "backgroundUrl": {
+          "type": "string",
+          "readOnly": true
+        },
+        "species": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AquariumSpecies"
+          },
+          "maxItems": 8,
+          "readOnly": true
+        },
+        "instances": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AquariumInstance"
+          },
+          "maxItems": 16,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "sessionId",
+        "configurationRevision",
+        "assetRevision",
+        "status",
+        "errorCode",
+        "errorText",
+        "requestedPlayback",
+        "effectivePlayback",
+        "suspendReasons",
+        "environmentId",
+        "seed",
+        "backgroundUrl",
+        "species",
+        "instances"
+      ],
+      "additionalProperties": false
+    },
     "SurfaceContext": {
       "type": "object",
       "properties": {
@@ -5267,6 +5515,10 @@
         },
         "uiStatus": {
           "$ref": "#/$defs/UiStatus",
+          "readOnly": true
+        },
+        "clock": {
+          "$ref": "#/$defs/ClockState",
           "readOnly": true
         }
       },
@@ -7860,6 +8112,100 @@
         "rows",
         "selectedIndex",
         "section"
+      ],
+      "additionalProperties": false
+    },
+    "AquariumContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "aquarium": {
+          "$ref": "#/$defs/AquariumSnapshot",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "aquarium"
       ],
       "additionalProperties": false
     },

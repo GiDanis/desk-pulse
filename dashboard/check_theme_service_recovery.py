@@ -46,6 +46,18 @@ class ServiceRecoveryTests(unittest.TestCase):
     def service(self):
         return ThemeService(store=self.store)
 
+    def test_unchanged_settings_exit_does_not_republish_appearance(self):
+        service=self.service()
+        service.beginEdit();revision=service.revision;appearance=service.resolvedAppearance
+        notifications=[];service.changed.connect(lambda:notifications.append(True))
+        with patch.object(service,'_publish',wraps=service._publish) as published:
+            self.assertTrue(service.cancel())
+            published.assert_not_called()
+        self.assertFalse(service.editing)
+        self.assertEqual(service.revision,revision)
+        self.assertEqual(service.resolvedAppearance,appearance)
+        self.assertEqual(notifications,[])
+
     def preview(self,service):
         service.beginEdit()
         self.assertTrue(service.selectDraft('studio.ambient'),service.lastError)

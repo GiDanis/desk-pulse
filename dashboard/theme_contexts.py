@@ -10,9 +10,9 @@ from copy import deepcopy
 from datetime import datetime
 from types import MappingProxyType
 
-from PySide6.QtCore import QObject, Property, Signal, Slot
+from PySide6.QtCore import QObject, Property, Signal, Slot, QCoreApplication, QTimer
 from PySide6.QtGui import QColor
-from PySide6.QtQml import QQmlEngine, qmlRegisterUncreatableType
+from PySide6.QtQml import QQmlEngine, qmlRegisterUncreatableType, qjsEngine
 
 from theme_api_contract import ThemeApiContract
 from theme_models import ThemeListModel
@@ -36,6 +36,42 @@ class _RuntimeContract(ThemeApiContract):
 CONTRACT = _RuntimeContract()
 _DEFAULT_SNAPSHOTS = {}
 PUBLIC_TYPES = {}
+# JavaScriptOwnership controls Qt GC, but does not keep a Python-created
+# wrapper alive while a QObject* slot result crosses into QML (PySide6 6.8.2).
+# Retain that wrapper until Qt destroys an exposed result. Pure Python returns
+# leave the handoff on the next event turn and remain owned by their caller.
+_RETURNED_RESULTS = {}
+_RESULT_HANDOFFS = set()
+_RESULT_HANDOFF_SCHEDULED = False
+
+
+def _drain_result_handoffs():
+    global _RESULT_HANDOFF_SCHEDULED
+    _RESULT_HANDOFF_SCHEDULED = False
+    keys = tuple(_RESULT_HANDOFFS)
+    _RESULT_HANDOFFS.clear()
+    for key in keys:
+        obj = _RETURNED_RESULTS.get(key)
+        if obj is not None and qjsEngine(obj) is None:
+            _RETURNED_RESULTS.pop(key, None)
+
+
+def _retain_returned_result(obj):
+    global _RESULT_HANDOFF_SCHEDULED
+    if QCoreApplication.instance() is None:
+        return  # Without a Qt application this can only be a Python caller.
+    key = id(obj)
+    _RETURNED_RESULTS[key] = obj
+    _RESULT_HANDOFFS.add(key)
+    def destroyed(*_args, registry=_RETURNED_RESULTS, handoffs=_RESULT_HANDOFFS):
+        registry.pop(key, None)
+        handoffs.discard(key)
+    obj.destroyed.connect(destroyed)
+    if not _RESULT_HANDOFF_SCHEDULED:
+        _RESULT_HANDOFF_SCHEDULED = True
+        QTimer.singleShot(0, _drain_result_handoffs)
+
+
 PRIMITIVE_TYPES = {'string': str, 'int': int, 'real': float, 'bool': bool,
                    'color': QColor, 'scalar': 'QVariant', 'legacyMap': 'QVariantMap',
                    'array': 'QVariantList'}
@@ -212,6 +248,7 @@ def _request(self, action_id, target_id='', arguments=None):
     # completion/revocation. Python callers retain the wrapper normally.
     obj = PUBLIC_TYPES['ActionResult'](result)
     QQmlEngine.setObjectOwnership(obj, QQmlEngine.JavaScriptOwnership)
+    _retain_returned_result(obj)
     if self._broker is not None:
         self._broker._track_result(obj)
     return obj

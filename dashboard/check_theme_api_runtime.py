@@ -31,6 +31,16 @@ class PublicApiTests(unittest.TestCase):
         self.errors = []
         self.factory.diagnostic.connect(lambda *args: self.errors.append(args))
 
+    def test_shell_clock_updates_in_place_without_navigation(self):
+        context = self.factory.create('shell.main')
+        self.assertTrue(self.factory.updateLegacy(context, {'clockText': '23:59', 'epoch': 123.0}))
+        clock = context.clock
+        self.assertEqual(clock.timeText, '23:59')
+        self.assertTrue(self.factory.updateLegacy(context, {'clockText': '00:00', 'epoch': 183.0}))
+        self.assertIs(context.clock, clock)
+        self.assertEqual(clock.timeText, '00:00')
+        self.assertEqual(clock.epoch, 183.0)
+
     def test_private_style_cache_owns_wrapper_until_context_release(self):
         import weakref
         from theme_api import object_snapshot

@@ -2,11 +2,11 @@
 import json
 import os
 from pathlib import Path
-import tempfile
 import time
 from unittest.mock import patch
 
-os.environ['XDG_CONFIG_HOME'] = tempfile.mkdtemp(prefix='smartpc-sport-ui-')
+from theme_fixture_support import isolate_process
+_private, _base = isolate_process()
 os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
 os.environ.setdefault('QT_QUICK_BACKEND', 'software')
 
@@ -41,6 +41,9 @@ def main():
     for match in data['fixtures']:
         match['fetchedAt'] = now
     sport = SportService(auto_refresh=False, cache_path=directory/'sport.json', state_path=directory/'goals.json', initial=data, verified=False)
+    def publish_sport():
+        if sport._snapshot is not None:sport._snapshot=dict(sport._snapshot)
+        sport.changed.emit()
     events = EventService(path=directory/'events.sqlite3', auto_refresh=False)
     weather = WeatherService(auto_refresh=False)
     account = AccountService(path=directory/'missing.json')
@@ -203,7 +206,7 @@ def main():
     for m in future: m.update(kickoffUtc=now+3600, round='6')
     sport._snapshot = simultaneous
     sport._error = ''
-    sport.changed.emit(); app.processEvents()
+    publish_sport(); app.processEvents()
     assert {m['canonicalMatchId'] for m in future} <= {m['canonicalMatchId'] for m in value('sportOverviewMatches')}
     assert len(panel.property('rows').toVariant()) == 3
     first_page = {m['canonicalMatchId'] for m in panel.property('rows').toVariant()}
@@ -216,7 +219,7 @@ def main():
     assert not timer.property('running'), 'summary rotation continued during selection'
     press(7)
     for m in future: m.update(status='live', kickoffUtc=now-1800, homeScore=0, awayScore=0)
-    sport.changed.emit(); app.processEvents()
+    publish_sport(); app.processEvents()
     press(8)
     assert value('sportView') == 'IN CORSO'
     assert len(value('sportOverviewMatches')) == 4
@@ -233,7 +236,7 @@ def main():
     press(7); press(2); press(2)
     assert value('sportView') == 'IN CORSO'
     for m in future: m['status'] = 'finished'
-    sport.changed.emit(); app.processEvents()
+    publish_sport(); app.processEvents()
     assert value('sportView') == 'IN CORSO', 'update unexpectedly changed page'
     assert value('sportMatch')['status'] == 'finished', 'final result disappeared'
     assert panel.property('rows').toVariant()[0]['status'] == 'finished'

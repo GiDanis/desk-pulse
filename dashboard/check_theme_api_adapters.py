@@ -85,6 +85,7 @@ def verify():
                     assert context.session.id == event['sessions'][0]['id']
                 checks.append('actualRacingEventSessionIdentity')
             if surface_id == 'shell.main':
+                assert context.clock.timeText == harness.expression('timeText()')
                 assert context.families.count == len(harness.value('families'))
                 assert context.navigation.familyCount == context.families.count
                 assert context.navigation.familyPosition == harness.value('family') + 1

@@ -5,7 +5,7 @@ Canvas {
     required property var visualStyle
     readonly property var drawing: {
         const lines=[]
-        if (!chart) return lines
+        if (!visible || !chart) return lines
         for (let i=0;i<chart.series.count;i++) {
             const series=chart.series.get(i),points=[]
             for (let j=0;j<series.points.count;j++) {const p=series.points.get(j);points.push({time:p.time,value:p.value,broken:p.breakBefore})}
@@ -13,11 +13,18 @@ Canvas {
         }
         return lines
     }
-    onDrawingChanged:requestPaint()
-    onWidthChanged:requestPaint()
-    onHeightChanged:requestPaint()
+    readonly property string paintPalette: visualStyle ? [visualStyle.border,visualStyle.accent,visualStyle.textSecondary].join("|") : ""
+    function repaintVisible() { if (visible && available) requestPaint() }
+    onDrawingChanged:repaintVisible()
+    onWidthChanged:repaintVisible()
+    onHeightChanged:repaintVisible()
+    onPaintPaletteChanged:repaintVisible()
+    onVisibleChanged:repaintVisible()
+    onAvailableChanged:repaintVisible()
     onPaint: {
-        const c=getContext("2d");c.reset();if (!chart) return;let maximum=0
+        if (!visible) return
+        const c=getContext("2d");c.reset();let maximum=0
+        if (!chart) return
         for (var a=0;a<root.drawing.length;a++) for (var b=0;b<root.drawing[a].length;b++) {var v=root.drawing[a][b].value;if (v!==null && v!==undefined && isFinite(v)) maximum=Math.max(maximum,v)}
         maximum=Math.max(maximum,1)
         c.strokeStyle=visualStyle.border;c.lineWidth=1

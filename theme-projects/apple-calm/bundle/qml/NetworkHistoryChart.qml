@@ -6,6 +6,7 @@ Item {
     readonly property var series:chart.series
     readonly property var drawing: {
         const result=[]
+        if (!visible || !chart) return result
         for (let i=0;i<series.count;i++) {
             const s=series.get(i),points=[]
             for (let j=0;j<s.points.count;j++) { const p=s.points.get(j);points.push({time:p.time,value:p.value,broken:p.breakBefore}) }
@@ -17,7 +18,11 @@ Item {
         if (unit==="bit/s") return value>=1e9 ? (value/1e9).toFixed(2)+" Gbit/s" : value>=1e6 ? (value/1e6).toFixed(2)+" Mbit/s" : (value/1000).toFixed(1)+" kbit/s"
         return value.toFixed(1)+" "+unit
     }
-    onDrawingChanged: canvas.requestPaint()
+    readonly property string paintPalette: visualStyle ? [visualStyle.border,visualStyle.accent,visualStyle.textSecondary].join("|") : ""
+    function repaintVisible() { if (visible && canvas.available) canvas.requestPaint() }
+    onDrawingChanged: repaintVisible()
+    onPaintPaletteChanged: repaintVisible()
+    onVisibleChanged: repaintVisible()
     readonly property real maximum: {
         let value=0
         for (const s of drawing) for (const p of s.points)
@@ -27,9 +32,11 @@ Item {
     CasaLabel { visualStyle:root.visualStyle; width:parent.width;font.pixelSize:visualStyle.font20;text:root.chart.period+(root.chart.previous ? " · PRECEDENTE" : "") }
     Canvas {
         id:canvas;x:60;y:46;width:parent.width-80;height:parent.height-110
-        onWidthChanged:requestPaint()
-        onHeightChanged:requestPaint()
+        onWidthChanged:root.repaintVisible()
+        onHeightChanged:root.repaintVisible()
+        onAvailableChanged:root.repaintVisible()
         onPaint: {
+            if (!root.visible) return
             const ctx=getContext("2d");ctx.reset()
             const maximum=root.maximum
             ctx.strokeStyle=root.visualStyle.border;ctx.lineWidth=1
