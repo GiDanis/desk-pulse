@@ -11,9 +11,13 @@ Item {
     property var publicContext: null
     property bool valid: false
     property bool publicEnabled: true
+    // Pending hosts must receive asynchronous asset/data readiness without
+    // becoming active or starting their animations. Retained hosts stay frozen.
+    property bool preparing: false
     property var heldPayload: ({})
     property var selectedModelDomains: null
     property string dataProjection: "full"
+    readonly property bool streamGameScene: publicEnabled && surfaceId === "game.track" && factory && typeof factory.bindGameScene === "function" && legacy && legacy.controller && !!legacy.controller.gameSceneSource
     readonly property var modelDomains: selectedModelDomains !== null ? selectedModelDomains : factory && typeof factory.modelDomains === "function"
         ? factory.modelDomains(surfaceId) : ["weather","account","nextEvent","sport","team","fantasy","racing","casa","network"]
     readonly property var payload: {
@@ -22,7 +26,7 @@ Item {
         if (!c) return ({})
         // Retained, hidden renderers must not subscribe to the whole dashboard.
         // Resume from the current controller transaction before exposing them.
-        if (valid && c.active === false && c.exiting !== true)
+        if (valid && c.active === false && c.exiting !== true && !preparing)
             return Object.assign({}, heldPayload, {active:false, interactive:false, suspended:true})
         const result = {active:c.active,interactive:c.interactive,style:c.style,
             viewportWidth:c.viewportWidth,viewportHeight:c.viewportHeight,
@@ -41,6 +45,14 @@ Item {
         }
         if (c.controller) {
             const app = c.controller
+            if (surfaceId === "sport.match.detail" && result.model && result.model.sport) {
+                // MatchContext exposes the selected match separately. This
+                // dependency supplies SourceState only; never round-trip a
+                // complete season just to derive its availability flags.
+                const envelope = result.model.sport
+                const hasData = Object.keys(envelope.data || {}).length > 0
+                result.model.sport = Object.assign({},envelope,{data:hasData ? {available:true} : {}})
+            }
             if ((surfaceId === "sport.standings" || surfaceId === "sport.fixtures") && result.model && result.model.sport && app.sportRounds !== undefined) {
                 const envelope=result.model.sport, data=envelope.data || ({})
                 const rounds=data.rounds && data.rounds.length ? data.rounds : app.sportRounds.map(id => ({id:String(id),label:String(id)}))
@@ -78,7 +90,7 @@ Item {
             result.route = app.overlay
             result.urgent = !!app.urgentEvent.id
             result.suspended = c.active === false || !!app.urgentEvent.id && surfaceId !== "alerts.urgent"
-            if (typeof app.publicSurfacePayload === "function") Object.assign(result,app.publicSurfacePayload(surfaceId,dataProjection))
+            if (typeof app.publicSurfacePayload === "function") Object.assign(result,app.publicSurfacePayload(surfaceId,dataProjection,streamGameScene))
             if (dataProjection === "route" && surfaceId === "racing.overview") {
                 result.rows=[]
                 result.selection=Object.assign({},result.selection,{selectedId:"",index:-1})
@@ -99,7 +111,7 @@ Item {
     function refresh() {
         if (!factory || !publicContext || disposed) return
         const snapshot = payload
-        if (!valid || legacy.active !== false || legacy.exiting === true) heldPayload = snapshot
+        if (!valid || preparing || legacy.active !== false || legacy.exiting === true) heldPayload = snapshot
         valid = factory.updateLegacy(publicContext,snapshot)
     }
     // A completed public action must expose its resulting state synchronously.
@@ -131,10 +143,15 @@ Item {
         if (typeof factory.createLegacy === "function") {
             const snapshot = payload
             publicContext = factory.createLegacy(surfaceId,snapshot,adapter)
-            if (publicContext) { heldPayload = snapshot; valid = true; return }
+            if (publicContext) { heldPayload = snapshot; valid = true; bindScene(); return }
         }
         publicContext = factory.create(surfaceId,adapter)
         refresh()
+        bindScene()
+    }
+    function bindScene() {
+        if (streamGameScene && publicContext && legacy && legacy.controller)
+            factory.bindGameScene(publicContext,legacy.controller.gameSceneSource)
     }
     onPublicEnabledChanged: initialize()
     Component.onCompleted: initialize()

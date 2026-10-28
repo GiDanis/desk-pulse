@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 from copy import deepcopy
+from bisect import bisect_right
+import math
 import os
 import logging
 from pathlib import Path
@@ -161,6 +163,14 @@ class SportService(QObject):
         self._snapshot = deepcopy(initial) if initial else read_cache(self._cache_path)
         if self._snapshot and self._snapshot.get("season") != self._season:
             self._snapshot = read_cache(self._season_cache_path())
+        self._view = None
+        self._view_snapshot = None
+        self._view_key = None
+        self._view_boundaries = ()
+        self._qml_view = None
+        self._qml_selected = None
+        self._qml_suppressed = None
+        self._qml_rows = {}
         self._from_cache = bool(self._snapshot) and not initial
         self._verified = (
             env_flag("SMARTPC_SPORT_LIVE_VERIFIED") if verified is None else verified
@@ -225,14 +235,30 @@ class SportService(QObject):
         self.changed.emit()
         self._publish_events()
 
+    def _data_view(self, now):
+        # Completed workers replace the owned snapshot. Derived season rows are
+        # read-only inside Python; QVariant conversion owns the QML boundary.
+        if self._snapshot is not self._view_snapshot or self._view is None:
+            boundaries = set()
+            for match in (self._snapshot or {}).get("fixtures", []):
+                fetched = match.get("fetchedAt", 0)
+                boundaries.update((fetched, math.nextafter(fetched + 90, math.inf)))
+                start = match.get("kickoffUtc")
+                if start is not None:
+                    boundaries.update((start - 900, math.nextafter(start + 21600, math.inf),
+                                       math.nextafter(start + 10800, math.inf)))
+            self._view_boundaries = sorted(boundaries)
+        key = (self._from_cache, self._verified, self._favourite, season_for(now),
+               bisect_right(self._view_boundaries, now))
+        if self._view is None or self._snapshot is not self._view_snapshot or key != self._view_key:
+            self._view = presentation(self._snapshot, now, from_cache=self._from_cache,
+                                      verified=self._verified, favourite=self._favourite)
+            self._view_snapshot = self._snapshot
+            self._view_key = key
+        return self._view
+
     def _data(self):
-        data = presentation(
-            self._snapshot,
-            time.time(),
-            from_cache=self._from_cache,
-            verified=self._verified,
-            favourite=self._favourite,
-        )
+        data = dict(self._data_view(time.time()))
         data.update(
             checkedAt=self._checked_at,
             cacheError=self._cache_error,
@@ -285,7 +311,7 @@ class SportService(QObject):
 
     @Slot(str)
     def setFavourite(self, identity):
-        teams = presentation(self._snapshot, time.time()).get("teams", [])
+        teams = self._data_view(time.time()).get("teams", [])
         if identity and identity not in [t["id"] for t in teams]:
             return
         self._favourite = identity
@@ -384,8 +410,14 @@ class SportService(QObject):
         else:
             status = "unavailable"
         if status in ("offline", "stale", "error"):
-            for match in data.get("fixtures", []):
-                match["isLive"] = False
+            # Never mutate the cached season when envelope availability changes.
+            if any(match.get("isLive") for match in data.get("fixtures", [])):
+                rows = {m["canonicalMatchId"]: dict(m, isLive=False) for m in data["fixtures"]}
+                for key in ("fixtures", "activeMatches", "upcoming", "lastFinished"):
+                    data[key] = [rows[m["canonicalMatchId"]] for m in data.get(key, [])]
+                favourite = data.get("favouriteMatch", {})
+                if favourite:
+                    data["favouriteMatch"] = rows[favourite["canonicalMatchId"]]
         return module_state(
             status=status,
             source={"fotmob": "FotMob", "espn": "ESPN"}.get(
@@ -395,6 +427,38 @@ class SportService(QObject):
             data=data,
             error=self._error,
         )
+
+    def view_state(self, selected=""):
+        """Private QML projection: season summaries plus one complete detail.
+
+        Acquisition, goal policy and Python consumers retain moduleState's full
+        facts. Avoid duplicating every cached lineup/incident tree across the
+        QVariant/JavaScript boundary on selection and worker-busy changes.
+        """
+        state = self.moduleState
+        data = state['data']
+        suppressed = state['status'] in ('offline', 'stale', 'error')
+        if self._qml_view is not self._view or self._qml_selected != selected or self._qml_suppressed != suppressed:
+            rows = {}
+            for match in data.get('fixtures', []):
+                row = dict(match)
+                raw = row.get('rawStatus')
+                if isinstance(raw, dict):
+                    # The public MatchData contract only uses reason.short.
+                    reason = raw.get('reason')
+                    row['rawStatus'] = {'reason':dict(reason)} if isinstance(reason, dict) else {}
+                if row['canonicalMatchId'] != selected:
+                    for field in ('events', 'stats', 'lineups'):
+                        if field in row:row[field] = []
+                rows[row['canonicalMatchId']] = row
+            self._qml_rows = {key:[rows[m['canonicalMatchId']] for m in data.get(key, [])]
+                              for key in ('fixtures', 'activeMatches', 'upcoming', 'lastFinished')}
+            favourite = data.get('favouriteMatch', {})
+            self._qml_rows['favouriteMatch'] = rows.get(favourite.get('canonicalMatchId'), {})
+            self._qml_view = self._view
+            self._qml_selected = selected
+            self._qml_suppressed = suppressed
+        return dict(state, data=dict(data, **self._qml_rows))
 
     @Slot(result=bool)
     def refresh(self, detail_only=False):

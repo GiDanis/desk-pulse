@@ -96,6 +96,12 @@ chmod 644 /etc/smartpc/eglfs-kms.json
 
 echo -e "${YELLOW}[5/6] Installing and configuring systemd service...${NC}"
 cp "$REPO_DIR/os/system/smartpc-dashboard.service" /etc/systemd/system/smartpc-dashboard.service
+cp "$REPO_DIR/os/system/smartpc-display-handoff.service" /etc/systemd/system/smartpc-display-handoff.service
+install -D -m 0755 "$REPO_DIR/os/system/smartpc-performance.sh" /usr/local/libexec/smartpc-performance
+cp "$REPO_DIR/os/system/smartpc-performance.service" /etc/systemd/system/smartpc-performance.service
+if /usr/local/libexec/smartpc-performance check; then
+    install -D -m 0644 "$REPO_DIR/os/system/30-dashboard-performance.conf" /etc/systemd/system/smartpc-dashboard.service.d/30-performance.conf
+fi
 systemctl daemon-reload
 
 # Disable desktop display manager if running (LightDM / GDM) to release KMS display

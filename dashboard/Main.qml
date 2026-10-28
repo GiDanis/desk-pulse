@@ -108,68 +108,70 @@ Window {
     onActiveFocusItemChanged: if (traceRecorder) { traceRecorder.invalidate("focus.changed"); traceRecorder.traceEvent("input.focus",{objectName:activeFocusItem ? activeFocusItem.objectName : ""}) }
     property var keypad: null
     property var dashboardState: null
+    readonly property var aquariumService: dashboardState ? dashboardState.aquarium : null
+    readonly property var aquariumData: aquariumService ? aquariumService.snapshot : ({})
+    readonly property bool aquariumSelected: familyId === "aquarium" && visibleModules.indexOf("aquarium") >= 0
+    readonly property bool aquariumAssetFailed: !!aquariumPage.currentItem && aquariumPage.currentItem.assetFailed === true
+    readonly property var aquariumLifecycle: [aquariumSelected, presentedPageContentId === "aquarium.main" && !!aquariumPage.currentItem && aquariumPage.currentItem.ready === true,
+        overlay !== "", !!urgentEvent.id, style.appearance ? style.appearance.motionMode : "off", !!themeCandidate.generation, aquariumAssetFailed]
+    onAquariumLifecycleChanged: Qt.callLater(syncAquariumLifecycle)
+    function syncAquariumLifecycle() {
+        if (!aquariumService) return
+        const p=aquariumLifecycle
+        if (aquariumAssetFailed) aquariumService.reportAssetError(aquariumData.sessionId,"Risorsa grafica Acquario non caricabile")
+        aquariumService.setLifecycle(p[0],p[1],p[2],p[3],p[4],p[5])
+    }
     readonly property var gameService: dashboardState ? dashboardState.game : null
     readonly property var gameData: gameService ? gameService.snapshot : ({})
     readonly property var gameFrame: gameService ? gameService.scene : ({cars:[],sensors:[],meta:{}})
+    readonly property var gameSceneSource: gameService
     readonly property bool gameCaptured: !!gameService && gameService.captured
     property int gameMenuIndex: 0
     property int gameListIndex: 0
     property string gameClassCategory: "race"
-    readonly property var gameRows: overlay === "gameMenu" ? gameMenuRows : activeContentId === "game.leaderboard" ? (gameData.leaderboard || {})[gameClassCategory] || [] : gameData.drivers || []
-    readonly property var gameMenuRows: {
-        const d=gameData,p=d.profile || {},rows=[
-            {id:"mode",title:"Modalità",detail:({impara:"Impara",gara:"Gara",prova:"Prova standard",campione:"Campione"})[d.mode] || "Impara"},
-            {id:"driver",title:"Pilota",detail:d.selectedDriverName || "—"},
-            {id:"algorithm",title:"Metodo",detail:p.algorithm==="evolution" ? "Evoluzione" : (p.algorithm || "")+" · sperimentale"},
-            {id:"population",title:p.algorithm==="ppo" ? "Copie ambiente" : "Popolazione",detail:String(p.population || 32)},
-            {id:"traffic",title:"Allenamento",detail:p.traffic ? "Con avversario fisso" : "Solo pista"},
-            {id:"create",title:"Nuovo pilota",detail:"Crea"}]
-        rows.splice(4,0,{id:"seed",title:"Seme iniziale",detail:String(p.seed || 0)},{id:"episodeSeconds",title:"Limite tentativo",detail:(p.episodeSeconds || 60)+" s"})
-        if (p.algorithm!=="neat") rows.splice(4,0,{id:"hidden",title:"Neuroni nascosti",detail:String(p.hidden || 16)})
-        if (p.algorithm==="ppo") rows.splice(4,0,{id:"learningRate",title:"Learning rate",detail:String(p.learningRate || 0.0003)},{id:"rollout",title:"Rollout",detail:String(p.rollout || 256)},{id:"epochs",title:"Epoche",detail:String(p.epochs || 4)},{id:"gamma",title:"Sconto ricompense",detail:String(p.gamma || 0.995)})
-        else rows.splice(4,0,{id:"mutation",title:"Mutazione",detail:String(p.mutation || 0.15)})
-        if (d.mode==="gara" || d.mode==="prova") for (const row of d.drivers || []) rows.push({id:"participant:"+row.id,title:row.name,detail:row.hasPolicy ? (row.participant ? "Schierato" : row.verified ? "Campione verificato" : "Modello precedente") : "Da qualificare"})
-        rows.push({id:"start",title:"Start",detail:"Avvia"})
-        const descriptions={
-            mode:"Scegli allenamento, gara o prova del modello salvato.",
-            driver:"Identità con rete, allenamento e risultati propri.",
-            algorithm:"Come il pilota modifica la propria rete.",
-            population:p.algorithm==="ppo" ? "Tentativi paralleli dello stesso pilota." : "Reti candidate valutate per ogni generazione.",
-            mutation:p.algorithm==="neat" ? "Intensità delle modifiche a pesi e bias della rete." : "Intensità delle modifiche ai pesi della rete.",
-            hidden:"Dimensione dello strato interno della rete.",
-            seed:"Punto di partenza casuale dell'allenamento.",
-            episodeSeconds:"Tempo simulato massimo per ogni tentativo di guida.",
-            traffic:"Da solo o con un avversario fisso. Traffico da qualificare.",
-            learningRate:"Ampiezza degli aggiornamenti della rete.",
-            rollout:"Passi raccolti per copia prima di un aggiornamento.",
-            epochs:"Passaggi di apprendimento sugli stessi dati.",
-            gamma:"Quanto pesano i risultati più lontani nel tempo.",
-            create:"Crea un'identità con un allenamento indipendente.",
-            start:d.mode==="impara" ? "Allena solo il pilota selezionato e salva i progressi." : "Avvia i modelli salvati con questi parametri."}
-        for (const row of rows) {
-            row.value=row.detail
-            row.description=row.id.indexOf("participant:")===0 ? "Includi questo modello salvato nella sessione." : descriptions[row.id] || ""
-        }
-        return rows
+    property string gameDossierSection: "summary"
+    property int gameDossierIndex: 0
+    property string gameResetPilot: ""
+    property bool gameResetAll: false
+    property bool gameResetCurriculum: false
+    property var gameSessionRows: []
+    readonly property var gameDossierRows: gameResetPilot ? [{id:"reset.cancel",title:"Annulla",value:"5",description:"Mantieni l’apprendimento del pilota."},{id:"reset.confirm",title:gameResetCurriculum ? "Conferma ripartenza" : "Conferma reset",value:"5",description:gameResetCurriculum ? "Riparte da Partenza. Pesi, base e qualifiche conservati." : gameResetAll ? "Azzera base e tutti i contesti di "+gameData.selectedDriverName+". Storico conservato." : "Azzera "+gameData.selectedDriverName+" · "+((gameData.configuration || {}).track || {}).name+". Base e altri contesti restano."}] : gameSessionRows.length ? gameSessionRows : (gameData.dossier || {})[gameDossierSection] || []
+    function openPilotDetails(identity) {
+        if (identity && !gameService.selectDriver(identity)) return false
+        gameDossierSection="summary";gameDossierIndex=0;gameResetPilot="";gameSessionRows=[]
+        pushOverlay("gameDetails");return true
     }
-    function gameOption(id,direction) {
+    function pilotSection(section) { gameDossierSection=section;gameDossierIndex=0;gameResetPilot="";gameSessionRows=[];return true }
+    function pilotAction(id) {
         if (!gameService || gameCaptured) return false
-        if (id.indexOf("category:")===0) { gameClassCategory=id.slice(9);gameListIndex=0;return true }
-        if ((gameData.drivers || []).some(row=>row.id===id)) { if (!gameService.selectDriver(id)) return false;pushOverlay("gameDetails");return true }
-        const p=gameData.profile || {}
-        function next(options,value) { return options[(Math.max(0,options.indexOf(value))+direction+options.length)%options.length] }
-        if (id==="mode") return gameService.setMode(next(["impara","gara","prova","campione"],gameData.mode))
-        if (id==="driver") { const rows=gameData.drivers || [],i=rows.findIndex(row=>row.id===gameData.selectedDriverId);return rows.length ? gameService.selectDriver(rows[(Math.max(0,i)+direction+rows.length)%rows.length].id) : false }
-        if (id==="algorithm") return gameService.configure({algorithm:next((gameData.algorithms || []).filter(row=>row.available).map(row=>row.id),p.algorithm)})
-        if (id==="traffic") return gameService.configure({traffic:!p.traffic})
-        if (id==="create") return gameService.createDriver("")
-        if (id.indexOf("participant:")===0) return gameService.toggleParticipant(id.slice(12))
-        if (id==="start") { popOverlay(); const values=viewIndex.slice();values[8]=0;viewIndex=values;return gameService.start() }
-        const options={seed:[1,2,3,4,5,11,21,42],episodeSeconds:[30,60,120,180],hidden:[8,16,32,64],population:[8,16,32,64,128,256],mutation:[0.05,0.15,0.3],learningRate:[0.0001,0.0003,0.001],rollout:[64,128,256,1024,2048],epochs:[1,2,4,8],gamma:[0.95,0.99,0.995,0.999]}
-        if (options[id]) return gameService.configure({[id]:next(options[id],p[id])})
+        if (id.indexOf("result:")===0) return pilotSection(id.slice(7))
+        if (id.indexOf("dossier:")===0) return pilotSection(id.slice(8))
+        if (id==="reset.cancel") { gameResetPilot="";gameDossierIndex=0;return true }
+        if (id==="reset.confirm") {
+            if (!gameResetPilot || gameResetPilot!==gameData.selectedDriverId) return false
+            if (!(gameResetCurriculum ? gameService.restartDriverCurriculum(gameResetPilot) : gameResetAll ? gameService.resetAllDriver(gameResetPilot) : gameService.resetDriver(gameResetPilot))) return false
+            gameResetPilot="";pilotSection("summary");return true
+        }
+        if (id==="reset" || id==="reset.all" || id==="reset.curriculum") { gameResetCurriculum=id==="reset.curriculum";gameResetAll=id==="reset.all";gameResetPilot=gameData.selectedDriverId;gameDossierIndex=0;return true }
+        if (id==="driver") { pushOverlay("gameMenu");gameService.openPilotPicker();return true }
+        if (id.indexOf("session:")===0 || id.indexOf("event:")===0 || id.indexOf("cert:")===0) {
+            const item=(((gameData.dossier || {}).history || []).concat((gameData.dossier || {}).allResults || [])).find(row=>row.id===id)
+            if (!item) return false
+            gameSessionRows=item.detailRows || [];gameDossierIndex=0;return true
+        }
         return false
     }
-    readonly property string activeContentId: familyId === "game" ? ["game.track","game.leaderboard","game.progress"][viewIndex[8] || 0] : familyId === "sports" ? "sport.hub" : familyId === "oggi" ? (viewIndex[0] === 0 ? "home.now" : viewIndex[0] === 1 ? "home.clock" : "home.day") : familyId === "meteo" ? (viewIndex[1] === 0 ? "weather.now" : "weather.forecast") : familyId === "account" ? "account.usage" : familyId === "sport" ? (sportView === "LA MIA SQUADRA" ? "sport.team" : "sport.overview") : familyId === "casa" ? ((viewIndex[6] || 0) < casaDashboardNames.length-1 ? "casa.overview" : "casa.devices") : familyId === "network" ? ((viewIndex[7] || 0) < 2 ? "network.overview" : "network.devices") : "racing.overview"
+    readonly property var gameRows: overlay === "gameMenu" ? gameMenuRows : activeContentId === "game.leaderboard" ? (gameData.leaderboard || {})[gameClassCategory] || [] : gameData.drivers || []
+    readonly property var gameMenuRows: (gameData.settings || {}).rows || []
+    function cycleGameClassification() { const categories=["race","qualification","trial"];gameClassCategory=categories[(categories.indexOf(gameClassCategory)+1)%categories.length];gameListIndex=0;return true }
+    function gameOption(id,direction) {
+        if (!gameService || gameCaptured) return false
+        if (overlay==="gameMenu") return gameService.settingsAction(id,direction || 1)
+        if (id.indexOf("category:")===0) { gameClassCategory=id.slice(9);gameListIndex=0;return true }
+        if ((gameData.drivers || []).some(row=>row.id===id)) return openPilotDetails(id)
+        return false
+    }
+    readonly property string activeContentId: familyId === "aquarium" ? "aquarium.main" : familyId === "game" ? ["game.track","game.leaderboard","game.progress","game.driver"][viewIndex[8] || 0] : familyId === "sports" ? "sport.hub" : familyId === "oggi" ? (viewIndex[0] === 0 ? "home.now" : viewIndex[0] === 1 ? "home.clock" : "home.day") : familyId === "meteo" ? (viewIndex[1] === 0 ? "weather.now" : "weather.forecast") : familyId === "account" ? "account.usage" : familyId === "sport" ? (sportView === "LA MIA SQUADRA" ? "sport.team" : "sport.overview") : familyId === "casa" ? ((viewIndex[6] || 0) < casaDashboardNames.length-1 ? "casa.overview" : "casa.devices") : familyId === "network" ? ((viewIndex[7] || 0) < 2 ? "network.overview" : "network.devices") : "racing.overview"
     onActiveContentIdChanged: { if (traceRecorder) traceRecorder.traceEvent("navigation.content",{surfaceId:activeContentId}); if (themeService) themeService.setActiveContent(activeContentId); Qt.callLater(function() { presentPage(contentLayer.children.find(host => host.active)) }) }
     readonly property var themeService: dashboardState ? dashboardState.appearance : null
     readonly property var themeCandidate: themeService ? themeService.candidateAppearance : ({})
@@ -180,8 +182,12 @@ Window {
     property string themeExitRequested: ""
     function openThemeChooser() { pushOverlay("themeChooser"); return true }
     function activateThemeChoice(index) {
-        const row=themeService ? themeService.themes[index] : null
-        if (row) { themeChoiceIndex=index; return themeService.activateTheme(row.id) }
+        const row=themeService ? themeService.themeInventory[index] : null
+        if (row) {
+            themeChoiceIndex=index
+            if (!row.selectable) return row.state === "blocked" ? themeService.verifyTheme(row.id) : false
+            return themeService.activateTheme(row.id)
+        }
         return false
     }
 
@@ -204,6 +210,7 @@ Window {
     readonly property var negotiatedLayout: style.appearance && hasExternalSurface("shell.main") ? style.appearance.layout || null : null
     readonly property bool builtinDashboardLayout: style.appearance && ["base","functional"].indexOf(style.appearance.themeId)>=0
     function pageGeometry(surfaceId) {
+        if (surfaceId === "aquarium.main") return Qt.rect(0,0,960,640)
         if (surfaceId.indexOf("game.")===0) return Qt.rect(24,72,912,552)
         const area = negotiatedLayout && hasExternalSurface(surfaceId) ? negotiatedLayout.content : null
         if (area) return Qt.rect(area.x,area.y,area.width,area.height)
@@ -267,6 +274,12 @@ Window {
             else if (overlay === "sportTeam") { tabs = ["PARTITE","RISULTATI","INFO","ROSA"]; index = teamTab }
             else if (overlay === "info") { tabs = deviceInfo.tabs; index = infoPage }
             else if (overlay === "racingDriver") { tabs = racingDriverTabs; index = racingDriverPage }
+            else if (overlay === "gameMenu" && (gameData.settings || {}).tabs) {
+                tabs=["Sessione","Allenamento","Gestione"];index=["session","training","management"].indexOf(gameData.settings.section)
+            }
+            else if (overlay === "gameDetails" && !gameResetPilot && !gameSessionRows.length && gameDossierSection!=="reset") {
+                tabs=["Sintesi","Metodo","Storico","Risultati"];index=["summary","parameters","history","results"].indexOf(gameDossierSection.indexOf("Results")>0 ? "results" : gameDossierSection)
+            }
             else if (overlay.indexOf("racing") === 0) {
                 tabs = racingOverlay.tabs
                 index = overlay === "racingTable" ? racingStandingTab : overlay === "racingSession" ? racingDetailPage : overlay === "racingTiming" ? racingTimingPage : overlay === "racingEvent" ? racingEventPage : 0
@@ -299,11 +312,13 @@ Window {
         return [1,2,3,4,5,6,7,8,9].map(key=>({id:"key."+key,key:key,actionId:actions[key],targetId:"",label:labels[key] || "",enabled:true}))
     }
     function publicSurfaceCommands(surfaceId) {
+        if (surfaceId === "aquarium.main" || surfaceId === "shell.main" && familyId === "aquarium")
+            return [[4,"ARGOMENTO"],[6,"ARGOMENTO"],[5,aquariumData.requestedPlayback === "paused" ? "RIPRENDI" : "PAUSA"],[7,"HOME"],[1,"HOME"],[3,"AVVISI"],[9,"MENU"]].map(row=>({id:"command."+row[0],key:row[0],label:row[1],enabled:true}))
         if (surfaceId.indexOf("game.")===0 || surfaceId==="shell.main" && familyId==="game") {
-            const active=gameCaptured,menu=surfaceId==="game.menu"
+            const active=gameCaptured,menu=surfaceId==="game.menu",dossier=surfaceId==="game.driver.details",settings=gameData.settings || {},panels=["telemetria","premi","rete"].indexOf(gameData.camera)>=0
             return [[2,active ? "VISTA AUTO" : menu ? "SELEZIONA" : "VISTA"],[8,active ? "VISTA AUTO" : menu ? "SELEZIONA" : "VISTA"],
-                [4,active ? "AUTO" : menu ? "MODIFICA" : "ARGOMENTO"],[6,active ? "AUTO" : menu ? "MODIFICA" : "ARGOMENTO"],
-                [5,active ? "PAUSA" : surfaceId==="game.track" ? "START" : "APRI"],[7,"INDIETRO"],[1,"HOME"],[9,"MENU"]].map(row=>({id:"command."+row[0],key:row[0],label:row[1],enabled:true}))
+                [4,active ? panels ? "DATI" : "AUTO" : menu ? settings.editing ? "VALORE" : settings.tabs ? "SEZIONE" : "" : dossier ? "SCHEDE" : "ARGOMENTO"],[6,active ? panels ? "DATI" : "AUTO" : menu ? settings.editing ? "VALORE" : settings.tabs ? "SEZIONE" : "" : dossier ? "SCHEDE" : "ARGOMENTO"],
+                [5,active ? "PAUSA" : surfaceId==="game.track" ? "START" : surfaceId==="game.leaderboard" ? "RISULTATI" : "APRI"],[7,"INDIETRO"],[1,"HOME"],[9,"MENU"]].map(row=>({id:"command."+row[0],key:row[0],label:row[1],enabled:true}))
         }
         const page = surfaceId.indexOf("home.") === 0 || surfaceId.indexOf("weather.") === 0 || surfaceId === "sport.overview" || surfaceId === "sport.team" || surfaceId === "racing.overview" || surfaceId === "shell.main"
         const settings = surfaceId.indexOf("settings.") === 0
@@ -321,11 +336,20 @@ Window {
             [[2,"SCORRI"],[8,"SCORRI"],[4,"SCHEDE"],[6,"SCHEDE"],[5,surfaceId === "sport.match.detail" ? sportDetailPage === 3 ? "SQUADRA" : "AGGIORNA" : "APRI"],[7,"INDIETRO"],[1,"HOME"]]
         return rows.map(row => ({id:"key."+row[0],key:row[0],label:row[1],enabled:true,actionId:"",targetId:""}))
     }
-    function publicSurfacePayload(surfaceId, dataProjection) {
-        if (surfaceId.indexOf("game.")===0) return {game:gameData,scene:surfaceId==="game.track" ? gameFrame : ({}),
-            rows:surfaceId==="game.menu" ? gameMenuRows : surfaceId==="game.leaderboard" ? (gameData.leaderboard || {})[gameClassCategory] || [] : gameData.drivers || [],
-            selectedIndex:surfaceId==="game.menu" ? gameMenuIndex : gameListIndex,section:gameClassCategory,
+    function publicSurfacePayload(surfaceId, dataProjection, streamGameScene) {
+        if (surfaceId === "aquarium.main") {
+            const header = shellGeometry().header
+            return {aquarium:aquariumData,commands:publicSurfaceCommands(surfaceId),
+                safeArea:Qt.rect(16,header.y+header.height+16,928,Math.max(0,624-header.y-header.height-16))}
+        }
+        if (surfaceId.indexOf("game.")===0) {
+            const payload={game:gameData,
+            rows:surfaceId==="game.driver" || surfaceId==="game.driver.details" ? gameDossierRows : surfaceId==="game.menu" ? gameMenuRows : surfaceId==="game.leaderboard" ? (gameData.leaderboard || {})[gameClassCategory] || [] : gameData.drivers || [],
+            selectedIndex:surfaceId==="game.driver" || surfaceId==="game.driver.details" ? gameDossierIndex : surfaceId==="game.menu" ? (gameData.settings || {}).selectedIndex || 0 : gameListIndex,section:surfaceId==="game.driver" || surfaceId==="game.driver.details" ? gameDossierSection : gameClassCategory,
             commands:publicSurfaceCommands(surfaceId)}
+            if (!streamGameScene) payload.scene=surfaceId==="game.track" ? gameFrame : ({})
+            return payload
+        }
         if (["network.router","network.wifi","network.ports"].indexOf(surfaceId)>=0) return {
             networkMetricsView:networkMetricsView,
             selection:{selectedId:networkMetricsRows[networkMetricsIndex] ? networkMetricsRows[networkMetricsIndex].id : "", index:networkMetricsIndex,count:networkMetricsRows.length,tabId:networkMetricsSection,anchorId:networkMetricsTabsSelected ? "metrics.tabs" : ""},
@@ -337,7 +361,7 @@ Window {
         // their payloads to every domain and settings binding in the dashboard.
         if (surfaceId === "scene.main" || surfaceId.indexOf("alerts.") === 0)
             return {commandHints:hints}
-        if (surfaceId === "shell.main") { const nav = settledNavigation(); return {commandHints:hints,
+        if (surfaceId === "shell.main") { const nav = settledNavigation(); return {commandHints:hints,clockText:timeText(),dateText:dateText(),
             families:families,currentFamilyId:nav.familyId,currentViewId:nav.viewId,navigation:nav,layout:shellGeometry(),commands:publicSurfaceCommands(surfaceId),
             uiStatus:{urgent:!!urgentEvent.id,recovery:!!(dashboardState && dashboardState.themeRecoveryError) || !!(themeService && themeService.status === "recovery"),quiet:quietActive,night:night,diagnostics:diagnostics},
             keyMap:publicKeyMap(),firstRun:!!(dashboardState && dashboardState.firstRun)} }
@@ -498,9 +522,13 @@ Window {
         const args=arguments || {}, surface=context.contentId
         if (urgentEvent.id && surface !== "alerts.urgent") return false
         if (gameCaptured && (action==="navigation.view.step" || action==="navigation.family.step")) return false
+        if (action === "aquarium.pause" || action === "aquarium.resume") {
+            if (surface !== "aquarium.main" || !aquariumSelected || overlay !== "" || !aquariumService) return false
+            return action === "aquarium.pause" ? aquariumService.pause() : aquariumService.resume()
+        }
         if (action.indexOf("game.")===0) {
             if (!gameService) return false
-            if (action==="game.start") return gameService.start()
+            if (action==="game.start") { const ok=surface==="game.menu" ? gameService.settingsAction("start",1) : gameService.start();if (!ok && overlay!=="gameMenu") pushOverlay("gameMenu");return ok }
             if (action==="game.pause") return gameService.pause()
             if (action==="game.observe") { gameService.selectAttempt(args.direction);return gameCaptured }
             if (action==="game.display") { gameService.displayStep(args.direction);return gameCaptured }
@@ -509,11 +537,12 @@ Window {
             if (action==="game.driver.select") return gameService.selectDriver(target)
             if (action==="game.driver.create") return gameService.createDriver(args.name)
             if (action==="game.participant") return gameService.toggleParticipant(target)
-            if (action==="game.option.step" || action==="game.option.activate") return gameOption(target,args.direction || 1)
+            if (action==="game.option.step" && surface==="game.menu" && gameData.settings.editing) { gameService.settingsKey(args.direction<0 ? 4 : 6);return true }
+            if (action==="game.option.step" || action==="game.option.activate") return surface==="game.driver" || surface==="game.driver.details" ? pilotAction(target) : gameOption(target,args.direction || 1)
         }
         if (surface.indexOf("game.")===0) {
-            if (action==="details.open") { if (surface==="game.track") pushOverlay("gameMenu");else pushOverlay("gameDetails");return true }
-            if (action==="selection.move") { if (surface==="game.menu") gameMenuIndex=Math.max(0,Math.min(gameMenuRows.length-1,gameMenuIndex+args.direction));else gameListIndex=Math.max(0,Math.min(gameRows.length-1,gameListIndex+args.direction));return true }
+            if (action==="details.open") { if (surface==="game.track") { pushOverlay("gameMenu");return true } if (surface==="game.leaderboard") return cycleGameClassification();return openPilotDetails() }
+            if (action==="selection.move") { if (surface==="game.driver" || surface==="game.driver.details") { gameDossierIndex=Math.max(0,Math.min(gameDossierRows.length-1,gameDossierIndex+args.direction));return true } if (surface==="game.menu") gameService.settingsKey(args.direction<0 ? 2 : 8);else gameListIndex=Math.max(0,Math.min(gameRows.length-1,gameListIndex+args.direction));return true }
         }
         if (themeOperation.busy && !urgentEvent.id) {
             if (action === "navigation.home" || action === "navigation.back" || action === "navigation.menu" || action === "appearance.cancel") {
@@ -889,9 +918,12 @@ Window {
         {id:"sports",slot:3,name:"SPORT",views:sportDisciplines.map(d=>d.name)},
         {id:"casa",slot:6,name:"CASA",views:casaDashboardNames},
         {id:"network",slot:7,name:"RETE",views:["TRAFFICO","ILIADBOX","DISPOSITIVI"]},
-        {id:"game",slot:8,name:"GIOCO",views:["PISTA","CLASSIFICA","PROGRESSI"]}
+        {id:"game",slot:8,name:"GIOCO",views:["PISTA","CLASSIFICA","PROGRESSI","PILOTA"]},
+        {id:"aquarium",slot:9,name:"ACQUARIO",views:["CALM"]}
     ]
-    readonly property var visibleModules: dashboardState ? dashboardState.visibleModules : ["oggi","meteo","account"]
+    // Detach the Qt reference sequence once per notification. Repeated indexOf
+    // on a property-backed sequence otherwise re-enters its Python getter.
+    readonly property var visibleModules: dashboardState ? dashboardState.visibleModules.slice() : ["oggi","meteo","account"]
     readonly property bool sportGroupVisible: dashboardState ? dashboardState.sportGroupVisible : false
     readonly property var sportDisciplines: providerFamilies.filter(item => visibleModules.indexOf(item.id)>=0).reduce((rows,item)=>rows.concat(item.id==="sport" ? [item,{id:"team",providerId:"sport",slot:3,name:"LA MIA SQUADRA",views:["LA MIA SQUADRA"]}] : [item]),[])
     readonly property var families: allFamilies.filter(item => item.id==="sports" ? sportGroupVisible && sportDisciplines.length>0 : visibleModules.indexOf(item.id)>=0)
@@ -950,7 +982,7 @@ Window {
         Qt.callLater(function(){presentPage(contentLayer.children.find(host=>host.active))})
         return true
     }
-    property var viewIndex: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    property var viewIndex: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     property string sportView: "PROSSIME"
     property bool sportTeamDetail: false
     property int teamTab: 0
@@ -1074,7 +1106,27 @@ Window {
         overlay = overlay === "sportTable" ? "sportList" : "sportTable"
         sportIndex = overlay === "sportTable" ? sportTableIndex : sportListIndex
     }
-    readonly property var sport: dashboardState ? dashboardState.sportState : ({status: "unavailable", source: "FotMob / ESPN", data: {}})
+    property var sportListCache: ({})
+    function decodeSportRows(key, encoded) {
+        const cached = sportListCache[key]
+        if (cached && cached.encoded === encoded) return cached.rows
+        const rows = Object.freeze(JSON.parse(encoded))
+        sportListCache[key] = {encoded:encoded, rows:rows}
+        return rows
+    }
+    readonly property var sport: {
+        if (!dashboardState) return ({status: "unavailable", source: "FotMob / ESPN", data: {}})
+        const revision = dashboardState.sportRevision
+        const result = Object.assign({}, dashboardState.sportViewState(sportMatchId))
+        if (result._sportLists) {
+            const data = Object.assign({}, result.data)
+            for (const key of Object.keys(result._sportLists))
+                data[key] = app.decodeSportRows(key, result._sportLists[key])
+            result.data = data
+            delete result._sportLists
+        }
+        return result
+    }
     readonly property var sportData: sport.data || ({})
     readonly property var sportViews: ["PROSSIME"].concat(sportData.hasLiveView || sportView === "IN CORSO" ? ["IN CORSO"] : []).concat(["RISULTATI", "CLASSIFICA", "LA MIA SQUADRA"])
     readonly property var sportFixtures: sportData.fixtures || []
@@ -1235,7 +1287,7 @@ Window {
         ? (dashboardState.brightnessMode === "manual" ? dashboardState.manualBrightness
            : (daytime ? dashboardState.dayBrightness : dashboardState.nightBrightness))
         : 100
-    readonly property var menuItems: ["Comandi", "Impostazioni", "Informazioni", "Diagnostica"].concat(["sports","sport","f1","motogp"].indexOf(familyId)>=0 ? [familyId==="sport" || familyId==="sports" && ["sport","team"].indexOf(sportHubSelectedId)>=0 ? "Altre partite" : "Calendario gare", "Classifica"] : [])
+    readonly property var menuItems: ["Comandi", "Impostazioni", "Informazioni", "Diagnostica"].concat(familyId === "aquarium" ? [aquariumData.requestedPlayback === "paused" ? "Riprendi acquario" : "Pausa acquario"] : []).concat(["sports","sport","f1","motogp"].indexOf(familyId)>=0 ? [familyId==="sport" || familyId==="sports" && ["sport","team"].indexOf(sportHubSelectedId)>=0 ? "Altre partite" : "Calendario gare", "Classifica"] : [])
     readonly property var settingsItems: settingsPanel.entries.map(row => row.title)
 
     function two(value) { return (value < 10 ? "0" : "") + value }
@@ -1342,7 +1394,7 @@ Window {
         if (target==="detail") summaryIndex=0
         settingsPanel.rememberSelectedRow()
         if (target === "themeChooser" && themeService)
-            themeChoiceIndex=Math.max(0,themeService.themes.findIndex(row=>row.id===themeService.draft.themeId))
+            themeChoiceIndex=Math.max(0,themeService.themeInventory.findIndex(row=>row.id===themeService.draft.themeId))
         if (sharedSettingsRoutes.indexOf(overlay)>=0) {
             const saved=Object.assign({},settingsRouteSelections);saved[overlay]=optionIndex;settingsRouteSelections=saved
         }
@@ -1389,6 +1441,10 @@ Window {
         else home()
     }
     function selectMenu() {
+        if (familyId === "aquarium" && menuIndex === 4 && aquariumService) {
+            if (aquariumData.requestedPlayback === "paused") aquariumService.resume(); else aquariumService.pause()
+            popOverlay(); return
+        }
         if (menuIndex === 0) pushOverlay("commands")
         else if (menuIndex === 1) { settingsIndex = 0; pushOverlay("settings") }
         else if (menuIndex === 2) { infoPage = 0; infoIndex = 0; pushOverlay("info") }
@@ -1473,25 +1529,28 @@ Window {
             return
         }
         if (!urgentEvent.id && overlay==="gameMenu") {
-            if (position===2 || position===8) gameMenuIndex=Math.max(0,Math.min(gameMenuRows.length-1,gameMenuIndex+(position===2 ? -1 : 1)))
-            else if (position===4 || position===6 || position===5) gameOption(gameMenuRows[gameMenuIndex].id,position===4 ? -1 : 1)
-            else if (position===7) popOverlay()
+            if ([2,4,5,6,7,8].indexOf(position)>=0) { if (gameService.settingsKey(position)==="close") popOverlay() }
             else if (position===1) home()
             else if (position===3) pushOverlay("alerts")
             else if (position===9) popOverlay()
             return
         }
         if (!urgentEvent.id && overlay==="gameDetails") {
-            if (position===2 || position===8) gameListIndex=Math.max(0,Math.min((gameData.drivers || []).length-1,gameListIndex+(position===2 ? -1 : 1)))
-            else if (position===5 && (gameData.drivers || [])[gameListIndex]) gameService.selectDriver(gameData.drivers[gameListIndex].id)
-            else if (position===7) popOverlay()
-            else if (position===1) home()
-            else if (position===9) pushOverlay("gameMenu")
+            if (position===2 || position===8) gameDossierIndex=Math.max(0,Math.min(gameDossierRows.length-1,gameDossierIndex+(position===2 ? -1 : 1)))
+            else if (position===4 || position===6) {
+                const tabs=["summary","parameters","history","results"]
+                pilotSection(tabs[(tabs.indexOf(gameDossierSection.indexOf("Results")>0 ? "results" : gameDossierSection)+(position===4 ? -1 : 1)+tabs.length)%tabs.length])
+            }
+            else if (position===5 && gameDossierRows[gameDossierIndex]) pilotAction(gameDossierRows[gameDossierIndex].id || "")
+            else if (position===7) { if (gameResetPilot) pilotAction("reset.cancel");else if (gameSessionRows.length) { gameSessionRows=[];gameDossierIndex=0 } else if (gameDossierSection.indexOf("Results")>0) pilotSection("results");else popOverlay() }
+            else if (position===1) { gameResetPilot="";home() }
+            else if (position===9) { gameResetPilot="";pushOverlay("gameMenu") }
             return
         }
         if (!urgentEvent.id && familyId==="game" && overlay==="" && position===5) {
-            if (activeContentId==="game.track") gameService.start()
-            else { gameListIndex=0;pushOverlay("gameDetails") }
+            if (activeContentId==="game.track") { if (!gameService.start()) pushOverlay("gameMenu") }
+            else if (activeContentId==="game.leaderboard") cycleGameClassification()
+            else openPilotDetails()
             return
         }
         if (!urgentEvent.id && familyId==="game" && overlay==="" && position===9) {gameMenuIndex=0;pushOverlay("gameMenu");return}
@@ -1515,7 +1574,7 @@ Window {
             return
         }
         if (overlay === "themeChooser") {
-            if (position===2 || position===8) themeChoiceIndex=Math.max(0,Math.min(themeService.themes.length-1,themeChoiceIndex+(position===2 ? -1 : 1)))
+            if (position===2 || position===8) themeChoiceIndex=Math.max(0,Math.min(themeService.themeInventory.length-1,themeChoiceIndex+(position===2 ? -1 : 1)))
             else if (position===5) activateThemeChoice(themeChoiceIndex)
             else if (position===7) popOverlay()
             else if (position===1) home()
@@ -1754,6 +1813,10 @@ Window {
             return
         }
         if (overlay !== "") return
+        if (familyId === "aquarium" && position === 5 && aquariumService) {
+            if (aquariumData.requestedPlayback === "paused") aquariumService.resume(); else aquariumService.pause()
+            return
+        }
         if (["sports","casa","network"].indexOf(familyId)>=0) {
             if (position===4 || position===6) navigateFamily(position===4 ? -1 : 1)
             else if (position===2 || position===8) {
@@ -1788,6 +1851,7 @@ Window {
     Component.onCompleted: {
         if (themeService) { themeService.setActiveContent(activeContentId); themeService.setPreparedContents(notificationContents.concat(shellHost.active ? ["shell.main"] : []).concat(overlayHost.active ? [overlayHost.contentId] : [])) }
         if (dashboardState) { dashboardState.setBannerPresentationAcknowledgement(true); dashboardState.setCasaVisible(casaConsulted); dashboardState.setNetworkVisible(networkConsulted) }
+        syncAquariumLifecycle()
         notificationInitialized = true
         Qt.callLater(reconcileFamily)
         if (dashboardState && dashboardState.firstRun) pushOverlay("commands")
@@ -1820,6 +1884,8 @@ Window {
         }
     }
     onOverlayChanged: {
+        if (overlay==="gameMenu" && gameService) gameService.openSettings()
+        if (overlay!=="gameDetails") gameResetPilot=""
         if (overlay!=="" && gameCaptured) gameService.pause()
         if (overlay !== "networkDetail") Qt.callLater(syncNetworkSelection)
         // Read the new route directly: the derived overlayContentId can still
@@ -1840,7 +1906,7 @@ Window {
         const hosts=[smallBanner,largeBanner,urgentHost,badgeHost,inboxHost,detailHost,shellHost,overlayHost]
         for (const host of hosts) if (host.active && (!host.currentReady || host.readiness !== "ready" || host.loadedRevision !== themeService.revision)) return false
         for (const host of contentLayer.children) if (host.active && (!host.currentReady || host.readiness !== "ready" || host.loadedRevision !== themeService.revision)) return false
-        return !sceneHost.sceneEnabled || sceneHost.currentReady && sceneHost.readiness === "ready"
+        return aquariumSelected || !sceneHost.sceneEnabled || sceneHost.currentReady && sceneHost.readiness === "ready"
     }
     Timer {
         interval: 1000; running: !!app.themeService; repeat: true
@@ -1862,6 +1928,18 @@ Window {
     }
     Connections { target: app.gameService
         function onOperationFinished(operation,ok,message) { app.completePublicActions("game:"+operation,ok,message) }
+        function onSettingsRouteRequested(route) {
+            if (route==="running") {
+                app.overlayStack=[];app.overlay=""
+                const values=app.viewIndex.slice();values[8]=0;app.viewIndex=values
+            } else if (route==="pilot.picker") {
+                if (app.overlay==="gameMenu") app.popOverlay()
+                app.pilotSection("summary")
+            } else {
+                app.openPilotDetails()
+                if (route==="reset") app.pilotSection("reset")
+            }
+        }
     }
     Connections { target: app.dashboardState
         function onSourceRefreshFinished(source,ok,message) { app.completePublicActions("source:"+source,ok,ok ? "" : message) }
@@ -1879,6 +1957,11 @@ Window {
             else if (exit==="menu") app.pushOverlay("menu")
             else if (ok && app.overlay==="themeChooser") app.popOverlay()
             settingsPanel.feedback=app.themeOperation.message || ""
+        }
+        function onThemeVerificationFinished(ok) {
+            const exit=app.themeExitRequested;app.themeExitRequested=""
+            if (exit==="home") app.home()
+            else if (exit==="menu") app.pushOverlay("menu")
         }
         function onTransferFinished(ok,message) { app.completePublicActions("transfer",ok,ok ? "" : message) }
     }
@@ -1930,7 +2013,7 @@ Window {
         objectName: "inputOwner"
         focus: true
         Keys.onPressed: event => {
-            if (event.isAutoRepeat && (app.familyId==="game" || app.gameCaptured)) { event.accepted=true;return }
+            if (event.isAutoRepeat && (app.familyId==="game" || app.familyId==="aquarium" || app.gameCaptured)) { event.accepted=true;return }
             if (event.key === Qt.Key_Left) app.activateKey(4)
             else if (event.key === Qt.Key_Right) app.activateKey(6)
             else if (event.key === Qt.Key_Up) app.activateKey(2)
@@ -1945,15 +2028,17 @@ Window {
         }
     }
 
+    Rectangle { z:1;visible:app.aquariumSelected && (!shellHost.currentItem || !shellHost.active);width:960;height:app.builtinDashboardLayout ? 56 : 90;color:app.style.background }
     ShellHost { id: shellHost; z: app.negotiatedLayout && app.negotiatedLayout.guide.height === 0 ? 2 : 0; objectName: "shellHost"; controller: app; style: app.style; anchors.fill: parent; active: app.hasExternalSurface("shell.main") || app.hasCandidateSurface("shell.main"); renderActive: app.hasExternalSurface("shell.main"); interactive: active && app.overlay === "" && !app.urgentEvent.id }
-    Rectangle { visible: !shellHost.currentItem || !shellHost.active; x: 0; y: 0; width: 960; height: 5; color: app.accent }
-    AppText { visible: !shellHost.currentItem || !shellHost.active; style: app.style; x: app.builtinDashboardLayout ? 24 : 44; y: app.builtinDashboardLayout ? 13 : 26; width: app.builtinDashboardLayout ? 840 : 730; elide:Text.ElideRight; text: app.currentFamily.name + " · " + app.viewName(); color: app.style.accentTextOnCanvas; font.pixelSize: app.builtinDashboardLayout ? app.style.font31 : app.style.font35; font.weight: (true ) ? app.style.headingWeight : app.style.bodyWeight}
-    AppText { visible: !app.builtinDashboardLayout && (!shellHost.currentItem || !shellHost.active); style: app.style; x: 790; y: 33; width: 125; horizontalAlignment: Text.AlignRight; text: (app.family + 1) + "/" + app.families.length + "  ·  " + ((app.isRacing ? app.currentFamily.views.indexOf(app.racingView) : app.familyId === "sport" ? app.sportViews.indexOf(app.sportView) : (app.viewIndex[app.currentFamily.slot] || 0)) + 1) + "/" + app.currentFamily.views.length; color: app.muted; font.pixelSize: app.style.font23 }
+    Rectangle { z:2;visible: !shellHost.currentItem || !shellHost.active; x: 0; y: 0; width: 960; height: 5; color: app.accent }
+    AppText { z:2;visible: !shellHost.currentItem || !shellHost.active; style: app.style; x: app.builtinDashboardLayout ? 24 : 44; y: app.builtinDashboardLayout ? 13 : 26; width: app.builtinDashboardLayout ? 760 : 730; elide:Text.ElideRight; text: app.currentFamily.name + " · " + app.viewName(); color: app.style.accentTextOnCanvas; font.pixelSize: app.builtinDashboardLayout ? app.style.font31 : app.style.font35; font.weight: (true ) ? app.style.headingWeight : app.style.bodyWeight}
+    AppText { z:2;objectName: "headerClock"; visible: !shellHost.currentItem || !shellHost.active; style: app.style; role: "numbers"; x: app.builtinDashboardLayout ? 808 : 790; y: app.builtinDashboardLayout ? 5 : 26; width: app.builtinDashboardLayout ? 128 : 125; height: 46; horizontalAlignment: Text.AlignRight; verticalAlignment: Text.AlignVCenter; text: app.timeText(); color: app.style.textPrimary; font.pixelSize: app.style.font28 }
 
     Item {
         id: contentLayer
         objectName: "contentLayer"
         x: 0; y: 90; width: 960; height: 455
+        PageHost { id:aquariumPage;objectName:"aquariumPage";contentId:"aquarium.main";controller:app;style:app.style;active:app.aquariumSelected;interactive:active && app.overlay === "" && !app.urgentEvent.id }
         PageHost { objectName: "homeNow"; contentId: "home.now"; controller: app; style: app.style; active: app.familyId === "oggi" && app.viewIndex[0] === 0; interactive: active && app.overlay === "" && !app.urgentEvent.id }
         PageHost { objectName: "homeClock"; contentId: "home.clock"; controller: app; style: app.style; active: app.familyId === "oggi" && app.viewIndex[0] === 1; interactive: active && app.overlay === "" && !app.urgentEvent.id }
         PageHost { objectName: "homeDay"; contentId: "home.day"; controller: app; style: app.style; active: app.familyId === "oggi" && app.viewIndex[0] === 2; interactive: active && app.overlay === "" && !app.urgentEvent.id }
@@ -1970,6 +2055,7 @@ Window {
         PageHost { objectName:"gameTrack";contentId:"game.track";controller:app;style:app.style;active:app.familyId==="game" && (app.viewIndex[8] || 0)===0;interactive:active && app.overlay==="" && !app.urgentEvent.id }
         PageHost { objectName:"gameLeaderboard";contentId:"game.leaderboard";controller:app;style:app.style;active:app.familyId==="game" && (app.viewIndex[8] || 0)===1;interactive:active && app.overlay==="" && !app.urgentEvent.id }
         PageHost { objectName:"gameProgress";contentId:"game.progress";controller:app;style:app.style;active:app.familyId==="game" && (app.viewIndex[8] || 0)===2;interactive:active && app.overlay==="" && !app.urgentEvent.id }
+        PageHost { objectName:"gameDriver";contentId:"game.driver";controller:app;style:app.style;active:app.familyId==="game" && (app.viewIndex[8] || 0)===3;interactive:active && app.overlay==="" && !app.urgentEvent.id }
         PageHost { objectName: "accountPanel"; contentId: "account.usage"; controller: app; style: app.style; active: app.familyId === "account"; interactive: active && app.overlay === "" && !app.urgentEvent.id }
     }
 
@@ -1982,7 +2068,7 @@ Window {
     onTeamTabChanged: animateTab()
     onRacingStandingTabChanged: animateTab()
     readonly property var notificationRegions: [smallBanner,largeBanner,detailHost,inboxHost,badgeHost,urgentHost].filter(host => host.show || host.exiting).reduce((regions,host) => regions.concat(host.context ? host.context.occupiedRegions : [Qt.rect(host.x,host.y,host.width,host.height)]),[])
-    SceneHost { id: sceneHost; controller: app; traceRecorder: app.traceRecorder; style: app.style; familyId: app.familyId; occupiedRegions: app.notificationRegions; enforceSafeRegions: !!app.negotiatedLayout || app.builtinDashboardLayout; safeRegions: app.negotiatedLayout ? app.negotiatedLayout.sceneSafeRegions : app.builtinDashboardLayout ? [Qt.rect(880,8,56,48)] : []; notificationEvent: app.urgentEvent.id ? app.urgentEvent : app.bannerEvent; suspended: app.overlay !== "" || !!app.urgentEvent.id || app.night || app.quietActive }
+    SceneHost { id: sceneHost; controller: app; traceRecorder: app.traceRecorder; style: app.style; familyId: app.familyId; occupiedRegions: app.notificationRegions; enforceSafeRegions: !!app.negotiatedLayout || app.builtinDashboardLayout; safeRegions: app.negotiatedLayout ? app.negotiatedLayout.sceneSafeRegions : app.builtinDashboardLayout ? [Qt.rect(880,8,56,48)] : []; notificationEvent: app.urgentEvent.id ? app.urgentEvent : app.bannerEvent; suspended: app.aquariumSelected || app.overlay !== "" || !!app.urgentEvent.id || app.night || app.quietActive }
     onUrgentEventChanged: { if (urgentEvent.id && gameCaptured) gameService.pause(); if (traceRecorder) traceRecorder.traceEvent("notification.urgent",{eventId:String(urgentEvent.id || ""),eventRevision:String(urgentEvent.revision || ""),rank:urgentEvent.notificationRank || 0}); if (urgentEvent.id) { navigationMotion.settle(); tabMotion.settle() } }
 
     Rectangle { visible: !app.builtinDashboardLayout && (!shellHost.currentItem || !shellHost.active); x: 44; y: 558; width: 872; height: 2; color: app.style.divider }
@@ -2079,6 +2165,9 @@ Window {
     }
     Rectangle {
         id: dimmingLayer
+        objectName: "dimmingLayer"
+        // Dim the complete shell, notifications and theme transitions together.
+        z: 30
         anchors.fill: parent; color: "black"
         readonly property real targetOpacity: 1 - app.brightnessPercent / 100
         opacity: 0

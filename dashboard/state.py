@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 import os
+import json
+import logging
 import time
 from typing import Any
 
@@ -37,7 +39,7 @@ DEMO_WEATHER = {
 MIN_BRIGHTNESS = 20
 MAX_BRIGHTNESS = 100
 BRIGHTNESS_STEP = 5
-TOGGLEABLE_MODULES = ("meteo", "account", "sport", "f1", "motogp", "casa", "network", "game")
+TOGGLEABLE_MODULES = ("meteo", "account", "sport", "f1", "motogp", "casa", "network", "game", "aquarium")
 
 
 def _account_threshold(name: str, default: int) -> int:
@@ -83,7 +85,7 @@ class DashboardState(QObject):
     eventChanged = Signal()
 
     def __init__(self, weather: QObject, system: QObject, account: QObject,
-                 events: EventService | None = None, demo: bool = False, sport: QObject | None = None, racing=None, trace=None, casa=None, network=None, game=None) -> None:
+                 events: EventService | None = None, demo: bool = False, sport: QObject | None = None, racing=None, trace=None, casa=None, network=None, game=None, aquarium=None) -> None:
         super().__init__()
         self.settingsChanged.connect(self.modulesChanged)
         self._weather = weather
@@ -91,6 +93,8 @@ class DashboardState(QObject):
         self._account = account
         self._events = events
         self._dashboard_revision = 0
+        self._sport_revision = 0
+        self._sport_wire_arrays = {}
         self._dashboard_cache = {}
         for signal, domain in ((self.weatherChanged, 'weather'), (self.sportChanged, 'sport'),
                                (self.racingChanged, 'racing'), (self.casaChanged, 'casa'),
@@ -101,15 +105,22 @@ class DashboardState(QObject):
         self._racing = racing or {}
         self._source_refresh_states: dict[str, dict] = {}
         self._game = game
+        self._aquarium = aquarium
         self._network = network
+        self._network_available = False
         if network is not None:
+            self._update_network_availability()
+            network.changed.connect(self._update_network_availability)
             network.changed.connect(self.networkChanged)
             network.changed.connect(self.modulesChanged)
             network.refreshFinished.connect(self.networkRefreshFinished)
             network.metricsChanged.connect(self.networkMetricsChanged)
             network.metricsRefreshFinished.connect(self.networkMetricsRefreshFinished)
         self._casa = casa
+        self._casa_available = False
         if casa is not None:
+            self._update_casa_availability()
+            casa.changed.connect(self._update_casa_availability)
             casa.changed.connect(self.casaChanged)
             casa.changed.connect(self.settingsChanged)
             casa.refreshFinished.connect(self.casaRefreshFinished)
@@ -133,6 +144,7 @@ class DashboardState(QObject):
         except (ThemeError, OSError) as error:
             self._appearance = None
             self._theme_recovery_error = str(error)
+            logging.getLogger(__name__).exception("Impossibile inizializzare il servizio dei temi")
         self._last_source_refresh: dict[str, float] = {}
         providers = {"meteo": weather, "account": account, "alerts": events,
                      "sport": sport, "casa": casa, "network": network, **self._racing}
@@ -193,6 +205,7 @@ class DashboardState(QObject):
 
     def _invalidate_dashboards(self, domain=None):
         self._dashboard_revision += 1
+        if domain == 'sport':self._sport_revision += 1
         prefixes = {'weather': ('oggi-',), 'events': ('oggi-',), 'sport': ('sport-sport', 'sport-team'),
                     'racing': ('sport-f1', 'sport-motogp'), 'casa': ('casa-',), 'network': ('rete-',)}
         if domain not in prefixes:
@@ -328,8 +341,11 @@ class DashboardState(QObject):
 
     @Property(bool, notify=casaChanged)
     def casaAvailable(self):
-        data=self.casaState['data']
-        return bool(data.get('configured') and data.get('favourites'))
+        return self._casa_available
+
+    def _update_casa_availability(self):
+        data=self._casa.moduleState['data']
+        self._casa_available=bool(data.get('configured') and data.get('favourites'))
 
     @Slot(bool)
     def setCasaVisible(self,visible):
@@ -357,8 +373,10 @@ class DashboardState(QObject):
 
     @Property(bool, notify=networkChanged)
     def networkAvailable(self):
-        data=self.networkState['data']
-        return bool(data.get('hasInventory'))
+        return self._network_available
+
+    def _update_network_availability(self):
+        self._network_available=bool(self._network.moduleState['data'].get('hasInventory'))
 
     @Slot(bool)
     def setNetworkVisible(self,visible):
@@ -417,6 +435,37 @@ class DashboardState(QObject):
     @Property("QVariantMap", notify=sportChanged)
     def sportState(self) -> dict[str, Any]:
         return self._sport.moduleState if self._sport is not None else module_state(status="unavailable", source="FotMob / ESPN")
+
+    @Property(int, notify=sportChanged)
+    def sportRevision(self):
+        return self._sport_revision
+
+    @Slot(str, result='QVariantMap')
+    def sportViewState(self, selected):
+        if self._sport is None or not hasattr(self._sport, 'view_state'):
+            return self.sportState
+        state = self._sport.view_state(selected)
+        data = dict(state['data'])
+        encoded_lists = {}
+        for key in ('fixtures', 'activeMatches', 'upcoming', 'lastFinished'):
+            rows = data.get(key, [])
+            cached = self._sport_wire_arrays.get(key)
+            if cached is None or cached[0] is not rows:
+                # Ship a string once per owned revision, not recursive QVariant
+                # lists on every busy notification. QML owns its parsed arrays.
+                encoded = None
+                try:
+                    encoded = json.dumps(rows, ensure_ascii=True, allow_nan=False,
+                                         separators=(',', ':'))
+                except (TypeError, ValueError):
+                    pass  # Preserve QVariant semantics for non-JSON facts.
+                self._sport_wire_arrays[key] = (rows, encoded)
+            encoded = self._sport_wire_arrays[key][1]
+            if encoded is not None:
+                encoded_lists[key] = encoded
+                data.pop(key, None)
+        # Source status/timestamps stay fresh; only immutable lists are encoded.
+        return dict(state, data=data, _sportLists=encoded_lists)
 
     @Property('QVariantList', constant=True)
     def racingAvailable(self):
@@ -533,6 +582,10 @@ class DashboardState(QObject):
         return self._theme_recovery_error
 
     @Property(QObject, constant=True)
+    def aquarium(self):
+        return self._aquarium
+
+    @Property(QObject, constant=True)
     def game(self):
         return self._game
 
@@ -543,7 +596,7 @@ class DashboardState(QObject):
     @Property("QVariantList", notify=modulesChanged)
     def visibleModules(self) -> list[str]:
         return ["oggi"] + [module_id for module_id in TOGGLEABLE_MODULES
-                           if self._module_visible[module_id] and (module_id != "sport" or self._sport is not None) and (module_id not in ("f1","motogp") or module_id in self._racing) and (module_id != "casa" or self.casaAvailable) and (module_id != "network" or self.networkAvailable) and (module_id != "game" or self._game is not None)]
+                           if self._module_visible[module_id] and (module_id != "sport" or self._sport is not None) and (module_id not in ("f1","motogp") or module_id in self._racing) and (module_id != "casa" or self.casaAvailable) and (module_id != "network" or self.networkAvailable) and (module_id != "game" or self._game is not None) and (module_id != "aquarium" or self._aquarium is not None)]
 
     @Property(bool, notify=modulesChanged)
     def sportGroupVisible(self):

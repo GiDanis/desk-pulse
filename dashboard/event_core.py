@@ -6,6 +6,8 @@ and delivery state so an unchanged provider refresh never reopens a notice.
 
 from __future__ import annotations
 
+from copy import deepcopy
+from functools import lru_cache
 import json
 import math
 import sqlite3
@@ -67,6 +69,12 @@ def validate_event(value: dict[str, Any]) -> dict[str, Any]:
     return event
 
 
+@lru_cache(maxsize=2048)
+def _payload(text):
+    # Owned by the decoder cache; public display values always get their own tree.
+    return json.loads(text)
+
+
 class EventEngine:
     def __init__(self, path: Path | str) -> None:
         if path != ":memory:":
@@ -99,12 +107,14 @@ class EventEngine:
         self.db.execute("CREATE INDEX IF NOT EXISTS events_expires ON events(expires_at)")
         self.db.execute("CREATE TABLE IF NOT EXISTS source_revisions (source TEXT PRIMARY KEY, revision TEXT NOT NULL)")
         self.db.commit()
+        self._row_cache = None
+        self._deadline_cache = None
 
     def source_revision(self, source: str) -> str:
         row = self.db.execute("SELECT revision FROM source_revisions WHERE source=?", (source,)).fetchone()
         if row is not None:
             return row["revision"]
-        return max((str(json.loads(row["payload"]).get("revision", "")) for row in
+        return max((str(_payload(row["payload"]).get("revision", "")) for row in
                     self.db.execute("SELECT payload FROM events WHERE source=?", (source,))), default="")
 
     def migrate_identity(self, old_id: str, new_id: str, source: str) -> None:
@@ -158,12 +168,18 @@ class EventEngine:
         return changed
 
     def _rows(self, now: float) -> list[sqlite3.Row]:
-        return self.db.execute("""SELECT * FROM events WHERE cancelled=0 AND expires_at>?
+        revision = (self.db.total_changes, self.db.execute('PRAGMA data_version').fetchone()[0])
+        cached = self._row_cache
+        if cached and cached[0] == revision and cached[1] <= now < cached[2]:
+            return cached[3]
+        rows = self.db.execute("""SELECT * FROM events WHERE cancelled=0 AND expires_at>?
             ORDER BY priority DESC, rank DESC, starts_at ASC, id ASC""", (now,)).fetchall()
+        self._row_cache = (revision, now, min((row['expires_at'] for row in rows), default=math.inf), rows)
+        return rows
 
     @staticmethod
     def _display(row: sqlite3.Row, now: float) -> dict[str, Any]:
-        event = json.loads(row["payload"])
+        event = deepcopy(_payload(row["payload"]))
         event.setdefault("bannerSize", "small")
         event["seen"] = bool(row["seen"])
         event["upcoming"] = row["starts_at"] > now
@@ -182,14 +198,14 @@ class EventEngine:
         rows = self._rows(current)
         urgent = next((self._display(row, current) for row in rows
                        if row["starts_at"] <= current and row["priority"] == 3
-                       and json.loads(row["payload"])["category"] not in silenced_categories
+                       and _payload(row["payload"])["category"] not in silenced_categories
                        and row["dismissed_level"] < row["rank"]), {})
         pending = [row for row in rows
                        if not quiet and row["starts_at"] <= current and row["priority"] == 2
-                       and json.loads(row["payload"]).get("bannerUntil", row["expires_at"]) > current
-                       and json.loads(row["payload"])["category"] not in silenced_categories
+                       and _payload(row["payload"]).get("bannerUntil", row["expires_at"]) > current
+                       and _payload(row["payload"])["category"] not in silenced_categories
                        and row["notified_level"] < row["rank"] and row["skipped_level"] < row["rank"]]
-        pending.sort(key=lambda row: (-row["rank"], json.loads(row["payload"])["issuedAt"], row["id"]))
+        pending.sort(key=lambda row: (-row["rank"], _payload(row["payload"])["issuedAt"], row["id"]))
         if len(pending) > MAX_PENDING_BANNERS:
             with self.db:
                 self.db.executemany("UPDATE events SET skipped_level=MAX(skipped_level,rank) WHERE id=?",
@@ -198,7 +214,7 @@ class EventEngine:
             rows = self._rows(current)
         banner = self._display(pending[0], current) if pending else {}
         future = sorted((row for row in rows if row["starts_at"] > current
-                         and json.loads(row["payload"]).get("showOnHome")),
+                         and _payload(row["payload"]).get("showOnHome")),
                         key=lambda row: (row["starts_at"], -row["priority"]))
         next_event = self._display(future[0], current) if future else {}
         visible = self.db.execute("""SELECT * FROM events WHERE expires_at>=?
@@ -216,11 +232,16 @@ class EventEngine:
         return self._display(row, now) if row else {}
 
     def next_deadline(self, now: float) -> float:
-        deadlines = [now + 300]  # Bounded recovery for wall-clock/time-zone changes.
-        for row in self._rows(now):
+        rows = self._rows(now)
+        cached = self._deadline_cache
+        if cached and cached[0] is rows and cached[1] <= now < cached[2]:
+            return min(now + 300, cached[2])
+        deadlines = [math.inf]
+        for row in rows:
             deadlines.extend(value for value in (row["starts_at"], row["expires_at"],
-                             json.loads(row["payload"]).get("bannerUntil", row["expires_at"])) if value > now)
-        return min(deadlines)
+                             _payload(row["payload"]).get("bannerUntil", row["expires_at"])) if value > now)
+        self._deadline_cache = (rows, now, min(deadlines))
+        return min(now + 300, self._deadline_cache[2])  # Wall-clock recovery remains bounded.
 
     def mark_notified(self, event_id: str) -> None:
         with self.db:

@@ -30,11 +30,11 @@ Rectangle {
             RotationAnimator on rotation {from:0;to:360;duration:1300;loops:Animation.Infinite;running:loading.animate}
         }
     }
-    Text {x:48;y:265;width:864;horizontalAlignment:Text.AlignHCenter;text:loading.operation.busy ? "Attivazione di "+loading.operation.targetName : "Preparazione del tema…";color:loading.ink;font.pixelSize:34;elide:Text.ElideRight}
+    Text {x:48;y:265;width:864;horizontalAlignment:Text.AlignHCenter;text:loading.operation.busy ? (loading.phase==="verifying" ? "Verifica di " : "Attivazione di ")+loading.operation.targetName : "Preparazione del tema…";color:loading.ink;font.pixelSize:34;elide:Text.ElideRight}
     Text {x:48;y:320;width:864;horizontalAlignment:Text.AlignHCenter;text:loading.operation.busy ? loading.operation.message : "Le schermate saranno visibili appena pronte.";color:loading.muted;font.pixelSize:24;elide:Text.ElideRight}
     Row {
         x:120;y:402;spacing:28
-        Repeater {model:["Preparazione","Schermata","Salvataggio"]
+        Repeater {model:loading.phase==="verifying" ? ["Copia isolata","Controllo","Disponibilità"] : ["Preparazione","Schermata","Salvataggio"]
             delegate:Text {
                 required property string modelData
                 required property int index

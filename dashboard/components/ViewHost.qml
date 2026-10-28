@@ -293,7 +293,7 @@ Item {
             property string resourceLease: ""
             Component.onDestruction: if (resourceLease && host.service) host.service.releaseRevision(resourceLease)
             property alias publicAdapter: publicAdapter
-            PublicContextAdapter { id: publicAdapter; publicEnabled: candidate.usePublicApi; selectedModelDomains: candidate.dataDomains; dataProjection:candidate.dataProjection; factory: host.service ? host.service.apiFactory : null; legacy: candidate.presentationContext; surfaceId: candidate.surfaceId }
+            PublicContextAdapter { id: publicAdapter; preparing: host.pendingLoader === candidate && !candidate.acknowledged; publicEnabled: candidate.usePublicApi; selectedModelDomains: candidate.dataDomains; dataProjection:candidate.dataProjection; factory: host.service ? host.service.apiFactory : null; legacy: candidate.presentationContext; surfaceId: candidate.surfaceId }
             property int requestedRevision: 0
             property var stagedAppearance: null
             property bool useLiveStyle: false

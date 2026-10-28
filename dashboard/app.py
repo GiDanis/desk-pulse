@@ -22,6 +22,7 @@ from weather import WeatherService
 from casa import CasaService
 from network import NetworkService
 from game import GameService
+from aquarium import AquariumService
 
 
 def main() -> int:
@@ -53,7 +54,8 @@ def main() -> int:
     account = AccountService()
     casa = CasaService(auto_refresh=not demo, demo=demo)
     network = NetworkService(auto_refresh=not demo, demo=demo)
-    game = GameService()
+    aquarium = AquariumService()
+    game = GameService(async_metadata=True)
     events = EventService(path=":memory:" if demo else None, auto_refresh=not demo)
     sport = SportService(auto_refresh=not demo) if not demo else None
     racing = {kind: MotorsportService(kind) for kind in ('f1','motogp')} if not demo else {}
@@ -61,7 +63,7 @@ def main() -> int:
     if options.theme_trace_output:
         from theme_trace_bridge import ThemeTraceBridge
         trace = ThemeTraceBridge()
-    state = DashboardState(weather, system_info, account, events, demo=demo, sport=sport, racing=racing, trace=trace, casa=casa, network=network, game=game)
+    state = DashboardState(weather, system_info, account, events, demo=demo, sport=sport, racing=racing, trace=trace, casa=casa, network=network, game=game, aquarium=aquarium)
     if not demo:
         def update_account_events() -> None:
             events.ingest_account(account.moduleState, state.accountWarningPercent,
@@ -80,6 +82,7 @@ def main() -> int:
             trace.attach(engine.rootObjects()[0])
         result = application.exec()
     finally:
+        aquarium.close()
         game.close()
         weather.close()
         account.close()

@@ -20,6 +20,7 @@ case "$mode" in
         export QT_QPA_EGLFS_HIDECURSOR=1
         export QT_QPA_EGLFS_KMS_CONFIG="${SMARTPC_KMS_CONFIG:-/etc/smartpc/eglfs-kms.json}"
         export QSG_RHI_BACKEND=opengl
+        if [[ $EUID -eq 0 ]] && command -v plymouth >/dev/null 2>&1; then plymouth quit 2>/dev/null || true; fi
         ;;
     *)
         echo "Uso: $0 [--desktop|--device|--demo]" >&2
