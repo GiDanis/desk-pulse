@@ -1,0 +1,392 @@
+{
+  "status": "passed",
+  "version": "0.9.0-rc.26",
+  "files": 636,
+  "operation": "driving-school-new-learning-epoch-with-full-history-preservation",
+  "authorization": "User paused and authorized implement/complete plan",
+  "runtimeRollback": "/opt/smartpc/dashboard-rc25-before-school-20261021-033403",
+  "dataBackup": "/var/lib/smartpc-dashboard/game-backups/before-driving-school-20261021-033403",
+  "backupFiles": 91,
+  "backupHashesPreserved": true,
+  "drivers": [
+    {
+      "id": "d26beef89da244a1984e87cd0404308e",
+      "name": "Crono",
+      "steps": 411181,
+      "seconds": 2210.532456883928,
+      "oldCheckpoint": "ad3c6d40d47bbe5df23366c178e8dfd7ef3749eeaacc956a8e6e4be0d66f9bba",
+      "protocol": "direct-driving-3",
+      "hidden": 128,
+      "epochUpdates": 0,
+      "recipeArchives": [
+        {
+          "recipe": {
+            "action": "direct-steer-pedal-v1",
+            "actorRateScale": 0.1,
+            "algorithm": "residual_ppo",
+            "anchorSteps": 4096,
+            "anchorWeight": 2.0,
+            "base": null,
+            "batchSize": 64,
+            "candidateRestart": "failed-or-three-no-gain-1",
+            "criticContext": "task-context-1",
+            "criticInputs": 94,
+            "criticWarmup": 512,
+            "curriculum": "solo-or-selected-traffic-v1",
+            "decisionHz": 10,
+            "domainRandomization": "vehicle-grip-1",
+            "entropy": 0.0001,
+            "exploration": [
+              0.015,
+              0.1
+            ],
+            "features": "direct-physical-90-v1",
+            "gaeLambda": 0.9394130628134758,
+            "gamma": 0.9975031223974601,
+            "gradientEvery": 4,
+            "hidden": 64,
+            "learner": "ppo",
+            "learningRate": 0.0001,
+            "lineMap": null,
+            "maxStd": [
+              0.1,
+              0.4
+            ],
+            "minStd": [
+              0.005,
+              0.03
+            ],
+            "passRule": "held-0.5s-band-v1",
+            "physicsHz": 60,
+            "policyDelay": 2,
+            "potentialPrior": true,
+            "ppoEntropy": 0.0001,
+            "replayCapacity": 32768,
+            "reward": "direct-driving-2",
+            "rollout": 128,
+            "scales": [
+              1.0,
+              1.0
+            ],
+            "seed": 2,
+            "shaping": "bounded-time-speed-potential-1",
+            "targetClip": 0.03,
+            "targetNoise": 0.015,
+            "tau": 0.005,
+            "teacherAtInference": false,
+            "version": "direct-driving-2"
+          },
+          "sourceCheckpoint": "ad3c6d40d47bbe5df23366c178e8dfd7ef3749eeaacc956a8e6e4be0d66f9bba",
+          "steps": 411181,
+          "decisions": 68637,
+          "updates": 536,
+          "stats": {
+            "cleanLaps": 252,
+            "contacts": 0,
+            "episodes": 252,
+            "passes": 0,
+            "success": 252,
+            "trackLimits": 0,
+            "windows": 0
+          },
+          "championHash": "bebfd3a3fc2f0e22bff7ca30b0a43972ec770a34642ce80c3174f6ceaa511259"
+        }
+      ]
+    },
+    {
+      "id": "2c20bdbb28ff4ff6856ea4cdc7708b42",
+      "name": "Memoria",
+      "steps": 85902,
+      "seconds": 541.677288755207,
+      "oldCheckpoint": "53aaddcaae8c6dd41ba1d6c31d7ddb3e819f07101a2a1e5d1592f2cd7b2ef219",
+      "protocol": "direct-driving-3",
+      "hidden": 128,
+      "epochUpdates": 0,
+      "recipeArchives": [
+        {
+          "recipe": {
+            "action": "direct-steer-pedal-v1",
+            "actorRateScale": 0.1,
+            "algorithm": "residual_sac",
+            "anchorSteps": 4096,
+            "anchorWeight": 2.0,
+            "base": null,
+            "batchSize": 64,
+            "candidateRestart": "failed-or-three-no-gain-1",
+            "criticContext": "task-context-1",
+            "criticInputs": 94,
+            "criticWarmup": 512,
+            "curriculum": "solo-or-selected-traffic-v1",
+            "decisionHz": 10,
+            "domainRandomization": "vehicle-grip-1",
+            "entropy": 0.0001,
+            "exploration": [
+              0.015,
+              0.1
+            ],
+            "features": "direct-physical-90-v1",
+            "gaeLambda": 0.9753099120283326,
+            "gamma": 0.9975031223974601,
+            "gradientEvery": 4,
+            "hidden": 64,
+            "learner": "sac",
+            "learningRate": 0.0001,
+            "lineMap": null,
+            "maxStd": [
+              0.1,
+              0.4
+            ],
+            "minStd": [
+              0.005,
+              0.03
+            ],
+            "passRule": "held-0.5s-band-v1",
+            "physicsHz": 60,
+            "policyDelay": 2,
+            "potentialPrior": true,
+            "ppoEntropy": 0.0002,
+            "replayCapacity": 32768,
+            "reward": "direct-driving-2",
+            "rollout": 128,
+            "scales": [
+              1.0,
+              1.0
+            ],
+            "seed": 3,
+            "shaping": "bounded-time-speed-potential-1",
+            "targetClip": 0.03,
+            "targetNoise": 0.015,
+            "tau": 0.005,
+            "teacherAtInference": false,
+            "version": "direct-driving-2"
+          },
+          "sourceCheckpoint": "53aaddcaae8c6dd41ba1d6c31d7ddb3e819f07101a2a1e5d1592f2cd7b2ef219",
+          "steps": 85902,
+          "decisions": 14336,
+          "updates": 3553,
+          "stats": {
+            "cleanLaps": 37,
+            "contacts": 0,
+            "episodes": 40,
+            "passes": 0,
+            "success": 37,
+            "trackLimits": 6,
+            "windows": 0
+          },
+          "championHash": "f9005c0ca46de8d49ae36f6020136c4e5b2d25c5870922339137232b1d9c4daa"
+        }
+      ]
+    },
+    {
+      "id": "c89159135317425b8b4180bc68945c10",
+      "name": "Linea",
+      "steps": 97923,
+      "seconds": 491.75033942960727,
+      "oldCheckpoint": "66c59028e0709f644af73ff57fd832f6e0f9b3dbee2e9e56a00e23f4532b1054",
+      "protocol": "direct-driving-3",
+      "hidden": 128,
+      "epochUpdates": 0,
+      "recipeArchives": [
+        {
+          "recipe": {
+            "action": "direct-steer-pedal-v1",
+            "actorRateScale": 0.1,
+            "algorithm": "residual_td3",
+            "anchorSteps": 4096,
+            "anchorWeight": 2.0,
+            "base": null,
+            "batchSize": 64,
+            "candidateRestart": "failed-or-three-no-gain-1",
+            "criticContext": "task-context-1",
+            "criticInputs": 94,
+            "criticWarmup": 512,
+            "curriculum": "solo-or-selected-traffic-v1",
+            "decisionHz": 10,
+            "domainRandomization": "vehicle-grip-1",
+            "entropy": 0.0001,
+            "exploration": [
+              0.015,
+              0.1
+            ],
+            "features": "direct-physical-90-v1",
+            "gaeLambda": 0.9753099120283326,
+            "gamma": 0.9975031223974601,
+            "gradientEvery": 4,
+            "hidden": 64,
+            "learner": "td3",
+            "learningRate": 0.0001,
+            "lineMap": null,
+            "maxStd": [
+              0.1,
+              0.4
+            ],
+            "minStd": [
+              0.005,
+              0.03
+            ],
+            "passRule": "held-0.5s-band-v1",
+            "physicsHz": 60,
+            "policyDelay": 2,
+            "potentialPrior": true,
+            "ppoEntropy": 0.0002,
+            "replayCapacity": 32768,
+            "reward": "direct-driving-2",
+            "rollout": 128,
+            "scales": [
+              1.0,
+              1.0
+            ],
+            "seed": 4,
+            "shaping": "bounded-time-speed-potential-1",
+            "targetClip": 0.03,
+            "targetNoise": 0.015,
+            "tau": 0.005,
+            "teacherAtInference": false,
+            "version": "direct-driving-2"
+          },
+          "sourceCheckpoint": "66c59028e0709f644af73ff57fd832f6e0f9b3dbee2e9e56a00e23f4532b1054",
+          "steps": 97923,
+          "decisions": 16369,
+          "updates": 4061,
+          "stats": {
+            "cleanLaps": 37,
+            "contacts": 0,
+            "episodes": 121,
+            "passes": 0,
+            "success": 37,
+            "trackLimits": 85,
+            "windows": 0
+          },
+          "championHash": "9053bbbe887e93cebdaae22bfd9974badb79683d3e0f45794e359f1ab23dcc15"
+        }
+      ]
+    },
+    {
+      "id": "75c83293476840819581efb2a0de199e",
+      "name": "Tattico",
+      "steps": 93039,
+      "seconds": 801.0889432915137,
+      "oldCheckpoint": "7249fcef167459abaefd31a58ab150f9797bbdee0ec20b4118be8189e0924dfe",
+      "protocol": "direct-driving-3",
+      "hidden": 128,
+      "epochUpdates": 0,
+      "recipeArchives": [
+        {
+          "recipe": {
+            "action": "direct-steer-pedal-v1",
+            "actorRateScale": 0.1,
+            "algorithm": "residual_tactic",
+            "anchorSteps": 4096,
+            "anchorWeight": 2.0,
+            "base": null,
+            "batchSize": 64,
+            "candidateRestart": "failed-or-three-no-gain-1",
+            "criticContext": "task-context-1",
+            "criticInputs": 94,
+            "criticWarmup": 512,
+            "curriculum": "solo-8192-then-mixed-v1",
+            "decisionHz": 10,
+            "domainRandomization": "vehicle-grip-1",
+            "entropy": 0.0001,
+            "exploration": [
+              0.015,
+              0.1
+            ],
+            "features": "direct-physical-90-v1",
+            "gaeLambda": 0.9753099120283326,
+            "gamma": 0.9975031223974601,
+            "gradientEvery": 4,
+            "hidden": 64,
+            "learner": "td3",
+            "learningRate": 0.0001,
+            "lineMap": null,
+            "maxStd": [
+              0.1,
+              0.4
+            ],
+            "minStd": [
+              0.005,
+              0.03
+            ],
+            "passRule": "held-0.5s-band-v1",
+            "physicsHz": 60,
+            "policyDelay": 2,
+            "potentialPrior": true,
+            "ppoEntropy": 0.0002,
+            "replayCapacity": 32768,
+            "reward": "direct-driving-2",
+            "rollout": 128,
+            "scales": [
+              1.0,
+              1.0
+            ],
+            "seed": 5,
+            "shaping": "bounded-time-speed-potential-1",
+            "targetClip": 0.03,
+            "targetNoise": 0.015,
+            "tau": 0.005,
+            "teacherAtInference": false,
+            "version": "direct-driving-2"
+          },
+          "sourceCheckpoint": "7249fcef167459abaefd31a58ab150f9797bbdee0ec20b4118be8189e0924dfe",
+          "steps": 93039,
+          "decisions": 15529,
+          "updates": 3851,
+          "stats": {
+            "cleanLaps": 39,
+            "contacts": 25,
+            "episodes": 52,
+            "passes": 9,
+            "success": 39,
+            "trackLimits": 21,
+            "windows": 2
+          },
+          "championHash": "fcc7899571784b2c4124541970b73bf725149efa299e8ffd24c0e61ff46cd378"
+        }
+      ]
+    }
+  ],
+  "identitiesPreserved": true,
+  "lifetimeTotalsPreserved": true,
+  "historyPreserved": true,
+  "originalPolicyArtifactsPreserved": true,
+  "neuralBases": {
+    "driving": "9e8f62942307e2391ad71e2fadbb03ccea023380e9f047e0d5c15aecf55c4a83",
+    "traffic": "7589fcc157ee794243a7b5b7444425668a236edc1a5fa5993f44a55aad040a58"
+  },
+  "preferencesPreserved": true,
+  "preferenceFilesPreserved": true,
+  "activeTheme": {
+    "digest": "faf3e0032162416a471c8122d320709f47b71df0667b042816fffa4e3b452d62",
+    "id": "studio.applecalm",
+    "version": "1.6.3"
+  },
+  "liveGuiPidVerified": true,
+  "guiHeartbeat": {
+    "ready": true,
+    "ageSeconds": 0.9898614883422852,
+    "pid": 104141,
+    "selection": {
+      "digest": "faf3e0032162416a471c8122d320709f47b71df0667b042816fffa4e3b452d62",
+      "id": "studio.applecalm",
+      "version": "1.6.3"
+    },
+    "pending": null
+  },
+  "service": {
+    "MainPID": "104132",
+    "NRestarts": "0",
+    "ActiveState": "active",
+    "SubState": "running"
+  },
+  "manifestMismatches": [],
+  "finalManifestSha256": "25a162289d8dd03b39df3ba1882a573f15afd0845fb03616a044e3e858640bc6",
+  "newOSReboot": false,
+  "nativeCases": [
+    "base",
+    "functional",
+    "apple"
+  ],
+  "noStudyChampionsImported": true,
+  "newQualificationRequired": true
+}

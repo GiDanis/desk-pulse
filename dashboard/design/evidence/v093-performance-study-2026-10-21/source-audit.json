@@ -1,0 +1,703 @@
+{
+  "capturedAtUtc": "2026-10-21T18:03:42.688867+00:00",
+  "scope": "Local source inspection only; candidates are not measured bottlenecks",
+  "files": [
+    {
+      "path": "dashboard/game.py",
+      "sha256": "825a056620b7f54ff5a6780a09af42c159cfc16d0275624cb5f5f2580fbbeb16",
+      "lines": 533,
+      "locations": [
+        {
+          "line": 62,
+          "text": "self._timer.setInterval(33)"
+        },
+        {
+          "line": 68,
+          "text": "def _refresh(self):"
+        },
+        {
+          "line": 81,
+          "text": "def snapshot(self):"
+        },
+        {
+          "line": 372,
+          "text": "self._timer.setInterval(16);self._run_state='starting';self._start_started=time.monotonic();self.changed.emit();return True"
+        },
+        {
+          "line": 391,
+          "text": "self._frames=context.Queue(maxsize=2)"
+        },
+        {
+          "line": 396,
+          "text": "self._process=context.Process(target=worker_main,args=(child,self._frames,str(self._root),request),daemon=False)"
+        },
+        {
+          "line": 402,
+          "text": "self._message='Avvio';self.changed.emit();self._timer.setInterval(33);self._timer.start()"
+        },
+        {
+          "line": 409,
+          "text": "self._timer.setInterval(16)"
+        },
+        {
+          "line": 459,
+          "text": "def _poll(self):"
+        },
+        {
+          "line": 471,
+          "text": "self._timer.setInterval(33)"
+        },
+        {
+          "line": 476,
+          "text": "self._timer.setInterval(250)"
+        },
+        {
+          "line": 509,
+          "text": "def stop(self):"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/game_worker.py",
+      "sha256": "323f6b32d343cf0a754a4f30e4c6d91ea279efbb37f68edbbdd9e00cf835a6b8",
+      "lines": 686,
+      "locations": [
+        {
+          "line": 13,
+          "text": "os.environ['OPENBLAS_NUM_THREADS']='1'"
+        },
+        {
+          "line": 17,
+          "text": "os.setpriority(os.PRIO_PROCESS, 0, 10)"
+        },
+        {
+          "line": 290,
+          "text": "def save_training(force=False):"
+        },
+        {
+          "line": 307,
+          "text": "checkpoint_writer.capture_ms=(time.monotonic()-snapshot_started)*1000"
+        },
+        {
+          "line": 420,
+          "text": "meta['checkpoint']=dict(state='saving' if checkpoint_writer.busy else 'idle',captureMs=getattr(checkpoint_writer,'capture_ms',0),cost={k:v for k,v in (checkpoint_writer.last_cost or {}).items() if k in ('encodeMs','persi"
+        },
+        {
+          "line": 431,
+          "text": "time.sleep(0.001)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/game_checkpoint_writer.py",
+      "sha256": "cb77a236bd5a2e6a8901a005e134ffd54f62fe9b50086340a7de7abae82dffc7",
+      "lines": 103,
+      "locations": [
+        {
+          "line": 7,
+          "text": "from copy import deepcopy"
+        },
+        {
+          "line": 20,
+          "text": "def persist_snapshot(store,identity,checkpoint,policy,steps,seconds,metric,curriculum,session,session_stats,prune):"
+        },
+        {
+          "line": 49,
+          "text": "self.process=subprocess.Popen([sys.executable,str(Path(__file__).resolve()),'--checkpoint-child'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)"
+        },
+        {
+          "line": 58,
+          "text": "np.ndarray((size,),dtype=np.uint8,buffer=self.block).fill(0)"
+        },
+        {
+          "line": 73,
+          "text": "def submit(self,identity,checkpoint,policy,steps,seconds,metric,curriculum,session,session_stats):"
+        },
+        {
+          "line": 78,
+          "text": "np.ndarray(rows.shape,dtype='<f8',buffer=self.block)[:]=rows"
+        },
+        {
+          "line": 82,
+          "text": "self.job=self.pool.submit(self._send,(self.store,identity,checkpoint,deepcopy(policy),steps,seconds,deepcopy(metric),deepcopy(curriculum),session,deepcopy(session_stats),self.save_count%10==0))"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/game_presentation.py",
+      "sha256": "48320cc6787dfa17111930c07a613fbb7a8c7478e4bbf3ebf4f3df858b721e2a",
+      "lines": 72,
+      "locations": [
+        {
+          "line": 19,
+          "text": "self._display_sync=os.environ.get('SMARTPC_GAME_PRESENTER','timer')=='frame' and 59<=refresh<=61"
+        },
+        {
+          "line": 37,
+          "text": "self._deadline = time.monotonic() + 1 / 30"
+        },
+        {
+          "line": 53,
+          "text": "def _timeout(self):"
+        },
+        {
+          "line": 57,
+          "text": "self._deadline += 1 / 30"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/state.py",
+      "sha256": "070311b13138160cdaa99778968c4bb81f8dcff73483c9f67586bdb571b738bf",
+      "lines": 780,
+      "locations": [
+        {
+          "line": 95,
+          "text": "self._dashboard_cache = {}"
+        },
+        {
+          "line": 100,
+          "text": "signal.connect(lambda d=domain: self._invalidate_dashboards(d))"
+        },
+        {
+          "line": 196,
+          "text": "def _invalidate_dashboards(self, domain=None):"
+        },
+        {
+          "line": 201,
+          "text": "self._dashboard_cache.clear()"
+        },
+        {
+          "line": 203,
+          "text": "for key in tuple(self._dashboard_cache):"
+        },
+        {
+          "line": 205,
+          "text": "self._dashboard_cache.pop(key)"
+        },
+        {
+          "line": 220,
+          "text": "if key in self._dashboard_cache:"
+        },
+        {
+          "line": 221,
+          "text": "return self._dashboard_cache[key]"
+        },
+        {
+          "line": 241,
+          "text": "if len(self._dashboard_cache) >= 32:"
+        },
+        {
+          "line": 242,
+          "text": "self._dashboard_cache.pop(next(iter(self._dashboard_cache)))"
+        },
+        {
+          "line": 243,
+          "text": "self._dashboard_cache[key] = result"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/theme_api.py",
+      "sha256": "a7d7a4124db6793ab88a774bca2c7ce7758fa748de782089fa82b2c28f2c7dd9",
+      "lines": 957,
+      "locations": [
+        {
+          "line": 289,
+          "text": "def _cached(cache, key, raw, build):"
+        },
+        {
+          "line": 313,
+          "text": "def normalize_legacy(surface_id, payload, cache=None, *, validate=True):"
+        },
+        {
+          "line": 730,
+          "text": "def updateLegacy(self, context, payload):"
+        },
+        {
+          "line": 764,
+          "text": "def bindGameScene(self, context, service):"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/theme_contexts.py",
+      "sha256": "8705cd67b8c22959358396cb51a1ce0bc65852528907143e446fb8c7463ab630",
+      "lines": 299,
+      "locations": [
+        {
+          "line": 44,
+          "text": "def snapshot_equal(left, right):"
+        },
+        {
+          "line": 169,
+          "text": "def _update(self, values, validated=False):"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/components/PublicContextAdapter.qml",
+      "sha256": "df7effba33f96b3ce546450482d13abae08fbd200fc9940fd69abe8f51245399",
+      "lines": 151,
+      "locations": [
+        {
+          "line": 17,
+          "text": "readonly property bool streamGameScene: publicEnabled && surfaceId === \"game.track\" && factory && typeof factory.bindGameScene === \"function\" && legacy && legacy.controller && !!legacy.controller.gameSceneSource"
+        },
+        {
+          "line": 18,
+          "text": "readonly property var modelDomains: selectedModelDomains !== null ? selectedModelDomains : factory && typeof factory.modelDomains === \"function\""
+        },
+        {
+          "line": 19,
+          "text": "? factory.modelDomains(surfaceId) : [\"weather\",\"account\",\"nextEvent\",\"sport\",\"team\",\"fantasy\",\"racing\",\"casa\",\"network\"]"
+        },
+        {
+          "line": 26,
+          "text": "if (valid && c.active === false && c.exiting !== true)"
+        },
+        {
+          "line": 38,
+          "text": "if (modelDomains.length && c.model) {"
+        },
+        {
+          "line": 40,
+          "text": "for (const domain of modelDomains) if (c.model[domain] !== undefined) model[domain] = c.model[domain]"
+        },
+        {
+          "line": 81,
+          "text": "result.suspended = c.active === false || !!app.urgentEvent.id && surfaceId !== \"alerts.urgent\""
+        },
+        {
+          "line": 82,
+          "text": "if (typeof app.publicSurfacePayload === \"function\") Object.assign(result,app.publicSurfacePayload(surfaceId,dataProjection,streamGameScene))"
+        },
+        {
+          "line": 118,
+          "text": "function scheduleRefresh() {"
+        },
+        {
+          "line": 121,
+          "text": "Qt.callLater(function() {"
+        },
+        {
+          "line": 142,
+          "text": "if (streamGameScene && publicContext && legacy && legacy.controller)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/components/ViewHost.qml",
+      "sha256": "2d2f7a5174e15420168d5877f8a69ddad9ca5d883c0c8e8eff3603073421f714",
+      "lines": 376,
+      "locations": [
+        {
+          "line": 69,
+          "text": "property var retainedLoaders: []"
+        },
+        {
+          "line": 87,
+          "text": "function rendererKey(snapshot, identifier, surface) {"
+        },
+        {
+          "line": 92,
+          "text": "const loaders = retainedLoaders"
+        },
+        {
+          "line": 93,
+          "text": "retainedLoaders = []"
+        },
+        {
+          "line": 102,
+          "text": "const loaders = retainedLoaders.concat([loader])"
+        },
+        {
+          "line": 104,
+          "text": "retainedLoaders = loaders"
+        },
+        {
+          "line": 140,
+          "text": "const loaders = retainedLoaders.filter(loader => {"
+        },
+        {
+          "line": 144,
+          "text": "retainedLoaders = loaders"
+        },
+        {
+          "line": 226,
+          "text": "const cachedIndex = retainedLoaders.findIndex(loader => loader.rendererKey === key)"
+        },
+        {
+          "line": 228,
+          "text": "const loaders = retainedLoaders.slice()"
+        },
+        {
+          "line": 230,
+          "text": "retainedLoaders = loaders"
+        },
+        {
+          "line": 303,
+          "text": "active: false; asynchronous: true"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/presentations/GameVisual.qml",
+      "sha256": "6caf803057afddea5ed255ee88616d97917fd48f078935f13d71760ed9d22218",
+      "lines": 537,
+      "locations": [
+        {
+          "line": 112,
+          "text": "GamePresentationClock {"
+        },
+        {
+          "line": 118,
+          "text": "FrameAnimation {"
+        },
+        {
+          "line": 121,
+          "text": "onTriggered:if (currentFrame%2 === 0) frameClock.pulse()"
+        },
+        {
+          "line": 238,
+          "text": "Shape {"
+        },
+        {
+          "line": 395,
+          "text": "Shape {"
+        },
+        {
+          "line": 510,
+          "text": "Canvas {"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/game_native.py",
+      "sha256": "ddb65479dac7b3894cbfc985d6dae2a157f66a8d0797d4fc859842b85f4ad961",
+      "lines": 71,
+      "locations": [
+        {
+          "line": 7,
+          "text": "_library=ctypes.CDLL(str(Path(__file__).with_name('libsmartpc_game_native.so')))"
+        },
+        {
+          "line": 26,
+          "text": "def rays(track,states,angles,limit):"
+        },
+        {
+          "line": 41,
+          "text": "class SparsePopulation:"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/game_native.c",
+      "sha256": "4a62223aeab5d94ac9cfdb0a492aa18a1509da1cf181a3e12a5a890d8710569f",
+      "lines": 61,
+      "locations": [
+        {
+          "line": 9,
+          "text": "void smartpc_neat(double *values,const int64_t *destination,const int64_t *starts,"
+        },
+        {
+          "line": 10,
+          "text": "const int64_t *sources,const double *weights,const double *bias,const double *response,"
+        },
+        {
+          "line": 11,
+          "text": "size_t nodes,const int64_t *outputs,size_t output_count,double *result) {"
+        },
+        {
+          "line": 13,
+          "text": "double sum=0.;for(int64_t k=starts[i];k<starts[i+1];k++)sum+=values[sources[k]]*weights[k];"
+        },
+        {
+          "line": 14,
+          "text": "double z=2.5*(bias[i]+response[i]*sum);z=fmax(-60.,fmin(60.,z));"
+        },
+        {
+          "line": 20,
+          "text": "void smartpc_polygon_rays(const double *origins,const double *directions,"
+        },
+        {
+          "line": 21,
+          "text": "const double *starts,const double *deltas,const double *lo,const double *hi,"
+        },
+        {
+          "line": 22,
+          "text": "size_t rays,size_t segments,double limit,double *result) {"
+        },
+        {
+          "line": 24,
+          "text": "double ox=origins[2*i],oy=origins[2*i+1],dx=directions[2*i],dy=directions[2*i+1];"
+        },
+        {
+          "line": 25,
+          "text": "double ex=ox+dx*limit,ey=oy+dy*limit;"
+        },
+        {
+          "line": 26,
+          "text": "double minx=fmin(ox,ex),maxx=fmax(ox,ex),miny=fmin(oy,ey),maxy=fmax(oy,ey),best=limit;"
+        },
+        {
+          "line": 30,
+          "text": "double sx=deltas[k],sy=deltas[k+1],qx=starts[k]-ox,qy=starts[k+1]-oy;"
+        },
+        {
+          "line": 31,
+          "text": "double den=dx*sy-dy*sx;if(fabs(den)<=1e-12)continue;"
+        },
+        {
+          "line": 32,
+          "text": "double t=(qx*sy-qy*sx)/den,u=(qx*dy-qy*dx)/den;"
+        },
+        {
+          "line": 39,
+          "text": "void smartpc_oval_rays(const double *origins,const double *directions,size_t rays,"
+        },
+        {
+          "line": 40,
+          "text": "double half_straight,double radius,double width,double limit,double *result) {"
+        },
+        {
+          "line": 41,
+          "text": "double a=half_straight;"
+        },
+        {
+          "line": 43,
+          "text": "double ox=origins[2*i],oy=origins[2*i+1],dx=directions[2*i],dy=directions[2*i+1],best=limit;"
+        },
+        {
+          "line": 45,
+          "text": "double r=radius+(ri?width/2:-width/2);"
+        },
+        {
+          "line": 47,
+          "text": "double y=side?r:-r,t=fabs(dy)>1e-9?(y-oy)/dy:1e6;"
+        },
+        {
+          "line": 48,
+          "text": "double x=ox+t*dx;if(t>0&&fabs(x)<=a&&t<best)best=t;"
+        },
+        {
+          "line": 51,
+          "text": "double center=ci?a:-a,rx=ox-center,b=rx*dx+oy*dy,c=rx*rx+oy*oy-r*r;"
+        },
+        {
+          "line": 52,
+          "text": "double disc=b*b-c,root=sqrt(fmax(disc,0.));"
+        },
+        {
+          "line": 54,
+          "text": "double t=-b+(root_index?root:-root),x=ox+t*dx;"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/weather.py",
+      "sha256": "8508649e9d4e192aee7eed56ba737bb1a7cc56b53f78c07b26a01826afba0735",
+      "lines": 420,
+      "locations": [
+        {
+          "line": 387,
+          "text": "QThreadPool.globalInstance().start(worker)"
+        },
+        {
+          "line": 392,
+          "text": "def _on_finished(self, snapshot: object, error: object) -> None:"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/sport.py",
+      "sha256": "21c6ce62364c27f81ee89b36c5e066cf208a4f66dfc2543e8154d9509816b454",
+      "lines": 594,
+      "locations": [
+        {
+          "line": 441,
+          "text": "QThreadPool.globalInstance().start(worker)"
+        },
+        {
+          "line": 460,
+          "text": "def _finished(self, snapshot, error):"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/network.py",
+      "sha256": "db9f8e7ccf00baa1d734df58b05199081b9d4b9f1ac6cfedf620443366cb297d",
+      "lines": 395,
+      "locations": [
+        {
+          "line": 147,
+          "text": "def _finished(self, result, error):"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/theme_lifecycle.py",
+      "sha256": "ad1fcd5b53e1110b89bb7bb74eab57d081c6e6e450573617fd9822667b527a55",
+      "lines": 430,
+      "locations": [
+        {
+          "line": 56,
+          "text": "health_root=Path(tempfile.gettempdir())/('smartpc-theme-health-'+str(os.getuid()))"
+        },
+        {
+          "line": 419,
+          "text": "def heartbeat(self, *, ready=True, generation=None, transition=False, context=None):"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/run.sh",
+      "sha256": "88de24bc67f2b9cb96000aeb05d47877d143449728a8f18c98c23f73501b6a57",
+      "lines": 73,
+      "locations": [
+        {
+          "line": 14,
+          "text": "export QSG_RHI_BACKEND=opengl"
+        },
+        {
+          "line": 18,
+          "text": "export QT_QPA_PLATFORM=eglfs"
+        },
+        {
+          "line": 19,
+          "text": "export QT_QPA_EGLFS_INTEGRATION=eglfs_kms"
+        },
+        {
+          "line": 20,
+          "text": "export QT_QPA_EGLFS_HIDECURSOR=1"
+        },
+        {
+          "line": 21,
+          "text": "export QT_QPA_EGLFS_KMS_CONFIG=\"${SMARTPC_KMS_CONFIG:-/etc/smartpc/eglfs-kms.json}\""
+        },
+        {
+          "line": 22,
+          "text": "export QSG_RHI_BACKEND=opengl"
+        }
+      ]
+    },
+    {
+      "path": "os/system/smartpc-dashboard.service",
+      "sha256": "83d363ac6f6390efe6c884cd89e577130961e4c180814223d4b500a40b58c49f",
+      "lines": 35,
+      "locations": [
+        {
+          "line": 17,
+          "text": "CacheDirectory=smartpc-dashboard"
+        },
+        {
+          "line": 18,
+          "text": "ExecStartPre=-/usr/bin/plymouth quit"
+        },
+        {
+          "line": 19,
+          "text": "ExecStart=/opt/smartpc/dashboard/run.sh --device"
+        }
+      ]
+    },
+    {
+      "path": "scripts/build-game-native.sh",
+      "sha256": "a344946ecfacdff99af56e7e5e1d2f3f1d908212189661bff8e09b8367d7b096",
+      "lines": 14,
+      "locations": [
+        {
+          "line": 10,
+          "text": "\"$native_compiler\" -O3 -ffp-contract=off -fPIC -shared \\"
+        }
+      ]
+    },
+    {
+      "path": "theme-projects/apple-calm/bundle/qml/MiniHistory.qml",
+      "sha256": "05f38c0f8546a664bfc1d4347e154fb5f29dee9b65b37229528c4af07f418798",
+      "lines": 45,
+      "locations": [
+        {
+          "line": 8,
+          "text": "if (!visible || !chart) return lines"
+        },
+        {
+          "line": 17,
+          "text": "function repaintVisible() { if (visible && available) requestPaint() }"
+        },
+        {
+          "line": 21,
+          "text": "onPaintPaletteChanged:repaintVisible()"
+        },
+        {
+          "line": 24,
+          "text": "onPaint: {"
+        },
+        {
+          "line": 25,
+          "text": "if (!visible) return"
+        }
+      ]
+    },
+    {
+      "path": "theme-projects/apple-calm/bundle/qml/NetworkHistoryChart.qml",
+      "sha256": "acaaed00ac088e2afbf0233c0a11c2c52a418c1bf57b6969bab7a70088beba79",
+      "lines": 72,
+      "locations": [
+        {
+          "line": 9,
+          "text": "if (!visible || !chart) return result"
+        },
+        {
+          "line": 22,
+          "text": "function repaintVisible() { if (visible && canvas.available) canvas.requestPaint() }"
+        },
+        {
+          "line": 24,
+          "text": "onPaintPaletteChanged: repaintVisible()"
+        },
+        {
+          "line": 38,
+          "text": "onPaint: {"
+        }
+      ]
+    },
+    {
+      "path": "theme-projects/apple-calm/bundle/qml/OutlineIcon.qml",
+      "sha256": "f0c2729eb695d1c84e9b49feca659e5d0ebd031ed266703ade03e59745c80b46",
+      "lines": 31,
+      "locations": [
+        {
+          "line": 15,
+          "text": "readonly property bool ready: drawing.status === Image.Ready"
+        },
+        {
+          "line": 16,
+          "text": "readonly property string error: drawing.status === Image.Error ? \"Icona non disponibile\" : \"\""
+        },
+        {
+          "line": 22,
+          "text": "Image {"
+        },
+        {
+          "line": 26,
+          "text": "source:\"icon-atlas.png\""
+        },
+        {
+          "line": 28,
+          "text": "cache:true"
+        }
+      ]
+    }
+  ],
+  "appleQmlFiles": 71,
+  "appleCanvasDeclarations": [
+    {
+      "path": "theme-projects/apple-calm/bundle/qml/NetworkHistoryChart.qml",
+      "line": 33
+    },
+    {
+      "path": "theme-projects/apple-calm/bundle/qml/MiniHistory.qml",
+      "line": 2
+    }
+  ]
+}

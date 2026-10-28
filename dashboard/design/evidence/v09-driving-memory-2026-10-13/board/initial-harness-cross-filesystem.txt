@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/var/lib/smartpc-dashboard/smartpc-v09-rc12-project/qualify-install.py", line 54, in <module>
+    subprocess.run(['runuser','-u','smartpc','--','env','OPENBLAS_NUM_THREADS=1',str(PY),str(PROJECT/'check-existing-drivers.py')],cwd=SOURCE,stdout=out,stderr=subprocess.STDOUT,check=True,timeout=120)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['runuser', '-u', 'smartpc', '--', 'env', 'OPENBLAS_NUM_THREADS=1', '/var/lib/smartpc-dashboard/game-runtime/bin/python', '/var/lib/smartpc-dashboard/smartpc-v09-rc12-project/check-existing-drivers.py']' returned non-zero exit status 1.

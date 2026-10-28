@@ -1,10 +1,16 @@
 # v0.9 · Gioco / Auto che impara — studio di fattibilità, GUI e UX
 
+**Approfondimento 11 ottobre, analisi:** [impostazioni Apple Calm e secondo circuito](game-settings-circuits-ux-study.md), sezioni/avanzate, draft/focus, ricerca primaria e quattro concept nativi; geometria comune e percorsi per pista da implementare. La baseline runtime resta rc.6.
+
+**Aggiornamento rc.6:** [vista Pilota e dossier](v09-pilot-dossier-report.md), durata/sessioni/profili/risultati e reset confermato con storico conservato; API 2.9, 68 superfici.
+
+**Aggiornamento rc.5:** [Gara e guida PPO](v09-race-ppo-report.md): una vettura per pilota, reti salvate congelate, 3/5/10 giri e dimostrazione PPO distinta dai tentativi di apprendimento.
+
 ## Stato implementazione · 11 ottobre 2026
 
 **Aggiornamento rc.3:** [impostazioni comprensibili e miglioramento del tempo](game-settings-speed-study.md) implementati e installati dopo autorizzazione: menu senza legenda, descrizioni secondarie/valore distinti, Controllo/Passo, campione verificato e Progressi dei tempi. [Report e gate ancora aperti](v09-game-settings-pace-report.md). Geometrie/tavole successive nel testo conservano lo studio storico.
 
-La candidata corrente è 0.9.0-rc.3; la [consegna rc.2](v09-game-implementation-report.md) conserva le prove precedenti. Il testo seguente conserva lo studio precedente; i candidati numeric9/30 sono sostituiti da race-32-v1, rete 32→16→2 e fisica f1-2. NPU verificata nella rc.2 con una politica appresa, CPU scelta dopo misure; PPO/NEAT e guida nel traffico restano da qualificare.
+La candidata corrente è 0.9.0-rc.6, con [ottimizzazioni del motore e delle scene](v09-game-performance-report.md); la [consegna rc.2](v09-game-implementation-report.md) conserva le prove precedenti. Il testo seguente conserva lo studio precedente; i candidati numeric9/30 sono sostituiti da race-32-v1, rete 32→16→2 e fisica f1-2. NPU verificata nella rc.2 con una politica appresa, CPU scelta dopo misure; PPO/NEAT e guida nel traffico restano da qualificare.
 
 
 10 ottobre 2026 · revisione GUI/UX 4 · layout/tavole r2 · S0, approfondimento progettuale · SmartPC / DeskPulse · 960×640.

@@ -1,0 +1,28 @@
+.......................................................
+----------------------------------------------------------------------
+Ran 55 tests in 67.899s
+
+OK
+gc:0: ResourceWarning: gc: 3 uncollectable objects at shutdown; use gc.set_debug(gc.DEBUG_UNCOLLECTABLE) to list them
+cations_once_and_preserves_totals)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_game_school.py", line 92, in test_store_migration_archives_qualifications_once_and_preserves_totals
+    saved=store.driver(d['id']);self.assertEqual(saved['profile']['hidden'],128)
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game_store.py", line 274, in driver
+    return next((x for x in self.drivers(track_id) if x['id']==identity), None)
+                            ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game_store.py", line 265, in drivers
+    row['timedQualifications']=sorted(certificates.get(row['id'],[]),key=lambda c:(c['bestLap'],c['policy']))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game_store.py", line 265, in <lambda>
+    row['timedQualifications']=sorted(certificates.get(row['id'],[]),key=lambda c:(c['bestLap'],c['policy']))
+                                                                                   ~^^^^^^^^^^^
+KeyError: 'bestLap'
+
+----------------------------------------------------------------------
+Ran 55 tests in 66.653s
+
+FAILED (errors=1)
+gc:0: ResourceWarning: gc: 3 uncollectable objects at shutdown; use gc.set_debug(gc.DEBUG_UNCOLLECTABLE) to list them

@@ -1,0 +1,5340 @@
+{
+  "status": "complete",
+  "trainingRuns": 40,
+  "trainingSeeds": [
+    741,
+    742,
+    743,
+    744,
+    745
+  ],
+  "methods": [
+    "residual_ppo",
+    "residual_sac",
+    "residual_td3",
+    "residual_tactic"
+  ],
+  "commonPreparedBase": true,
+  "retainedPhysicalSteps": 7864320,
+  "decisions": 1314066,
+  "updates": 248045,
+  "heldoutEpisodes": 2320,
+  "heldoutFiveCarGrids": 80,
+  "supplementaryTwoCarGrids": 80,
+  "supplementaryLatencyEpisodes": 400,
+  "perRunBudget": 196608,
+  "independentTeacherPreparations": false,
+  "teacherCallsDuringLearning": 0,
+  "productionChanges": false,
+  "fullWallClockComparisonAvailable": false,
+  "wallClockLimit": "Quota recovery resumed exact checkpoints; timings of resumed processes exclude earlier CPU and re-executed work.",
+  "measuredScope": "Exact policy selected for racing; exploratory raw candidates reported separately in final-cohorts.",
+  "gaps": [
+    "Latency and two-car bank added after primary bank, no model tuning from outcomes",
+    "Global five-car grid contacts and limits include frozen rivals; two-car grids also report ego",
+    "Complex collision/contact attribution unchanged"
+  ],
+  "promotedDefault": false,
+  "pairs": [
+    {
+      "method": "residual_ppo",
+      "seed": 741,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8916666666666648,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.875000000000323,
+            "queueSeconds": 93.1666666666679,
+            "idleAlongsideSeconds": 49.200000000001765,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.050000000000228,
+            "queueSeconds": 63.866666666667435,
+            "idleAlongsideSeconds": 28.7000000000005,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 53.883333333333574,
+            "idleAlongsideSeconds": 23.900000000000734,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 2,
+            "contacts": 68,
+            "limits": 2,
+            "medianSeconds": null,
+            "queueSeconds": 166.98333333332934,
+            "idleAlongsideSeconds": 76.69999999999776,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 95,
+            "limits": 3,
+            "medianSeconds": null,
+            "queueSeconds": 214.2833333333266,
+            "idleAlongsideSeconds": 84.19999999999642,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.46666666666401,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.409748559783075
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 18,
+            "limits": 1
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": false,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": false
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "be7a12f9064dd0d1e649b63424da9384c478b0add382c213027ef59cf3403ea5",
+        "baseline": "a8326e3422ad0b2e3abff18e8dff616d11146a32b6348612bc8778f78b26dd90"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 79.91666666667633,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 11,
+            "egoLimits": 0
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 84.33333333334652,
+            "finished": 2,
+            "contacts": 1,
+            "egoContacts": 1,
+            "limits": 8,
+            "egoLimits": 4
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_ppo",
+      "seed": 742,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 7.666666666666645,
+            "queueSeconds": 17.466666666666654,
+            "idleAlongsideSeconds": 6.4000000000001185,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 7,
+            "passes": 7,
+            "contacts": 0,
+            "limits": 3,
+            "medianSeconds": 8.766666666666682,
+            "queueSeconds": 16.06666666666666,
+            "idleAlongsideSeconds": 12.10000000000007,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 0,
+            "limits": 13,
+            "medianSeconds": null,
+            "queueSeconds": 15.783333333333301,
+            "idleAlongsideSeconds": 2.3000000000001046,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 15,
+            "contacts": 0,
+            "limits": 13,
+            "medianSeconds": null,
+            "queueSeconds": 26.88333333333313,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 14,
+            "contacts": 17,
+            "limits": 15,
+            "medianSeconds": null,
+            "queueSeconds": 58.183333333332,
+            "idleAlongsideSeconds": 7.999999999999545,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.51666666666401,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.425278723997085
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 7,
+            "limits": 0
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": false,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": true
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "47d6881c3f9d5b19e8f56e8d55cae21cab55719b3c1fa73f24a9cdc70c6e7161",
+        "baseline": "78fb9bd83659f595ac2dc46be68e51c1426ff7f012cc86935c2a721493f5747c"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 83.1833333333456,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 3
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 92.01666666668596,
+            "finished": 2,
+            "contacts": 7,
+            "egoContacts": 7,
+            "limits": 18,
+            "egoLimits": 12
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_ppo",
+      "seed": 743,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8916666666666648,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 7.091666666666647,
+            "queueSeconds": 19.966666666666644,
+            "idleAlongsideSeconds": 0.4999999999999982,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 7,
+            "passes": 7,
+            "contacts": 0,
+            "limits": 3,
+            "medianSeconds": 7.416666666666646,
+            "queueSeconds": 16.666666666666657,
+            "idleAlongsideSeconds": 7.200000000000025,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 7,
+            "contacts": 0,
+            "limits": 16,
+            "medianSeconds": null,
+            "queueSeconds": 16.683333333333298,
+            "idleAlongsideSeconds": 1.3000000000000602,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 14,
+            "contacts": 0,
+            "limits": 14,
+            "medianSeconds": null,
+            "queueSeconds": 37.48333333333313,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 13,
+            "contacts": 28,
+            "limits": 14,
+            "medianSeconds": null,
+            "queueSeconds": 73.38333333333179,
+            "idleAlongsideSeconds": 14.899999999999153,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.31666666666402,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.35823814891102
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 7,
+            "limits": 2
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": false,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": true
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "9558ae27650a4b8d5198ab293201ecf8942f6160366a1fe41721dfb0fbf932e1",
+        "baseline": "70831ac638d658cf4290c4fed0bb2c91e032d1cfdf0871c334d34df018caf20a"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 78.90000000000886,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 13,
+            "egoLimits": 5
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 90.85000000001837,
+            "finished": 2,
+            "contacts": 12,
+            "egoContacts": 12,
+            "limits": 16,
+            "egoLimits": 11
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_ppo",
+      "seed": 744,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 7,
+            "passes": 7,
+            "contacts": 0,
+            "limits": 4,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 6.241666666666649,
+            "queueSeconds": 16.666666666666657,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 6.508333333333315,
+            "queueSeconds": 15.36666666666666,
+            "idleAlongsideSeconds": 0.09999999999999964,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 7,
+            "contacts": 0,
+            "limits": 16,
+            "medianSeconds": null,
+            "queueSeconds": 16.58333333333325,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 15,
+            "contacts": 0,
+            "limits": 17,
+            "medianSeconds": null,
+            "queueSeconds": 28.683333333333138,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 11,
+            "contacts": 27,
+            "limits": 15,
+            "medianSeconds": null,
+            "queueSeconds": 64.8833333333328,
+            "idleAlongsideSeconds": 18.599999999999604,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.24999999999736,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.339094436839783
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 7,
+            "limits": 3
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": false,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": true
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "835b5a70fc43715b9ad280883edeba382678b94683aac1fbf884c69ddbd9ed65",
+        "baseline": "75d8b715445f9f0793bbbf41ae3fcde9ac3b780664f5ba19f71fa7b82c3da977"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 78.80000000000878,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 11,
+            "egoLimits": 5
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 88.5833333333499,
+            "finished": 2,
+            "contacts": 21,
+            "egoContacts": 21,
+            "limits": 16,
+            "egoLimits": 12
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_ppo",
+      "seed": 745,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": true,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": true
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "b7c5d9276e401b48d7fff0171a086adaae650e864fe248f8479d643df373999a",
+        "baseline": "1eb67c961730ece08ef160597ef9bbd38254df91b6d18b99b1b7e8414475958c"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_sac",
+      "seed": 741,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": true,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": true
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "2ad28c4e70ab0d2811852e5197004465a84cad231faa38a01faf389c94ceb10c",
+        "baseline": "2b51c9ee55afa7da591dd687d81d013b421bfc1928f17d5ee9a3d4142227f780"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_sac",
+      "seed": 742,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": true,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": true
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "6738631a274f8d169569c32cbeb222a705ab2bfb700b98762b18e4dfed6bcbb7",
+        "baseline": "ea2eb4ecefaddbb69454e3f4c2c0b4ae7eda5813503ba8b5b10e203bc8b08d3b"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_sac",
+      "seed": 743,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": true,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": true
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "4dbd7e46ae7a5947fcbb09159bb39f995bd78c05065376d389e52e8bb595596d",
+        "baseline": "093a556918f5edee0b51a02ad29f905fe798512ac3b75965dbf9496657dad60e"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_sac",
+      "seed": 744,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": true,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": true
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "8746ff9324c9893c9874ba41f8076d63c4244d3de5ebd71d234ddc52ae07f17d",
+        "baseline": "c6ded2490efc1a2daacd9c07f36bcd72de3a744ebad867a8bcfebcb34101ad6f"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_sac",
+      "seed": 745,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": true,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": true
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "311b51ab9bf257c763419d6a1d741dc197ee1969b7952db0e3ef832db5d577cf",
+        "baseline": "ce490b2a55d9080cb2f4c1bccb6bc7ab784fcc66924da776e9c17057735b02e2"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_td3",
+      "seed": 741,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": true,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": true
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "5d111b0b919e3324d62c32e7d4b899138bf02931b39effa7612ac5b0f11ac170",
+        "baseline": "cc94677036d7fd1f8762c9b669358d8c8b0c38e97ab97af5f1a698bbf7068771"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_td3",
+      "seed": 742,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": true,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": true
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "61fd666bf33eeb7b25ba3eb85ed24a9e442f65b0cd870fe1e3cdee11c3ee8ee2",
+        "baseline": "0f1832d75effd44219bfb0348ddb2e096c6cd63a0de3609c4a73da1a116dadc5"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_td3",
+      "seed": 743,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": true,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": true
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "228ec36c91082160ca03269e76a52e97ad30c36d7d56fcb212d0a58e52ab5033",
+        "baseline": "1cefcdbb2a7f05e7cad7e9ae9b51674b1a1e5e20d4d46a3210898672678d7fba"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_td3",
+      "seed": 744,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": true,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": true
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "c4ea8261d1910847a9590db94aad2986c7ee0c7cd0c35b7a12a3da5c4452ac37",
+        "baseline": "ee81cab7898b512191443a714948b1c8e37b09d35ed8a1c17555723d322d4e20"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_td3",
+      "seed": 745,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 36,
+            "limits": 4
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": true,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": true
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "40385888ac70bbb646f74d91b23168f7c3ed659fa2df336a8c6351d7fdd422ca",
+        "baseline": "b8ee5949f05738daac71b15a08fe5f65c7bd76a0ed86ab82edccca66cc0e70cf"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_tactic",
+      "seed": 741,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 3,
+            "limits": 2
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 3,
+            "limits": 2
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": true,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": true
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "d97d3765b66c0f8e269fd77f4a804a76c025ffe17cce92826418bb7360cbe81c",
+        "baseline": "b381bd1af6dfa2354f451ab3cb31e7d6e344ebd4343e5e47f17dd2e4a54a09a2"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_tactic",
+      "seed": 742,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 3,
+            "limits": 2
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8916666666666648,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 9.691666666666727,
+            "queueSeconds": 36.86666666666679,
+            "idleAlongsideSeconds": 14.10000000000041,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 11.750000000000163,
+            "queueSeconds": 29.366666666666813,
+            "idleAlongsideSeconds": 20.100000000000204,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 0,
+            "limits": 13,
+            "medianSeconds": null,
+            "queueSeconds": 26.88333333333348,
+            "idleAlongsideSeconds": 7.100000000000269,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 2,
+            "contacts": 24,
+            "limits": 7,
+            "medianSeconds": null,
+            "queueSeconds": 75.78333333333357,
+            "idleAlongsideSeconds": 30.499999999999943,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 11,
+            "contacts": 47,
+            "limits": 8,
+            "medianSeconds": null,
+            "queueSeconds": 126.48333333333095,
+            "idleAlongsideSeconds": 43.89999999999809,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.29999999999735,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.35393495547258
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 3,
+            "limits": 0
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": false,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": false
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "004a3945e498fee600764f49040f9504366af58b5d0f9d6cd8f281f37ded2e2b",
+        "baseline": "f265449be666a97d49b8ab155cdfa854d6732fd170fa08669e1952b31c651dd2"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 77.5333333333411,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 6,
+            "egoLimits": 0
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 86.96666666668195,
+            "finished": 2,
+            "contacts": 3,
+            "egoContacts": 3,
+            "limits": 13,
+            "egoLimits": 7
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_tactic",
+      "seed": 743,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 3,
+            "limits": 2
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 3,
+            "limits": 2
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": true,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": true
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "b9c7e6bfe59ef6f0f2cfdd46bf8bbdbe00f87b429ad7cc7f13b690732dddd51a",
+        "baseline": "0063d80356c97e96145a8f823fa2b0e24741c22f9534bdd7ecc90627b64fbfbe"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_tactic",
+      "seed": 744,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 3,
+            "limits": 2
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 3,
+            "limits": 2
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": true,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": true
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "10de30d65f96bdf81fe7cf0db15a8ec36b3b930a30bf0ff763c9125d9b983208",
+        "baseline": "e9295a8e2dbee39adc072d4c1dd2d6dad30c7e71d5891aae23be1325c1237974"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    },
+    {
+      "method": "residual_tactic",
+      "seed": 745,
+      "summary": {
+        "candidate": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 3,
+            "limits": 2
+          }
+        },
+        "baseline": {
+          "complete": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 1.8999999999999981,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "attack": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 16.208333333333695,
+            "queueSeconds": 47.366666666666795,
+            "idleAlongsideSeconds": 44.00000000000152,
+            "flyingMedian": null
+          },
+          "corner": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 10,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 13.641666666666925,
+            "queueSeconds": 34.666666666667204,
+            "idleAlongsideSeconds": 29.00000000000057,
+            "flyingMedian": null
+          },
+          "defend": {
+            "total": 10,
+            "cleanSuccesses": 10,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 12.000000000000176,
+            "queueSeconds": 0.0,
+            "idleAlongsideSeconds": 0.0,
+            "flyingMedian": null
+          },
+          "traffic-1": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 5,
+            "contacts": 0,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 28.08333333333311,
+            "idleAlongsideSeconds": 19.500000000000714,
+            "flyingMedian": null
+          },
+          "traffic-2": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 8,
+            "contacts": 3,
+            "limits": 10,
+            "medianSeconds": null,
+            "queueSeconds": 54.88333333333399,
+            "idleAlongsideSeconds": 10.500000000000423,
+            "flyingMedian": null
+          },
+          "traffic-3": {
+            "total": 5,
+            "cleanSuccesses": 0,
+            "passes": 6,
+            "contacts": 126,
+            "limits": 0,
+            "medianSeconds": null,
+            "queueSeconds": 272.28333333332324,
+            "idleAlongsideSeconds": 158.09999999999243,
+            "flyingMedian": null
+          },
+          "solo": {
+            "total": 3,
+            "cleanSuccesses": 3,
+            "passes": 0,
+            "contacts": 0,
+            "limits": 0,
+            "medianSeconds": 69.716666666664,
+            "queueSeconds": 0,
+            "idleAlongsideSeconds": 0,
+            "flyingMedian": 22.49220588832332
+          },
+          "races": {
+            "total": 2,
+            "allArrived": 2,
+            "contacts": 3,
+            "limits": 2
+          }
+        }
+      },
+      "gates": {
+        "easy90": true,
+        "complex75": false,
+        "safetyRetention": true,
+        "soloWithinOnePercent": true,
+        "waitingReducedHalf": false,
+        "allFiveFinishBothGrids": true,
+        "attackLatency80": true,
+        "twoCarThreeLapRetention": true
+      },
+      "readyForDefault": false,
+      "policyHashes": {
+        "candidate": "0a378168a4cc15eeb19089dd98c3ff46b485e3d07e0246fb210a7246617315e9",
+        "baseline": "f7d583f04d891e698f1929ac4c8035e8ab9bcf4a4a7bfcf0fd64a248a7c59f30"
+      },
+      "supplementaryTwoCarGrids": {
+        "candidate": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ],
+        "baseline": [
+          {
+            "seed": 977501,
+            "slot": 0,
+            "reason": "success",
+            "seconds": 85.15000000001383,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 12,
+            "egoLimits": 1
+          },
+          {
+            "seed": 977502,
+            "slot": 1,
+            "reason": "success",
+            "seconds": 85.00000000001371,
+            "finished": 2,
+            "contacts": 0,
+            "egoContacts": 0,
+            "limits": 8,
+            "egoLimits": 6
+          }
+        ]
+      },
+      "promptAttacks": 10,
+      "offeredAttacks": 10
+    }
+  ]
+}

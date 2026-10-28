@@ -1,0 +1,12 @@
+{"name": "same-match-candidate", "code": 0, "seconds": 9.460738098016009, "nice": 0, "governor": "performance", "temperatureC": {"thermal_zone2": 44.764, "thermal_zone0": 45.384, "thermal_zone3": 47.12, "thermal_zone1": 45.074, "thermal_zone4": 44.95}, "reportStatus": "passed"}
+{"name": "performance-final", "code": 0, "seconds": 19.728915238025365, "nice": 0, "governor": "performance", "temperatureC": {"thermal_zone2": 45.446, "thermal_zone0": 45.818, "thermal_zone3": 46.81, "thermal_zone1": 45.446, "thermal_zone4": 45.012}, "reportStatus": "passed"}
+{"name": "mixed-all-surfaces", "code": 0, "seconds": 604.2337936789845, "nice": 0, "governor": "performance", "temperatureC": {"thermal_zone2": 48.918, "thermal_zone0": 49.848, "thermal_zone3": 51.026, "thermal_zone1": 49.166, "thermal_zone4": 48.918}, "reportStatus": "passed"}
+{"name": "game-sac", "code": 1, "seconds": 59.67836991100921, "nice": 0, "governor": "performance", "temperatureC": {"thermal_zone2": 49.848, "thermal_zone0": 50.964, "thermal_zone3": 51.708, "thermal_zone1": 50.22, "thermal_zone4": 50.282}, "reportStatus": null}
+Traceback (most recent call last):
+  File "/var/lib/smartpc-dashboard/v093-proof/native_selected_qualification.py", line 93, in <module>
+    case('game-sac',['check_game_fluidity_ui.py','--theme','apple','--load','sac','--seconds','120','--mature','--trace','--output','@DIR'],timeout=400)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/lib/smartpc-dashboard/v093-proof/native_selected_qualification.py", line 61, in case
+    assert code==0 and row['reportStatus']=='passed',row
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'name': 'game-sac', 'code': 1, 'seconds': 59.67836991100921, 'nice': 0, 'governor': 'performance', 'temperatureC': {'thermal_zone2': 49.848, 'thermal_zone0': 50.964, 'thermal_zone3': 51.708, 'thermal_zone1': 50.22, 'thermal_zone4': 50.282}, 'reportStatus': None}

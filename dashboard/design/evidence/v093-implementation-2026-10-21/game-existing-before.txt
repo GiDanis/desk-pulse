@@ -1,0 +1,309 @@
+EE..EEEE....EEE..EE.
+======================================================================
+ERROR: test_artifact_corruption_and_interrupted_session (__main__.GameChecks.test_artifact_corruption_and_interrupted_session)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 201, in test_artifact_corruption_and_interrupted_session
+    store=GameStore(root);drivers=store.drivers();a=Evolution(drivers[0]['profile'])
+          ^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 121, in __init__
+    self._seed_default_drivers(db)
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 140, in _seed_default_drivers
+    policy=self.artifact(seed_policy(prof))
+                         ^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_residual.py", line 100, in seed_policy
+    return initial_policy(profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 45, in initial_policy
+    data=base_asset(role)
+         ^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 27, in base_asset
+    data=json.loads((TACTICAL_ASSET if role=='traffic' else ASSET).read_text())
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/smartpc-v093-baseline-legacy/game-direct-base.json'
+
+======================================================================
+ERROR: test_driver_dossier_and_reset_preserve_provenance (__main__.GameChecks.test_driver_dossier_and_reset_preserve_provenance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 23, in test_driver_dossier_and_reset_preserve_provenance
+    store=GameStore(root);driver,other=store.drivers()[:2]
+          ^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 121, in __init__
+    self._seed_default_drivers(db)
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 140, in _seed_default_drivers
+    policy=self.artifact(seed_policy(prof))
+                         ^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_residual.py", line 100, in seed_policy
+    return initial_policy(profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 45, in initial_policy
+    data=base_asset(role)
+         ^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 27, in base_asset
+    data=json.loads((TACTICAL_ASSET if role=='traffic' else ASSET).read_text())
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/smartpc-v093-baseline-legacy/game-direct-base.json'
+
+======================================================================
+ERROR: test_frozen_race_and_trials_keep_each_pilots_policy (__main__.GameChecks.test_frozen_race_and_trials_keep_each_pilots_policy) (mode='gara', count=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 222, in test_frozen_race_and_trials_keep_each_pilots_policy
+    store=GameStore(root);drivers=store.drivers()[:count]
+          ^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 121, in __init__
+    self._seed_default_drivers(db)
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 140, in _seed_default_drivers
+    policy=self.artifact(seed_policy(prof))
+                         ^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_residual.py", line 100, in seed_policy
+    return initial_policy(profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 45, in initial_policy
+    data=base_asset(role)
+         ^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 27, in base_asset
+    data=json.loads((TACTICAL_ASSET if role=='traffic' else ASSET).read_text())
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/smartpc-v093-baseline-legacy/game-direct-base.json'
+
+======================================================================
+ERROR: test_frozen_race_and_trials_keep_each_pilots_policy (__main__.GameChecks.test_frozen_race_and_trials_keep_each_pilots_policy) (mode='gara', count=4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 222, in test_frozen_race_and_trials_keep_each_pilots_policy
+    store=GameStore(root);drivers=store.drivers()[:count]
+          ^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 121, in __init__
+    self._seed_default_drivers(db)
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 140, in _seed_default_drivers
+    policy=self.artifact(seed_policy(prof))
+                         ^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_residual.py", line 100, in seed_policy
+    return initial_policy(profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 45, in initial_policy
+    data=base_asset(role)
+         ^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 27, in base_asset
+    data=json.loads((TACTICAL_ASSET if role=='traffic' else ASSET).read_text())
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/smartpc-v093-baseline-legacy/game-direct-base.json'
+
+======================================================================
+ERROR: test_frozen_race_and_trials_keep_each_pilots_policy (__main__.GameChecks.test_frozen_race_and_trials_keep_each_pilots_policy) (mode='prova', count=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 222, in test_frozen_race_and_trials_keep_each_pilots_policy
+    store=GameStore(root);drivers=store.drivers()[:count]
+          ^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 121, in __init__
+    self._seed_default_drivers(db)
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 140, in _seed_default_drivers
+    policy=self.artifact(seed_policy(prof))
+                         ^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_residual.py", line 100, in seed_policy
+    return initial_policy(profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 45, in initial_policy
+    data=base_asset(role)
+         ^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 27, in base_asset
+    data=json.loads((TACTICAL_ASSET if role=='traffic' else ASSET).read_text())
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/smartpc-v093-baseline-legacy/game-direct-base.json'
+
+======================================================================
+ERROR: test_neat_graph_and_resume_generation (__main__.GameChecks.test_neat_graph_and_resume_generation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 175, in test_neat_graph_and_resume_generation
+    profile={**default_profile(),'algorithm':'neat'};a=NEAT(profile)
+                                                       ^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_neat.py", line 63, in __init__
+    config=neat.Config(neat.DefaultGenome,neat.DefaultReproduction,neat.DefaultSpeciesSet,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.cache/smartpc-population-py312/lib/python3.12/site-packages/neat/config.py", line 179, in __init__
+    raise Exception('No such config file: ' + os.path.abspath(filename))
+Exception: No such config file: /tmp/smartpc-v093-baseline-legacy/game-neat-config.txt
+
+======================================================================
+ERROR: test_real_workers_pause_and_resume (__main__.GameChecks.test_real_workers_pause_and_resume) (method='evolution')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 309, in test_real_workers_pause_and_resume
+    store=GameStore(root);driver=store.drivers()[0]
+          ^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 121, in __init__
+    self._seed_default_drivers(db)
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 140, in _seed_default_drivers
+    policy=self.artifact(seed_policy(prof))
+                         ^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_residual.py", line 100, in seed_policy
+    return initial_policy(profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 45, in initial_policy
+    data=base_asset(role)
+         ^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 27, in base_asset
+    data=json.loads((TACTICAL_ASSET if role=='traffic' else ASSET).read_text())
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/smartpc-v093-baseline-legacy/game-direct-base.json'
+
+======================================================================
+ERROR: test_real_workers_pause_and_resume (__main__.GameChecks.test_real_workers_pause_and_resume) (method='ppo')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 309, in test_real_workers_pause_and_resume
+    store=GameStore(root);driver=store.drivers()[0]
+          ^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 121, in __init__
+    self._seed_default_drivers(db)
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 140, in _seed_default_drivers
+    policy=self.artifact(seed_policy(prof))
+                         ^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_residual.py", line 100, in seed_policy
+    return initial_policy(profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 45, in initial_policy
+    data=base_asset(role)
+         ^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 27, in base_asset
+    data=json.loads((TACTICAL_ASSET if role=='traffic' else ASSET).read_text())
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/smartpc-v093-baseline-legacy/game-direct-base.json'
+
+======================================================================
+ERROR: test_real_workers_pause_and_resume (__main__.GameChecks.test_real_workers_pause_and_resume) (method='neat')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 309, in test_real_workers_pause_and_resume
+    store=GameStore(root);driver=store.drivers()[0]
+          ^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 121, in __init__
+    self._seed_default_drivers(db)
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 140, in _seed_default_drivers
+    policy=self.artifact(seed_policy(prof))
+                         ^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_residual.py", line 100, in seed_policy
+    return initial_policy(profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 45, in initial_policy
+    data=base_asset(role)
+         ^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 27, in base_asset
+    data=json.loads((TACTICAL_ASSET if role=='traffic' else ASSET).read_text())
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/smartpc-v093-baseline-legacy/game-direct-base.json'
+
+======================================================================
+ERROR: test_session_stats_reject_another_driver_and_unknown_duration_is_explicit (__main__.GameChecks.test_session_stats_reject_another_driver_and_unknown_duration_is_explicit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 60, in test_session_stats_reject_another_driver_and_unknown_duration_is_explicit
+    store=GameStore(root);driver,other=store.drivers()[:2]
+          ^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 121, in __init__
+    self._seed_default_drivers(db)
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 140, in _seed_default_drivers
+    policy=self.artifact(seed_policy(prof))
+                         ^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_residual.py", line 100, in seed_policy
+    return initial_policy(profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 45, in initial_policy
+    data=base_asset(role)
+         ^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 27, in base_asset
+    data=json.loads((TACTICAL_ASSET if role=='traffic' else ASSET).read_text())
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/smartpc-v093-baseline-legacy/game-direct-base.json'
+
+======================================================================
+ERROR: test_worker_publishes_during_neat_evaluation (__main__.GameChecks.test_worker_publishes_during_neat_evaluation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 273, in test_worker_publishes_during_neat_evaluation
+    store=GameStore(root);driver=store.drivers()[0]
+          ^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 121, in __init__
+    self._seed_default_drivers(db)
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 140, in _seed_default_drivers
+    policy=self.artifact(seed_policy(prof))
+                         ^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_residual.py", line 100, in seed_policy
+    return initial_policy(profile)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 45, in initial_policy
+    data=base_asset(role)
+         ^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_direct_bootstrap.py", line 27, in base_asset
+    data=json.loads((TACTICAL_ASSET if role=='traffic' else ASSET).read_text())
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/smartpc-v093-baseline-legacy/game-direct-base.json'
+
+----------------------------------------------------------------------
+Ran 16 tests in 6.365s
+
+FAILED (errors=11)

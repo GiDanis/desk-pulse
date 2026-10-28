@@ -1,0 +1,117 @@
+{
+  "capturedAtUtc": "2026-10-21T18:25:04.136704+00:00",
+  "scope": "Consistent read-only metadata transaction; no checkpoint or application imports",
+  "counts": {
+    "drivers": 5,
+    "sessions": 16,
+    "history": 635,
+    "timed_qualifications": 0,
+    "timing_laps": 0
+  },
+  "sessionGroups": [
+    {
+      "mode": "impara",
+      "status": "failed",
+      "count": 4,
+      "payloadBytes": 9751
+    },
+    {
+      "mode": "impara",
+      "status": "interrupted",
+      "count": 10,
+      "payloadBytes": 24719
+    },
+    {
+      "mode": "impara_sorpasso",
+      "status": "failed",
+      "count": 1,
+      "payloadBytes": 2476
+    },
+    {
+      "mode": "impara_sorpasso",
+      "status": "interrupted",
+      "count": 1,
+      "payloadBytes": 2404
+    }
+  ],
+  "eventGroups": [
+    {
+      "kind": "checkpoint",
+      "count": 517,
+      "payloadBytes": 140284
+    },
+    {
+      "kind": "evaluation",
+      "count": 110,
+      "payloadBytes": 5279076
+    },
+    {
+      "kind": "racing_migration",
+      "count": 4,
+      "payloadBytes": 1220
+    },
+    {
+      "kind": "school_migration",
+      "count": 4,
+      "payloadBytes": 420
+    }
+  ],
+  "curricula": [
+    {
+      "number": 1,
+      "bytes": 0,
+      "evaluations": 0
+    },
+    {
+      "number": 2,
+      "bytes": 1092052,
+      "evaluations": 20
+    },
+    {
+      "number": 3,
+      "bytes": 1021479,
+      "evaluations": 20
+    },
+    {
+      "number": 4,
+      "bytes": 893995,
+      "evaluations": 6
+    },
+    {
+      "number": 5,
+      "bytes": 502378,
+      "evaluations": 0
+    }
+  ],
+  "plans": {
+    "sessions": [
+      [
+        3,
+        0,
+        0,
+        "SCAN sessions"
+      ],
+      [
+        14,
+        0,
+        0,
+        "USE TEMP B-TREE FOR ORDER BY"
+      ]
+    ],
+    "events": [
+      [
+        4,
+        0,
+        0,
+        "SEARCH history USING INDEX history_driver_kind (driver=? AND kind=?)"
+      ],
+      [
+        44,
+        0,
+        0,
+        "USE TEMP B-TREE FOR ORDER BY"
+      ]
+    ]
+  },
+  "service": "MainPID=207975\nNRestarts=0\nActiveState=active\n"
+}

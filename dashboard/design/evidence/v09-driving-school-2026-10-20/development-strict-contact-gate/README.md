@@ -1,0 +1,1 @@
+Development only. Repeated historical World.events were counted repeatedly in contact diagnostics; fixed by unique event IDs. Contacts remain diagnostics; final retention rejects retirement and track-limit regression. Not installed.

@@ -1,0 +1,267 @@
+{
+  "scope": "instrumented PC, 1000 physics ticks, actual five frozen policies and 30Hz row/sensor/pickle cadence; excludes Qt/IPC feeder/GUI/disk",
+  "python": "3.12.13",
+  "machine": "x86_64",
+  "nativeSensorsAvailable": true,
+  "secondsWithProfiler": 3.2044857399887405,
+  "simulatedSeconds": 16.666666666666668,
+  "hotspots": [
+    {
+      "file": "profile_race.py",
+      "line": 18,
+      "function": "tick",
+      "calls": 1,
+      "selfSeconds": 0.009372106,
+      "cumulativeSeconds": 3.204435519
+    },
+    {
+      "file": "game_control.py",
+      "line": 112,
+      "function": "frozen_actions",
+      "calls": 1000,
+      "selfSeconds": 0.004960392,
+      "cumulativeSeconds": 1.9951768490000001
+    },
+    {
+      "file": "game_learning.py",
+      "line": 76,
+      "function": "act",
+      "calls": 5000,
+      "selfSeconds": 0.003337308,
+      "cumulativeSeconds": 1.9872703760000001
+    },
+    {
+      "file": "game_residual.py",
+      "line": 131,
+      "function": "act",
+      "calls": 5000,
+      "selfSeconds": 0.026116266000000003,
+      "cumulativeSeconds": 1.983933068
+    },
+    {
+      "file": "game_control.py",
+      "line": 42,
+      "function": "racing_actions",
+      "calls": 5668,
+      "selfSeconds": 0.163584857,
+      "cumulativeSeconds": 1.649400192
+    },
+    {
+      "file": "game_residual.py",
+      "line": 90,
+      "function": "controls",
+      "calls": 5000,
+      "selfSeconds": 0.08936276700000001,
+      "cumulativeSeconds": 1.6055108930000002
+    },
+    {
+      "file": "game_control.py",
+      "line": 5,
+      "function": "pursuit_actions",
+      "calls": 5668,
+      "selfSeconds": 0.308387687,
+      "cumulativeSeconds": 1.105651383
+    },
+    {
+      "file": "game_simulation.py",
+      "line": 408,
+      "function": "step",
+      "calls": 1000,
+      "selfSeconds": 0.416068464,
+      "cumulativeSeconds": 0.91053013
+    },
+    {
+      "file": "game_geometry.py",
+      "line": 126,
+      "function": "poses",
+      "calls": 28367,
+      "selfSeconds": 0.578856469,
+      "cumulativeSeconds": 0.707473377
+    },
+    {
+      "file": "game_simulation.py",
+      "line": 169,
+      "function": "observations",
+      "calls": 1168,
+      "selfSeconds": 0.166402711,
+      "cumulativeSeconds": 0.34174074400000004
+    },
+    {
+      "file": "game_residual.py",
+      "line": 50,
+      "function": "features",
+      "calls": 668,
+      "selfSeconds": 0.020271086,
+      "cumulativeSeconds": 0.32554774200000003
+    },
+    {
+      "file": "game_simulation.py",
+      "line": 71,
+      "function": "overlap",
+      "calls": 20000,
+      "selfSeconds": 0.06253897600000001,
+      "cumulativeSeconds": 0.164084781
+    },
+    {
+      "file": "game_simulation.py",
+      "line": 252,
+      "function": "coordinates",
+      "calls": 19031,
+      "selfSeconds": 0.044830724,
+      "cumulativeSeconds": 0.136808286
+    },
+    {
+      "file": "game_timing.py",
+      "line": 41,
+      "function": "advance",
+      "calls": 2000,
+      "selfSeconds": 0.035823716000000005,
+      "cumulativeSeconds": 0.079288945
+    },
+    {
+      "file": "game_control.py",
+      "line": 73,
+      "function": "cost",
+      "calls": 13083,
+      "selfSeconds": 0.038538027,
+      "cumulativeSeconds": 0.061833805000000006
+    },
+    {
+      "file": "game_simulation.py",
+      "line": 64,
+      "function": "vertices",
+      "calls": 2667,
+      "selfSeconds": 0.02462597,
+      "cumulativeSeconds": 0.059638314000000005
+    },
+    {
+      "file": "game_simulation.py",
+      "line": 162,
+      "function": "sensor_rays",
+      "calls": 1334,
+      "selfSeconds": 0.0017156290000000002,
+      "cumulativeSeconds": 0.051697245
+    },
+    {
+      "file": "game_native.py",
+      "line": 26,
+      "function": "rays",
+      "calls": 1334,
+      "selfSeconds": 0.017639296000000002,
+      "cumulativeSeconds": 0.049834602000000006
+    },
+    {
+      "file": "game_simulation.py",
+      "line": 15,
+      "function": "track_coordinates",
+      "calls": 2000,
+      "selfSeconds": 0.038044886,
+      "cumulativeSeconds": 0.044536423000000006
+    },
+    {
+      "file": "game_control.py",
+      "line": 51,
+      "function": "gap",
+      "calls": 129684,
+      "selfSeconds": 0.033669250000000005,
+      "cumulativeSeconds": 0.042740495
+    },
+    {
+      "file": "game_simulation.py",
+      "line": 33,
+      "function": "road_distance",
+      "calls": 4210,
+      "selfSeconds": 0.014191817,
+      "cumulativeSeconds": 0.028504616000000003
+    },
+    {
+      "file": "game_simulation.py",
+      "line": 644,
+      "function": "rows",
+      "calls": 500,
+      "selfSeconds": 0.018033765,
+      "cumulativeSeconds": 0.027995338
+    },
+    {
+      "file": "game_simulation.py",
+      "line": 255,
+      "function": "<genexpr>",
+      "calls": 68124,
+      "selfSeconds": 0.011901052,
+      "cumulativeSeconds": 0.023790702
+    },
+    {
+      "file": "game_learning.py",
+      "line": 18,
+      "function": "forward",
+      "calls": 668,
+      "selfSeconds": 0.005976747,
+      "cumulativeSeconds": 0.014159751000000002
+    },
+    {
+      "file": "game_control.py",
+      "line": 63,
+      "function": "<lambda>",
+      "calls": 11670,
+      "selfSeconds": 0.002423906,
+      "cumulativeSeconds": 0.006167309
+    },
+    {
+      "file": "game_timing.py",
+      "line": 95,
+      "function": "row",
+      "calls": 2500,
+      "selfSeconds": 0.005357248,
+      "cumulativeSeconds": 0.005918988
+    },
+    {
+      "file": "game_simulation.py",
+      "line": 155,
+      "function": "observation_key",
+      "calls": 1835,
+      "selfSeconds": 0.002011605,
+      "cumulativeSeconds": 0.004328097
+    },
+    {
+      "file": "game_simulation.py",
+      "line": 264,
+      "function": "<genexpr>",
+      "calls": 8000,
+      "selfSeconds": 0.001364577,
+      "cumulativeSeconds": 0.002797557
+    },
+    {
+      "file": "game_control.py",
+      "line": 85,
+      "function": "<genexpr>",
+      "calls": 5000,
+      "selfSeconds": 0.001181334,
+      "cumulativeSeconds": 0.0024116230000000003
+    },
+    {
+      "file": "game_control.py",
+      "line": 114,
+      "function": "<genexpr>",
+      "calls": 6000,
+      "selfSeconds": 0.00078604,
+      "cumulativeSeconds": 0.00078604
+    },
+    {
+      "file": "game_residual.py",
+      "line": 77,
+      "function": "<genexpr>",
+      "calls": 836,
+      "selfSeconds": 0.000450629,
+      "cumulativeSeconds": 0.0006325720000000001
+    },
+    {
+      "file": "game_residual.py",
+      "line": 75,
+      "function": "<genexpr>",
+      "calls": 2254,
+      "selfSeconds": 0.000399893,
+      "cumulativeSeconds": 0.000399893
+    }
+  ],
+  "diagnosticScriptSha256": "4e61e49e9572ed567ba697788f406bd3525258216e75447a66675ebf6c067afd"
+}

@@ -1,0 +1,191 @@
+2026-10-13 17:01:09.885738: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-10-13 17:01:09.885763: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+[32mI 17:01:11 Namespace(import='onnx', input_dtype_list=None, input_size_list=None, inputs=None, model='policy.onnx', output_data='policy-acuity.data', output_model='policy-acuity.json', outputs=None, size_with_batch=None, which='import')[0m
+[32mI 17:01:11 Set vsinn project dir to /work[0m
+2026-10-13 17:01:11.230526: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-10-13 17:01:11.230630: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-10-13 17:01:11.230646: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (0763b201b166): /proc/driver/nvidia/version does not exist
+[32mI 17:01:11 Start importing onnx...[0m
+[32mI 17:01:11 Current ONNX Model use ir_version 8 opset_version 13[0m
+[32mI 17:01:11 try optimize eliminate_option_const ...[0m
+[32mI 17:01:11 Call acuity onnx optimize 'eliminate_option_const' success[0m
+[32mI 17:01:11 try optimize froze_if ...[0m
+[32mI 17:01:11 Call acuity onnx optimize 'froze_if' success[0m
+[32mI 17:01:11 try optimize merge_sequence_construct_concat_from_sequence ...[0m
+[32mI 17:01:11 Call acuity onnx optimize 'merge_sequence_construct_concat_from_sequence' success[0m
+[32mI 17:01:11 try optimize merge_lrn_lowlevel_implement ...[0m
+[32mI 17:01:11 Call acuity onnx optimize 'merge_lrn_lowlevel_implement' success[0m
+[32mI 17:01:11 try optimize merge_splittosequence_sequenceat ...[0m
+[32mI 17:01:11 Call acuity onnx optimize 'merge_splittosequence_sequenceat' success[0m
+[36mD 17:01:11 Calc tensor Initializer_w1 shape: [68, 16][0m
+[36mD 17:01:11 Calc tensor Initializer_b1 shape: [16][0m
+[36mD 17:01:11 Calc tensor Initializer_w2 shape: [16, 2][0m
+[36mD 17:01:11 Calc tensor Initializer_b2 shape: [2][0m
+[36mD 17:01:11 Calc tensor Gemm_h0 shape: [1, 16][0m
+[36mD 17:01:11 Calc tensor Tanh_h shape: [1, 16][0m
+[36mD 17:01:11 Calc tensor Gemm_a0 shape: [1, 2][0m
+[36mD 17:01:11 Calc tensor Tanh_action shape: [1, 2][0m
+[32mI 17:01:11 build output layer attach_action:out0[0m
+[32mI 17:01:11 Try match action:out0[0m
+[32mI 17:01:11 Match r_tanh [['action']] [['Tanh']] to [['tanh']][0m
+[32mI 17:01:11 tanh lid: action_1[0m
+[32mI 17:01:11 Try match a0:out0[0m
+[32mI 17:01:11 Match gemm_2_fc_notranspose [['a0', 'w2', 'b2']] [['Gemm', 'Constant', 'Constant_1']] to [['fullconnect']][0m
+[32mI 17:01:11 fullconnect lid: a0_2[0m
+[32mI 17:01:11 Try match h:out0[0m
+[32mI 17:01:11 Match r_tanh [['h']] [['Tanh']] to [['tanh']][0m
+[32mI 17:01:11 tanh lid: h_3[0m
+[32mI 17:01:11 Try match h0:out0[0m
+[32mI 17:01:11 Match gemm_2_fc_notranspose [['h0', 'w1', 'b1']] [['Gemm', 'Constant', 'Constant_1']] to [['fullconnect']][0m
+[32mI 17:01:11 fullconnect lid: h0_4[0m
+[32mI 17:01:11 build input layer observation:out0[0m
+[36mD 17:01:11 connect a0_2 0  ~ action_1 0[0m
+[36mD 17:01:11 connect h_3 0  ~ a0_2 0[0m
+[36mD 17:01:11 connect h0_4 0  ~ h_3 0[0m
+[36mD 17:01:11 connect observation_5 0  ~ h0_4 0[0m
+[36mD 17:01:11 connect action_1 0  ~ attach_action/out0_0 0[0m
+[36mD 17:01:11 Process observation_5 ...[0m
+[36mD 17:01:11 Acuity output shape(input): (1 68)[0m
+[36mD 17:01:11 Tensor @observation_5:out0 type: float32[0m
+[36mD 17:01:11 Process h0_4 ...[0m
+[36mD 17:01:11 Acuity output shape(fullconnect): (1 16)[0m
+[36mD 17:01:11 Tensor @h0_4:out0 type: float32[0m
+[36mD 17:01:11 Process h_3 ...[0m
+[36mD 17:01:11 Acuity output shape(tanh): (1 16)[0m
+[36mD 17:01:11 Tensor @h_3:out0 type: float32[0m
+[36mD 17:01:11 Process a0_2 ...[0m
+[36mD 17:01:11 Acuity output shape(fullconnect): (1 2)[0m
+[36mD 17:01:11 Tensor @a0_2:out0 type: float32[0m
+[36mD 17:01:11 Process action_1 ...[0m
+[36mD 17:01:11 Acuity output shape(tanh): (1 2)[0m
+[36mD 17:01:11 Tensor @action_1:out0 type: float32[0m
+[36mD 17:01:11 Process attach_action/out0_0 ...[0m
+[36mD 17:01:11 Acuity output shape(output): (1 2)[0m
+[36mD 17:01:11 Tensor @attach_action/out0_0:out0 type: float32[0m
+[32mI 17:01:11 Build SmartPC frozen pilot complete.[0m
+[32mI 17:01:11 Start C2T Switcher...[0m
+[36mD 17:01:11 Optimizing network with broadcast_op[0m
+[32mI 17:01:11 End C2T Switcher...[0m
+[36mD 17:01:11 Process observation_5 ...[0m
+[36mD 17:01:11 Acuity output shape(input): (1 68)[0m
+[36mD 17:01:11 Tensor @observation_5:out0 type: float32[0m
+[36mD 17:01:11 Process h0_4 ...[0m
+[36mD 17:01:11 Acuity output shape(fullconnect): (1 16)[0m
+[36mD 17:01:11 Tensor @h0_4:out0 type: float32[0m
+[36mD 17:01:11 Process h_3 ...[0m
+[36mD 17:01:11 Acuity output shape(tanh): (1 16)[0m
+[36mD 17:01:11 Tensor @h_3:out0 type: float32[0m
+[36mD 17:01:11 Process a0_2 ...[0m
+[36mD 17:01:11 Acuity output shape(fullconnect): (1 2)[0m
+[36mD 17:01:11 Tensor @a0_2:out0 type: float32[0m
+[36mD 17:01:11 Process action_1 ...[0m
+[36mD 17:01:11 Acuity output shape(tanh): (1 2)[0m
+[36mD 17:01:11 Tensor @action_1:out0 type: float32[0m
+[36mD 17:01:11 Process attach_action/out0_0 ...[0m
+[36mD 17:01:11 Acuity output shape(output): (1 2)[0m
+[36mD 17:01:11 Tensor @attach_action/out0_0:out0 type: float32[0m
+[32mI 17:01:11 Build SmartPC frozen pilot complete.[0m
+[36mD 17:01:11 Optimizing network with force_1d_tensor, special_clip_to_relun, swapper, merge_duplicate_quantize_dequantize, fold_quantize_dequantize, batchmatmul_add_to_fc, merge_layer, resize_nearest_transformer, auto_fill_multiply, compute_gather_negative, auto_fill_zero_bias, proposal_opt_import, extend_gather_to_gather_reshape, extend_stack_to_stack_reshape, input_to_output[0m
+[36mD 17:01:11 Optimizing network with auto_fill_bn, auto_fill_l2normalizescale, auto_fill_instancenormalize, merge_layer[0m
+[36mD 17:01:11 Optimizing network with special_add_to_conv2d[0m
+[32mI 17:01:11 start process output layer attach_action/out0_0[0m
+[36mD 17:01:11 Process observation_5 ...[0m
+[36mD 17:01:11 Acuity output shape(input): (1 68)[0m
+[36mD 17:01:11 Tensor @observation_5:out0 type: float32[0m
+[36mD 17:01:11 Process h0_4 ...[0m
+[36mD 17:01:11 Acuity output shape(fullconnect): (1 16)[0m
+[36mD 17:01:11 Tensor @h0_4:out0 type: float32[0m
+[36mD 17:01:11 Process h_3 ...[0m
+[36mD 17:01:11 Acuity output shape(tanh): (1 16)[0m
+[36mD 17:01:11 Tensor @h_3:out0 type: float32[0m
+[36mD 17:01:11 Process a0_2 ...[0m
+[36mD 17:01:11 Acuity output shape(fullconnect): (1 2)[0m
+[36mD 17:01:11 Tensor @a0_2:out0 type: float32[0m
+[36mD 17:01:11 Process action_1 ...[0m
+[36mD 17:01:11 Acuity output shape(tanh): (1 2)[0m
+[36mD 17:01:11 Tensor @action_1:out0 type: float32[0m
+[36mD 17:01:11 Process attach_action/out0_0 ...[0m
+[36mD 17:01:11 Acuity output shape(output): (1 2)[0m
+[36mD 17:01:11 Tensor @attach_action/out0_0:out0 type: float32[0m
+[32mI 17:01:11 Build SmartPC frozen pilot complete.[0m
+[32mI 17:01:11 End importing onnx...[0m
+[32mI 17:01:11 Dump net to /work/policy-acuity.json[0m
+[32mI 17:01:11 Save net to /work/policy-acuity.data[0m
+[32mI 17:01:11 ----------------Error(0),Warning(0)----------------[0m
+2026-10-13 17:01:12.104463: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-10-13 17:01:12.104489: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+[32mI 17:01:13 Namespace(generate='inputmeta', input_meta_output='policy-inputmeta.yml', model='policy-acuity.json', separated_database=False, which='generate')[0m
+[32mI 17:01:13 Load model in policy-acuity.json[0m
+[32mI 17:01:13 Generate input meta policy-inputmeta.yml[0m
+[32mI 17:01:13 ----------------Error(0),Warning(0)----------------[0m
+2026-10-13 17:01:14.108728: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-10-13 17:01:14.108744: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+[32mI 17:01:15 Namespace(batch_size=None, build_platform='make', customer_lids=None, customer_ops=None, dtype='float', export='ovxlib', force_remove_permute=False, model='policy-acuity.json', model_data='policy-acuity.data', model_quantize=None, optimize='Default', output_path='nbg', pack_nbg_unify=True, postprocess_file=None, save_fused_graph=False, save_trace_db=False, target_ide_project='linux64', viv_sdk='/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools', which='export', with_input_meta='policy-inputmeta.yml')[0m
+[32mI 17:01:15 Set vsinn project dir to /work[0m
+[32mI 17:01:15 Load model in /work/policy-acuity.json[0m
+[32mI 17:01:15 Load data in /work/policy-acuity.data[0m
+[32mI 17:01:15 Load input meta /work/policy-inputmeta.yml[0m
+[32mI 17:01:15 Start exporting ovxlib case...[0m
+[36mD 17:01:15 Process observation_5 ...[0m
+[36mD 17:01:15 Acuity output shape(input): (1 68)[0m
+[36mD 17:01:15 Tensor @observation_5:out0 type: float32[0m
+[36mD 17:01:15 Process h0_4 ...[0m
+[36mD 17:01:15 Acuity output shape(fullconnect): (1 16)[0m
+[36mD 17:01:15 Tensor @h0_4:out0 type: float32[0m
+[36mD 17:01:15 Process h_3 ...[0m
+[36mD 17:01:15 Acuity output shape(tanh): (1 16)[0m
+[36mD 17:01:15 Tensor @h_3:out0 type: float32[0m
+[36mD 17:01:15 Process a0_2 ...[0m
+[36mD 17:01:15 Acuity output shape(fullconnect): (1 2)[0m
+[36mD 17:01:15 Tensor @a0_2:out0 type: float32[0m
+[36mD 17:01:15 Process action_1 ...[0m
+[36mD 17:01:15 Acuity output shape(tanh): (1 2)[0m
+[36mD 17:01:15 Tensor @action_1:out0 type: float32[0m
+[36mD 17:01:15 Process attach_action/out0_0 ...[0m
+[36mD 17:01:15 Acuity output shape(output): (1 2)[0m
+[36mD 17:01:15 Tensor @attach_action/out0_0:out0 type: float32[0m
+[32mI 17:01:15 Build SmartPC frozen pilot complete.[0m
+[32mI 17:01:15 Initialzing network optimizer by Default ...[0m
+[36mD 17:01:15 Optimizing network with split_squared_difference, merge_ximum, qnt_adjust_coef, adjust_qnt_reshape, multiply_transform, add_extra_io, format_input_ops, auto_fill_zero_bias, conv_kernel_transform, auto_fill_reshape_zero, strip_op, extend_unstack_split, convert_matmul_trans_ab, merge_layer, transform_layer, broadcast_op, strip_op, adjust_output_attrs, insert_dtype_converter, layernorm_to_moments_bnsingle, pow_to_square, average_to_add_divide, optimize_einsum[0m
+[32mI 17:01:15 Start T2C Switcher...[0m
+[36mD 17:01:15 Optimizing network with broadcast_op, t2c_fc[0m
+[32mI 17:01:15 End T2C Switcher...[0m
+[36mD 17:01:15 Optimizing network with strip_op_layout_sensitive[0m
+[36mD 17:01:15 Process observation_5 ...[0m
+[36mD 17:01:15 Acuity output shape(input): (1 68)[0m
+[36mD 17:01:15 Tensor @observation_5:out0 type: float32[0m
+[36mD 17:01:15 Process h0_4 ...[0m
+[36mD 17:01:15 Acuity output shape(fullconnect): (1 16)[0m
+[36mD 17:01:15 Tensor @h0_4:out0 type: float32[0m
+[36mD 17:01:15 Process h_3 ...[0m
+[36mD 17:01:15 Acuity output shape(tanh): (1 16)[0m
+[36mD 17:01:15 Tensor @h_3:out0 type: float32[0m
+[36mD 17:01:15 Process a0_2 ...[0m
+[36mD 17:01:15 Acuity output shape(fullconnect): (1 2)[0m
+[36mD 17:01:15 Tensor @a0_2:out0 type: float32[0m
+[36mD 17:01:15 Process action_1 ...[0m
+[36mD 17:01:15 Acuity output shape(tanh): (1 2)[0m
+[36mD 17:01:15 Tensor @action_1:out0 type: float32[0m
+[36mD 17:01:15 Process attach_action/out0_0 ...[0m
+[36mD 17:01:15 Acuity output shape(output): (1 2)[0m
+[36mD 17:01:15 Tensor @attach_action/out0_0:out0 type: float32[0m
+[32mI 17:01:15 Build SmartPC frozen pilot complete.[0m
+[36mD 17:01:15 Optimizing network with merge_mark_permute[0m
+[36mD 17:01:15 Optimizing network with insert_reshape_for_layernorm, c2drv_adjust_extra_io, c2drv_nhwc_resize, conv_1xn_transform, proposal_opt, c2drv_convert_axis, c2drv_convert_shape, c2drv_convert_array, c2drv_cast_dtype, c2drv_trans_data, c2drv_custom_opt[0m
+[32mI 17:01:15 Building data ...[0m
+[31mE 17:01:15 please set correct target name in config file[0m
+[33mW 17:01:15 ----------------Error(1),Warning(0)----------------[0m
+Traceback (most recent call last):
+  File "/root/acuity-toolkit-whl-6.30.22/bin/pegasus.py", line 131, in <module>
+    main(args)
+  File "/root/acuity-toolkit-whl-6.30.22/bin/pegasus.py", line 116, in main
+    ret = exporter.execute(args)
+  File "acuitylib/app/exporter/commands.py", line 220, in acuitylib.app.exporter.commands.execute
+  File "acuitylib/vsi_nn.py", line 738, in acuitylib.vsi_nn.VSInn.export_ovxlib
+  File "acuitylib/interface/exporter.py", line 84, in acuitylib.interface.exporter.OvxlibExporter.export
+  File "acuitylib/app/exporter/ovxlib_case/export_ovxlib.py", line 113, in acuitylib.app.exporter.ovxlib_case.export_ovxlib.ExportOvxlib.run
+  File "acuitylib/app/exporter/ovxlib_case/casegenerator.py", line 409, in acuitylib.app.exporter.ovxlib_case.casegenerator.CaseGenerator.generate
+  File "acuitylib/app/exporter/ovxlib_case/casegenerator.py", line 354, in acuitylib.app.exporter.ovxlib_case.casegenerator.CaseGenerator._gen_special_case
+  File "acuitylib/app/exporter/ovxlib_case/casegenerator.py", line 187, in acuitylib.app.exporter.ovxlib_case.casegenerator.CaseGenerator._setup_environment
+  File "acuitylib/acuitylog.py", line 260, in acuitylib.acuitylog.AcuityLog.e
+acuitylib.acuityerror.AcuityError: ('please set correct target name in config file', None)

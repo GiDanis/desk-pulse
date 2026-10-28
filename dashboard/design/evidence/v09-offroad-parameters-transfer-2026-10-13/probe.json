@@ -1,0 +1,170 @@
+{
+  "scope": "Isolated controlled fixtures, not a learning-quality benchmark",
+  "surfaceComparisons": [
+    {
+      "command": "accelerate",
+      "seconds": 0.5,
+      "results": [
+        {
+          "surface": "asphalt",
+          "speed": 14.215787666060335,
+          "lateral": 0.0,
+          "yaw": 0.0,
+          "retired": false,
+          "terms": {
+            "progress": 0.02366241785330203,
+            "time": -0.0003333333333333333,
+            "contact": 0.0,
+            "offroad": 0.0,
+            "finish": 0.0,
+            "control": 0.0
+          }
+        },
+        {
+          "surface": "runoff",
+          "speed": 12.960874056454967,
+          "lateral": 0.0,
+          "yaw": 0.0,
+          "retired": false,
+          "terms": {
+            "progress": 0.0,
+            "time": -0.0003333333333333333,
+            "contact": 0.0,
+            "offroad": -0.0033333333333333335,
+            "finish": 0.0,
+            "control": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "command": "brake",
+      "seconds": 0.5,
+      "results": [
+        {
+          "surface": "asphalt",
+          "speed": 7.91585902118105,
+          "lateral": 0.0,
+          "yaw": 0.0,
+          "retired": false,
+          "terms": {
+            "progress": 0.013249723516759104,
+            "time": -0.0003333333333333333,
+            "contact": 0.0,
+            "offroad": 0.0,
+            "finish": 0.0,
+            "control": 0.0
+          }
+        },
+        {
+          "surface": "runoff",
+          "speed": 9.552607787278342,
+          "lateral": 0.0,
+          "yaw": 0.0,
+          "retired": false,
+          "terms": {
+            "progress": 0.0,
+            "time": -0.0003333333333333333,
+            "contact": 0.0,
+            "offroad": -0.0033333333333333335,
+            "finish": 0.0,
+            "control": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "command": "steer",
+      "seconds": 0.2,
+      "results": [
+        {
+          "surface": "asphalt",
+          "speed": 11.90820294717002,
+          "lateral": 0.1857018274339031,
+          "yaw": 0.3163783969118017,
+          "retired": false,
+          "terms": {
+            "progress": 0.019830550437654894,
+            "time": -0.0003333333333333333,
+            "contact": 0.0,
+            "offroad": 0.0,
+            "finish": 0.0,
+            "control": -2.0833333333333333e-05
+          }
+        },
+        {
+          "surface": "runoff",
+          "speed": 11.85877911673798,
+          "lateral": 0.152269493120661,
+          "yaw": 0.2579838216851379,
+          "retired": false,
+          "terms": {
+            "progress": 0.0,
+            "time": -0.0003333333333333333,
+            "contact": 0.0,
+            "offroad": -0.0033333333333333335,
+            "finish": 0.0,
+            "control": -2.0833333333333333e-05
+          }
+        }
+      ]
+    }
+  ],
+  "returnToRoad": {
+    "exitTerms": {
+      "progress": 0.0,
+      "time": -0.0003333333333333333,
+      "contact": 0.0,
+      "offroad": -0.0033333333333333335,
+      "finish": 0.0,
+      "control": 0.0
+    },
+    "returnTerms": {
+      "progress": 0.006651080888954653,
+      "time": -0.0003333333333333333,
+      "contact": 0.0,
+      "offroad": 0.0,
+      "finish": 0.0,
+      "control": 0.0
+    },
+    "trackLimits": 1,
+    "offroad": false
+  },
+  "backwardProgress": [
+    {
+      "offroad": false,
+      "delta": -0.06663490474804235,
+      "progressReward": -0.006663490474804234
+    },
+    {
+      "offroad": true,
+      "delta": -0.06657359269976837,
+      "progressReward": 0.0
+    }
+  ],
+  "actualBudget": {
+    "profileSeconds": 60,
+    "launchSeconds": 15.0,
+    "launchGoal": 1.0
+  },
+  "ppo": {
+    "gamma": 0.9995834201268338,
+    "discountSeconds": 39.999999999995055,
+    "gaeLambda": 0.95,
+    "gaeTraceSeconds": 0.32231056312712847,
+    "rolloutSeconds": 4.266666666666667,
+    "transitions": 8192,
+    "minibatchesPerUpdate": 512
+  },
+  "populationSeeds": {
+    "distinct": 32,
+    "offsetSpread": 0.8133522213575901
+  },
+  "academyTransfer": {
+    "targetVersion": 2,
+    "initializerRegistered": true,
+    "checkpointCreated": false,
+    "donorApplied": false,
+    "sourceIntact": true
+  }
+}

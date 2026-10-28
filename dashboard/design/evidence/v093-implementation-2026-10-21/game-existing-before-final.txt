@@ -1,0 +1,57 @@
+FE........FFF..F..
+======================================================================
+ERROR: test_driver_dossier_and_reset_preserve_provenance (__main__.GameChecks.test_driver_dossier_and_reset_preserve_provenance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 34, in test_driver_dossier_and_reset_preserve_provenance
+    store.set_profile(driver['id'],{**driver['profile'],'algorithm':'ppo'},allow_reconfigure=True)
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 347, in set_profile
+    validate_profile(profile)
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 60, in validate_profile
+    raise ValueError('Parametro non valido: '+key)
+ValueError: Parametro non valido: population
+
+======================================================================
+FAIL: test_artifact_corruption_and_interrupted_session (__main__.GameChecks.test_artifact_corruption_and_interrupted_session)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 204, in test_artifact_corruption_and_interrupted_session
+    self.assertIsNone(store.driver(drivers[1]['id'])['policy'])
+AssertionError: '58aee4080f102af6728417621536cae9a41c0b31f863f51f134c4d70e76d522b' is not None
+
+======================================================================
+FAIL: test_real_workers_pause_and_resume (__main__.GameChecks.test_real_workers_pause_and_resume) (method='evolution')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 335, in test_real_workers_pause_and_resume
+    self.assertIsNone(store.drivers()[1]['policy'])
+AssertionError: '58aee4080f102af6728417621536cae9a41c0b31f863f51f134c4d70e76d522b' is not None
+
+======================================================================
+FAIL: test_real_workers_pause_and_resume (__main__.GameChecks.test_real_workers_pause_and_resume) (method='ppo')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 335, in test_real_workers_pause_and_resume
+    self.assertIsNone(store.drivers()[1]['policy'])
+AssertionError: '58aee4080f102af6728417621536cae9a41c0b31f863f51f134c4d70e76d522b' is not None
+
+======================================================================
+FAIL: test_real_workers_pause_and_resume (__main__.GameChecks.test_real_workers_pause_and_resume) (method='neat')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 335, in test_real_workers_pause_and_resume
+    self.assertIsNone(store.drivers()[1]['policy'])
+AssertionError: '58aee4080f102af6728417621536cae9a41c0b31f863f51f134c4d70e76d522b' is not None
+
+======================================================================
+FAIL: test_session_stats_reject_another_driver_and_unknown_duration_is_explicit (__main__.GameChecks.test_session_stats_reject_another_driver_and_unknown_duration_is_explicit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 64, in test_session_stats_reject_another_driver_and_unknown_duration_is_explicit
+    self.assertIsNone(store.driver(driver['id'])['policy'])
+AssertionError: 'b681f5815a3247723c22b6a25ca1c02d21be89227a48af8d94d2f8c768ecf06f' is not None
+
+----------------------------------------------------------------------
+Ran 16 tests in 16.552s
+
+FAILED (failures=5, errors=1)

@@ -1,0 +1,144 @@
+{
+  "name": "PPO-Smooth",
+  "profile": {
+    "algorithm": "ppo_smooth",
+    "episodeSeconds": 60,
+    "epochs": 4,
+    "gamma": 0.9995834201268338,
+    "hidden": 16,
+    "learningRate": 0.0003,
+    "mutation": 0.15,
+    "observation": "race-68-v3",
+    "population": 32,
+    "rollout": 256,
+    "seed": 6,
+    "traffic": false,
+    "version": 2
+  },
+  "budget": 50000,
+  "trainingSteps": 50000,
+  "pcWallSeconds": 21.6183970279817,
+  "before": [
+    {
+      "goal": 1.0,
+      "seed": 9901000,
+      "reason": "success",
+      "seconds": 1.1500000000000008,
+      "progress": 1.0080506725763883
+    },
+    {
+      "goal": 1.0,
+      "seed": 9901001,
+      "reason": "success",
+      "seconds": 1.0833333333333344,
+      "progress": 1.0047173485498035
+    },
+    {
+      "goal": 20.0,
+      "seed": 9901000,
+      "reason": "contact",
+      "seconds": 7.699999999999978,
+      "progress": 8.464568840104704
+    },
+    {
+      "goal": 20.0,
+      "seed": 9901001,
+      "reason": "contact",
+      "seconds": 7.299999999999979,
+      "progress": 9.22689793925477
+    }
+  ],
+  "after": [
+    {
+      "goal": 1.0,
+      "seed": 9901000,
+      "reason": "success",
+      "seconds": 1.016666666666668,
+      "progress": 1.0193680906324971
+    },
+    {
+      "goal": 1.0,
+      "seed": 9901001,
+      "reason": "success",
+      "seconds": 0.966666666666668,
+      "progress": 1.0048537000416502
+    },
+    {
+      "goal": 20.0,
+      "seed": 9901000,
+      "reason": "contact",
+      "seconds": 9.833333333333401,
+      "progress": 8.990318046892696
+    },
+    {
+      "goal": 20.0,
+      "seed": 9901001,
+      "reason": "contact",
+      "seconds": 8.700000000000012,
+      "progress": 9.841805866836296
+    }
+  ],
+  "phase": "launch",
+  "launchGoal": 20.0,
+  "updates": 6,
+  "parameterUpdates": 71,
+  "metric": {
+    "update": 71,
+    "loss": 0.027474203193997602,
+    "valueLoss": 0.01636642071183836,
+    "approxKL": 0.0017955264287263586,
+    "clipFraction": 0.015625,
+    "explainedVariance": 0.48308179542951124,
+    "rawStd": [
+      0.24519509428214858,
+      0.45657954298162007
+    ],
+    "entropy": 0.6481836354618924
+  },
+  "reviewTicksWithNoTraining": 12167,
+  "reviewStillRunning": false,
+  "stats": {
+    "blocked": 0,
+    "contact": 0,
+    "episodes": 187,
+    "laps": 0,
+    "launchSuccess": 0,
+    "launches": 0,
+    "no_progress": 0,
+    "passAttempts": 0,
+    "passes": 0,
+    "recoveries": 0,
+    "recoverySuccess": 0,
+    "recoveryTimes": [],
+    "rewardTerms": {
+      "progress": 377.3130283793804,
+      "time": -5.7019515870817035,
+      "finish": 0.0,
+      "contact": 0.0,
+      "offroad": 0.0,
+      "exit": 0.0,
+      "retirement": 0.0,
+      "understeer": 0.0,
+      "control": -0.04242256337096033,
+      "task": 374.0,
+      "stall": 0.0,
+      "recovery": 0.0
+    },
+    "simulatedSeconds": 429.2666666666661,
+    "skill_failed": 0,
+    "stationarySeconds": 55.66666666666666,
+    "success": 187,
+    "timeout": 0,
+    "warmupSuccess": 187,
+    "warmups": 187,
+    "window": 0,
+    "bestSeries": 0,
+    "pedalCounts": {
+      "gas": 20194,
+      "coast": 1358,
+      "brake": 4204
+    },
+    "understeerSeconds": 0.0
+  },
+  "scope": "One-seed 50k-transition calibration on private copies; actual Start migration, no production training, not convergence certification"
+}

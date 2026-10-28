@@ -1,0 +1,31 @@
+{
+  "created": 1792940712.915706,
+  "purpose": "development-only expert replay retention, not final qualification",
+  "base": "/home/giuseppe/.cache/smartpc-pilot-release-20261023/refined-factory-4105/base/policy.json",
+  "preparation": 4105,
+  "methods": [
+    "sac",
+    "td3",
+    "tactic"
+  ],
+  "decisionsPerMethod": 32768,
+  "actorRate": 3e-06,
+  "steeringRetention": 25,
+  "pedalRetention": 1,
+  "actuatorMode": "plastic",
+  "exploration": "gaussian",
+  "demonstrationFraction": 0.25,
+  "demonstrationCapacity": 16384,
+  "collectionSeed": 11004105,
+  "collectionEpisodes": 21,
+  "collectionSeconds": 90,
+  "teacherControlAtInference": false,
+  "evaluation": {
+    "split": "development",
+    "seconds": 180,
+    "casesPerGroup": 3
+  },
+  "comparison": "p6-pedal-{sac,td3,tactic}-4105: only demonstration replay changes",
+  "acceptance": "same existing P5/P6 gates, no relaxed contact or pace rules",
+  "finalBankUsed": false
+}

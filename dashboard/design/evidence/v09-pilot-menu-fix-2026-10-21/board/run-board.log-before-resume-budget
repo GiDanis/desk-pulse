@@ -1,0 +1,10 @@
+Previous ARM/Base/Functional evidence retained; diagnostic-only finished cleanup repaired
+Native menu apple passed
+Traceback (most recent call last):
+  File "/tmp/retry_board.py", line 33, in <module>
+    subprocess.run(['runuser','-u','smartpc','--','env',*env,*args],cwd=S.parent,stdout=out,stderr=subprocess.STDOUT,check=True,timeout=600)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['runuser', '-u', 'smartpc', '--', 'env', 'HOME=/var/lib/smartpc-dashboard', 'XDG_CONFIG_HOME=/var/lib/smartpc-dashboard/.config', 'XDG_DATA_HOME=/var/lib/smartpc-dashboard/.local/share', 'XDG_CACHE_HOME=/var/cache/smartpc-dashboard', 'OPENBLAS_NUM_THREADS=1', 'OMP_NUM_THREADS=1', 'QT_QPA_PLATFORM=eglfs', 'QT_QPA_EGLFS_INTEGRATION=eglfs_kms', 'QT_QPA_EGLFS_KMS_CONFIG=/etc/smartpc/eglfs-kms.json', 'QT_QPA_EGLFS_HIDECURSOR=1', 'QSG_RHI_BACKEND=opengl', '/var/lib/smartpc-dashboard/game-runtime/bin/python', '/var/lib/smartpc-dashboard/smartpc-menu-project/dashboard/check_game_menu_ui.py', '--theme', 'apple', '--restore-store', '/var/lib/smartpc-dashboard/v09-menu-proof/private/reopen', '--output', '/var/lib/smartpc-dashboard/v09-menu-proof/apple-reopen']' returned non-zero exit status 1.

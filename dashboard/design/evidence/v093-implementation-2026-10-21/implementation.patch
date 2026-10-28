@@ -1,0 +1,1495 @@
+--- before/README.md
++++ README.md
+@@ -1,4 +1,6 @@
+ # DeskPulse OS ⚡
++
++**v0.9.3-rc.1:** whole-system performance candidate. See [implementation, measurements and delivery status](dashboard/design/v093-implementation-report.md) and the [release MasterPlan](dashboard/design/release-masterplan.md). Extended qualification and physical frame/input measurements remain separate.
+ 
+ <p align="center">
+   <b>The Open-Source Ambient Operating System for Desk Displays & Single Board Computers.</b>
+@@ -12,7 +14,7 @@
+   <a href="https://www.qt.io/"><img src="https://img.shields.io/badge/Compositor-Qt%206%20%7C%20QML%20EGLFS-41CD52?style=for-the-badge&logo=qt&logoColor=white" alt="Qt 6 QML"></a>
+   <img src="https://img.shields.io/badge/Display-Hagibis%20960%C3%97640%20%40%2060Hz-00C49F?style=for-the-badge" alt="Hagibis Display">
+   <img src="https://img.shields.io/badge/Graphics-Hardware%20OpenGL-8A2BE2?style=for-the-badge" alt="Hardware OpenGL">
+-  <img src="https://img.shields.io/badge/24h%20Soak%20Test-Passed%20(0%20Crashes)-success?style=for-the-badge" alt="24h Stability">
++  <img src="https://img.shields.io/badge/v0.9.3%20Extended%20Qualification-Pending-lightgrey?style=for-the-badge" alt="v0.9.3 extended qualification pending">
+   <a href="https://github.com/GiDanis/desk-pulse/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-informational?style=for-the-badge" alt="MIT License"></a>
+ </p>
+ 
+--- before/dashboard/Main.qml
++++ dashboard/Main.qml
+@@ -895,7 +895,9 @@
+         {id:"network",slot:7,name:"RETE",views:["TRAFFICO","ILIADBOX","DISPOSITIVI"]},
+         {id:"game",slot:8,name:"GIOCO",views:["PISTA","CLASSIFICA","PROGRESSI","PILOTA"]}
+     ]
+-    readonly property var visibleModules: dashboardState ? dashboardState.visibleModules : ["oggi","meteo","account"]
++    // Detach the Qt reference sequence once per notification. Repeated indexOf
++    // on a property-backed sequence otherwise re-enters its Python getter.
++    readonly property var visibleModules: dashboardState ? dashboardState.visibleModules.slice() : ["oggi","meteo","account"]
+     readonly property bool sportGroupVisible: dashboardState ? dashboardState.sportGroupVisible : false
+     readonly property var sportDisciplines: providerFamilies.filter(item => visibleModules.indexOf(item.id)>=0).reduce((rows,item)=>rows.concat(item.id==="sport" ? [item,{id:"team",providerId:"sport",slot:3,name:"LA MIA SQUADRA",views:["LA MIA SQUADRA"]}] : [item]),[])
+     readonly property var families: allFamilies.filter(item => item.id==="sports" ? sportGroupVisible && sportDisciplines.length>0 : visibleModules.indexOf(item.id)>=0)
+@@ -1078,7 +1080,27 @@
+         overlay = overlay === "sportTable" ? "sportList" : "sportTable"
+         sportIndex = overlay === "sportTable" ? sportTableIndex : sportListIndex
+     }
+-    readonly property var sport: dashboardState ? dashboardState.sportState : ({status: "unavailable", source: "FotMob / ESPN", data: {}})
++    property var sportListCache: ({})
++    function decodeSportRows(key, encoded) {
++        const cached = sportListCache[key]
++        if (cached && cached.encoded === encoded) return cached.rows
++        const rows = Object.freeze(JSON.parse(encoded))
++        sportListCache[key] = {encoded:encoded, rows:rows}
++        return rows
++    }
++    readonly property var sport: {
++        if (!dashboardState) return ({status: "unavailable", source: "FotMob / ESPN", data: {}})
++        const revision = dashboardState.sportRevision
++        const result = Object.assign({}, dashboardState.sportViewState(sportMatchId))
++        if (result._sportLists) {
++            const data = Object.assign({}, result.data)
++            for (const key of Object.keys(result._sportLists))
++                data[key] = app.decodeSportRows(key, result._sportLists[key])
++            result.data = data
++            delete result._sportLists
++        }
++        return result
++    }
+     readonly property var sportData: sport.data || ({})
+     readonly property var sportViews: ["PROSSIME"].concat(sportData.hasLiveView || sportView === "IN CORSO" ? ["IN CORSO"] : []).concat(["RISULTATI", "CLASSIFICA", "LA MIA SQUADRA"])
+     readonly property var sportFixtures: sportData.fixtures || []
+--- before/dashboard/README.md
++++ dashboard/README.md
+@@ -2,7 +2,9 @@
+ 
+ Dashboard Qt Quick per Orange Pi Zero 3W e display Hagibis 960×640 a 60 Hz. La v0.6.6 applica la [specifica UX](design/ux-navigation-v2.md): un dato dominante per vista, Home dinamica, due assi di navigazione, tasti coerenti e avvisi condivisi. La board usa Orange Pi Debian 13, Qt 6, EGLFS/KMS e GPU PowerVR.
+ 
+-**Candidata installata: 0.9.0-rc.22 · 17 ottobre 2026.** Controllo geometrico raggruppato, osservazioni/sensori visuali alleggeriti, salvataggi in processo dedicato e cache di verifiche compatibili. Dossier e classifica riusano la lettura corrente; esiti delle manovre più chiari. 624 hash, cinque piloti e 36 artefatti originali/preferenze/Base conservati, GUI pronta con PID verificato/NRestarts=0, nessun reboot OS. Verifiche PC/ARM e tre temi EGLFS; sei carichi da dieci minuti e supplemento finale. Simulazione ~1× ma scatti residui: nessuna certificazione di 30 FPS fissi. Premi comuni e curriculum a capacità respinti nel confronto a cinque semi; ricetta precedente e replay conservati. CPU simulazione/learning, GPU rendering, nessun nuovo uso NPU. [Report/ricevuta e limiti](design/v09-overtaking-fluidity-report.md) · [MasterPlan 2.95](design/release-masterplan.md).
++**v0.9.3-rc.1 · ottimizzazione dell’intero sistema.** Cache Sport ed eventi, proiezioni QML mirate, disponibilità dei moduli aggiornata dai provider, metadati Gioco in processo read-only e filtri SQL. Handoff Plymouth root e governor dei soli A76 selezionato mediante confronti ABBA; rendering GPU e identità Apple Calm 1.6.3 conservati. Stato di installazione, risultati e gate residui nel [report v0.9.3](design/v093-implementation-report.md) e nel [MasterPlan](design/release-masterplan.md). Le prove software non certificano 60 FPS ottici o il raggiungimento di tutti i target di apertura.
++
++**Candidata precedente: 0.9.0-rc.22 · 17 ottobre 2026.** Controllo geometrico raggruppato, osservazioni/sensori visuali alleggeriti, salvataggi in processo dedicato e cache di verifiche compatibili. Dossier e classifica riusano la lettura corrente; esiti delle manovre più chiari. 624 hash, cinque piloti e 36 artefatti originali/preferenze/Base conservati, GUI pronta con PID verificato/NRestarts=0, nessun reboot OS. Verifiche PC/ARM e tre temi EGLFS; sei carichi da dieci minuti e supplemento finale. Simulazione ~1× ma scatti residui: nessuna certificazione di 30 FPS fissi. Premi comuni e curriculum a capacità respinti nel confronto a cinque semi; ricetta precedente e replay conservati. CPU simulazione/learning, GPU rendering, nessun nuovo uso NPU. [Report/ricevuta e limiti](design/v09-overtaking-fluidity-report.md) · [MasterPlan 2.95](design/release-masterplan.md).
+ 
+ **Candidata precedente: 0.9.0-rc.21 · 16 ottobre 2026.** Plancia nell’ovale con personale, ultimo giro e delta S1/S2/S3; lancio, invalidità, modelli storici e anteprima espliciti. Cronometraggio persistente e pausa confermata dopo il salvataggio, protezione di Tattico per abilità e diagnostica delle manovre. Pista/auto e cinque piloti conservati, compresa l’esperienza reale di Crono. 621 hash, preferenze/Base conservati, Apple Calm 1.6.3 selezionabile, GUI pronta/NRestarts=0; nessun reboot OS o training di produzione. 33 test PC, 33 ARM (uno escluso), tre temi EGLFS e A/B esteso; screening a cinque semi senza promessa di tattica generale o 30 fps ottici fissi. CPU simulazione/learning, GPU rendering, nessun nuovo uso NPU. [Report/ricevuta e limiti](design/v09-timing-improvements-report.md) · [MasterPlan 2.93](design/release-masterplan.md).
+ 
+--- before/dashboard/app.py
++++ dashboard/app.py
+@@ -53,7 +53,7 @@
+     account = AccountService()
+     casa = CasaService(auto_refresh=not demo, demo=demo)
+     network = NetworkService(auto_refresh=not demo, demo=demo)
+-    game = GameService()
++    game = GameService(async_metadata=True)
+     events = EventService(path=":memory:" if demo else None, auto_refresh=not demo)
+     sport = SportService(auto_refresh=not demo) if not demo else None
+     racing = {kind: MotorsportService(kind) for kind in ('f1','motogp')} if not demo else {}
+--- before/dashboard/check_game_fluidity_ui.py
++++ dashboard/check_game_fluidity_ui.py
+@@ -1,5 +1,5 @@
+ """Private native event-loop traces. No pumping/screenshots inside measured windows."""
+-import argparse,json,os,time,shutil,math
++import argparse,json,os,time,math
+ from pathlib import Path
+ os.environ.setdefault('QT_QPA_PLATFORM','offscreen')
+ if os.environ['QT_QPA_PLATFORM']=='offscreen':os.environ.setdefault('QT_QUICK_BACKEND','software')
+@@ -18,7 +18,7 @@
+         bundle=project/'theme-projects/apple-calm/bundle';v=validate_project(bundle)
+         cache=json.loads((bundle.parent/'evidence/preflight-cache.json').read_text());assert cache['digest']==v['digest'] and cache['result']['qt']==qVersion()
+         BundleManager(base,app_root=project/'dashboard').import_bundle(bundle,preflight=lambda *_:cache['result'],require_preflight=True)
+-    h=None;runs=[]
++    h=None;runs=[];maturity={}
+     from game_store import GameStore
+     store=GameStore(base/'state/game')
+     def wait(f,seconds=120):
+@@ -43,6 +43,7 @@
+                 rng=np.random.default_rng(4051);rows=t.learner.replay
+                 rows[:]=rng.normal(0,.2,rows.shape);rows[:,90:92]=np.tanh(rows[:,90:92]);rows[:,92]=.001;rows[:,183]=0
+                 t.learner.count=t.learner.capacity;t.learner.transitions=t.learner.capacity;t.learner.cursor=0
++                maturity['preparedReplayCount']=t.learner.count
+             else:
+                 # Actual mature PPO checkpoint when supplied; weights/optimizer
+                 # preserved in the private store, with migration at Start.
+@@ -51,7 +52,9 @@
+                     c=json.loads(mature.read_text());private_seconds=c.get('seconds',60.)
+                     original=store.artifact(c);c['migrationSource']=original
+                     t=ResidualTrainer(driver['profile'],'oval-1',c,objective='impara_sorpasso')
++            store.select_objective('impara_sorpasso')
+             store.save_training(driver['id'],t.checkpoint(private_seconds),t.learner.policy(),t.steps,private_seconds,t.metric,t.state)
++            maturity['checkpoint']=store.driver(driver['id'])['checkpoint']
+         if a.load=='race':qualify_roster(store)
+         # Prepare large fixtures before creating Qt timers/windows. Headless
+         # qualifying or replay encoding must not starve a pending renderer load.
+@@ -62,6 +65,9 @@
+             assert h.game.setMode('gara' if a.load=='race' else 'qualifica');h.game._race_laps=10
+         else:
+             assert h.game.selectDriver(driver['id']);assert h.game.setMode('impara_sorpasso')
++        if maturity:
++            assert h.game._store.driver(driver['id'])['checkpoint']==maturity['checkpoint'],'Prepared replay not selected'
++            maturity['preparedCheckpointSelected']=True
+         for n in range(a.segments):
+             if n:h.game.stop()
+             assert h.game.start();wait(lambda:h.game.snapshot['runState']=='running' and h.game.scene.get('meta',{}).get('time',0)>3)
+@@ -75,10 +81,15 @@
+                 s=h.game.scene;packets.append(dict(received=time.monotonic(),timestamp=s['timestamp'],sequence=s['sequence'],phase=s['meta'].get('phase'),simTime=s['meta'].get('time'),carCount=len(s['cars']),rate=s['meta'].get('simRate'),saveState=h.game._save_state,previewState=s['meta'].get('previewState','running'),speed=s['cars'][s['meta'].get('selected',0)%len(s['cars'])].get('speed',0),resetKey=s['cars'][s['meta'].get('selected',0)%len(s['cars'])].get('resetKey',''),checkpoint=s['meta'].get('checkpoint'),pipeline=s['meta'].get('pipeline')))
+             h.window.frameSwapped.connect(swapped)
+             if a.trace:root.posePresented.connect(presented);h.game.sceneChanged.connect(received)
+-            before=time.monotonic();loop=QEventLoop();timer=QTimer();timer.setSingleShot(True);timer.setTimerType(__import__('PySide6.QtCore',fromlist=['Qt']).Qt.TimerType.PreciseTimer);timer.timeout.connect(loop.quit);timer.start(round(a.seconds*1000));loop.exec();elapsed=time.monotonic()-before
++            before=time.monotonic();loop=QEventLoop();timer=QTimer();timer.setSingleShot(True);timer.setTimerType(__import__('PySide6.QtCore',fromlist=['Qt']).Qt.TimerType.PreciseTimer);timer.timeout.connect(loop.quit)
++            def terminal():
++                if h.game.snapshot['runState'] in ('finished','error'):loop.quit()
++            h.game.changed.connect(terminal)
++            timer.start(round(a.seconds*1000));loop.exec();elapsed=time.monotonic()-before
++            timer.stop();h.game.changed.disconnect(terminal)
+             h.window.frameSwapped.disconnect(swapped)
+             if a.trace:root.posePresented.disconnect(presented);h.game.sceneChanged.disconnect(received)
+-            state=h.game.snapshot['runState'];assert state=='running',(a.load,state,h.game.scene.get('meta'))
++            state=h.game.snapshot['runState'];assert state=='running' or state=='finished' and a.load in ('race','qualification'),(a.load,state,h.game.scene.get('meta'))
+             spans=[(b-c)*1000 for c,b in zip(frames,frames[1:])]
+             motion=[(float(b['presentedMs'])-float(c['presentedMs'])) for c,b in zip(poses,poses[1:])]
+             ages=[p['presentedMs']-p.get('poseSampleMs',p['publishedMs']) for p in poses if p.get('poseSampleMs',0)>0]
+@@ -88,11 +99,18 @@
+                 poseAgeP95Ms=percentile(ages,.95),poseAgeMaxMs=max(ages) if ages else None,allCars=len(h.game.scene['cars']),visibleCars=sum(item.isVisible() for item in visual_items(root) if item.objectName().startswith('gameCar') and item.objectName()[7:].isdigit()),runState=state)
+             runs.append(summary)
+             (a.output/f'raw-{n}.json').write_text(json.dumps(dict(frames=frames,poses=poses,packets=packets),separators=(',',':')))
+-            assert h.game.pause();wait(lambda:h.game.snapshot['saveState']=='saved',180)
++            if state=='running':
++                assert h.game.pause();wait(lambda:h.game.snapshot['saveState']=='saved',180)
++            else:
++                assert h.game._store.sessions('qualifica' if a.load=='qualification' else 'gara'),'No durable completed session'
++            if maturity.get('preparedReplayCount'):
++                saved=h.game._store.load(h.game._store.driver(driver['id'])['checkpoint'])
++                assert saved['learner']['replayBinary']['count']==maturity['preparedReplayCount'],'Mature replay was discarded'
++                maturity['replayPreservedAfterWorkerSave']=True
+             assert h.window.grabWindow().save(str(a.output/f'end-{n}.png'))
+             print(json.dumps(summary),flush=True)
+         assert not h.messages,h.messages
+-        report=dict(status='passed',theme=a.theme,load=a.load,mature=a.mature,syntheticOffPolicyReplay=a.mature and a.load in ('sac','td3','tactic'),trace=a.trace,presenter=os.environ.get('SMARTPC_GAME_PRESENTER','timer'),window=[h.window.width(),h.window.height()],qt=qVersion(),runs=runs,qmlWarnings=h.messages,opticalFPS=False)
++        report=dict(status='passed',theme=a.theme,load=a.load,mature=a.mature,maturityProof=maturity,syntheticOffPolicyReplay=bool(maturity.get('preparedReplayCount')),trace=a.trace,presenter=os.environ.get('SMARTPC_GAME_PRESENTER','timer'),window=[h.window.width(),h.window.height()],qt=qVersion(),runs=runs,qmlWarnings=h.messages,opticalFPS=False)
+         (a.output/'report.json').write_text(json.dumps(report,indent=2)+'\n')
+     finally:
+         if h is not None:h.close()
+--- before/dashboard/check_sport_ui.py
++++ dashboard/check_sport_ui.py
+@@ -2,11 +2,11 @@
+ import json
+ import os
+ from pathlib import Path
+-import tempfile
+ import time
+ from unittest.mock import patch
+ 
+-os.environ['XDG_CONFIG_HOME'] = tempfile.mkdtemp(prefix='smartpc-sport-ui-')
++from theme_fixture_support import isolate_process
++_private, _base = isolate_process()
+ os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
+ os.environ.setdefault('QT_QUICK_BACKEND', 'software')
+ 
+@@ -41,6 +41,9 @@
+     for match in data['fixtures']:
+         match['fetchedAt'] = now
+     sport = SportService(auto_refresh=False, cache_path=directory/'sport.json', state_path=directory/'goals.json', initial=data, verified=False)
++    def publish_sport():
++        if sport._snapshot is not None:sport._snapshot=dict(sport._snapshot)
++        sport.changed.emit()
+     events = EventService(path=directory/'events.sqlite3', auto_refresh=False)
+     weather = WeatherService(auto_refresh=False)
+     account = AccountService(path=directory/'missing.json')
+@@ -203,7 +206,7 @@
+     for m in future: m.update(kickoffUtc=now+3600, round='6')
+     sport._snapshot = simultaneous
+     sport._error = ''
+-    sport.changed.emit(); app.processEvents()
++    publish_sport(); app.processEvents()
+     assert {m['canonicalMatchId'] for m in future} <= {m['canonicalMatchId'] for m in value('sportOverviewMatches')}
+     assert len(panel.property('rows').toVariant()) == 3
+     first_page = {m['canonicalMatchId'] for m in panel.property('rows').toVariant()}
+@@ -216,7 +219,7 @@
+     assert not timer.property('running'), 'summary rotation continued during selection'
+     press(7)
+     for m in future: m.update(status='live', kickoffUtc=now-1800, homeScore=0, awayScore=0)
+-    sport.changed.emit(); app.processEvents()
++    publish_sport(); app.processEvents()
+     press(8)
+     assert value('sportView') == 'IN CORSO'
+     assert len(value('sportOverviewMatches')) == 4
+@@ -233,7 +236,7 @@
+     press(7); press(2); press(2)
+     assert value('sportView') == 'IN CORSO'
+     for m in future: m['status'] = 'finished'
+-    sport.changed.emit(); app.processEvents()
++    publish_sport(); app.processEvents()
+     assert value('sportView') == 'IN CORSO', 'update unexpectedly changed page'
+     assert value('sportMatch')['status'] == 'finished', 'final result disappeared'
+     assert panel.property('rows').toVariant()[0]['status'] == 'finished'
+--- before/dashboard/components/PublicContextAdapter.qml
++++ dashboard/components/PublicContextAdapter.qml
+@@ -42,6 +42,14 @@
+         }
+         if (c.controller) {
+             const app = c.controller
++            if (surfaceId === "sport.match.detail" && result.model && result.model.sport) {
++                // MatchContext exposes the selected match separately. This
++                // dependency supplies SourceState only; never round-trip a
++                // complete season just to derive its availability flags.
++                const envelope = result.model.sport
++                const hasData = Object.keys(envelope.data || {}).length > 0
++                result.model.sport = Object.assign({},envelope,{data:hasData ? {available:true} : {}})
++            }
+             if ((surfaceId === "sport.standings" || surfaceId === "sport.fixtures") && result.model && result.model.sport && app.sportRounds !== undefined) {
+                 const envelope=result.model.sport, data=envelope.data || ({})
+                 const rounds=data.rounds && data.rounds.length ? data.rounds : app.sportRounds.map(id => ({id:String(id),label:String(id)}))
+--- before/dashboard/event_core.py
++++ dashboard/event_core.py
+@@ -6,6 +6,8 @@
+ 
+ from __future__ import annotations
+ 
++from copy import deepcopy
++from functools import lru_cache
+ import json
+ import math
+ import sqlite3
+@@ -67,6 +69,12 @@
+     return event
+ 
+ 
++@lru_cache(maxsize=2048)
++def _payload(text):
++    # Owned by the decoder cache; public display values always get their own tree.
++    return json.loads(text)
++
++
+ class EventEngine:
+     def __init__(self, path: Path | str) -> None:
+         if path != ":memory:":
+@@ -99,12 +107,14 @@
+         self.db.execute("CREATE INDEX IF NOT EXISTS events_expires ON events(expires_at)")
+         self.db.execute("CREATE TABLE IF NOT EXISTS source_revisions (source TEXT PRIMARY KEY, revision TEXT NOT NULL)")
+         self.db.commit()
++        self._row_cache = None
++        self._deadline_cache = None
+ 
+     def source_revision(self, source: str) -> str:
+         row = self.db.execute("SELECT revision FROM source_revisions WHERE source=?", (source,)).fetchone()
+         if row is not None:
+             return row["revision"]
+-        return max((str(json.loads(row["payload"]).get("revision", "")) for row in
++        return max((str(_payload(row["payload"]).get("revision", "")) for row in
+                     self.db.execute("SELECT payload FROM events WHERE source=?", (source,))), default="")
+ 
+     def migrate_identity(self, old_id: str, new_id: str, source: str) -> None:
+@@ -158,12 +168,18 @@
+         return changed
+ 
+     def _rows(self, now: float) -> list[sqlite3.Row]:
+-        return self.db.execute("""SELECT * FROM events WHERE cancelled=0 AND expires_at>?
++        revision = (self.db.total_changes, self.db.execute('PRAGMA data_version').fetchone()[0])
++        cached = self._row_cache
++        if cached and cached[0] == revision and cached[1] <= now < cached[2]:
++            return cached[3]
++        rows = self.db.execute("""SELECT * FROM events WHERE cancelled=0 AND expires_at>?
+             ORDER BY priority DESC, rank DESC, starts_at ASC, id ASC""", (now,)).fetchall()
++        self._row_cache = (revision, now, min((row['expires_at'] for row in rows), default=math.inf), rows)
++        return rows
+ 
+     @staticmethod
+     def _display(row: sqlite3.Row, now: float) -> dict[str, Any]:
+-        event = json.loads(row["payload"])
++        event = deepcopy(_payload(row["payload"]))
+         event.setdefault("bannerSize", "small")
+         event["seen"] = bool(row["seen"])
+         event["upcoming"] = row["starts_at"] > now
+@@ -182,14 +198,14 @@
+         rows = self._rows(current)
+         urgent = next((self._display(row, current) for row in rows
+                        if row["starts_at"] <= current and row["priority"] == 3
+-                       and json.loads(row["payload"])["category"] not in silenced_categories
++                       and _payload(row["payload"])["category"] not in silenced_categories
+                        and row["dismissed_level"] < row["rank"]), {})
+         pending = [row for row in rows
+                        if not quiet and row["starts_at"] <= current and row["priority"] == 2
+-                       and json.loads(row["payload"]).get("bannerUntil", row["expires_at"]) > current
+-                       and json.loads(row["payload"])["category"] not in silenced_categories
++                       and _payload(row["payload"]).get("bannerUntil", row["expires_at"]) > current
++                       and _payload(row["payload"])["category"] not in silenced_categories
+                        and row["notified_level"] < row["rank"] and row["skipped_level"] < row["rank"]]
+-        pending.sort(key=lambda row: (-row["rank"], json.loads(row["payload"])["issuedAt"], row["id"]))
++        pending.sort(key=lambda row: (-row["rank"], _payload(row["payload"])["issuedAt"], row["id"]))
+         if len(pending) > MAX_PENDING_BANNERS:
+             with self.db:
+                 self.db.executemany("UPDATE events SET skipped_level=MAX(skipped_level,rank) WHERE id=?",
+@@ -198,7 +214,7 @@
+             rows = self._rows(current)
+         banner = self._display(pending[0], current) if pending else {}
+         future = sorted((row for row in rows if row["starts_at"] > current
+-                         and json.loads(row["payload"]).get("showOnHome")),
++                         and _payload(row["payload"]).get("showOnHome")),
+                         key=lambda row: (row["starts_at"], -row["priority"]))
+         next_event = self._display(future[0], current) if future else {}
+         visible = self.db.execute("""SELECT * FROM events WHERE expires_at>=?
+@@ -216,11 +232,16 @@
+         return self._display(row, now) if row else {}
+ 
+     def next_deadline(self, now: float) -> float:
+-        deadlines = [now + 300]  # Bounded recovery for wall-clock/time-zone changes.
+-        for row in self._rows(now):
++        rows = self._rows(now)
++        cached = self._deadline_cache
++        if cached and cached[0] is rows and cached[1] <= now < cached[2]:
++            return min(now + 300, cached[2])
++        deadlines = [math.inf]
++        for row in rows:
+             deadlines.extend(value for value in (row["starts_at"], row["expires_at"],
+-                             json.loads(row["payload"]).get("bannerUntil", row["expires_at"])) if value > now)
+-        return min(deadlines)
++                             _payload(row["payload"]).get("bannerUntil", row["expires_at"])) if value > now)
++        self._deadline_cache = (rows, now, min(deadlines))
++        return min(now + 300, self._deadline_cache[2])  # Wall-clock recovery remains bounded.
+ 
+     def mark_notified(self, event_id: str) -> None:
+         with self.db:
+--- before/dashboard/game.py
++++ dashboard/game.py
+@@ -12,10 +12,10 @@
+ 
+ from PySide6.QtCore import QObject, Property, QStandardPaths, QTimer, Qt, Signal, Slot
+ 
+-from game_catalog import configuration, TRACKS, scope_hash, race_eligible, qualified, visual_content, reference_ready,race_cohort
++from game_catalog import configuration, TRACKS, scope_hash, race_eligible, qualified, visual_content, reference_ready
+ from game_store import GameStore, validate_profile
+ from game_curriculum import PHASE_LABELS
+-from game_modes import MODES, LEGACY, learning, qualified_snapshot, GRID, lap_time, MAX_RACE_DRIVERS
++from game_modes import MODES, LEGACY, learning, qualified_snapshot, GRID, MAX_RACE_DRIVERS
+ from game_profiles import METHODS
+ 
+ 
+@@ -25,14 +25,20 @@
+     operationFinished=Signal(str,bool,str)
+     settingsRouteRequested=Signal(str)
+ 
+-    def __init__(self, root=None, parent=None):
++    def __init__(self, root=None, parent=None, *, async_metadata=False):
+         super().__init__(parent)
++        self._async_metadata=async_metadata
++        self._metadata_reader=None
++        self._metadata_ticket=0
++        self._metadata_closed=False
++        self._metadata_failures=0
++        self._metadata_scope=None
+         default=Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation))/'game'
+         self._root=Path(root or os.environ.get('SMARTPC_GAME_STORE') or default)
+         self._storage_error=''
+         try:
+             self._store=GameStore(self._root)
+-            self._drivers=self._store.drivers()
++            self._drivers=[] if async_metadata else self._store.drivers()
+         except (OSError,ValueError,sqlite3.Error) as error:
+             self._store=None;self._drivers=[];self._storage_error=str(error)
+         self._selected=next((d['id'] for d in self._drivers if d['profile']['algorithm']!='race_master'),self._drivers[0]['id'] if self._drivers else '')
+@@ -66,16 +72,55 @@
+         self._refresh()
+ 
+     def _refresh(self):
++        if self._metadata_closed:return
++        if self._async_metadata and self._store:
++            scope=(self._track,getattr(self._store,'objective','impara'))
++            if self._metadata_scope is not None and scope!=self._metadata_scope:
++                self._drivers=[]
++                self._classification={}
++                self._dossier={}
++            self._metadata_scope=scope
++            if self._dossier.get('id')!=self._selected:self._dossier={}
++            if self._metadata_reader is None or self._metadata_reader.closed:
++                if self._metadata_reader:self._metadata_reader.deleteLater()
++                from game_metadata import MetadataReader
++                self._metadata_reader=MetadataReader(self._root,self._metadata_ready,self)
++            self._metadata_ticket+=1
++            self._metadata_reader.request(self._metadata_ticket,self._selected,self._track,
++                                          getattr(self._store,'objective','impara'))
++            self.changed.emit()
++            return
+         if self._store:
+             try:
+                 self._drivers=self._store.drivers()
+-                self._history=self._store.history(self._selected)
+                 self._classification=self._leaderboard()
+                 from game_dossier import dossier
+                 self._dossier=dossier(self._store,self._selected,driver=next((d for d in self._drivers if d['id']==self._selected),None))
+             except (OSError,ValueError,sqlite3.Error) as error:
+                 self._storage_error=str(error);self._message='Archivio gioco non disponibile: '+str(error)
+         self.changed.emit()
++
++    def _metadata_ready(self, result):
++        if result['ticket']!=self._metadata_ticket:return
++        if result.get('error'):
++            self._storage_error=result['error']
++            self._message='Archivio gioco non disponibile: '+result['error']
++            self._metadata_failures+=1
++            if self._metadata_failures<=3:QTimer.singleShot(2000,self._refresh)
++        else:
++            self._storage_error=''
++            self._metadata_failures=0
++            self._drivers=result['drivers']
++            self._selected=result['selected']
++            self._classification=result['classification']
++            self._dossier=result['dossier']
++        self.changed.emit()
++
++    def _menu_drivers(self, track):
++        # Getters reuse the last complete read projection; commands still
++        # validate against the writer store immediately before mutation/Start.
++        if self._async_metadata and track==self._track:return self._drivers
++        return self._store.drivers(track) if self._store else []
+ 
+     @Property('QVariantMap',notify=changed)
+     def snapshot(self):
+@@ -100,24 +145,28 @@
+                 'algorithms':[{'id':method,'name':data[1],
+                     'available':bool(importlib.util.find_spec('numpy') and (method!='neat' or importlib.util.find_spec('neat')))}
+                     for method,data in METHODS.items() if method.startswith(('residual_','race_'))],
+-                'leaderboard':self._classification,'history':self._history,
++                'leaderboard':self._classification,
+                 'progress':self._progress(driver),'dossier':self._dossier,
+                 'available':not bool(self._storage_error)}
+ 
+     def _progress(self, driver):
++        if '_progress' in driver:return driver['_progress']
+         state=driver.get('curriculum') or {}
+         champion=(state.get('raceChampion') or state.get('champion')) if qualified(driver,self._track) else None
+         proof=champion['proof'] if champion else None
+-        points=[{'round':p['round'],'valid':p['candidate']['valid'],'total':p['candidate']['total'],
++        from game_results import exercise
++        points=[]
++        for p in state.get('evaluations',[]):
++            detail=exercise(p)
++            points.append({'round':p['round'],'valid':p['candidate']['valid'],'total':p['candidate']['total'],
+                  'time':p['candidate']['median'],'best':p['candidate'].get('best',p['candidate']['median']),
+-                 'tested':__import__('game_results').exercise(p)['tested'],
+-                 'goalMeters':__import__('game_results').exercise(p)['goalMeters'],
+-                 'comparisonKey':str(__import__('game_results').exercise(p)['comparisonKey']),
+-                 'summary':__import__('game_results').exercise(p)['title']+' · '+__import__('game_results').exercise(p)['value'],
++                 'tested':detail['tested'],
++                 'goalMeters':detail['goalMeters'],
++                 'comparisonKey':str(detail['comparisonKey']),
++                 'summary':detail['title']+' · '+detail['value'],
+                  'retained':p['candidate'].get('retained',False),
+                  'phaseId':p['phase'],
+-                 'phase':PHASE_LABELS.get(p['phase'],p['phase']),'promoted':p.get('promoted',p.get('accepted',False))}
+-                for p in state.get('evaluations',[])]
++                 'phase':PHASE_LABELS.get(p['phase'],p['phase']),'promoted':p.get('promoted',p.get('accepted',False))})
+         return {'phase':PHASE_LABELS.get(state.get('phase','legacy'),'Precedente') if driver.get('candidate') or driver.get('policy') else 'Da allenare',
+                 'phaseId':state.get('phase','legacy'),'academy':bool(state.get('academyVersion')),
+                 'verified':bool(champion),'champion':proof['candidate'] if proof else {},
+@@ -530,4 +579,7 @@
+         self._scene={'cars':[],'sensors':[],'sequence':0,'engine':'CPU','meta':{}}
+         self.sceneChanged.emit();self.changed.emit()
+ 
+-    def close(self):self.stop()
++    def close(self):
++        self._metadata_closed=True
++        if self._metadata_reader:self._metadata_reader.close()
++        self.stop()
+--- before/dashboard/game_settings.py
++++ dashboard/game_settings.py
+@@ -137,7 +137,7 @@
+                     source=s._store.driver(d['driver'],t['id']) or {}
+                     choices.append(row('source:'+t['id'],t['name'],'Importa' if source.get('policy') else 'Non disponibile','Modello del solo pilota selezionato; compatibilità verificata prima di applicarlo.',bool(source.get('policy'))))
+                 return choices
+-            if self.picker=='driver':return [row('pick:'+p['id'],p['name'],'Selezionato' if p['id']==d['driver'] else 'Scegli',METHODS.get(p['profile']['algorithm'],'Identità persistente') + ' · ' + ('Modello salvato' if p['policy'] or p.get('candidate') else 'Da allenare')) for p in s._store.drivers(d['track'])]
++            if self.picker=='driver':return [row('pick:'+p['id'],p['name'],'Selezionato' if p['id']==d['driver'] else 'Scegli',METHODS.get(p['profile']['algorithm'],'Identità persistente') + ' · ' + ('Modello salvato' if p['policy'] or p.get('candidate') else 'Da allenare')) for p in s._menu_drivers(d['track'])]
+             residual=d['profile'].get('algorithm','').startswith(('race_','residual_'))
+             return [row('pick:'+t['id'],t['name'],'Da verificare' if residual and t['id']!='oval-1' else 'Selezionato' if t['id']==d['track'] else 'Scegli',
+                 'Nuova base da qualificare su questo circuito.' if residual and t['id']!='oval-1' else t.get('description','Asfalto asciutto · vettura standard · percorso proprio.'),
+@@ -145,7 +145,7 @@
+         if self.view=='participants':
+             def eligible(p):return race_eligible(p,d['track'],max(2,len(d['participants'])+int(p['id'] not in d['participants']))) if d['mode']=='gara' else bool(p['policy'])
+             return [row('participant:'+p['id'],p['name'],'Schierato' if p['id'] in d['participants'] else 'Non schierato' if eligible(p) else 'Da qualificare' if p['policy'] or p.get('candidate') else 'Da allenare',
+-                        'Versione qualificata · '+lap_time((qualified_snapshot(p,d['track']) or {}).get('bestLap')) if eligible(p) else 'Completa almeno un giro valido in Qualifica.' if p['policy'] else 'Serve un modello salvato su questo circuito.',eligible(p)) for p in s._store.drivers(d['track'])]
++                        'Versione qualificata · '+lap_time((qualified_snapshot(p,d['track']) or {}).get('bestLap')) if eligible(p) else 'Completa almeno un giro valido in Qualifica.' if p['policy'] else 'Serve un modello salvato su questo circuito.',eligible(p)) for p in s._menu_drivers(d['track'])]
+         if self.view=='advanced':
+             return [row('group:network','Rete','Consulta','Tentativi paralleli e dimensione della rete.'),
+                     row('group:learning','Apprendimento','Consulta','Parametri specifici del metodo scelto.'),
+@@ -207,7 +207,7 @@
+             if d['mode']=='gara':
+                 output.extend([self.setting('laps'),self.setting('grid')])
+                 from game_modes import grid_order
+-                people=[s._store.driver(i,d['track']) for i in d['participants']]
++                people=[next((p for p in s._menu_drivers(d['track']) if p['id']==i),None) for i in d['participants']]
+                 try:
+                     for i,(person,cert) in enumerate(grid_order(people,d['track'],d['grid'])):
+                         output.append(row('info:grid:'+str(i),'P'+str(i+1)+' · '+person['name'],lap_time(cert['bestLap']),'Versione '+cert['policy'][:10]+' · rete congelata.',False))
+--- before/dashboard/game_store.py
++++ dashboard/game_store.py
+@@ -229,36 +229,36 @@
+             prof=default_profile(number,algorithm)
+             from game_profiles import reference_policy
+             policy=self.artifact(reference_policy('oval-1')) if algorithm=='pure_pursuit' else None
+-            from game_profiles import VARIANTS,METHODS
++            from game_profiles import VARIANTS
+             suggested=(VARIANTS.get(prof.get('variant'),{}).get('name') or ('Clone → PPO' if prof['algorithm']=='clone_ppo' else 'Pilota'))+' '+str(number)
+             identity=self._insert_driver(db, (name.strip() or suggested)[:40], number,prof,policy)
+             self._ensure_paths(db)
+             return identity
+ 
+-    def drivers(self,track_id=None):
++    def drivers(self,track_id=None, *, identity=None):
+         track_id=track_id or self.track_id
+         with self.connect() as db:
+-            rows = [dict(row) for row in db.execute('SELECT * FROM drivers ORDER BY number')]
++            rows = [dict(row) for row in db.execute('SELECT * FROM drivers WHERE (? IS NULL OR id=?) ORDER BY number',(identity,identity))]
+             if track_id!='oval-1':
+-                paths={r['id']:dict(r) for r in db.execute('SELECT * FROM driver_paths WHERE track_id=?',(track_id,))}
++                paths={r['id']:dict(r) for r in db.execute('SELECT * FROM driver_paths WHERE track_id=? AND (? IS NULL OR id=?)',(track_id,identity,identity))}
+                 rows=[{**r,**{k:v for k,v in paths.get(r['id'],{'profile':canonical(path_profile(json.loads(r['profile']),track_id)).decode(),
+                       'policy':None,'checkpoint':None,'steps':0,'seconds':0,'policy_profile':None,'candidate':None,'curriculum':None}).items() if k!='track_id'}} for r in rows]
+             archived={}
+-            for item in db.execute('SELECT id,state FROM profile_paths WHERE track_id=?',(track_id,)):
++            for item in db.execute('SELECT id,state FROM profile_paths WHERE track_id=? AND (? IS NULL OR id=?)',(track_id,identity,identity)):
+                 state=json.loads(item['state'])
+                 if state.get('policy'):
+                     archived.setdefault(item['id'],[]).append(state)
+-            for item in db.execute('SELECT id,state FROM driving_archives WHERE track_id=?',(track_id,)):
++            for item in db.execute('SELECT id,state FROM driving_archives WHERE track_id=? AND (? IS NULL OR id=?)',(track_id,identity,identity)):
+                 state=json.loads(item['state'])
+                 if state.get('policy'):archived.setdefault(item['id'],[]).append(state)
+             certificates={}
+-            for cert in db.execute('SELECT driver,data FROM timed_qualifications'):
++            for cert in db.execute('SELECT driver,data FROM timed_qualifications WHERE (? IS NULL OR driver=?)',(identity,identity)):
+                 certificates.setdefault(cert['driver'],[]).append(json.loads(cert['data']))
+             objective=getattr(self,'objective','impara')
+             if objective!='impara':
+-                paths={r['driver']:json.loads(r['state']) for r in db.execute('SELECT * FROM objective_paths WHERE track=? AND objective=?',(track_id,objective))}
++                paths={r['driver']:json.loads(r['state']) for r in db.execute('SELECT * FROM objective_paths WHERE track=? AND objective=? AND (? IS NULL OR driver=?)',(track_id,objective,identity,identity))}
+                 rows=[{**r,**paths.get(r['id'],{})} for r in rows]
+-            memories={r['id']:json.loads(r['data']) for r in db.execute('SELECT * FROM driver_memory')}
++            memories={r['id']:json.loads(r['data']) for r in db.execute('SELECT * FROM driver_memory WHERE (? IS NULL OR id=?)',(identity,identity))}
+         for row in rows:
+             # Keep the exact previous race policy's proof while its learner has
+             # moved to Academy. Never reuse that proof for a new policy hash.
+@@ -278,7 +278,7 @@
+         return rows
+ 
+     def driver(self, identity,track_id=None):
+-        return next((x for x in self.drivers(track_id) if x['id']==identity), None)
++        return next(iter(self.drivers(track_id,identity=identity)),None)
+ 
+     def path_key(self,profile):
+         return hashlib.sha256(canonical({k:profile[k] for k in ('algorithm','hidden','observation','population','traffic','seed','variant','recipeVersion') if k in profile})).hexdigest()
+@@ -808,10 +808,10 @@
+ 
+     def sessions(self, mode=None, complete=True):
+         with self.connect() as db:
+-            rows = [dict(row) for row in db.execute('SELECT * FROM sessions ORDER BY created DESC')]
++            rows = [dict(row) for row in db.execute('SELECT * FROM sessions WHERE (? IS NULL OR mode=?) AND (?=0 OR status=?) ORDER BY created DESC',(mode or None,mode or None,int(bool(complete)),'complete'))]
+         for row in rows:
+             row['payload'] = json.loads(row['payload'])
+-        return [row for row in rows if (not mode or row['mode']==mode) and (not complete or row['status']=='complete')]
++        return rows
+ 
+     def history(self, identity):
+         with self.connect() as db:
+--- before/dashboard/run.sh
++++ dashboard/run.sh
+@@ -20,7 +20,7 @@
+         export QT_QPA_EGLFS_HIDECURSOR=1
+         export QT_QPA_EGLFS_KMS_CONFIG="${SMARTPC_KMS_CONFIG:-/etc/smartpc/eglfs-kms.json}"
+         export QSG_RHI_BACKEND=opengl
+-        if command -v plymouth >/dev/null 2>&1; then plymouth quit 2>/dev/null || true; fi
++        if [[ $EUID -eq 0 ]] && command -v plymouth >/dev/null 2>&1; then plymouth quit 2>/dev/null || true; fi
+         ;;
+     *)
+         echo "Uso: $0 [--desktop|--device|--demo]" >&2
+--- before/dashboard/sport.py
++++ dashboard/sport.py
+@@ -2,6 +2,8 @@
+ 
+ from __future__ import annotations
+ from copy import deepcopy
++from bisect import bisect_right
++import math
+ import os
+ import logging
+ from pathlib import Path
+@@ -161,6 +163,14 @@
+         self._snapshot = deepcopy(initial) if initial else read_cache(self._cache_path)
+         if self._snapshot and self._snapshot.get("season") != self._season:
+             self._snapshot = read_cache(self._season_cache_path())
++        self._view = None
++        self._view_snapshot = None
++        self._view_key = None
++        self._view_boundaries = ()
++        self._qml_view = None
++        self._qml_selected = None
++        self._qml_suppressed = None
++        self._qml_rows = {}
+         self._from_cache = bool(self._snapshot) and not initial
+         self._verified = (
+             env_flag("SMARTPC_SPORT_LIVE_VERIFIED") if verified is None else verified
+@@ -225,14 +235,30 @@
+         self.changed.emit()
+         self._publish_events()
+ 
++    def _data_view(self, now):
++        # Completed workers replace the owned snapshot. Derived season rows are
++        # read-only inside Python; QVariant conversion owns the QML boundary.
++        if self._snapshot is not self._view_snapshot or self._view is None:
++            boundaries = set()
++            for match in (self._snapshot or {}).get("fixtures", []):
++                fetched = match.get("fetchedAt", 0)
++                boundaries.update((fetched, math.nextafter(fetched + 90, math.inf)))
++                start = match.get("kickoffUtc")
++                if start is not None:
++                    boundaries.update((start - 900, math.nextafter(start + 21600, math.inf),
++                                       math.nextafter(start + 10800, math.inf)))
++            self._view_boundaries = sorted(boundaries)
++        key = (self._from_cache, self._verified, self._favourite, season_for(now),
++               bisect_right(self._view_boundaries, now))
++        if self._view is None or self._snapshot is not self._view_snapshot or key != self._view_key:
++            self._view = presentation(self._snapshot, now, from_cache=self._from_cache,
++                                      verified=self._verified, favourite=self._favourite)
++            self._view_snapshot = self._snapshot
++            self._view_key = key
++        return self._view
++
+     def _data(self):
+-        data = presentation(
+-            self._snapshot,
+-            time.time(),
+-            from_cache=self._from_cache,
+-            verified=self._verified,
+-            favourite=self._favourite,
+-        )
++        data = dict(self._data_view(time.time()))
+         data.update(
+             checkedAt=self._checked_at,
+             cacheError=self._cache_error,
+@@ -285,7 +311,7 @@
+ 
+     @Slot(str)
+     def setFavourite(self, identity):
+-        teams = presentation(self._snapshot, time.time()).get("teams", [])
++        teams = self._data_view(time.time()).get("teams", [])
+         if identity and identity not in [t["id"] for t in teams]:
+             return
+         self._favourite = identity
+@@ -384,8 +410,14 @@
+         else:
+             status = "unavailable"
+         if status in ("offline", "stale", "error"):
+-            for match in data.get("fixtures", []):
+-                match["isLive"] = False
++            # Never mutate the cached season when envelope availability changes.
++            if any(match.get("isLive") for match in data.get("fixtures", [])):
++                rows = {m["canonicalMatchId"]: dict(m, isLive=False) for m in data["fixtures"]}
++                for key in ("fixtures", "activeMatches", "upcoming", "lastFinished"):
++                    data[key] = [rows[m["canonicalMatchId"]] for m in data.get(key, [])]
++                favourite = data.get("favouriteMatch", {})
++                if favourite:
++                    data["favouriteMatch"] = rows[favourite["canonicalMatchId"]]
+         return module_state(
+             status=status,
+             source={"fotmob": "FotMob", "espn": "ESPN"}.get(
+@@ -395,6 +427,38 @@
+             data=data,
+             error=self._error,
+         )
++
++    def view_state(self, selected=""):
++        """Private QML projection: season summaries plus one complete detail.
++
++        Acquisition, goal policy and Python consumers retain moduleState's full
++        facts. Avoid duplicating every cached lineup/incident tree across the
++        QVariant/JavaScript boundary on selection and worker-busy changes.
++        """
++        state = self.moduleState
++        data = state['data']
++        suppressed = state['status'] in ('offline', 'stale', 'error')
++        if self._qml_view is not self._view or self._qml_selected != selected or self._qml_suppressed != suppressed:
++            rows = {}
++            for match in data.get('fixtures', []):
++                row = dict(match)
++                raw = row.get('rawStatus')
++                if isinstance(raw, dict):
++                    # The public MatchData contract only uses reason.short.
++                    reason = raw.get('reason')
++                    row['rawStatus'] = {'reason':dict(reason)} if isinstance(reason, dict) else {}
++                if row['canonicalMatchId'] != selected:
++                    for field in ('events', 'stats', 'lineups'):
++                        if field in row:row[field] = []
++                rows[row['canonicalMatchId']] = row
++            self._qml_rows = {key:[rows[m['canonicalMatchId']] for m in data.get(key, [])]
++                              for key in ('fixtures', 'activeMatches', 'upcoming', 'lastFinished')}
++            favourite = data.get('favouriteMatch', {})
++            self._qml_rows['favouriteMatch'] = rows.get(favourite.get('canonicalMatchId'), {})
++            self._qml_view = self._view
++            self._qml_selected = selected
++            self._qml_suppressed = suppressed
++        return dict(state, data=dict(data, **self._qml_rows))
+ 
+     @Slot(result=bool)
+     def refresh(self, detail_only=False):
+--- before/dashboard/state.py
++++ dashboard/state.py
+@@ -4,6 +4,7 @@
+ 
+ from datetime import datetime, timedelta
+ import os
++import json
+ import logging
+ import time
+ from typing import Any
+@@ -92,6 +93,8 @@
+         self._account = account
+         self._events = events
+         self._dashboard_revision = 0
++        self._sport_revision = 0
++        self._sport_wire_arrays = {}
+         self._dashboard_cache = {}
+         for signal, domain in ((self.weatherChanged, 'weather'), (self.sportChanged, 'sport'),
+                                (self.racingChanged, 'racing'), (self.casaChanged, 'casa'),
+@@ -103,14 +106,20 @@
+         self._source_refresh_states: dict[str, dict] = {}
+         self._game = game
+         self._network = network
++        self._network_available = False
+         if network is not None:
++            self._update_network_availability()
++            network.changed.connect(self._update_network_availability)
+             network.changed.connect(self.networkChanged)
+             network.changed.connect(self.modulesChanged)
+             network.refreshFinished.connect(self.networkRefreshFinished)
+             network.metricsChanged.connect(self.networkMetricsChanged)
+             network.metricsRefreshFinished.connect(self.networkMetricsRefreshFinished)
+         self._casa = casa
++        self._casa_available = False
+         if casa is not None:
++            self._update_casa_availability()
++            casa.changed.connect(self._update_casa_availability)
+             casa.changed.connect(self.casaChanged)
+             casa.changed.connect(self.settingsChanged)
+             casa.refreshFinished.connect(self.casaRefreshFinished)
+@@ -195,6 +204,7 @@
+ 
+     def _invalidate_dashboards(self, domain=None):
+         self._dashboard_revision += 1
++        if domain == 'sport':self._sport_revision += 1
+         prefixes = {'weather': ('oggi-',), 'events': ('oggi-',), 'sport': ('sport-sport', 'sport-team'),
+                     'racing': ('sport-f1', 'sport-motogp'), 'casa': ('casa-',), 'network': ('rete-',)}
+         if domain not in prefixes:
+@@ -330,8 +340,11 @@
+ 
+     @Property(bool, notify=casaChanged)
+     def casaAvailable(self):
+-        data=self.casaState['data']
+-        return bool(data.get('configured') and data.get('favourites'))
++        return self._casa_available
++
++    def _update_casa_availability(self):
++        data=self._casa.moduleState['data']
++        self._casa_available=bool(data.get('configured') and data.get('favourites'))
+ 
+     @Slot(bool)
+     def setCasaVisible(self,visible):
+@@ -359,8 +372,10 @@
+ 
+     @Property(bool, notify=networkChanged)
+     def networkAvailable(self):
+-        data=self.networkState['data']
+-        return bool(data.get('hasInventory'))
++        return self._network_available
++
++    def _update_network_availability(self):
++        self._network_available=bool(self._network.moduleState['data'].get('hasInventory'))
+ 
+     @Slot(bool)
+     def setNetworkVisible(self,visible):
+@@ -419,6 +434,37 @@
+     @Property("QVariantMap", notify=sportChanged)
+     def sportState(self) -> dict[str, Any]:
+         return self._sport.moduleState if self._sport is not None else module_state(status="unavailable", source="FotMob / ESPN")
++
++    @Property(int, notify=sportChanged)
++    def sportRevision(self):
++        return self._sport_revision
++
++    @Slot(str, result='QVariantMap')
++    def sportViewState(self, selected):
++        if self._sport is None or not hasattr(self._sport, 'view_state'):
++            return self.sportState
++        state = self._sport.view_state(selected)
++        data = dict(state['data'])
++        encoded_lists = {}
++        for key in ('fixtures', 'activeMatches', 'upcoming', 'lastFinished'):
++            rows = data.get(key, [])
++            cached = self._sport_wire_arrays.get(key)
++            if cached is None or cached[0] is not rows:
++                # Ship a string once per owned revision, not recursive QVariant
++                # lists on every busy notification. QML owns its parsed arrays.
++                encoded = None
++                try:
++                    encoded = json.dumps(rows, ensure_ascii=True, allow_nan=False,
++                                         separators=(',', ':'))
++                except (TypeError, ValueError):
++                    pass  # Preserve QVariant semantics for non-JSON facts.
++                self._sport_wire_arrays[key] = (rows, encoded)
++            encoded = self._sport_wire_arrays[key][1]
++            if encoded is not None:
++                encoded_lists[key] = encoded
++                data.pop(key, None)
++        # Source status/timestamps stay fresh; only immutable lists are encoded.
++        return dict(state, data=data, _sportLists=encoded_lists)
+ 
+     @Property('QVariantList', constant=True)
+     def racingAvailable(self):
+--- before/dashboard/theme_fixture_support.py
++++ dashboard/theme_fixture_support.py
+@@ -134,7 +134,7 @@
+         from network import NetworkService
+         self.network=NetworkService(auto_refresh=False,demo=True,clock=lambda:self.now)
+         from game import GameService
+-        self.game=GameService(base/"state/game") if profile.get("game") else None
++        self.game=GameService(base/"state/game",async_metadata=os.environ.get('SMARTPC_TEST_ASYNC_METADATA')=='1') if profile.get("game") else None
+         self.state=DashboardState(self.weather,self.system,self.account,self.events,sport=self.sport,racing=self.racing,casa=self.casa,network=self.network,game=self.game)
+         self.state.markCommandsSeen();self.state._quiet_enabled=False;self.events.set_quiet(False,0,1)
+         self.state._night_mode=profile['variant'];self.state._brightness_mode='manual';self.state._manual_brightness=100
+@@ -171,6 +171,10 @@
+         assert not self.sport._worker,'positive-control worker did not finish'
+         self.root.setProperty('overlay','');self.root.setProperty('overlayStack',[]);self.root.setProperty('familyId','oggi');self.wait_ready()
+         self.positive_control={'providerDelegationViaQKeyEvent':True,'networkDenied':True}
++        if self.game and self.game._async_metadata:
++            deadline=time.monotonic()+15
++            while not self.game._drivers and time.monotonic()<deadline:self.pump(5)
++            assert self.game._drivers,'async game metadata readiness timeout'
+         self.reset_effects()
+ 
+     def value(self,name):
+@@ -263,6 +267,8 @@
+                 if variant=='canvas':
+                     # App-registered example renderer, not a theme-provided public API implementation.
+                     assert self.service.setSection('scene',{'enabled':True,'renderer':'fixture.canvas'})
++        # Publish a new owned revision, just like a completed provider worker.
++        self.sport._snapshot=dict(self.sport._snapshot)
+         self.sport.changed.emit()
+         for name,value in case['initialProperties'].items():assert self.root.setProperty(name,value),(name,value)
+         if self.value('overlay'):self.root.setProperty('overlayStack',['','menu'])
+@@ -358,14 +364,16 @@
+                 host=self.root.findChild(QObject,name)
+                 assert host and host.property('readiness')=='ready' and host.property('visible'),sid
+             return
+-        elif sid in ('settings.casa','casa.detail','casa.inventory','settings.network','network.detail','network.inventory'):
++        elif sid in ('settings.casa','casa.detail','casa.inventory','settings.network','network.detail','network.inventory','network.router','network.wifi','network.ports','network.history'):
+             host=self.root.findChild(QObject,'overlayHost')
+             assert host and host.property('readiness')=='ready' and host.property('visible'),sid
++            if sid in ('network.router','network.wifi','network.ports','network.history'):
++                assert host.property('contentId')==sid and host.property('currentReady'),sid
+         elif sid.startswith('settings.') and sid not in ('settings.sport','settings.racing'):
+             assert self.expression('settingsPanel.active && settingsPanel.rows.length > 0'),sid
+         elif sid=='shell.main':assert self.window.width()==960 and self.window.height()==640
+         else:assert self.value('overlay')==case['initialProperties'].get('overlay'),sid
+-        if sid not in names and sid not in ('shell.main','scene.main','settings.casa','casa.detail','casa.inventory','settings.network','network.detail','network.inventory'):
++        if sid not in names and sid not in ('shell.main','scene.main','settings.casa','casa.detail','casa.inventory','settings.network','network.detail','network.inventory','network.router','network.wifi','network.ports','network.history'):
+             source={'device.info':'DeviceInfo','sport.team.detail':'SportTeamOverlay','sport.team.picker':'SportTeamOverlay'}.get(sid, 'MotorsportOverlay' if sid.startswith('racing.') or sid=='settings.racing' else 'SportOverlay' if sid.startswith('sport.') or sid=='settings.sport' else 'SettingsPanel' if sid.startswith('settings.') else 'DashboardOverlay')
+             components=[obj for obj in self.root.findChildren(QObject) if obj.metaObject().className().startswith(source+'_') and obj.metaObject().indexOfProperty('dashboard')>=0]
+             assert len(components)==1 and components[0].property('visible') and components[0].property('width')>0 and components[0].property('height')>0,(sid,'legacy component not exposed',source)
+--- before/dashboard/verify_performance_ui.py
++++ dashboard/verify_performance_ui.py
+@@ -44,7 +44,7 @@
+ def stats(rows):
+     ordered = sorted(rows)
+     return {'n': len(rows), 'median_ms': statistics.median(ordered),
+-            'p95_ms': ordered[int((len(ordered)-1)*.95)], 'max_ms': max(ordered)} if rows else None
++            'p95_ms': ordered[__import__('math').ceil(len(ordered)*.95)-1], 'max_ms': max(ordered)} if rows else None
+ 
+ class Keypad(QObject):
+     keyPressed = Signal(int)
+@@ -87,7 +87,7 @@
+             row.update(canonicalMatchId='performance-'+str(i), round=str(i//10+1),
+                        kickoffUtc=h.now+3600+i*7200, status='scheduled', homeScore=None, awayScore=None)
+             fixtures.append(row)
+-        h.sport._snapshot['fixtures'] = fixtures
++        h.sport._snapshot = dict(h.sport._snapshot, fixtures=fixtures)
+         h.sport.changed.emit()
+         h.wait_ready()
+         h.pump(50)
+--- before/dashboard/version.py
++++ dashboard/version.py
+@@ -1,2 +1,2 @@
+ """Software version shared by runtime, installer and recursive release manifest."""
+-VERSION = '0.9.0-rc.28'
++VERSION = '0.9.3-rc.1'
+--- before/os/system/smartpc-dashboard.service
++++ os/system/smartpc-dashboard.service
+@@ -1,6 +1,7 @@
+ [Unit]
+ Description=SmartPC fullscreen dashboard
+-After=systemd-user-sessions.service
++Wants=smartpc-display-handoff.service
++After=systemd-user-sessions.service smartpc-display-handoff.service
+ Conflicts=display-manager.service
+ Before=display-manager.service
+ StartLimitIntervalSec=0
+@@ -15,7 +16,6 @@
+ Environment=XDG_CACHE_HOME=/var/cache/smartpc-dashboard
+ StateDirectory=smartpc-dashboard
+ CacheDirectory=smartpc-dashboard
+-ExecStartPre=-/usr/bin/plymouth quit
+ ExecStart=/opt/smartpc/dashboard/run.sh --device
+ Restart=always
+ RestartSec=2
+--- before/scripts/setup-board.sh
++++ scripts/setup-board.sh
+@@ -96,6 +96,12 @@
+ 
+ echo -e "${YELLOW}[5/6] Installing and configuring systemd service...${NC}"
+ cp "$REPO_DIR/os/system/smartpc-dashboard.service" /etc/systemd/system/smartpc-dashboard.service
++cp "$REPO_DIR/os/system/smartpc-display-handoff.service" /etc/systemd/system/smartpc-display-handoff.service
++install -D -m 0755 "$REPO_DIR/os/system/smartpc-performance.sh" /usr/local/libexec/smartpc-performance
++cp "$REPO_DIR/os/system/smartpc-performance.service" /etc/systemd/system/smartpc-performance.service
++if /usr/local/libexec/smartpc-performance check; then
++    install -D -m 0644 "$REPO_DIR/os/system/30-dashboard-performance.conf" /etc/systemd/system/smartpc-dashboard.service.d/30-performance.conf
++fi
+ systemctl daemon-reload
+ 
+ # Disable desktop display manager if running (LightDM / GDM) to release KMS display
+--- /dev/null
++++ dashboard/game_metadata.py
+@@ -0,0 +1,160 @@
++"""Persistent read-only metadata process, independent of the explicit learner.
++
++Only the latest informational request is published. Commands and durable save
++acknowledgements continue through GameService's existing worker protocol.
++"""
++from contextlib import contextmanager
++import multiprocessing
++import os
++from pathlib import Path
++import queue
++import sqlite3
++import time
++from types import SimpleNamespace
++
++from PySide6.QtCore import QObject, QTimer
++
++
++def display_curriculum(state):
++    if not state:return state
++    # Only fields consumed by menu settings/eligibility. Full episodes, policies,
++    # optimizer arrays and model snapshots remain in the read-only process/DB.
++    result={key:state[key] for key in ('phase','effectiveParameters','learningMetrics',
++            'tuning','rewardVersion','residualVersion','academyVersion','qualifications') if key in state}
++    for key in ('champion','raceChampion'):
++        if state.get(key):result[key]={'proof':state[key].get('proof',{})}
++    if state.get('verifiedBest'):result['verifiedBest']=True
++    return result
++
++
++def _read_loop(root, requests, results):
++    os.nice(10)
++    os.environ.update(OPENBLAS_NUM_THREADS='1',OMP_NUM_THREADS='1',MKL_NUM_THREADS='1')
++    from game import GameService
++    from game_dossier import dossier
++    from game_store import GameStore
++
++    class ReaderStore(GameStore):
++        def __init__(self):
++            self.root=Path(root)
++            self.policies=self.root/'policies'
++            self.track_id='oval-1'
++
++        @contextmanager
++        def connect(self):
++            yield db
++
++    db=sqlite3.connect((Path(root)/'game.sqlite').as_uri()+'?mode=ro',uri=True,timeout=3)
++    db.row_factory=sqlite3.Row
++    db.execute('PRAGMA query_only=ON')
++    store=ReaderStore()
++    base_key=None
++    projections={}
++    try:
++        while True:
++            request=requests.get()
++            if request is None:return
++            ticket,selected,track,objective=request
++            try:
++                # A persistent connection observes commits from every writer.
++                # One transaction owns the entire returned projection.
++                db.execute('BEGIN')
++                version=db.execute('PRAGMA data_version').fetchone()[0]
++                key=(version,track,objective)
++                if base_key!=key:
++                    store.track_id=track
++                    store.objective=objective
++                    drivers=store.drivers()
++                    proxy=SimpleNamespace(_drivers=drivers,_track=track,_store=store)
++                    classification=GameService._leaderboard(proxy)
++                    displayed=[]
++                    for driver in drivers:
++                        compact=dict(driver,_progress=GameService._progress(proxy,driver))
++                        # Evaluation episodes are large private facts. The GUI
++                        # receives their complete display projection, not replay.
++                        for field in ('curriculum','policy_curriculum'):
++                            if field in compact:compact[field]=display_curriculum(compact[field])
++                        displayed.append(compact)
++                    projections={}
++                    base_key=key
++                selected=selected or next((d['id'] for d in drivers if d['profile']['algorithm']!='race_master'),drivers[0]['id'] if drivers else '')
++                if selected not in projections:
++                    selected_driver=next((d for d in drivers if d['id']==selected),None)
++                    if len(projections)>=16:projections.pop(next(iter(projections)))
++                    projections[selected]=dict(selected=selected,drivers=displayed,
++                        classification=classification,dossier=dossier(store,selected,driver=selected_driver))
++                db.rollback()
++                results.put(dict(projections[selected],ticket=ticket))
++            except Exception as error:
++                db.rollback()
++                base_key=None
++                results.put(dict(ticket=ticket,error=str(error)))
++    finally:
++        db.close()
++
++
++class MetadataReader(QObject):
++    def __init__(self, root, receive, parent=None):
++        super().__init__(parent)
++        self.root=str(root)
++        self.receive=receive
++        self.process=None
++        self.pending=None
++        self.inflight=None
++        self.closed=False
++        self.last_stats={}
++        self.timer=QTimer(self)
++        self.timer.setInterval(20)
++        self.timer.timeout.connect(self._poll)
++
++    def request(self, ticket, selected, track, objective):
++        if self.closed:return
++        self.pending=(ticket,selected,track,objective)
++        # Spawn after construction/engine loading, never from a property getter.
++        self.timer.start()
++
++    def _poll(self):
++        if self.closed:return
++        if self.process is None:
++            context=multiprocessing.get_context('spawn')
++            self.requests=context.Queue(maxsize=1)
++            self.results=context.Queue(maxsize=1)
++            self.process=context.Process(target=_read_loop,args=(self.root,self.requests,self.results),
++                                         name='smartpc-metadata',daemon=True)
++            self.process.start()
++        if self.inflight is not None:
++            before=time.perf_counter()
++            try:
++                result=self.results.get_nowait()
++            except queue.Empty:
++                if not self.process.is_alive():
++                    ticket=self.pending[0] if self.pending else self.inflight[0]
++                    self.receive(dict(ticket=ticket,error='Reader metadati interrotto'))
++                    self.close()
++                return
++            self.inflight=None
++            self.last_stats['receiveMs']=(time.perf_counter()-before)*1000
++            if self.pending is None:
++                before=time.perf_counter()
++                self.receive(result)
++                self.last_stats['publishMs']=(time.perf_counter()-before)*1000
++        if self.pending is not None:
++            self.inflight=self.pending
++            self.pending=None
++            self.requests.put_nowait(self.inflight)
++        elif self.inflight is None:
++            self.timer.stop()
++
++    def close(self):
++        self.closed=True
++        self.timer.stop()
++        if self.process is not None:
++            # This helper never writes; cancelling a read cannot lose a commit.
++            self.process.terminate()
++            self.process.join(.5)
++            if self.process.is_alive():self.process.kill();self.process.join(.5)
++            self.process.close()
++            for channel in (self.requests,self.results):
++                channel.cancel_join_thread()
++                channel.close()
++            self.process=None
+--- /dev/null
++++ dashboard/check_system_performance.py
+@@ -0,0 +1,195 @@
++"""v0.9.3 correctness gates for cached projections and read-only metadata."""
++from copy import deepcopy
++import json
++import math
++import os
++from pathlib import Path
++import tempfile
++import time
++import unittest
++from unittest.mock import patch
++
++os.environ.setdefault('QT_QPA_PLATFORM','offscreen')
++_private=tempfile.TemporaryDirectory(prefix='smartpc-performance-')
++for _key in ('XDG_CONFIG_HOME','XDG_DATA_HOME','XDG_CACHE_HOME','XDG_STATE_HOME'):
++    os.environ[_key]=str(Path(_private.name)/_key)
++    Path(os.environ[_key]).mkdir()
++os.environ['STATE_DIRECTORY']=os.environ['XDG_STATE_HOME']
++os.environ['SMARTPC_FOOTBALL_CONFIG']=str(Path(_private.name)/'unconfigured-football.json')
++from PySide6.QtCore import QCoreApplication
++from sport import SportService
++from sport_core import presentation
++from event_core import EventEngine, _payload
++from game import GameService
++
++ROOT=Path(__file__).parent
++app=QCoreApplication.instance() or QCoreApplication([])
++
++
++class ProjectionChecks(unittest.TestCase):
++    def test_sport_exact_time_boundaries_and_revision(self):
++        source=json.loads((ROOT/'fixtures/sport-normalized-sample.json').read_text())
++        now=time.time()
++        source['fetchedAt']=now
++        for match in source['fixtures']:
++            match['fetchedAt']=now
++        match=source['fixtures'][0]
++        match.update(status='live',kickoffUtc=now-10)
++        original=deepcopy(source)
++        service=SportService(auto_refresh=False,initial=source,verified=True,
++                             cache_path=Path(_private.name)/'sport.json',state_path=Path(_private.name)/'goals.json')
++        try:
++            with patch('sport.presentation',wraps=presentation) as render:
++                first=service._data_view(now)
++                self.assertIs(first,service._data_view(now+1))
++                self.assertEqual(render.call_count,1)
++                points=(now-1,now,now+90,math.nextafter(now+90,math.inf),now+10800,
++                        math.nextafter(now+10800,math.inf),now+21590,
++                        math.nextafter(now+21590,math.inf),now-1000,now+2)
++                for point in points:
++                    self.assertEqual(service._data_view(point),presentation(source,point,verified=True))
++                service._favourite='inter'
++                self.assertEqual(service._data_view(now),presentation(source,now,verified=True,favourite='inter'))
++                service._from_cache=True
++                self.assertEqual(service._data_view(now),presentation(source,now,verified=True,favourite='inter',from_cache=True))
++                service._snapshot=deepcopy(source)
++                service._snapshot['fixtures'][0]['homeScore']=9
++                self.assertEqual(service._data_view(now),presentation(service._snapshot,now,verified=True,favourite='inter',from_cache=True))
++            self.assertEqual(source,original)
++        finally:service.close()
++
++    def test_sport_transient_error_does_not_poison_cache(self):
++        source=json.loads((ROOT/'fixtures/sport-normalized-sample.json').read_text())
++        now=time.time()
++        source['fetchedAt']=now
++        source['fixtures'][0].update(status='live',kickoffUtc=now-10,fetchedAt=now)
++        service=SportService(auto_refresh=False,initial=source,verified=True,
++                             cache_path=Path(_private.name)/'sport.json',state_path=Path(_private.name)/'goals.json')
++        try:
++            with patch('sport.time.time',return_value=now):
++                good=service.moduleState
++                service._error='offline'
++                self.assertFalse(any(m['isLive'] for m in service.moduleState['data']['fixtures']))
++                service._error=''
++                self.assertEqual(good,service.moduleState)
++                self.assertNotIn('detailLoading',service._view)
++        finally:service.close()
++
++    def test_sport_qml_projection_retains_selected_detail_and_backend_facts(self):
++        from theme_api import normalize_dto
++        source=json.loads((ROOT/'fixtures/sport-normalized-sample.json').read_text())
++        service=SportService(auto_refresh=False,initial=source,
++                             cache_path=Path(_private.name)/'sport.json',state_path=Path(_private.name)/'goals.json')
++        try:
++            full=service.moduleState
++            match=next(row for row in full['data']['fixtures'] if row.get('events'))
++            identity=match['canonicalMatchId']
++            projected=service.view_state(identity)
++            selected=next(row for row in projected['data']['fixtures'] if row['canonicalMatchId']==identity)
++            self.assertEqual(normalize_dto('MatchData',selected),normalize_dto('MatchData',match))
++            self.assertEqual(projected['status'],full['status'])
++            self.assertEqual(projected['updatedAt'],full['updatedAt'])
++            self.assertEqual([m['canonicalMatchId'] for m in full['data']['fixtures']],
++                             [m['canonicalMatchId'] for m in projected['data']['fixtures']])
++            self.assertTrue(all(not m.get('events') and not m.get('stats') and not m.get('lineups')
++                                for m in service.view_state()['data']['fixtures']))
++            self.assertEqual(full,service.moduleState)
++        finally:service.close()
++
++    def test_event_decode_reuse_and_public_ownership(self):
++        engine=EventEngine(':memory:')
++        event=dict(version=1,id='test:1',source='test',category='test',priority=2,
++                   title='Test',detail='Test',issuedAt=100,startsAt=100,expiresAt=200,
++                   showOnHome=True,nested={'value':[1]})
++        try:
++            engine.replace_source('test',[event])
++            _payload.cache_clear()
++            first=engine.snapshot(now=101)
++            loads=_payload.cache_info().misses
++            engine.next_deadline(101)
++            self.assertEqual(first,engine.snapshot(now=101))
++            self.assertEqual(_payload.cache_info().misses,loads)
++            first['inbox'][0]['nested']['value'].append(2)
++            self.assertEqual(engine.lookup('test:1',101)['nested']['value'],[1])
++            engine.mark_notified('test:1')
++            self.assertTrue(engine.lookup('test:1',101)['presented'])
++            self.assertFalse(engine.snapshot(now=200)['inbox'])
++        finally:engine.close()
++
++    def test_metadata_process_matches_sync_and_observes_commit(self):
++        from game_store import GameStore
++        with tempfile.TemporaryDirectory() as root:
++            reference=GameService(root)
++            expected=reference.snapshot
++            reference.close()
++            service=GameService(root,async_metadata=True)
++            try:
++                def wait_ready():
++                    until=time.monotonic()+15
++                    while time.monotonic()<until:
++                        app.processEvents()
++                        reader=service._metadata_reader
++                        if service._drivers and reader.inflight is None and reader.pending is None:return
++                        time.sleep(.005)
++                    self.fail('metadata process timeout')
++                wait_ready()
++                actual=service.snapshot
++                for key in ('drivers','selectedDriverId','profile','progress','leaderboard','dossier','settings'):
++                    self.assertEqual(actual[key],expected[key],key)
++                self.assertIsNone(service._process)
++                identity=service._drivers[2]['id']
++                # Coalescing: only the last route request can reach publication.
++                service._selected=identity
++                service._refresh()
++                self.assertFalse(service._dossier)  # Never label the previous dossier with a new pilot.
++                service._selected=service._drivers[-1]['id']
++                service._refresh()
++                wait_ready()
++                self.assertEqual(service._selected,service._drivers[-1]['id'])
++                with GameStore(root).connect() as db:
++                    db.execute('UPDATE drivers SET name=? WHERE id=?',('Commit osservato',service._selected))
++                service._refresh()
++                wait_ready()
++                self.assertEqual(service.snapshot['selectedDriverName'],'Commit osservato')
++                # A reader never creates a running training or race session.
++                with service._store.connect() as db:
++                    self.assertEqual(db.execute('SELECT count(*) FROM sessions').fetchone()[0],0)
++            finally:service.close()
++
++    def test_event_cache_external_commit_and_clock_reversal(self):
++        with tempfile.TemporaryDirectory() as root:
++            engine=EventEngine(Path(root)/'events.sqlite')
++            writer=EventEngine(Path(root)/'events.sqlite')
++            event=dict(version=1,id='test:future',source='test',category='test',priority=2,
++                       title='Test',detail='Test',issuedAt=100,startsAt=120,expiresAt=200,
++                       showOnHome=True,bannerUntil=180)
++            try:
++                writer.replace_source('test',[event])
++                self.assertFalse(engine.snapshot(now=110)['banner'])
++                self.assertEqual(engine.next_deadline(110),120)
++                self.assertTrue(engine.snapshot(now=120)['banner'])
++                self.assertEqual(engine.next_deadline(120),180)
++                writer.mark_seen('test:future')
++                self.assertTrue(engine.snapshot(now=120)['inbox'][0]['seen'])
++                self.assertFalse(engine.snapshot(now=200)['inbox'])
++                self.assertTrue(engine.snapshot(now=150)['inbox'])
++                self.assertEqual(engine.next_deadline(110),120)
++                writer.replace_source('test',[])
++                self.assertFalse(engine.snapshot(now=150)['inbox'])
++            finally:
++                writer.close()
++                engine.close()
++
++    def test_match_context_needs_only_selected_facts_and_source_envelope(self):
++        from theme_api import normalize_legacy
++        match=json.loads((ROOT/'fixtures/sport-normalized-sample.json').read_text())['fixtures'][0]
++        for status in ('active','updating','stale','offline','error','unavailable'):
++            for data in ({},{'fixtures':[match]}):
++                envelope=dict(status=status,source='Fixture',updatedAt=100,checkedAt=110,error='',data=data)
++                full=dict(model={'sport':envelope},sportMatch=match)
++                compact=dict(full,model={'sport':dict(envelope,data={'available':True} if data else {})})
++                self.assertEqual(normalize_legacy('sport.match.detail',full),
++                                 normalize_legacy('sport.match.detail',compact))
++
++
++if __name__=='__main__':unittest.main()
+--- /dev/null
++++ dashboard/check_state_availability.py
+@@ -0,0 +1,109 @@
++"""Navigation availability must not rebuild unrelated provider trees."""
++import unittest
++import math
++import json
++from unittest.mock import patch
++
++from theme_fixture_support import isolate_process
++private,base=isolate_process()
++from PySide6.QtCore import QObject,Signal
++from PySide6.QtGui import QGuiApplication
++from account import AccountService
++from casa import CasaService
++from casa_core import display_devices
++from network import NetworkService
++from network_core import display
++from state import DashboardState
++from weather import WeatherService
++
++app=QGuiApplication.instance() or QGuiApplication([])
++
++
++class System(QObject):changed=Signal()
++
++
++class AvailabilityChecks(unittest.TestCase):
++    def test_repeated_reads_are_constant_and_domain_signals_update_first(self):
++        network=NetworkService(auto_refresh=False,demo=True)
++        casa=CasaService(auto_refresh=False,demo=True)
++        weather=WeatherService(auto_refresh=False)
++        account=AccountService(path=base/'missing-account.json')
++        state=None
++        try:
++            with patch('network.display',wraps=display) as net,patch('casa.display_devices',wraps=display_devices) as home:
++                state=DashboardState(weather,System(),account,casa=casa,network=network)
++                initial=(net.call_count,home.call_count)
++                self.assertTrue(state.networkAvailable)
++                self.assertTrue(state.casaAvailable)
++                expected=state.visibleModules
++                for _ in range(200):
++                    self.assertEqual(state.visibleModules,expected)
++                    self.assertTrue(state.networkAvailable)
++                    self.assertTrue(state.casaAvailable)
++                self.assertEqual((net.call_count,home.call_count),initial)
++                seen=[]
++                state.networkChanged.connect(lambda:seen.append(state.networkAvailable))
++                network._snapshot=dict(network._snapshot,checkedAt=0)
++                network.changed.emit()
++                self.assertEqual(seen,[False])
++                self.assertNotIn('network',state.visibleModules)
++                self.assertEqual(net.call_count,initial[0]+1)
++                favourites=casa._snapshot['favourites']
++                casa._snapshot=dict(casa._snapshot,favourites=['not-in-inventory'])
++                casa.changed.emit()
++                self.assertFalse(state.casaAvailable)
++                casa._snapshot=dict(casa._snapshot,favourites=favourites)
++                casa.changed.emit()
++                self.assertTrue(state.casaAvailable)
++                casa._demo=False
++                casa.changed.emit()
++                self.assertFalse(state.casaAvailable)
++                reads=(net.call_count,home.call_count)
++                for _ in range(200):state.visibleModules
++                self.assertEqual((net.call_count,home.call_count),reads)
++        finally:
++            if state and state.appearance:state.appearance.cancel()
++            network.close();casa.close();weather.close();account.close()
++
++    def test_json_wire_preserves_values_reuse_and_source_revision(self):
++        class Sport(QObject):
++            changed=Signal()
++            def __init__(self):
++                super().__init__()
++                self.rows=[dict(canonicalMatchId='quote"\\unicode-é',homeScore=0,lineups=[{'name':'A'}]),
++                           dict(canonicalMatchId='match-2',homeScore=None)]
++                self.status='stale'
++                self.stamp=100
++            def view_state(self,selected):
++                return dict(status=self.status,updatedAt=self.stamp,data=dict(fixtures=self.rows,
++                    activeMatches=[],upcoming=self.rows,lastFinished=[],selectedMatchId=selected))
++        weather=WeatherService(auto_refresh=False)
++        account=AccountService(path=base/'missing-account.json')
++        sport=Sport()
++        state=DashboardState(weather,System(),account,sport=sport)
++        try:
++            first=state.sportViewState('match-2')
++            self.assertEqual(json.loads(first['_sportLists']['fixtures']),sport.rows)
++            self.assertEqual(first['data']['selectedMatchId'],'match-2')
++            sport.status='updating';sport.stamp+=1;sport.changed.emit()
++            second=state.sportViewState('match-2')
++            self.assertIs(first['_sportLists']['fixtures'],second['_sportLists']['fixtures'])
++            self.assertNotIn('fixtures',second['data'])
++            self.assertEqual((second['status'],second['updatedAt']),('updating',101))
++            sport.rows=list(reversed(sport.rows))
++            changed=state.sportViewState('match-2')
++            self.assertNotEqual(first['_sportLists']['fixtures'],changed['_sportLists']['fixtures'])
++            self.assertEqual(json.loads(changed['_sportLists']['fixtures']),sport.rows)
++            # Preserve QVariant semantics for non-JSON values rather than lose facts.
++            sport.rows=[dict(value=math.nan)]
++            nonfinite=state.sportViewState('')
++            self.assertIs(nonfinite['data']['fixtures'],sport.rows)
++            self.assertTrue(math.isnan(nonfinite['data']['fixtures'][0]['value']))
++            self.assertLessEqual(len(state._sport_wire_arrays),4)
++            self.assertNotIn('fixtures',nonfinite['_sportLists'])
++        finally:
++            if state.appearance:state.appearance.cancel()
++            weather.close();account.close()
++
++
++if __name__=='__main__':unittest.main()
+--- /dev/null
++++ os/system/smartpc-display-handoff.service
+@@ -0,0 +1,12 @@
++[Unit]
++Description=Release the boot display before the SmartPC kiosk
++After=plymouth-start.service systemd-user-sessions.service
++Before=smartpc-dashboard.service
++ConditionPathExists=/run/plymouth/pid
++
++[Service]
++Type=oneshot
++User=root
++ExecStart=/usr/bin/plymouth quit
++TimeoutStartSec=20
++RemainAfterExit=yes
+--- /dev/null
++++ os/system/smartpc-performance.sh
+@@ -0,0 +1,27 @@
++#!/bin/sh
++# Qualified Orange Pi topology only. Keep the preceding governor for rollback.
++set -eu
++policy=/sys/devices/system/cpu/cpufreq/policy6/scaling_governor
++saved=/run/smartpc-performance/previous-governor
++check_board() {
++    [ -f "$policy" ] &&
++    [ "$(cat /sys/devices/system/cpu/cpu0/cpu_capacity)" = 385 ] &&
++    [ "$(cat /sys/devices/system/cpu/cpu6/cpu_capacity)" = 1024 ] &&
++    [ "$(cat /sys/devices/system/cpu/cpufreq/policy6/related_cpus)" = '6 7' ] &&
++    grep -qw performance /sys/devices/system/cpu/cpufreq/policy6/scaling_available_governors
++}
++case "${1:-check}" in
++    check) check_board ;;
++    apply)
++        check_board
++        cat "$policy" > "$saved"
++        if ! printf '%s\n' performance > "$policy" || [ "$(cat "$policy")" != performance ]; then
++            cat "$saved" > "$policy"
++            exit 1
++        fi
++        ;;
++    restore)
++        if [ -s "$saved" ] && [ -f "$policy" ]; then cat "$saved" > "$policy"; fi
++        ;;
++    *) exit 2 ;;
++esac
+--- /dev/null
++++ os/system/smartpc-performance.service
+@@ -0,0 +1,16 @@
++[Unit]
++Description=Qualified SmartPC fast-cluster performance policy
++After=systemd-modules-load.service
++Before=smartpc-dashboard.service
++ConditionPathExists=/sys/devices/system/cpu/cpufreq/policy6/scaling_governor
++
++[Service]
++Type=oneshot
++RuntimeDirectory=smartpc-performance
++RuntimeDirectoryMode=0700
++ExecCondition=/usr/local/libexec/smartpc-performance check
++ExecStart=/usr/local/libexec/smartpc-performance apply
++ExecStop=/usr/local/libexec/smartpc-performance restore
++RemainAfterExit=yes
++NoNewPrivileges=true
++PrivateTmp=true
+--- /dev/null
++++ os/system/30-dashboard-performance.conf
+@@ -0,0 +1,3 @@
++[Unit]
++Wants=smartpc-performance.service
++After=smartpc-performance.service

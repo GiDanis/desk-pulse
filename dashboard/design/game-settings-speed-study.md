@@ -1,8 +1,14 @@
 # Gioco — impostazioni comprensibili e miglioramento del tempo sul giro
 
-11 ottobre 2026 · revisione 1 · approfondimento della famiglia v0.9.x.
+**Nuovo studio UX/circuiti, 11 ottobre:** [impostazioni Apple Calm e secondo circuito](game-settings-circuits-ux-study.md). Analisi delle sezioni, bozza/focus e geometria condivisa, con concept offline; nessun nuovo runtime consegnato.
 
-**Stato aggiornato: implementazione autorizzata e candidata 0.9.0-rc.3 installata.** Menu senza legenda, descrizioni/valore distinti, Controllo/Passo, campione verificato, valutazioni riprendibili e Progressi dei tempi consegnati; [report e limiti delle prove](v09-game-settings-pace-report.md). Il testo seguente conserva la specifica e l'ispezione iniziale della rc.2, quando questo documento era analisi dei prossimi passi. La tabella della sezione 2 descrive quella baseline, non il runtime attuale. Taratura, competenza traffico/PPO/NEAT e gate fisici restano aperti nel [MasterPlan revisione 2.53](release-masterplan.md).
+**Aggiornamento rc.6:** [vista Pilota e dossier](v09-pilot-dossier-report.md), durata/sessioni/profili/risultati e reset confermato con storico conservato; API 2.9, 68 superfici.
+
+**Aggiornamento rc.5:** [Gara e guida PPO](v09-race-ppo-report.md): una vettura per pilota, reti salvate congelate, 3/5/10 giri e dimostrazione PPO distinta dai tentativi di apprendimento.
+
+11 ottobre 2026 · revisione 2 · approfondimento della famiglia v0.9.x.
+
+**Stato aggiornato: implementazione autorizzata e candidata 0.9.0-rc.6 installata.** Ottimizzazioni della fisica/sensori e consegna scene nella [rc.4](v09-game-performance-report.md). Menu senza legenda, descrizioni/valore distinti, Controllo/Passo, campione verificato, valutazioni riprendibili e Progressi dei tempi consegnati; [report e limiti delle prove](v09-game-settings-pace-report.md). Il testo seguente conserva la specifica e l'ispezione iniziale della rc.2, quando questo documento era analisi dei prossimi passi. La tabella della sezione 2 descrive quella baseline, non il runtime attuale. Taratura, competenza traffico/PPO/NEAT e gate fisici restano aperti nel [MasterPlan revisione 2.57](release-masterplan.md).
 
 ## 1. Risultato da ottenere
 
@@ -158,3 +164,11 @@ Un esito positivo richiede miglioramento di tempo rispetto alla baseline dello s
 - Sorgenti locali: [menu](../Main.qml), [presentazione](../presentations/GameVisual.qml), [fisica/reward](../game_simulation.py), [Evoluzione/PPO](../game_learning.py), [NEAT](../game_neat.py), [worker](../game_worker.py), [persistenza](../game_store.py) e [contratto](../theme-api/contexts.json), ispezionati l'11 ottobre 2026.
 - [Narvekar et al., Curriculum Learning for Reinforcement Learning Domains](https://arxiv.org/abs/2003.04960), 2020: inquadra l'ordinamento dei compiti e le decisioni di trasferimento tra fasi. Il percorso Controllo/Passo/Traffico qui proposto è una scelta da sperimentare su SmartPC, non un risultato del paper.
 - [Documentazione ufficiale DeepRacer on AWS, Create a model](https://docs.aws.amazon.com/solutions/latest/deepracer-on-aws/create-a-model.html), consultata l'11 ottobre 2026: distingue time trial e ostacoli e descrive il compromesso velocità/controllo e valutazioni ripetute. È un riferimento di progettazione; SmartPC usa sensori numerici e il proprio motore, non questo servizio.
+
+## 10. Controllo prestazioni e pilota prudente — 11 ottobre 2026
+
+La segnalazione di vetture lente richiede tre misure separate: secondi simulati per secondo reale, velocità fisica in km/h e avanzamento del training/valutazione. Il candidato NEAT dell’utente, popolazione 8, è ancora in Controllo: una prova privata di dieci secondi simulati su dieci partenze mostra circa 6,25 km/h medi, includendo vetture ferme/ritirate. Questo non certifica una difficoltà della NPU. La [verifica prestazioni](v09-game-performance-report.md) documenta profilazione e ottimizzazioni compatibili con i checkpoint.
+
+Prossimo studio di apprendimento: confrontare più seed NEAT con popolazioni 8/16/32, distinguere auto ferme da guida prudente e misurare tempo alla prima qualifica. In Controllo il costo temporale è 0,02/s e l’urto costa 5: sessanta secondi senza progresso costano circa 1,2, quindi nella fase iniziale fermarsi può essere favorito rispetto a un tentativo molto breve che termina in incidente. Valutare terminazione per assenza prolungata di progresso, esplorazione e stagnazione con prove abbinate; una terminazione deve avere una conseguenza esplicita, per non premiare episodi più brevi senza progresso. Versionare ogni cambio di obiettivo e preservare campioni/profili esistenti. Nessuna accelerazione artificiale dell’auto e nessuna promessa di miglioramento monotono.
+
+Nel confronto PPO verificare anche il tempo del singolo episodio dopo `reset_trials`: l’orologio comune del mondo continua e il bonus terminale sul tempo oggi lo usa. Separare l’età della prova dal tempo della sessione richiede una modifica versionata e checkpoint compatibili; non confondere tale verifica con l’ottimizzazione numericamente equivalente del motore.

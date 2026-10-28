@@ -1,10 +1,16 @@
 # v0.9 · Gioco — studio di evoluzione, PPO, NEAT e uso della NPU
 
+**Riferimento corrente, 15 ottobre 2026:** [consegna rc.17 e limiti](v09-driving-integrity-report.md); [nuova analisi dei piloti, fix e varianti G0–G6](game-pilot-fixes-variants-analysis.md), con fotografia della rosa e proposte NEAT-64/NEAT-Risposta, Clone→PPO, Regolare/Attaccante/Polivalente e SAC. Il testo seguente conserva gli studi e le tappe precedenti: le proposte iniziali SB3/PyTorch non descrivono il PPO NumPy attualmente implementato. Il nuovo studio non installa algoritmi né modifica i piloti.
+
+**Aggiornamento rc.6:** [vista Pilota e dossier](v09-pilot-dossier-report.md), durata/sessioni/profili/risultati e reset confermato con storico conservato; API 2.9, 68 superfici.
+
+**Aggiornamento rc.5:** [Gara e guida PPO](v09-race-ppo-report.md): una vettura per pilota, reti salvate congelate, 3/5/10 giri e dimostrazione PPO distinta dai tentativi di apprendimento.
+
 ## Stato implementazione · 11 ottobre 2026
 
 **Aggiornamento rc.3:** [impostazioni e miglioramento del tempo sul giro](game-settings-speed-study.md) implementati e installati dopo autorizzazione. Controllo/Passo, campione verificato distinto dal checkpoint e confronto su prove comuni; cinque seed acquisiti, vantaggio del nuovo reward non uniforme. [Report e limiti](v09-game-settings-pace-report.md). Traffico e backend sperimentali conservano gate di competenza separati.
 
-La candidata corrente è 0.9.0-rc.3; la [consegna rc.2](v09-game-implementation-report.md) conserva le prove precedenti. Il testo seguente conserva lo studio precedente; i candidati numeric9/30 sono sostituiti da race-32-v1, rete 32→16→2 e fisica f1-2. NPU verificata nella rc.2 con una politica appresa, CPU scelta dopo misure; PPO/NEAT e guida nel traffico restano da qualificare.
+La candidata corrente è 0.9.0-rc.6, con [ottimizzazioni del motore e delle scene](v09-game-performance-report.md); la [consegna rc.2](v09-game-implementation-report.md) conserva le prove precedenti. Il testo seguente conserva lo studio precedente; i candidati numeric9/30 sono sostituiti da race-32-v1, rete 32→16→2 e fisica f1-2. NPU verificata nella rc.2 con una politica appresa, CPU scelta dopo misure; PPO/NEAT e guida nel traffico restano da qualificare.
 
 
 10 ottobre 2026 · revisione 5 · approfondimento S0 · SmartPC / DeskPulse.

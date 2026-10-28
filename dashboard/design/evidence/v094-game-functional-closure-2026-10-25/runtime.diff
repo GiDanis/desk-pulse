@@ -1,0 +1,57 @@
+--- rc.2/game_protocol.py
++++ rc.3/game_protocol.py
+@@ -21,6 +21,19 @@
+     return max(300., lap_budget(track_id)*laps)
+ 
+ 
++def finish_window(qualifying_times,laps):
++    """Allow the qualified slower grid to finish, plus one slower lap.
++
++    The overall race budget still bounds the session. A fixed 30-second
++    cutoff otherwise disqualifies a legitimate slower car before three laps.
++    """
++    values=[float(v) for v in qualifying_times if v is not None]
++    if not values:return 30.
++    if any(not math.isfinite(v) or v<=0 for v in values):raise ValueError('Invalid qualifying pace')
++    if type(laps) is not int or laps<=0:raise ValueError('Invalid race lap target')
++    return max(30.,(max(values)-min(values))*laps+max(values))
++
++
+ def academy_task(track_id,phase):
+     """Lightweight task metadata; safe for QML-facing code (no NumPy import)."""
+     from game_curriculum import PHASE_LABELS
+--- rc.2/game_worker.py
++++ rc.3/game_worker.py
+@@ -29,7 +29,7 @@
+     from game_simulation import World, DT
+     from game_curriculum import initial_state, pace_weight, Evaluation, consider, REWARD_VERSION, PHASE_LABELS
+     from game_catalog import scope_hash, race_eligible, reference_ready,race_cohort
+-    from game_protocol import training_task, race_budget, TRIAL_PROTOCOL
++    from game_protocol import training_task, race_budget, finish_window, TRIAL_PROTOCOL
+     from game_control import pursuit_actions,frozen_actions
+ 
+     from game_modes import learning, CONTINUOUS, grid_order, qualified_snapshot, MAX_RACE_DRIVERS
+@@ -256,7 +256,7 @@
+             if mode in ('gara','prova') and (type(laps) is not int or laps not in (3,5,10)):raise ValueError('Giri non validi')
+             payload={'participants':participants,'profile':{'observation':sensor_version},'trialProtocol':TRIAL_PROTOCOL if mode=='prova' else None,'rules':{'version':'race-4' if modern[0] else 'race-2' if track_id=='oval-1' else 'race-3','laps':laps,
+                      'grid':'staggered-6m-v2' if modern[0] else 'paired-7m-v1' if track_id=='oval-1' else 'staggered-4m-v1',
+-                     'contacts':'impulse-1' if modern[0] else 'retirement','limitSeconds':race_budget(track_id,laps),'finishWindowSeconds':30},'grid':identities,'gridOrder':request.get('grid','fastest_first'),'qualificationProtocol':'flying-lap-1' if mode=='qualifica' else None}
++                     'contacts':'impulse-1' if modern[0] else 'retirement','limitSeconds':race_budget(track_id,laps),'finishWindowSeconds':finish_window([p['qualifyingTime'] for p in participants],laps)},'grid':identities,'gridOrder':request.get('grid','fastest_first'),'qualificationProtocol':'flying-lap-1' if mode=='qualifica' else None}
+             race_deadline=payload['rules']['limitSeconds']
+             if mode=='prova':
+                 eval_world=World(1,1,laps=laps,track_id=track_id,physics=physics,telemetry=True)
+@@ -635,7 +635,7 @@
+                             command.send({'type':'qualification','session':request['epoch']})
+                     persisted_laps=len(world.lap_times[0])
+                 if mode=='gara' and np.isfinite(world.finish).any():
+-                    race_deadline=min(race_deadline,float(np.nanmin(world.finish))+30)
++                    race_deadline=min(race_deadline,float(np.nanmin(world.finish))+payload['rules']['finishWindowSeconds'])
+                 ended=not world.active.any() or world.time>=race_deadline
+                 if ended:
+                     timed_out=world.active.copy()
+--- rc.2/version.py
++++ rc.3/version.py
+@@ -1,2 +1,2 @@
+ """Software version shared by runtime, installer and recursive release manifest."""
+-VERSION = '0.9.4-rc.2'
++VERSION = '0.9.4-rc.3'

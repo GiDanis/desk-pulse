@@ -1,0 +1,29 @@
+E
+======================================================================
+ERROR: test_skipping_discarded_observations_keeps_rewards_and_physics (check_game_overtaking.OvertakingChecks.test_skipping_discarded_observations_keeps_rewards_and_physics)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_game_overtaking.py", line 47, in test_skipping_discarded_observations_keeps_rewards_and_physics
+    a=Episode(track,phase,95201,protocol='driving-memory-1',reward_spec=spec)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game_academy.py", line 99, in __init__
+    self.spec=task(track_id,phase)
+              ^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game_driving_memory.py", line 35, in task
+    if phase!='recovery':return {**academy_task(track,phase),'version':PROTOCOL,'rewardVersion':REWARD}
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game_protocol.py", line 27, in academy_task
+    length=4*TRACK.half_straight+2*math.pi*TRACK.radius if track_id=='oval-1' else track_data(track_id)['drawing']['length']
+                                                                                   ^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game_catalog.py", line 107, in track_data
+    def track_data(identity='oval-1'):return deepcopy(_track_data(identity))
+                                                      ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game_catalog.py", line 103, in _track_data
+    if identity not in {t['id'] for t in TRACKS}:raise ValueError('Circuito sconosciuto')
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Circuito sconosciuto
+
+----------------------------------------------------------------------
+Ran 1 test in 3.520s
+
+FAILED (errors=1)

@@ -1,0 +1,58 @@
+Downloading ruff (9.9MiB)
+ Downloaded ruff
+Installed 1 package in 2ms
+F401 [*] `game_catalog.race_cohort` imported but unused
+  --> dashboard/game.py:15:119
+   |
+13 | from PySide6.QtCore import QObject, Property, QStandardPaths, QTimer, Qt, Signal, Slot
+14 |
+15 | from game_catalog import configuration, TRACKS, scope_hash, race_eligible, qualified, visual_content, reference_ready,race_cohort
+   |                                                                                                                       ^^^^^^^^^^^
+16 | from game_store import GameStore, validate_profile
+17 | from game_curriculum import PHASE_LABELS
+   |
+help: Remove unused import: `game_catalog.race_cohort`
+   |
+14 |
+   - from game_catalog import configuration, TRACKS, scope_hash, race_eligible, qualified, visual_content, reference_ready,race_cohort
+15 + from game_catalog import configuration, TRACKS, scope_hash, race_eligible, qualified, visual_content, reference_ready
+16 | from game_store import GameStore, validate_profile
+   |
+
+F401 [*] `game_modes.lap_time` imported but unused
+  --> dashboard/game.py:18:75
+   |
+16 | from game_store import GameStore, validate_profile
+17 | from game_curriculum import PHASE_LABELS
+18 | from game_modes import MODES, LEGACY, learning, qualified_snapshot, GRID, lap_time, MAX_RACE_DRIVERS
+   |                                                                           ^^^^^^^^
+19 | from game_profiles import METHODS
+   |
+help: Remove unused import: `game_modes.lap_time`
+   |
+17 | from game_curriculum import PHASE_LABELS
+   - from game_modes import MODES, LEGACY, learning, qualified_snapshot, GRID, lap_time, MAX_RACE_DRIVERS
+18 + from game_modes import MODES, LEGACY, learning, qualified_snapshot, GRID, MAX_RACE_DRIVERS
+19 | from game_profiles import METHODS
+   |
+
+F401 [*] `game_profiles.METHODS` imported but unused
+   --> dashboard/game_store.py:232:48
+    |
+230 | …     from game_profiles import reference_policy
+231 | …     policy=self.artifact(reference_policy('oval-1')) if algorithm=='pure_pursuit' else None
+232 | …     from game_profiles import VARIANTS,METHODS
+    |                                          ^^^^^^^
+233 | …     suggested=(VARIANTS.get(prof.get('variant'),{}).get('name') or ('Clone → PPO' if prof['algorithm']=='clone_ppo' else 'Pilota'))…
+234 | …     identity=self._insert_driver(db, (name.strip() or suggested)[:40], number,prof,policy)
+    |
+help: Remove unused import: `game_profiles.METHODS`
+    |
+231 |             policy=self.artifact(reference_policy('oval-1')) if algorithm=='pure_pursuit' else None
+    -             from game_profiles import VARIANTS,METHODS
+232 +             from game_profiles import VARIANTS
+233 |             suggested=(VARIANTS.get(prof.get('variant'),{}).get('name') or ('Clone → PPO' if prof['algorithm']=='clone_ppo' else 'Pilota'))+' '+str(number)
+    |
+
+Found 3 errors.
+[*] 3 fixable with the `--fix` option.

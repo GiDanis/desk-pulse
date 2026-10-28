@@ -1,0 +1,71 @@
+2026-10-13 17:03:21.628898: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-10-13 17:03:21.628913: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+[32mI 17:03:23 Namespace(batch_size=None, build_platform='make', customer_lids=None, customer_ops=None, dtype='float', export='ovxlib', force_remove_permute=False, model='policy-acuity.json', model_data='policy-acuity.data', model_quantize=None, optimize='Default', output_path='nbg-a733', pack_nbg_unify=True, postprocess_file=None, save_fused_graph=False, save_trace_db=False, target_ide_project='VIP9000NANODI_PID0X1000003B', viv_sdk='/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools', which='export', with_input_meta='policy-inputmeta.yml')[0m
+[32mI 17:03:23 Set vsinn project dir to /work[0m
+[32mI 17:03:23 Load model in /work/policy-acuity.json[0m
+[32mI 17:03:23 Load data in /work/policy-acuity.data[0m
+[32mI 17:03:23 Load input meta /work/policy-inputmeta.yml[0m
+[32mI 17:03:23 Start exporting ovxlib case...[0m
+[36mD 17:03:23 Process observation_5 ...[0m
+[36mD 17:03:23 Acuity output shape(input): (1 68)[0m
+[36mD 17:03:23 Tensor @observation_5:out0 type: float32[0m
+[36mD 17:03:23 Process h0_4 ...[0m
+[36mD 17:03:23 Acuity output shape(fullconnect): (1 16)[0m
+[36mD 17:03:23 Tensor @h0_4:out0 type: float32[0m
+[36mD 17:03:23 Process h_3 ...[0m
+[36mD 17:03:23 Acuity output shape(tanh): (1 16)[0m
+[36mD 17:03:23 Tensor @h_3:out0 type: float32[0m
+[36mD 17:03:23 Process a0_2 ...[0m
+[36mD 17:03:23 Acuity output shape(fullconnect): (1 2)[0m
+[36mD 17:03:23 Tensor @a0_2:out0 type: float32[0m
+[36mD 17:03:23 Process action_1 ...[0m
+[36mD 17:03:23 Acuity output shape(tanh): (1 2)[0m
+[36mD 17:03:23 Tensor @action_1:out0 type: float32[0m
+[36mD 17:03:23 Process attach_action/out0_0 ...[0m
+[36mD 17:03:23 Acuity output shape(output): (1 2)[0m
+[36mD 17:03:23 Tensor @attach_action/out0_0:out0 type: float32[0m
+[32mI 17:03:23 Build SmartPC frozen pilot complete.[0m
+[32mI 17:03:23 Initialzing network optimizer by Default ...[0m
+[36mD 17:03:23 Optimizing network with split_squared_difference, merge_ximum, qnt_adjust_coef, adjust_qnt_reshape, multiply_transform, add_extra_io, format_input_ops, auto_fill_zero_bias, conv_kernel_transform, auto_fill_reshape_zero, strip_op, extend_unstack_split, convert_matmul_trans_ab, merge_layer, transform_layer, broadcast_op, strip_op, adjust_output_attrs, insert_dtype_converter, layernorm_to_moments_bnsingle, pow_to_square, average_to_add_divide, optimize_einsum[0m
+[32mI 17:03:23 Start T2C Switcher...[0m
+[36mD 17:03:23 Optimizing network with broadcast_op, t2c_fc[0m
+[32mI 17:03:23 End T2C Switcher...[0m
+[36mD 17:03:23 Optimizing network with strip_op_layout_sensitive[0m
+[36mD 17:03:23 Process observation_5 ...[0m
+[36mD 17:03:23 Acuity output shape(input): (1 68)[0m
+[36mD 17:03:23 Tensor @observation_5:out0 type: float32[0m
+[36mD 17:03:23 Process h0_4 ...[0m
+[36mD 17:03:23 Acuity output shape(fullconnect): (1 16)[0m
+[36mD 17:03:23 Tensor @h0_4:out0 type: float32[0m
+[36mD 17:03:23 Process h_3 ...[0m
+[36mD 17:03:23 Acuity output shape(tanh): (1 16)[0m
+[36mD 17:03:23 Tensor @h_3:out0 type: float32[0m
+[36mD 17:03:23 Process a0_2 ...[0m
+[36mD 17:03:23 Acuity output shape(fullconnect): (1 2)[0m
+[36mD 17:03:23 Tensor @a0_2:out0 type: float32[0m
+[36mD 17:03:23 Process action_1 ...[0m
+[36mD 17:03:23 Acuity output shape(tanh): (1 2)[0m
+[36mD 17:03:23 Tensor @action_1:out0 type: float32[0m
+[36mD 17:03:23 Process attach_action/out0_0 ...[0m
+[36mD 17:03:23 Acuity output shape(output): (1 2)[0m
+[36mD 17:03:23 Tensor @attach_action/out0_0:out0 type: float32[0m
+[32mI 17:03:23 Build SmartPC frozen pilot complete.[0m
+[36mD 17:03:23 Optimizing network with merge_mark_permute[0m
+[36mD 17:03:23 Optimizing network with insert_reshape_for_layernorm, c2drv_adjust_extra_io, c2drv_nhwc_resize, conv_1xn_transform, proposal_opt, c2drv_convert_axis, c2drv_convert_shape, c2drv_convert_array, c2drv_cast_dtype, c2drv_trans_data, c2drv_custom_opt[0m
+[32mI 17:03:23 Building data ...[0m
+[31mE 17:03:23 please set correct target name in config file[0m
+[33mW 17:03:23 ----------------Error(1),Warning(0)----------------[0m
+Traceback (most recent call last):
+  File "/root/acuity-toolkit-whl-6.30.22/bin/pegasus.py", line 131, in <module>
+    main(args)
+  File "/root/acuity-toolkit-whl-6.30.22/bin/pegasus.py", line 116, in main
+    ret = exporter.execute(args)
+  File "acuitylib/app/exporter/commands.py", line 220, in acuitylib.app.exporter.commands.execute
+  File "acuitylib/vsi_nn.py", line 738, in acuitylib.vsi_nn.VSInn.export_ovxlib
+  File "acuitylib/interface/exporter.py", line 84, in acuitylib.interface.exporter.OvxlibExporter.export
+  File "acuitylib/app/exporter/ovxlib_case/export_ovxlib.py", line 113, in acuitylib.app.exporter.ovxlib_case.export_ovxlib.ExportOvxlib.run
+  File "acuitylib/app/exporter/ovxlib_case/casegenerator.py", line 409, in acuitylib.app.exporter.ovxlib_case.casegenerator.CaseGenerator.generate
+  File "acuitylib/app/exporter/ovxlib_case/casegenerator.py", line 354, in acuitylib.app.exporter.ovxlib_case.casegenerator.CaseGenerator._gen_special_case
+  File "acuitylib/app/exporter/ovxlib_case/casegenerator.py", line 187, in acuitylib.app.exporter.ovxlib_case.casegenerator.CaseGenerator._setup_environment
+  File "acuitylib/acuitylog.py", line 260, in acuitylib.acuitylog.AcuityLog.e
+acuitylib.acuityerror.AcuityError: ('please set correct target name in config file', None)

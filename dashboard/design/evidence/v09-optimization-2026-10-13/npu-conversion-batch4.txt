@@ -1,0 +1,239 @@
+2026-10-13 17:10:55.446871: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-10-13 17:10:55.446898: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+[32mI 17:10:56 Namespace(import='onnx', input_dtype_list=None, input_size_list=None, inputs=None, model='policy.onnx', output_data='policy-acuity.data', output_model='policy-acuity.json', outputs=None, size_with_batch=None, which='import')[0m
+[32mI 17:10:56 Set vsinn project dir to /work[0m
+2026-10-13 17:10:56.962076: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-10-13 17:10:56.962273: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-10-13 17:10:56.962289: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (d32023fba3da): /proc/driver/nvidia/version does not exist
+[32mI 17:10:56 Start importing onnx...[0m
+[32mI 17:10:56 Current ONNX Model use ir_version 8 opset_version 13[0m
+[32mI 17:10:56 try optimize eliminate_option_const ...[0m
+[32mI 17:10:56 Call acuity onnx optimize 'eliminate_option_const' success[0m
+[32mI 17:10:56 try optimize froze_if ...[0m
+[32mI 17:10:56 Call acuity onnx optimize 'froze_if' success[0m
+[32mI 17:10:56 try optimize merge_sequence_construct_concat_from_sequence ...[0m
+[32mI 17:10:56 Call acuity onnx optimize 'merge_sequence_construct_concat_from_sequence' success[0m
+[32mI 17:10:56 try optimize merge_lrn_lowlevel_implement ...[0m
+[32mI 17:10:56 Call acuity onnx optimize 'merge_lrn_lowlevel_implement' success[0m
+[32mI 17:10:56 try optimize merge_splittosequence_sequenceat ...[0m
+[32mI 17:10:56 Call acuity onnx optimize 'merge_splittosequence_sequenceat' success[0m
+[36mD 17:10:57 Calc tensor Initializer_w1 shape: [68, 16][0m
+[36mD 17:10:57 Calc tensor Initializer_b1 shape: [16][0m
+[36mD 17:10:57 Calc tensor Initializer_w2 shape: [16, 2][0m
+[36mD 17:10:57 Calc tensor Initializer_b2 shape: [2][0m
+[36mD 17:10:57 Calc tensor Gemm_h0 shape: [4, 16][0m
+[36mD 17:10:57 Calc tensor Tanh_h shape: [4, 16][0m
+[36mD 17:10:57 Calc tensor Gemm_a0 shape: [4, 2][0m
+[36mD 17:10:57 Calc tensor Tanh_action shape: [4, 2][0m
+[32mI 17:10:57 build output layer attach_action:out0[0m
+[32mI 17:10:57 Try match action:out0[0m
+[32mI 17:10:57 Match r_tanh [['action']] [['Tanh']] to [['tanh']][0m
+[32mI 17:10:57 tanh lid: action_1[0m
+[32mI 17:10:57 Try match a0:out0[0m
+[32mI 17:10:57 Match gemm_2_fc_notranspose [['a0', 'w2', 'b2']] [['Gemm', 'Constant', 'Constant_1']] to [['fullconnect']][0m
+[32mI 17:10:57 fullconnect lid: a0_2[0m
+[32mI 17:10:57 Try match h:out0[0m
+[32mI 17:10:57 Match r_tanh [['h']] [['Tanh']] to [['tanh']][0m
+[32mI 17:10:57 tanh lid: h_3[0m
+[32mI 17:10:57 Try match h0:out0[0m
+[32mI 17:10:57 Match gemm_2_fc_notranspose [['h0', 'w1', 'b1']] [['Gemm', 'Constant', 'Constant_1']] to [['fullconnect']][0m
+[32mI 17:10:57 fullconnect lid: h0_4[0m
+[32mI 17:10:57 build input layer observation:out0[0m
+[36mD 17:10:57 connect a0_2 0  ~ action_1 0[0m
+[36mD 17:10:57 connect h_3 0  ~ a0_2 0[0m
+[36mD 17:10:57 connect h0_4 0  ~ h_3 0[0m
+[36mD 17:10:57 connect observation_5 0  ~ h0_4 0[0m
+[36mD 17:10:57 connect action_1 0  ~ attach_action/out0_0 0[0m
+[36mD 17:10:57 Process observation_5 ...[0m
+[36mD 17:10:57 Acuity output shape(input): (4 68)[0m
+[36mD 17:10:57 Tensor @observation_5:out0 type: float32[0m
+[36mD 17:10:57 Process h0_4 ...[0m
+[36mD 17:10:57 Acuity output shape(fullconnect): (4 16)[0m
+[36mD 17:10:57 Tensor @h0_4:out0 type: float32[0m
+[36mD 17:10:57 Process h_3 ...[0m
+[36mD 17:10:57 Acuity output shape(tanh): (4 16)[0m
+[36mD 17:10:57 Tensor @h_3:out0 type: float32[0m
+[36mD 17:10:57 Process a0_2 ...[0m
+[36mD 17:10:57 Acuity output shape(fullconnect): (4 2)[0m
+[36mD 17:10:57 Tensor @a0_2:out0 type: float32[0m
+[36mD 17:10:57 Process action_1 ...[0m
+[36mD 17:10:57 Acuity output shape(tanh): (4 2)[0m
+[36mD 17:10:57 Tensor @action_1:out0 type: float32[0m
+[36mD 17:10:57 Process attach_action/out0_0 ...[0m
+[36mD 17:10:57 Acuity output shape(output): (4 2)[0m
+[36mD 17:10:57 Tensor @attach_action/out0_0:out0 type: float32[0m
+[32mI 17:10:57 Build SmartPC frozen pilot complete.[0m
+[32mI 17:10:57 Start C2T Switcher...[0m
+[36mD 17:10:57 Optimizing network with broadcast_op[0m
+[32mI 17:10:57 End C2T Switcher...[0m
+[36mD 17:10:57 Process observation_5 ...[0m
+[36mD 17:10:57 Acuity output shape(input): (4 68)[0m
+[36mD 17:10:57 Tensor @observation_5:out0 type: float32[0m
+[36mD 17:10:57 Process h0_4 ...[0m
+[36mD 17:10:57 Acuity output shape(fullconnect): (4 16)[0m
+[36mD 17:10:57 Tensor @h0_4:out0 type: float32[0m
+[36mD 17:10:57 Process h_3 ...[0m
+[36mD 17:10:57 Acuity output shape(tanh): (4 16)[0m
+[36mD 17:10:57 Tensor @h_3:out0 type: float32[0m
+[36mD 17:10:57 Process a0_2 ...[0m
+[36mD 17:10:57 Acuity output shape(fullconnect): (4 2)[0m
+[36mD 17:10:57 Tensor @a0_2:out0 type: float32[0m
+[36mD 17:10:57 Process action_1 ...[0m
+[36mD 17:10:57 Acuity output shape(tanh): (4 2)[0m
+[36mD 17:10:57 Tensor @action_1:out0 type: float32[0m
+[36mD 17:10:57 Process attach_action/out0_0 ...[0m
+[36mD 17:10:57 Acuity output shape(output): (4 2)[0m
+[36mD 17:10:57 Tensor @attach_action/out0_0:out0 type: float32[0m
+[32mI 17:10:57 Build SmartPC frozen pilot complete.[0m
+[36mD 17:10:57 Optimizing network with force_1d_tensor, special_clip_to_relun, swapper, merge_duplicate_quantize_dequantize, fold_quantize_dequantize, batchmatmul_add_to_fc, merge_layer, resize_nearest_transformer, auto_fill_multiply, compute_gather_negative, auto_fill_zero_bias, proposal_opt_import, extend_gather_to_gather_reshape, extend_stack_to_stack_reshape, input_to_output[0m
+[36mD 17:10:57 Optimizing network with auto_fill_bn, auto_fill_l2normalizescale, auto_fill_instancenormalize, merge_layer[0m
+[36mD 17:10:57 Optimizing network with special_add_to_conv2d[0m
+[32mI 17:10:57 start process output layer attach_action/out0_0[0m
+[36mD 17:10:57 Process observation_5 ...[0m
+[36mD 17:10:57 Acuity output shape(input): (4 68)[0m
+[36mD 17:10:57 Tensor @observation_5:out0 type: float32[0m
+[36mD 17:10:57 Process h0_4 ...[0m
+[36mD 17:10:57 Acuity output shape(fullconnect): (4 16)[0m
+[36mD 17:10:57 Tensor @h0_4:out0 type: float32[0m
+[36mD 17:10:57 Process h_3 ...[0m
+[36mD 17:10:57 Acuity output shape(tanh): (4 16)[0m
+[36mD 17:10:57 Tensor @h_3:out0 type: float32[0m
+[36mD 17:10:57 Process a0_2 ...[0m
+[36mD 17:10:57 Acuity output shape(fullconnect): (4 2)[0m
+[36mD 17:10:57 Tensor @a0_2:out0 type: float32[0m
+[36mD 17:10:57 Process action_1 ...[0m
+[36mD 17:10:57 Acuity output shape(tanh): (4 2)[0m
+[36mD 17:10:57 Tensor @action_1:out0 type: float32[0m
+[36mD 17:10:57 Process attach_action/out0_0 ...[0m
+[36mD 17:10:57 Acuity output shape(output): (4 2)[0m
+[36mD 17:10:57 Tensor @attach_action/out0_0:out0 type: float32[0m
+[32mI 17:10:57 Build SmartPC frozen pilot complete.[0m
+[32mI 17:10:57 End importing onnx...[0m
+[32mI 17:10:57 Dump net to /work/policy-acuity.json[0m
+[32mI 17:10:57 Save net to /work/policy-acuity.data[0m
+[32mI 17:10:57 ----------------Error(0),Warning(0)----------------[0m
+2026-10-13 17:10:58.015186: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-10-13 17:10:58.015224: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+[32mI 17:11:00 Namespace(generate='inputmeta', input_meta_output='policy-inputmeta.yml', model='policy-acuity.json', separated_database=False, which='generate')[0m
+[32mI 17:11:00 Load model in policy-acuity.json[0m
+[32mI 17:11:00 Generate input meta policy-inputmeta.yml[0m
+[32mI 17:11:00 ----------------Error(0),Warning(0)----------------[0m
+2026-10-13 17:11:02.281092: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-10-13 17:11:02.281110: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+[32mI 17:11:03 Namespace(batch_size=None, build_platform='make', customer_lids=None, customer_ops=None, dtype='float', export='ovxlib', force_remove_permute=False, model='policy-acuity.json', model_data='policy-acuity.data', model_quantize=None, optimize='VIP9000NANODI_PID0X1000003B', output_path='nbg-v3', pack_nbg_unify=True, postprocess_file=None, save_fused_graph=False, save_trace_db=False, target_ide_project='linux64', viv_sdk='/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools', which='export', with_input_meta='policy-inputmeta.yml')[0m
+[32mI 17:11:03 Set vsinn project dir to /work[0m
+[32mI 17:11:03 Load model in /work/policy-acuity.json[0m
+[32mI 17:11:03 Load data in /work/policy-acuity.data[0m
+[32mI 17:11:03 Load input meta /work/policy-inputmeta.yml[0m
+[32mI 17:11:03 Start exporting ovxlib case...[0m
+[36mD 17:11:03 Process observation_5 ...[0m
+[36mD 17:11:03 Acuity output shape(input): (4 68)[0m
+[36mD 17:11:03 Tensor @observation_5:out0 type: float32[0m
+[36mD 17:11:03 Process h0_4 ...[0m
+[36mD 17:11:03 Acuity output shape(fullconnect): (4 16)[0m
+[36mD 17:11:03 Tensor @h0_4:out0 type: float32[0m
+[36mD 17:11:03 Process h_3 ...[0m
+[36mD 17:11:03 Acuity output shape(tanh): (4 16)[0m
+[36mD 17:11:03 Tensor @h_3:out0 type: float32[0m
+[36mD 17:11:03 Process a0_2 ...[0m
+[36mD 17:11:03 Acuity output shape(fullconnect): (4 2)[0m
+[36mD 17:11:03 Tensor @a0_2:out0 type: float32[0m
+[36mD 17:11:03 Process action_1 ...[0m
+[36mD 17:11:03 Acuity output shape(tanh): (4 2)[0m
+[36mD 17:11:03 Tensor @action_1:out0 type: float32[0m
+[36mD 17:11:03 Process attach_action/out0_0 ...[0m
+[36mD 17:11:03 Acuity output shape(output): (4 2)[0m
+[36mD 17:11:03 Tensor @attach_action/out0_0:out0 type: float32[0m
+[32mI 17:11:03 Build SmartPC frozen pilot complete.[0m
+[32mI 17:11:03 Initialzing network optimizer by VIP9000NANODI_PID0X1000003B ...[0m
+[32mI 17:11:03 Optimize config VIP9000NANODI_PID0X1000003B with 'Default' optimization rules.[0m
+[36mD 17:11:03 Optimizing network with split_squared_difference, merge_ximum, qnt_adjust_coef, adjust_qnt_reshape, multiply_transform, add_extra_io, format_input_ops, auto_fill_zero_bias, conv_kernel_transform, auto_fill_reshape_zero, strip_op, extend_unstack_split, convert_matmul_trans_ab, merge_layer, transform_layer, broadcast_op, strip_op, adjust_output_attrs, insert_dtype_converter, layernorm_to_moments_bnsingle, pow_to_square, average_to_add_divide, optimize_einsum[0m
+[32mI 17:11:03 Start T2C Switcher...[0m
+[36mD 17:11:03 Optimizing network with broadcast_op, t2c_fc[0m
+[32mI 17:11:03 End T2C Switcher...[0m
+[36mD 17:11:03 Optimizing network with strip_op_layout_sensitive[0m
+[36mD 17:11:03 Process observation_5 ...[0m
+[36mD 17:11:03 Acuity output shape(input): (4 68)[0m
+[36mD 17:11:03 Tensor @observation_5:out0 type: float32[0m
+[36mD 17:11:03 Process h0_4 ...[0m
+[36mD 17:11:03 Acuity output shape(fullconnect): (4 16)[0m
+[36mD 17:11:03 Tensor @h0_4:out0 type: float32[0m
+[36mD 17:11:03 Process h_3 ...[0m
+[36mD 17:11:03 Acuity output shape(tanh): (4 16)[0m
+[36mD 17:11:03 Tensor @h_3:out0 type: float32[0m
+[36mD 17:11:03 Process a0_2 ...[0m
+[36mD 17:11:03 Acuity output shape(fullconnect): (4 2)[0m
+[36mD 17:11:03 Tensor @a0_2:out0 type: float32[0m
+[36mD 17:11:03 Process action_1 ...[0m
+[36mD 17:11:03 Acuity output shape(tanh): (4 2)[0m
+[36mD 17:11:03 Tensor @action_1:out0 type: float32[0m
+[36mD 17:11:03 Process attach_action/out0_0 ...[0m
+[36mD 17:11:03 Acuity output shape(output): (4 2)[0m
+[36mD 17:11:03 Tensor @attach_action/out0_0:out0 type: float32[0m
+[32mI 17:11:03 Build SmartPC frozen pilot complete.[0m
+[36mD 17:11:03 Optimizing network with merge_mark_permute[0m
+[36mD 17:11:03 Optimizing network with insert_reshape_for_layernorm, c2drv_adjust_extra_io, c2drv_nhwc_resize, conv_1xn_transform, proposal_opt, c2drv_convert_axis, c2drv_convert_shape, c2drv_convert_array, c2drv_cast_dtype, c2drv_trans_data, c2drv_custom_opt[0m
+[32mI 17:11:03 Building data ...[0m
+[32mI 17:11:03 Packing data ...[0m
+[36mD 17:11:03 Packing a0_2 ...[0m
+[36mD 17:11:03 Packing h0_4 ...[0m
+[32mI 17:11:03 Saving data to /work/nbg-v3.export.data[0m
+[32mI 17:11:03 Export ovxlib case with version 1.1.83[0m
+[32mI 17:11:03 Save vx network source file to /work/vnn_nbgv3.c[0m
+[32mI 17:11:03 Save vx network source file to /work/vnn_nbgv3.h[0m
+[32mI 17:11:03 Save vx network source file to /work/vnn_post_process.c[0m
+[32mI 17:11:03 Save vx network source file to /work/vnn_post_process.h[0m
+[32mI 17:11:03 Save vx network source file to /work/vnn_pre_process.c[0m
+[32mI 17:11:03 Save vx network source file to /work/vnn_pre_process.h[0m
+[32mI 17:11:03 Save vx network source file to /work/vnn_global.h[0m
+[32mI 17:11:03 Save vx network source file to /work/main.c[0m
+[32mI 17:11:03 Save vx network source file to /work/BUILD[0m
+[32mI 17:11:03 Save vx network source file to /work/nbgv3.vcxproj[0m
+[32mI 17:11:03 Save vx network source file to /work/nbgv3.2012.vcxproj[0m
+[32mI 17:11:03 Save vx network source file to /work/makefile.linux[0m
+[32mI 17:11:03 Save vx network source file to /work/.cproject[0m
+[32mI 17:11:03 Save vx network source file to /work/.project[0m
+[36mD 17:11:03 Generate fake input /work/observation_5_0.tensor[0m
+gcc -Wall -std=c++0x -I. -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/CL -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/VX -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ovxlib -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/jpeg -D__linux__ -DLINUX -O3 -c vnn_nbgv3.c
+cc1: warning: command line option ‘-std=c++11’ is valid for C++/ObjC++ but not for C
+gcc -Wall -std=c++0x -I. -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/CL -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/VX -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ovxlib -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/jpeg -D__linux__ -DLINUX -O3 -c vnn_pre_process.c
+cc1: warning: command line option ‘-std=c++11’ is valid for C++/ObjC++ but not for C
+vnn_pre_process.c: In function ‘_handle_multiple_inputs’:
+vnn_pre_process.c:639:11: warning: variable ‘p1’ set but not used [-Wunused-but-set-variable]
+  639 |     char *p1 = NULL;
+      |           ^~
+At top level:
+vnn_pre_process.c:599:13: warning: ‘_get_image_handle_buffer’ defined but not used [-Wunused-function]
+  599 | static void _get_image_handle_buffer
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~
+gcc -Wall -std=c++0x -I. -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/CL -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/VX -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ovxlib -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/jpeg -D__linux__ -DLINUX -O3 -c main.c
+cc1: warning: command line option ‘-std=c++11’ is valid for C++/ObjC++ but not for C
+gcc -Wall -std=c++0x -I. -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/CL -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/VX -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ovxlib -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/jpeg -D__linux__ -DLINUX -O3 -c vnn_post_process.c
+cc1: warning: command line option ‘-std=c++11’ is valid for C++/ObjC++ but not for C
+gcc -Wall -std=c++0x -I. -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/CL -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/VX -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ovxlib -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/jpeg -D__linux__ -DLINUX -O3 -O3  vnn_nbgv3.o vnn_pre_process.o main.o vnn_post_process.o -L/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/lib -lOpenVX -lOpenVXU -lCLC -lVSC -lGAL -lovxlib -lEmulator -lvdtproxy -L/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/lib/vsim -lOpenVX -lOpenVXU -lCLC -lVSC -lGAL -lovxlib -lEmulator -lvdtproxy -L/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/lib/x64_linux -lOpenVX -lOpenVXU -lCLC -lVSC -lGAL -lovxlib -lEmulator -lvdtproxy -L/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/lib/x64_linux/vsim -lOpenVX -lOpenVXU -lCLC -lVSC -lGAL -lovxlib -lEmulator -lvdtproxy -L/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/lib/x64_linux/vsim -lOpenVX -lOpenVXU -lCLC -lVSC -lGAL -lovxlib -lEmulator -lvdtproxy -L/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/../common/lib/ -lvdtproxy /root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/../common/lib/libjpeg.a -o gen_nbg
+Killed
+[31mE 17:11:56 Fatal model generation error: 35072[0m
+[33mW 17:11:56 ----------------Error(1),Warning(0)----------------[0m
+[31mE 17:11:56 ('Fatal model generation error: 35072', 'nbg_generate')[0m
+[33mW 17:11:56 ----------------Error(1),Warning(0)----------------[0m
+Traceback (most recent call last):
+  File "acuitylib/app/exporter/ovxlib_case/casegenerator.py", line 327, in acuitylib.app.exporter.ovxlib_case.casegenerator.CaseGenerator._gen_nb_file
+  File "acuitylib/acuitylog.py", line 264, in acuitylib.acuitylog.AcuityLog.e
+acuitylib.acuityerror.AcuityError: ('Fatal model generation error: 35072', 'nbg_generate')
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/acuity-toolkit-whl-6.30.22/bin/pegasus.py", line 131, in <module>
+    main(args)
+  File "/root/acuity-toolkit-whl-6.30.22/bin/pegasus.py", line 116, in main
+    ret = exporter.execute(args)
+  File "acuitylib/app/exporter/commands.py", line 220, in acuitylib.app.exporter.commands.execute
+  File "acuitylib/vsi_nn.py", line 738, in acuitylib.vsi_nn.VSInn.export_ovxlib
+  File "acuitylib/interface/exporter.py", line 84, in acuitylib.interface.exporter.OvxlibExporter.export
+  File "acuitylib/app/exporter/ovxlib_case/export_ovxlib.py", line 113, in acuitylib.app.exporter.ovxlib_case.export_ovxlib.ExportOvxlib.run
+  File "acuitylib/app/exporter/ovxlib_case/casegenerator.py", line 409, in acuitylib.app.exporter.ovxlib_case.casegenerator.CaseGenerator.generate
+  File "acuitylib/app/exporter/ovxlib_case/casegenerator.py", line 359, in acuitylib.app.exporter.ovxlib_case.casegenerator.CaseGenerator._gen_special_case
+  File "acuitylib/app/exporter/ovxlib_case/casegenerator.py", line 338, in acuitylib.app.exporter.ovxlib_case.casegenerator.CaseGenerator._gen_nb_file
+  File "acuitylib/acuitylog.py", line 260, in acuitylib.acuitylog.AcuityLog.e
+acuitylib.acuityerror.AcuityError: (AcuityError('Fatal model generation error: 35072', 'nbg_generate'), None)

@@ -1,0 +1,26 @@
+E.....................F.................
+======================================================================
+ERROR: check_game_pacing (unittest.loader._FailedTest.check_game_pacing)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: check_game_pacing
+Traceback (most recent call last):
+  File "/usr/lib/python3.13/unittest/loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+  File "/var/lib/smartpc-dashboard/smartpc-v09-rc13-project/dashboard/check_game_pacing.py", line 6, in <module>
+    from PySide6.QtTest import QTest
+ModuleNotFoundError: No module named 'PySide6.QtTest'
+
+
+======================================================================
+FAIL: test_lint_typo_rejected_with_real_qmllint (check_theme_api_runtime.PublicApiTests.test_lint_typo_rejected_with_real_qmllint)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/var/lib/smartpc-dashboard/smartpc-v09-rc13-project/dashboard/check_theme_api_runtime.py", line 620, in test_lint_typo_rejected_with_real_qmllint
+    self.assertTrue(executable, 'qmllint is required for this runtime gate')
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: None is not true : qmllint is required for this runtime gate
+
+----------------------------------------------------------------------
+Ran 40 tests in 1.454s
+
+FAILED (failures=1, errors=1)

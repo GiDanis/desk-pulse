@@ -1,0 +1,565 @@
+{
+  "capturedAt": "2026-10-21T14:38:38.810115+00:00",
+  "installedVersion": "0.9.0-rc.27",
+  "readOnly": true,
+  "productionChanges": false,
+  "drivers": [
+    {
+      "id": "0e81c7b8396b4d47aa345b67dbabc325",
+      "name": "Maestro",
+      "profile": {
+        "algorithm": "race_master",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.9975031223974601,
+        "hidden": 32,
+        "learningRate": 0.0001,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 1,
+        "recipeVersion": 1,
+        "rollout": 128,
+        "seed": 1,
+        "traffic": false,
+        "version": 2
+      },
+      "policy_profile": {
+        "algorithm": "race_master",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.9975031223974601,
+        "hidden": 32,
+        "learningRate": 0.0001,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 1,
+        "recipeVersion": 1,
+        "rollout": 128,
+        "seed": 1,
+        "traffic": false,
+        "version": 2
+      },
+      "policy": "b681f5815a3247723c22b6a25ca1c02d21be89227a48af8d94d2f8c768ecf06f",
+      "checkpoint": null,
+      "steps": 0,
+      "seconds": 0
+    },
+    {
+      "id": "d26beef89da244a1984e87cd0404308e",
+      "name": "Crono",
+      "profile": {
+        "algorithm": "residual_ppo",
+        "controlMode": "direct",
+        "episodeExploration": "coherent-pedal-1",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "expertLearning": "routed-1",
+        "gamma": 0.9975031223974601,
+        "hidden": 128,
+        "learningRate": 0.0001,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 1,
+        "raceValidationEvery": 4,
+        "racingAnchor": "steering-retained-1",
+        "racingCurriculum": "graduated-1",
+        "racingObjective": "valid-time-1",
+        "recipeVersion": 1,
+        "rollout": 128,
+        "seed": 2,
+        "traffic": false,
+        "version": 2
+      },
+      "policy_profile": {
+        "algorithm": "residual_ppo",
+        "controlMode": "direct",
+        "episodeExploration": "coherent-pedal-1",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "expertLearning": "routed-1",
+        "gamma": 0.9975031223974601,
+        "hidden": 128,
+        "learningRate": 0.0001,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 1,
+        "raceValidationEvery": 4,
+        "racingAnchor": "steering-retained-1",
+        "racingCurriculum": "graduated-1",
+        "racingObjective": "valid-time-1",
+        "recipeVersion": 1,
+        "rollout": 128,
+        "seed": 2,
+        "traffic": false,
+        "version": 2
+      },
+      "policy": "f4c1d98095c3f3d4bc7d481f3475d2a34c3ad391e498705ca74995c4decf012e",
+      "checkpoint": "4a1119a1d45931d84d087fef09fa544653858734ef65dbb8bf1edea1639fe971",
+      "steps": 631930,
+      "seconds": 4415.958734617088,
+      "checkpointSummary": {
+        "protocol": "direct-driving-3",
+        "decisions": 105501,
+        "updates": 208,
+        "learnerKeys": [
+          "actor",
+          "actorAdam",
+          "algorithm",
+          "buffer",
+          "critic",
+          "criticAdam",
+          "explorationBlock",
+          "logStd",
+          "pending",
+          "rng",
+          "stdAdam",
+          "tuning",
+          "update"
+        ],
+        "actorParameters": 11999,
+        "epochStart": {
+          "decisions": 78877,
+          "steps": 472473
+        },
+        "stats": {
+          "cleanLaps": 105,
+          "contacts": 0,
+          "episodes": 112,
+          "passes": 0,
+          "success": 112,
+          "trackLimits": 0,
+          "windows": 0
+        },
+        "schoolStats": {
+          "accelerazione": {
+            "total": 13,
+            "valid": 13
+          },
+          "aderenza": {
+            "total": 11,
+            "valid": 11
+          },
+          "frenata": {
+            "total": 13,
+            "valid": 13
+          },
+          "traiettoria": {
+            "total": 13,
+            "valid": 13
+          }
+        },
+        "schoolGraduated": true,
+        "status": "Verifica giri lanciati · gara separata",
+        "migration": {
+          "actor": "solo-preserved-traffic-from-own-champion",
+          "actorOptimizer": "solo-preserved-traffic-and-gate-reset",
+          "critics": "reset",
+          "qualifications": "preserved-exact-policies",
+          "replay": "archived",
+          "sourceCheckpoint": "80bc5d79c14f717736d5e4f4324f4604799d85165e9b9326e011e999c06afb0b",
+          "version": "direct-racing-1"
+        },
+        "evaluations": [
+          {
+            "decision": "no_gain",
+            "decisionLabel": "Guida valida · tempo da migliorare",
+            "accepted": false,
+            "raceAccepted": false,
+            "raceDecisionLabel": "Gara precedente conservata",
+            "candidate": {
+              "median": 21.59561324719461,
+              "valid": 3,
+              "total": 3,
+              "trafficValid": 0
+            },
+            "regressions": []
+          },
+          {
+            "decision": "race_improved",
+            "decisionLabel": "Versione gara migliorata",
+            "accepted": false,
+            "raceAccepted": true,
+            "raceDecisionLabel": "Pronto per la gara",
+            "candidate": {
+              "median": 21.466794351719734,
+              "valid": 3,
+              "total": 3,
+              "trafficValid": 0
+            },
+            "regressions": []
+          }
+        ]
+      }
+    },
+    {
+      "id": "2c20bdbb28ff4ff6856ea4cdc7708b42",
+      "name": "Memoria",
+      "profile": {
+        "algorithm": "residual_sac",
+        "controlMode": "direct",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "expertLearning": "routed-1",
+        "gamma": 0.9975031223974601,
+        "hidden": 128,
+        "learningRate": 0.0001,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 1,
+        "raceValidationEvery": 4,
+        "racingAnchor": "steering-retained-1",
+        "racingCurriculum": "graduated-1",
+        "racingObjective": "valid-time-1",
+        "recipeVersion": 1,
+        "rollout": 128,
+        "seed": 3,
+        "traffic": false,
+        "version": 2
+      },
+      "policy_profile": {
+        "algorithm": "residual_sac",
+        "controlMode": "direct",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.9975031223974601,
+        "hidden": 128,
+        "learningRate": 0.0001,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 1,
+        "recipeVersion": 1,
+        "rollout": 128,
+        "seed": 3,
+        "traffic": false,
+        "version": 2
+      },
+      "policy": "ed75cc7545858bcbd9cd19dea3e5e6b264b0c5a9e49ed28dd49a5b90be43d254",
+      "checkpoint": "6444a92ec55882ada8babd122da7975e18058280b3f2664d16a2ab9abda77218",
+      "steps": 110409,
+      "seconds": 833.3435617586074,
+      "checkpointSummary": {
+        "protocol": "direct-driving-3",
+        "decisions": 18432,
+        "updates": 0,
+        "learnerKeys": [
+          "actor",
+          "actorAdam",
+          "anchorActor",
+          "cursor",
+          "explorationBlock",
+          "log_std",
+          "method",
+          "q1",
+          "q1Adam",
+          "q2",
+          "q2Adam",
+          "replayBinary",
+          "rng",
+          "stdAdam",
+          "target1",
+          "target2",
+          "target_actor",
+          "transitions",
+          "update"
+        ],
+        "actorParameters": 11999,
+        "epochStart": {
+          "decisions": 18432,
+          "steps": 110409
+        },
+        "stats": {
+          "cleanLaps": 0,
+          "contacts": 0,
+          "episodes": 0,
+          "passes": 0,
+          "success": 0,
+          "trackLimits": 0,
+          "windows": 0
+        },
+        "schoolStats": {
+          "accelerazione": {
+            "total": 5,
+            "valid": 5
+          },
+          "aderenza": {
+            "total": 4,
+            "valid": 4
+          },
+          "frenata": {
+            "total": 4,
+            "valid": 4
+          },
+          "traiettoria": {
+            "total": 4,
+            "valid": 4
+          }
+        },
+        "schoolGraduated": true,
+        "status": "Guida conservata · nuovo obiettivo sul tempo",
+        "migration": {
+          "actor": "solo-preserved-traffic-from-own-champion",
+          "actorOptimizer": "solo-preserved-traffic-and-gate-reset",
+          "critics": "reset",
+          "qualifications": "preserved-exact-policies",
+          "replay": "archived",
+          "sourceCheckpoint": "a8146cfd12d23f3a7fa2e14a0fca69e6116f6e7cba7e9f4d9ca320455faabebb",
+          "version": "direct-racing-1"
+        },
+        "evaluations": []
+      }
+    },
+    {
+      "id": "c89159135317425b8b4180bc68945c10",
+      "name": "Linea",
+      "profile": {
+        "algorithm": "residual_td3",
+        "controlMode": "direct",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "expertLearning": "routed-1",
+        "gamma": 0.9975031223974601,
+        "hidden": 128,
+        "learningRate": 0.0001,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 1,
+        "raceValidationEvery": 4,
+        "racingAnchor": "steering-retained-1",
+        "racingCurriculum": "graduated-1",
+        "racingObjective": "valid-time-1",
+        "recipeVersion": 1,
+        "rollout": 128,
+        "seed": 4,
+        "traffic": false,
+        "version": 2
+      },
+      "policy_profile": {
+        "algorithm": "residual_td3",
+        "controlMode": "direct",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.9975031223974601,
+        "hidden": 128,
+        "learningRate": 0.0001,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 1,
+        "recipeVersion": 1,
+        "rollout": 128,
+        "seed": 4,
+        "traffic": false,
+        "version": 2
+      },
+      "policy": "ecd21568ef9e964137ac6e3f8bcaa92590ab1db140215de6ac7d269edf30c435",
+      "checkpoint": "93aad07342a5c8691a83ba2085285b2fc830c12df45b84dc3ec4dcb02b3fc3bc",
+      "steps": 127837,
+      "seconds": 695.1047247705283,
+      "checkpointSummary": {
+        "protocol": "direct-driving-3",
+        "decisions": 21367,
+        "updates": 0,
+        "learnerKeys": [
+          "actor",
+          "actorAdam",
+          "anchorActor",
+          "cursor",
+          "explorationBlock",
+          "log_std",
+          "method",
+          "q1",
+          "q1Adam",
+          "q2",
+          "q2Adam",
+          "replayBinary",
+          "rng",
+          "stdAdam",
+          "target1",
+          "target2",
+          "target_actor",
+          "transitions",
+          "update"
+        ],
+        "actorParameters": 11999,
+        "epochStart": {
+          "decisions": 21367,
+          "steps": 127837
+        },
+        "stats": {
+          "cleanLaps": 0,
+          "contacts": 0,
+          "episodes": 0,
+          "passes": 0,
+          "success": 0,
+          "trackLimits": 0,
+          "windows": 0
+        },
+        "schoolStats": {
+          "accelerazione": {
+            "total": 5,
+            "valid": 5
+          },
+          "aderenza": {
+            "total": 5,
+            "valid": 4
+          },
+          "frenata": {
+            "total": 5,
+            "valid": 5
+          },
+          "traiettoria": {
+            "total": 5,
+            "valid": 5
+          }
+        },
+        "schoolGraduated": true,
+        "status": "Guida conservata · nuovo obiettivo sul tempo",
+        "migration": {
+          "actor": "solo-preserved-traffic-from-own-champion",
+          "actorOptimizer": "solo-preserved-traffic-and-gate-reset",
+          "critics": "reset",
+          "qualifications": "preserved-exact-policies",
+          "replay": "archived",
+          "sourceCheckpoint": "22627e6f80bdf668d0fec9cc2872a3dc701da3ba56b95ed95137ae15127c2d82",
+          "version": "direct-racing-1"
+        },
+        "evaluations": []
+      }
+    },
+    {
+      "id": "75c83293476840819581efb2a0de199e",
+      "name": "Tattico",
+      "profile": {
+        "algorithm": "residual_tactic",
+        "controlMode": "direct",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "expertLearning": "routed-1",
+        "gamma": 0.9975031223974601,
+        "hidden": 128,
+        "learningRate": 0.0001,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 1,
+        "raceValidationEvery": 4,
+        "racingAnchor": "steering-retained-1",
+        "racingCurriculum": "graduated-1",
+        "racingObjective": "valid-time-1",
+        "recipeVersion": 1,
+        "rollout": 128,
+        "seed": 5,
+        "traffic": false,
+        "version": 2
+      },
+      "policy_profile": {
+        "algorithm": "residual_tactic",
+        "controlMode": "direct",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.9975031223974601,
+        "hidden": 128,
+        "learningRate": 0.0001,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 1,
+        "recipeVersion": 1,
+        "rollout": 128,
+        "seed": 5,
+        "traffic": false,
+        "version": 2
+      },
+      "policy": "65a535b2288447e4a024509d7418a716de8b52f3393d36f979602b5e5e64c11f",
+      "checkpoint": "9b4c5c75754b789b0d36c222cccae09b82789adb48f6525742f76584091cbbb0",
+      "steps": 105297,
+      "seconds": 864.2159498011606,
+      "checkpointSummary": {
+        "protocol": "direct-driving-3",
+        "decisions": 17577,
+        "updates": 0,
+        "learnerKeys": [
+          "actor",
+          "actorAdam",
+          "anchorActor",
+          "cursor",
+          "explorationBlock",
+          "log_std",
+          "method",
+          "q1",
+          "q1Adam",
+          "q2",
+          "q2Adam",
+          "replayBinary",
+          "rng",
+          "stdAdam",
+          "target1",
+          "target2",
+          "target_actor",
+          "transitions",
+          "update"
+        ],
+        "actorParameters": 11999,
+        "epochStart": {
+          "decisions": 17577,
+          "steps": 105297
+        },
+        "stats": {
+          "cleanLaps": 0,
+          "contacts": 0,
+          "episodes": 0,
+          "passes": 0,
+          "success": 0,
+          "trackLimits": 0,
+          "windows": 0
+        },
+        "schoolStats": {
+          "accelerazione": {
+            "total": 2,
+            "valid": 2
+          },
+          "aderenza": {
+            "total": 2,
+            "valid": 2
+          },
+          "frenata": {
+            "total": 2,
+            "valid": 2
+          },
+          "traiettoria": {
+            "total": 2,
+            "valid": 2
+          }
+        },
+        "schoolGraduated": true,
+        "status": "Guida conservata · nuovo obiettivo sul tempo",
+        "migration": {
+          "actor": "solo-preserved-traffic-from-own-champion",
+          "actorOptimizer": "solo-preserved-traffic-and-gate-reset",
+          "critics": "reset",
+          "qualifications": "preserved-exact-policies",
+          "replay": "archived",
+          "sourceCheckpoint": "923973bbffe0fddb25f45744bb2ffe6cfbf92cae2ff1207cf2fdd3901d974da4",
+          "version": "direct-racing-1"
+        },
+        "evaluations": []
+      }
+    }
+  ],
+  "runningSessions": [
+    {
+      "id": "1caa1fa5cd3c42e2ad751372ecb5f3c6",
+      "mode": "impara",
+      "status": "running",
+      "updated": "2026-10-21T14:38:28.838531+00:00",
+      "driver": "d26beef89da244a1984e87cd0404308e"
+    }
+  ],
+  "sourceHashes": {
+    "game_store.py": "7e80af823226b68b9b8364fdb572d76ff874b1c23f296adced697e18b342cebe",
+    "game.py": "825a056620b7f54ff5a6780a09af42c159cfc16d0275624cb5f5f2580fbbeb16",
+    "game_settings.py": "ce513c85db1535de6fbb70095cae9793cadaf52dd1522439e38fee1ed55af600",
+    "game_direct_trainer.py": "3caf1f4636172476d6175f7628d7e18e7919619c829f153b612ade7becd66a04",
+    "game_racing_presets.py": "5c704d628bb243322b3ef8d34c4f5e7e805cc7d3f3b1a9ecd3d99a2a11354305",
+    "check_game_residual_ui.py": "dc11a289a0cf39dce6f1c90c4627c9685f793a73da2f1da5ba6d5922c87b0f77"
+  },
+  "service": "NRestarts=0\nActiveState=active"
+}
+

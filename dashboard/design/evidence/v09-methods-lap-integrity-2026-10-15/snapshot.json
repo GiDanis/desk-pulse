@@ -1,0 +1,7482 @@
+{
+  "captured": "2026-10-15T11:50:29.512556+00:00",
+  "scope": "Durable checkpoints read in a SQLite read-only transaction; not live frame telemetry",
+  "version": "0.9.0-rc.16",
+  "service": "MainPID=24575\nNRestarts=0\nActiveState=active",
+  "sourceSha256": {
+    "game_academy.py": "c4736307d9ed72ffa1d7958592f21aad51cfac1e16e512ada4100dd59a6fd9ee",
+    "game_academy_trainer.py": "1c2dce5c798d4feda27318d1cbc355dfbf482797a574135b99c616e70d89db6e",
+    "game_evo_plan.py": "979bc7e6e3ea3de580280590fe8b8b19ee322fa98320b2e4dbe9719601db6ffe",
+    "game_simulation.py": "192a398d10ceb5c975780616d8837627aedb5e68a8fb9dd5cfcc6b83ed6f2d70",
+    "game_batch.py": "edfb7180d339fff413d597dad19b89583010337660ab67f7c5688b1efdca51fd",
+    "game_learning.py": "7d518c27166d1debec8185afab75a9575647995a6f376341e8e984de8689c407",
+    "game_neat.py": "09dc4fe2dda29b163485fc109da2340339213a9554e2fa7eb190b4b73fe2e45b",
+    "game_rewards.py": "63e8ee648418c631a564b38e28f80b02a7737e69da1030820bd989ec70ced56b",
+    "game_driving_memory.py": "29f94690f24b329cabdb22a7cb87408963d195e4a6e14f34589cd22d1c921c6f",
+    "game_geometry.py": "0555e1a67777092483fc7beae1964a531d3228d7698460fe0d8b042c52f9df8b",
+    "game_worker.py": "6817cb87e0ebbaa06fb5dfa1b5f4f7a0ae93bad7b2ff9084d49fafbda05af3fa"
+  },
+  "sourceMatchesWorkspace": true,
+  "drivers": [
+    {
+      "id": "6e985116769d4cc3affab28274153919",
+      "name": "Evo",
+      "track": "oval-1",
+      "profile": {
+        "algorithm": "evolution",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 32,
+        "rollout": 256,
+        "seed": 1,
+        "traffic": false,
+        "version": 2
+      },
+      "checkpoint": "e4d0aa71643924e563dec1d8c412a17c068aadebf651239871924c7d2c000a05",
+      "modified": "2026-10-15T11:50:25.273806+00:00",
+      "storedSteps": 13908853,
+      "storedSeconds": 24683.617972004256,
+      "training": {
+        "steps": 13908853,
+        "seconds": 24683.617972004256,
+        "protocol": "driving-memory-1",
+        "state": {
+          "phase": "pace",
+          "phaseUpdates": 96,
+          "updates": 376,
+          "round": 94,
+          "curveReady": true,
+          "pacePressure": 1.0,
+          "rewardVersion": "balanced-driving-2",
+          "objective": null
+        },
+        "generation": 376,
+        "rewardSpec": {
+          "cleanLap": 3.0,
+          "curriculum": "evo-progressive-1",
+          "drillProgress": 2.0,
+          "drillSuccess": 2.0,
+          "evoVersion": "evo-progressive-1",
+          "exit": 0.5,
+          "outside": 2.0,
+          "passReward": 0.5,
+          "progressPerLap": 10.0,
+          "recovery": 0.5,
+          "referenceSpeed": 9.0,
+          "retirement": 3.0,
+          "smooth": 0.1,
+          "stall": 3.0,
+          "timeControl": 0.5,
+          "timePace": 2.0,
+          "understeer": 1.0,
+          "version": "balanced-driving-2"
+        },
+        "task": {
+          "distance": 338.7787445225672,
+          "label": "Un giro \u00b7 Passo",
+          "laps": 1,
+          "limitSeconds": 261.34360291740904,
+          "opponents": 0,
+          "phase": "pace",
+          "rewardVersion": "valid-progress-recovery-1",
+          "stall": {
+            "creditMeters": 1.0,
+            "grace": 2.0,
+            "maxNoProgressSeconds": 15.0,
+            "slowSeconds": 4.0
+          },
+          "teacher": "traffic-pursuit-2",
+          "version": "driving-memory-1"
+        },
+        "plan": {
+          "level": 11,
+          "generations": 220,
+          "stageGenerations": 96,
+          "case": 0,
+          "reliable": 0
+        },
+        "metric": {
+          "bestFitness": 9.153517407005884,
+          "diversity": 0.05920354631786075,
+          "fitness": 9.153517407005884,
+          "generation": 376,
+          "mutationScale": 1.7,
+          "selectionKind": "suite-success-retention-reward",
+          "selectionUnusedTime": {
+            "max": 0.5047542172133216,
+            "mean": 0.028447770575399937
+          },
+          "stagnation": 14
+        },
+        "statistics": {
+          "episodes": 25600,
+          "success": 13321,
+          "no_progress": 1331,
+          "contact": 8720,
+          "skill_failed": 2189,
+          "timeout": 39,
+          "window": 0,
+          "pedalCounts": {
+            "brake": 2042076,
+            "coast": 687654,
+            "gas": 9609951
+          },
+          "simulatedSeconds": 231716.81666666202
+        },
+        "epoch": {
+          "version": "balanced-driving-2",
+          "startedSteps": 1992091,
+          "episodes": 20608,
+          "pedalCounts": {
+            "brake": 1705617,
+            "coast": 668158,
+            "gas": 9542987
+          }
+        },
+        "epochTasks": {
+          "oval-1:Arco lento \u00b7 20 m": {
+            "episodes": 256,
+            "success": 239,
+            "no_progress": 2,
+            "contact": 6,
+            "skill_failed": 9,
+            "timeout": null
+          },
+          "oval-1:Arco lento \u00b7 50 m": {
+            "episodes": 256,
+            "success": 207,
+            "no_progress": 2,
+            "contact": 45,
+            "skill_failed": 2,
+            "timeout": null
+          },
+          "oval-1:Curva completa \u00b7 140 m": {
+            "episodes": 3072,
+            "success": 240,
+            "no_progress": 26,
+            "contact": 2329,
+            "skill_failed": 477,
+            "timeout": null
+          },
+          "oval-1:Curva veloce \u00b7 140 m": {
+            "episodes": 768,
+            "success": 306,
+            "no_progress": 9,
+            "contact": 299,
+            "skill_failed": 152,
+            "timeout": 2
+          },
+          "oval-1:Ingresso curva \u00b7 60 m": {
+            "episodes": 2048,
+            "success": 865,
+            "no_progress": 51,
+            "contact": 722,
+            "skill_failed": 410,
+            "timeout": null
+          },
+          "oval-1:Partenza \u00b7 1 m": {
+            "episodes": 256,
+            "success": 242,
+            "no_progress": 14,
+            "contact": null,
+            "skill_failed": null,
+            "timeout": null
+          },
+          "oval-1:Partenza \u00b7 20 m": {
+            "episodes": 256,
+            "success": 218,
+            "no_progress": 6,
+            "contact": 4,
+            "skill_failed": 28,
+            "timeout": null
+          },
+          "oval-1:Partenza \u00b7 3 m": {
+            "episodes": 256,
+            "success": 250,
+            "no_progress": 6,
+            "contact": null,
+            "skill_failed": null,
+            "timeout": null
+          },
+          "oval-1:Partenza \u00b7 8 m": {
+            "episodes": 256,
+            "success": 134,
+            "no_progress": 8,
+            "contact": 114,
+            "skill_failed": null,
+            "timeout": null
+          },
+          "oval-1:Rettilineo \u00b7 40 m": {
+            "episodes": 256,
+            "success": 246,
+            "no_progress": 5,
+            "contact": 3,
+            "skill_failed": null,
+            "timeout": 2
+          },
+          "oval-1:Ripasso Partenza \u00b7 20 m": {
+            "episodes": 6528,
+            "success": 6299,
+            "no_progress": 127,
+            "contact": 51,
+            "skill_failed": 23,
+            "timeout": 28
+          },
+          "oval-1:Un giro pulito": {
+            "episodes": 256,
+            "success": 98,
+            "no_progress": 17,
+            "contact": 73,
+            "skill_failed": 68,
+            "timeout": null
+          },
+          "oval-1:Un giro \u00b7 Passo": {
+            "episodes": 6144,
+            "success": 1426,
+            "no_progress": 200,
+            "contact": 3779,
+            "skill_failed": 739,
+            "timeout": null
+          }
+        },
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": "consolidated",
+          "fresh": false,
+          "skills": [
+            {
+              "track": "oval-1",
+              "phase": "control",
+              "valid": 20,
+              "total": 20
+            },
+            {
+              "track": "oval-1",
+              "phase": "launch",
+              "valid": 20,
+              "total": 20
+            }
+          ]
+        },
+        "episodeReasons": {
+          "running": 32
+        },
+        "episodes": [
+          {
+            "index": 0,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 1,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 2,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 3,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 4,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 5,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 6,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 7,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 8,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 9,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 10,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 11,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 12,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 13,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 14,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 15,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 16,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 17,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 18,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 19,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 20,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 21,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 22,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 23,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 24,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 25,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 26,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 27,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 28,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 29,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 30,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 31,
+            "phase": "pace",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          }
+        ],
+        "latestChecks": [
+          {
+            "round": 86,
+            "phase": "pace",
+            "valid": 0,
+            "total": 20,
+            "retained": false,
+            "tested": 0,
+            "stage": null,
+            "median": null
+          },
+          {
+            "round": 87,
+            "phase": "pace",
+            "valid": 0,
+            "total": 20,
+            "retained": false,
+            "tested": 0,
+            "stage": null,
+            "median": null
+          },
+          {
+            "round": 88,
+            "phase": "pace",
+            "valid": 0,
+            "total": 20,
+            "retained": false,
+            "tested": 0,
+            "stage": null,
+            "median": null
+          },
+          {
+            "round": 89,
+            "phase": "pace",
+            "valid": 0,
+            "total": 20,
+            "retained": false,
+            "tested": 0,
+            "stage": null,
+            "median": null
+          },
+          {
+            "round": 90,
+            "phase": "pace",
+            "valid": 0,
+            "total": 20,
+            "retained": false,
+            "tested": 0,
+            "stage": null,
+            "median": null
+          },
+          {
+            "round": 91,
+            "phase": "pace",
+            "valid": 0,
+            "total": 20,
+            "retained": false,
+            "tested": 0,
+            "stage": null,
+            "median": null
+          },
+          {
+            "round": 92,
+            "phase": "pace",
+            "valid": 0,
+            "total": 20,
+            "retained": false,
+            "tested": 0,
+            "stage": null,
+            "median": null
+          },
+          {
+            "round": 93,
+            "phase": "pace",
+            "valid": 0,
+            "total": 20,
+            "retained": false,
+            "tested": 0,
+            "stage": null,
+            "median": null
+          }
+        ],
+        "candidate": "d943fe676afe906f9978781a1feedf929c9ac93192ea5dca89c1d6c5071c2d1f",
+        "actor": "1ca3250932cb565b6b54f55f7b0f6d33c8db88f8de118278380c8202a8868bd7",
+        "review": null
+      }
+    },
+    {
+      "id": "48fb12b6a56c47fb9ef555d7c954ed30",
+      "name": "Neat",
+      "track": "oval-1",
+      "profile": {
+        "algorithm": "neat",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 32,
+        "rollout": 256,
+        "seed": 2,
+        "traffic": false,
+        "version": 2
+      },
+      "checkpoint": "d25949b4d5a9f293bf9a153feaf6fed402241edaae6d1b6d514ec57e6b4650f1",
+      "modified": "2026-10-15T10:41:56.315551+00:00",
+      "storedSteps": 416655,
+      "storedSeconds": 4471.829695379973,
+      "training": {
+        "steps": 416655,
+        "seconds": 4471.829695379973,
+        "protocol": "driving-memory-1",
+        "state": {
+          "phase": "bend",
+          "phaseUpdates": 4,
+          "updates": 30,
+          "round": 6,
+          "curveReady": false,
+          "pacePressure": 0.0,
+          "rewardVersion": "balanced-driving-1",
+          "objective": null
+        },
+        "generation": 90,
+        "rewardSpec": {
+          "cleanLap": 3.0,
+          "curriculum": "corner-control-1",
+          "drillProgress": 2.0,
+          "drillSuccess": 2.0,
+          "exit": 0.5,
+          "outside": 2.0,
+          "passReward": 0.5,
+          "progressPerLap": 10.0,
+          "recovery": 0.5,
+          "referenceSpeed": 9.0,
+          "retirement": 3.0,
+          "smooth": 0.1,
+          "stall": 0.5,
+          "timeControl": 0.5,
+          "timePace": 2.0,
+          "understeer": 1.0,
+          "version": "balanced-driving-1"
+        },
+        "task": {
+          "distance": 140.0,
+          "label": "Ingresso curva \u00b7 140 m",
+          "laps": 1,
+          "limitSeconds": 45.0,
+          "opponents": 0,
+          "phase": "bend",
+          "rewardVersion": "balanced-driving-1",
+          "stall": {
+            "creditMeters": 1.0,
+            "grace": 2.0,
+            "maxNoProgressSeconds": 15.0,
+            "slowSeconds": 4.0
+          },
+          "teacher": "traffic-pursuit-2",
+          "version": "corner-control-1"
+        },
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": {
+          "bestFitness": 3.977764820755594,
+          "connections": 78,
+          "fitness": 3.977764820755594,
+          "generation": 90,
+          "nodes": 5,
+          "selectionUnusedTime": {
+            "max": 0.16227405316551066,
+            "mean": 0.07039301206339833
+          },
+          "species": 1
+        },
+        "statistics": {
+          "episodes": 960,
+          "success": 283,
+          "no_progress": 183,
+          "contact": 456,
+          "skill_failed": 35,
+          "timeout": 3,
+          "window": 0,
+          "pedalCounts": {
+            "brake": 11735,
+            "coast": 5291,
+            "gas": 36698
+          },
+          "simulatedSeconds": 6939.433333333327
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": "consolidated",
+          "fresh": false,
+          "skills": [
+            {
+              "track": "oval-1",
+              "phase": "pace",
+              "valid": 20,
+              "total": 20
+            },
+            {
+              "track": "oval-1",
+              "phase": "control",
+              "valid": 20,
+              "total": 20
+            },
+            {
+              "track": "oval-1",
+              "phase": "launch",
+              "valid": 20,
+              "total": 20
+            }
+          ]
+        },
+        "episodeReasons": {
+          "running": 32
+        },
+        "episodes": [
+          {
+            "index": 0,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.16666666666666666,
+            "validProgress": 2.150571150605032,
+            "worldProgress": [
+              2.150571150605032
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 13.224561534944407,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 1,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.9248262452167353,
+            "worldProgress": [
+              1.9248262452167353
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 13.071597680932667,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 2,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.9189381619624442,
+            "worldProgress": [
+              1.9189381619624442
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 12.992420145302443,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 3,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.8881223915721819,
+            "worldProgress": [
+              1.8881223915721819
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 12.54969010127667,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 4,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.9297917721984277,
+            "worldProgress": [
+              1.9297917721984277
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 13.133442314669661,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 5,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.890883298802862,
+            "worldProgress": [
+              1.890883298802862
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 12.590860691838262,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 6,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.8264470682454714,
+            "worldProgress": [
+              1.8264470682454714
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 11.791096233457347,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 7,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.9245783376598808,
+            "worldProgress": [
+              1.9245783376598808
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 13.042523824615303,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 8,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.937214396984615,
+            "worldProgress": [
+              1.937214396984615
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 13.233741924716066,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 9,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.8839085600636452,
+            "worldProgress": [
+              1.8839085600636452
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 12.567470127949946,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 10,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.908531444665016,
+            "worldProgress": [
+              1.908531444665016
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 12.833130509027995,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 11,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.9366850610943516,
+            "worldProgress": [
+              1.9366850610943516
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 13.226491938729108,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 12,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.9363979171816936,
+            "worldProgress": [
+              1.9363979171816936
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 13.224242713664882,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 13,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.8756967871882182,
+            "worldProgress": [
+              1.8756967871882182
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 12.453090923343302,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 14,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.9286187013180438,
+            "worldProgress": [
+              1.9286187013180438
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 13.098206048883025,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 15,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.8916300527164367,
+            "worldProgress": [
+              1.8916300527164367
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 12.601645539163728,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 16,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.8454133333049754,
+            "worldProgress": [
+              1.8454133333049754
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 12.077904982840014,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 17,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.9145976477132365,
+            "worldProgress": [
+              1.9145976477132365
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 12.923870839185245,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 18,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.9177347931887994,
+            "worldProgress": [
+              1.9177347931887994
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 12.973066239150247,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 19,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.8859333026206002,
+            "worldProgress": [
+              1.8859333026206002
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 12.582162360447741,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 20,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.936525146868405,
+            "worldProgress": [
+              1.936525146868405
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 13.225098807126715,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 21,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.9380393247303402,
+            "worldProgress": [
+              1.9380393247303402
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 13.231944108940546,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 22,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.9145447658096941,
+            "worldProgress": [
+              1.9145447658096941
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 12.91158302651997,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 23,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.8987322227472987,
+            "worldProgress": [
+              1.8987322227472987
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 12.719257957672449,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 24,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.7843184608442186,
+            "worldProgress": [
+              1.7843184608442186
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 11.297051499178117,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 25,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.9190409029595799,
+            "worldProgress": [
+              1.9190409029595799
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 12.952793595445325,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 26,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.920731453950367,
+            "worldProgress": [
+              1.920731453950367
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 13.016338980650627,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 27,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.9220894965841069,
+            "worldProgress": [
+              1.9220894965841069
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 13.009339923287948,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 28,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.933018563444847,
+            "worldProgress": [
+              1.933018563444847
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 13.169712326362223,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 29,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.9345078858215743,
+            "worldProgress": [
+              1.9345078858215743
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 13.188617340328475,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 30,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.9014329667708694,
+            "worldProgress": [
+              1.9014329667708694
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 12.74947195489625,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 31,
+            "phase": "bend",
+            "reason": "",
+            "age": 0.15,
+            "validProgress": 1.803150840623573,
+            "worldProgress": [
+              1.803150840623573
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 6.0,
+            "speed": 11.515345586703843,
+            "worldActive": [
+              true
+            ]
+          }
+        ],
+        "latestChecks": [
+          {
+            "round": 1,
+            "phase": "launch",
+            "valid": 0,
+            "total": 20,
+            "retained": false,
+            "tested": 3,
+            "stage": null,
+            "median": null
+          },
+          {
+            "round": 2,
+            "phase": "launch",
+            "valid": 20,
+            "total": 20,
+            "retained": true,
+            "tested": 20,
+            "stage": null,
+            "median": 3.016666666666661
+          },
+          {
+            "round": 3,
+            "phase": "launch",
+            "valid": 20,
+            "total": 20,
+            "retained": true,
+            "tested": 20,
+            "stage": null,
+            "median": 2.9999999999999942
+          },
+          {
+            "round": 4,
+            "phase": "control",
+            "valid": 0,
+            "total": 20,
+            "retained": false,
+            "tested": 3,
+            "stage": null,
+            "median": null
+          },
+          {
+            "round": 5,
+            "phase": "control",
+            "valid": 20,
+            "total": 20,
+            "retained": true,
+            "tested": 20,
+            "stage": null,
+            "median": 23.01666666666664
+          },
+          {
+            "round": 6,
+            "phase": "control",
+            "valid": 20,
+            "total": 20,
+            "retained": true,
+            "tested": 20,
+            "stage": null,
+            "median": 25.58333333333316
+          }
+        ],
+        "candidate": "31011ba8a7c4a591370ed11d1db11c6b8c5ee353b9618e09ce0a966f023e5a17",
+        "actor": "7593eaa05ca2834f5737835824d3167fd9dfc0424160f699757dc9b95c8dc2a1",
+        "review": null
+      }
+    },
+    {
+      "id": "6c50d6587b5f4ae1bd0af32586a13a68",
+      "name": "PPO",
+      "track": "oval-1",
+      "profile": {
+        "algorithm": "ppo",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-32-v1",
+        "population": 32,
+        "rollout": 256,
+        "seed": 3,
+        "traffic": false,
+        "version": 1
+      },
+      "checkpoint": null,
+      "modified": null,
+      "storedSteps": 0,
+      "storedSeconds": 0.0,
+      "training": {
+        "steps": null,
+        "seconds": null,
+        "protocol": null,
+        "state": {
+          "phase": null,
+          "phaseUpdates": null,
+          "updates": null,
+          "round": null,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": null,
+          "objective": null
+        },
+        "generation": null,
+        "rewardSpec": null,
+        "task": null,
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [],
+        "candidate": null,
+        "actor": null,
+        "review": null
+      }
+    },
+    {
+      "id": "b7e1dbf2272b4051bd665914a7f430c6",
+      "name": "Pursuit",
+      "track": "oval-1",
+      "profile": {
+        "algorithm": "pure_pursuit",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-32-v1",
+        "population": 32,
+        "rollout": 256,
+        "seed": 4,
+        "traffic": false,
+        "version": 1
+      },
+      "checkpoint": "03826115c5a3aca6c4c195129a9d7fdd46caad87cbc9d893ff99b68f5e8b99d9",
+      "modified": "2026-10-11T22:59:33.993737+00:00",
+      "storedSteps": 77536,
+      "storedSeconds": 9.493183030968794,
+      "training": {
+        "steps": 77536,
+        "seconds": 9.493183030968794,
+        "protocol": null,
+        "state": {
+          "phase": "control",
+          "phaseUpdates": 1,
+          "updates": 1,
+          "round": 1,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": "control-pace-2",
+          "objective": null
+        },
+        "generation": 1,
+        "rewardSpec": null,
+        "task": null,
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [
+          {
+            "round": 1,
+            "phase": "control",
+            "valid": 10,
+            "total": 10,
+            "retained": null,
+            "tested": null,
+            "stage": null,
+            "median": 36.21682186305277
+          }
+        ],
+        "candidate": null,
+        "actor": null,
+        "review": null
+      }
+    },
+    {
+      "id": "0fa2a5af6db04e909c9e413097e3be70",
+      "name": "Clone",
+      "track": "oval-1",
+      "profile": {
+        "algorithm": "imitation",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 32,
+        "rollout": 256,
+        "seed": 5,
+        "traffic": false,
+        "version": 2
+      },
+      "checkpoint": "115f3c3d082c1c88ad91077376cf2f94331d58d61eba3863fc5323e4c2505e5c",
+      "modified": "2026-10-13T12:06:06.366510+00:00",
+      "storedSteps": 2013,
+      "storedSeconds": 13.476463396276813,
+      "training": {
+        "steps": 2013,
+        "seconds": 13.476463396276813,
+        "protocol": null,
+        "state": {
+          "phase": "launch",
+          "phaseUpdates": 0,
+          "updates": 0,
+          "round": 0,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": "academy-progress-1",
+          "objective": null
+        },
+        "generation": 0,
+        "rewardSpec": null,
+        "task": {
+          "distance": 1.0,
+          "label": "Partenza \u00b7 1 m",
+          "laps": 1,
+          "limitSeconds": 15.0,
+          "opponents": 0,
+          "phase": "launch",
+          "rewardVersion": "academy-progress-1",
+          "stall": {
+            "creditMeters": 1.0,
+            "grace": 2.0,
+            "maxNoProgressSeconds": 15.0,
+            "slowSeconds": 4.0
+          },
+          "teacher": "traffic-pursuit-2",
+          "version": "academy-1"
+        },
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": {},
+        "statistics": {
+          "episodes": 0,
+          "success": 0,
+          "no_progress": 0,
+          "contact": 0,
+          "skill_failed": 0,
+          "timeout": 0,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": 0.0
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {
+          "running": 32
+        },
+        "episodes": [
+          {
+            "index": 0,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5509656341895663
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.1010580177845835,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 1,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5528786790227969
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.1048152768425452,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 2,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5516822462005564
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.1024061868972899,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 3,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5480396200070174
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.0958513743416711,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 4,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5510338924372036
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.1014251304669034,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 5,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5514366990542214
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.1020344130347233,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 6,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5484264488037809
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.0969040050527608,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 7,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5490492572681092
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.097649651079342,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 8,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5483537167236818
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.096593139470897,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 9,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5494442961748973
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.0986878134229796,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 10,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5502256009900179
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.0998846207940427,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 11,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5520895485218489
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.102975469347613,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 12,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5488555078914601
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.0973324163057714,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 13,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5472967574184224
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.0948435208608305,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 14,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5499793271906981
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.0992831364711724,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 15,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5486924351280607
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.0970742082251985,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 16,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5519737774010309
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.1027962535904199,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 17,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5512996283215443
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.1016188369472095,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 18,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5497117201267088
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.0988146420253175,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 19,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5514944548515643
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.1019779497792979,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 20,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5502450339563154
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.1001209108887366,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 21,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5513084392750613
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.1016693299983504,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 22,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5481208309823842
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.09599574776259,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 23,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5494810401467021
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.0984000280806787,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 24,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5512876874151686
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.1015836755496549,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 25,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5483874543292302
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.0965816606610055,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 26,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5480110672147305
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.095801462434303,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 27,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5475808138588434
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.0951360360909288,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 28,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0500000000000012,
+            "validProgress": null,
+            "worldProgress": [
+              0.5514309901310526
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.1018376264509768,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 29,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0333333333333345,
+            "validProgress": null,
+            "worldProgress": [
+              0.5338269994608993
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.082184339858819,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 30,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0333333333333345,
+            "validProgress": null,
+            "worldProgress": [
+              0.5311631381548239
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.0773396023637003,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 31,
+            "phase": "launch",
+            "reason": "",
+            "age": 1.0333333333333345,
+            "validProgress": null,
+            "worldProgress": [
+              0.5347275105640676
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 1.0837814781374862,
+            "worldActive": [
+              true
+            ]
+          }
+        ],
+        "latestChecks": [],
+        "candidate": "5b9220cbb47214bb777d4beddb7a59a9927be28c1a8c1f427a593fdbd0d9e6d0",
+        "actor": "5b9220cbb47214bb777d4beddb7a59a9927be28c1a8c1f427a593fdbd0d9e6d0",
+        "review": null
+      }
+    },
+    {
+      "id": "594c3229110f46999ba153a8690f41c4",
+      "name": "PPO-Smooth",
+      "track": "oval-1",
+      "profile": {
+        "algorithm": "ppo_smooth",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.9995834201268338,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 32,
+        "rollout": 256,
+        "seed": 6,
+        "traffic": false,
+        "version": 2
+      },
+      "checkpoint": "219958162bcd6f5316d053fb003e6851b7dbbbd87a01f04176e721526dd1b98d",
+      "modified": "2026-10-15T10:42:34.935811+00:00",
+      "storedSteps": 0,
+      "storedSeconds": 25.570203833311098,
+      "training": {
+        "steps": 0,
+        "seconds": 25.570203833311098,
+        "protocol": "driving-memory-1",
+        "state": {
+          "phase": "launch",
+          "phaseUpdates": 0,
+          "updates": 0,
+          "round": 0,
+          "curveReady": false,
+          "pacePressure": 0.0,
+          "rewardVersion": "balanced-driving-1",
+          "objective": null
+        },
+        "generation": 65,
+        "rewardSpec": {
+          "cleanLap": 3.0,
+          "curriculum": "corner-control-1",
+          "drillProgress": 2.0,
+          "drillSuccess": 2.0,
+          "exit": 0.5,
+          "outside": 2.0,
+          "passReward": 0.5,
+          "progressPerLap": 10.0,
+          "recovery": 0.5,
+          "referenceSpeed": 9.0,
+          "retirement": 3.0,
+          "smooth": 0.1,
+          "stall": 0.5,
+          "timeControl": 0.5,
+          "timePace": 2.0,
+          "understeer": 1.0,
+          "version": "balanced-driving-1"
+        },
+        "task": {
+          "distance": 1.0,
+          "label": "Partenza \u00b7 1 m",
+          "laps": 1,
+          "limitSeconds": 15.0,
+          "opponents": 0,
+          "phase": "launch",
+          "rewardVersion": "valid-progress-recovery-1",
+          "stall": {
+            "creditMeters": 1.0,
+            "grace": 2.0,
+            "maxNoProgressSeconds": 15.0,
+            "slowSeconds": 4.0
+          },
+          "teacher": "traffic-pursuit-2",
+          "version": "driving-memory-1"
+        },
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": {},
+        "statistics": {
+          "episodes": 0,
+          "success": 0,
+          "no_progress": 0,
+          "contact": 0,
+          "skill_failed": 0,
+          "timeout": 0,
+          "window": 0,
+          "pedalCounts": null,
+          "simulatedSeconds": 0.0
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": true,
+          "skills": []
+        },
+        "episodeReasons": {
+          "running": 32
+        },
+        "episodes": [
+          {
+            "index": 0,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 1,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 2,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 3,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 4,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 5,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 6,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 7,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 8,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 9,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 10,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 11,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 12,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 13,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 14,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 15,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 16,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 17,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 18,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 19,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 20,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 21,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 22,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 23,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 24,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 25,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 26,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 27,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 28,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 29,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 30,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 31,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          }
+        ],
+        "latestChecks": [],
+        "candidate": "f996344aa1f06b892c85df1842b034ce8acd3b0a54b8d1b0b1f1758377acbc4f",
+        "actor": "f996344aa1f06b892c85df1842b034ce8acd3b0a54b8d1b0b1f1758377acbc4f",
+        "review": {
+          "kind": "familiarization",
+          "finished": 0,
+          "total": 20
+        }
+      }
+    },
+    {
+      "id": "6e985116769d4cc3affab28274153919",
+      "name": null,
+      "track": "technical-1",
+      "profile": {
+        "algorithm": "evolution",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-32-v1",
+        "population": 32,
+        "rollout": 256,
+        "seed": 1,
+        "traffic": true,
+        "version": 1
+      },
+      "checkpoint": "560e309f61df4cd7dfffa264df2deff6d38bbf616d99542cab3dea1af056b6ba",
+      "modified": "2026-10-11T23:01:33.510550+00:00",
+      "storedSteps": 4032,
+      "storedSeconds": 12.819102013952943,
+      "training": {
+        "steps": 4032,
+        "seconds": 12.819102013952943,
+        "protocol": null,
+        "state": {
+          "phase": "traffic",
+          "phaseUpdates": 0,
+          "updates": 0,
+          "round": 0,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": "control-pace-2",
+          "objective": null
+        },
+        "generation": 0,
+        "rewardSpec": null,
+        "task": null,
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [],
+        "candidate": null,
+        "actor": "13c74a8f853d087409dbe4c15f490fb78ec14edcfb12b65fa642962a12328149",
+        "review": null
+      }
+    },
+    {
+      "id": "48fb12b6a56c47fb9ef555d7c954ed30",
+      "name": null,
+      "track": "technical-1",
+      "profile": {
+        "algorithm": "neat",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-32-v1",
+        "population": 32,
+        "rollout": 256,
+        "seed": 2,
+        "traffic": false,
+        "version": 1
+      },
+      "checkpoint": null,
+      "modified": null,
+      "storedSteps": 0,
+      "storedSeconds": 0.0,
+      "training": {
+        "steps": null,
+        "seconds": null,
+        "protocol": null,
+        "state": {
+          "phase": null,
+          "phaseUpdates": null,
+          "updates": null,
+          "round": null,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": null,
+          "objective": null
+        },
+        "generation": null,
+        "rewardSpec": null,
+        "task": null,
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [],
+        "candidate": null,
+        "actor": null,
+        "review": null
+      }
+    },
+    {
+      "id": "6c50d6587b5f4ae1bd0af32586a13a68",
+      "name": null,
+      "track": "technical-1",
+      "profile": {
+        "algorithm": "ppo",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-32-v1",
+        "population": 32,
+        "rollout": 256,
+        "seed": 3,
+        "traffic": false,
+        "version": 1
+      },
+      "checkpoint": null,
+      "modified": null,
+      "storedSteps": 0,
+      "storedSeconds": 0.0,
+      "training": {
+        "steps": null,
+        "seconds": null,
+        "protocol": null,
+        "state": {
+          "phase": null,
+          "phaseUpdates": null,
+          "updates": null,
+          "round": null,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": null,
+          "objective": null
+        },
+        "generation": null,
+        "rewardSpec": null,
+        "task": null,
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [],
+        "candidate": null,
+        "actor": null,
+        "review": null
+      }
+    },
+    {
+      "id": "b7e1dbf2272b4051bd665914a7f430c6",
+      "name": null,
+      "track": "technical-1",
+      "profile": {
+        "algorithm": "evolution",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-32-v1",
+        "population": 32,
+        "rollout": 256,
+        "seed": 4,
+        "traffic": false,
+        "version": 1
+      },
+      "checkpoint": "4d69628fde645c3f015533319d70268a4d66ca7411fed63aab4a2033083f48c4",
+      "modified": "2026-10-11T23:01:08.458380+00:00",
+      "storedSteps": 58080,
+      "storedSeconds": 14.53522481105756,
+      "training": {
+        "steps": 58080,
+        "seconds": 14.53522481105756,
+        "protocol": null,
+        "state": {
+          "phase": "control",
+          "phaseUpdates": 0,
+          "updates": 0,
+          "round": 0,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": "control-pace-2",
+          "objective": null
+        },
+        "generation": 0,
+        "rewardSpec": null,
+        "task": null,
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [],
+        "candidate": null,
+        "actor": "bf0fc77caaae07263b60a58a30a8d5799a038a39b24284d7251d0ebc86b1d61b",
+        "review": null
+      }
+    },
+    {
+      "id": "0fa2a5af6db04e909c9e413097e3be70",
+      "name": null,
+      "track": "technical-1",
+      "profile": {
+        "algorithm": "imitation",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-32-v1",
+        "population": 32,
+        "rollout": 256,
+        "seed": 5,
+        "traffic": false,
+        "version": 1
+      },
+      "checkpoint": null,
+      "modified": null,
+      "storedSteps": 0,
+      "storedSeconds": 0.0,
+      "training": {
+        "steps": null,
+        "seconds": null,
+        "protocol": null,
+        "state": {
+          "phase": null,
+          "phaseUpdates": null,
+          "updates": null,
+          "round": null,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": null,
+          "objective": null
+        },
+        "generation": null,
+        "rewardSpec": null,
+        "task": null,
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [],
+        "candidate": null,
+        "actor": null,
+        "review": null
+      }
+    },
+    {
+      "id": "594c3229110f46999ba153a8690f41c4",
+      "name": null,
+      "track": "technical-1",
+      "profile": {
+        "algorithm": "ppo_smooth",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-32-v1",
+        "population": 32,
+        "rollout": 256,
+        "seed": 6,
+        "traffic": false,
+        "version": 1
+      },
+      "checkpoint": null,
+      "modified": null,
+      "storedSteps": 0,
+      "storedSeconds": 0.0,
+      "training": {
+        "steps": null,
+        "seconds": null,
+        "protocol": null,
+        "state": {
+          "phase": null,
+          "phaseUpdates": null,
+          "updates": null,
+          "round": null,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": null,
+          "objective": null
+        },
+        "generation": null,
+        "rewardSpec": null,
+        "task": null,
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [],
+        "candidate": null,
+        "actor": null,
+        "review": null
+      }
+    },
+    {
+      "id": "6e985116769d4cc3affab28274153919",
+      "name": null,
+      "track": "varano-short-1",
+      "profile": {
+        "algorithm": "evolution",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-42-v2",
+        "population": 32,
+        "rollout": 256,
+        "seed": 1,
+        "traffic": false,
+        "version": 1
+      },
+      "checkpoint": "698f502c5cd3458ea5a133f6c9df196c7f8c36a450c568e0b7025091e70aa403",
+      "modified": "2026-10-12T22:00:01.000291+00:00",
+      "storedSteps": 40828800,
+      "storedSeconds": 12962.843054965306,
+      "training": {
+        "steps": 40828800,
+        "seconds": 12962.843054965306,
+        "protocol": null,
+        "state": {
+          "phase": "control",
+          "phaseUpdates": 50,
+          "updates": 50,
+          "round": 10,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": "control-pace-3",
+          "objective": null
+        },
+        "generation": 50,
+        "rewardSpec": null,
+        "task": {
+          "laps": 1,
+          "limitSeconds": 421.71428571428527,
+          "version": "driving-task-2"
+        },
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [
+          {
+            "round": 3,
+            "phase": "control",
+            "valid": 0,
+            "total": 10,
+            "retained": null,
+            "tested": null,
+            "stage": null,
+            "median": null
+          },
+          {
+            "round": 4,
+            "phase": "control",
+            "valid": 0,
+            "total": 10,
+            "retained": null,
+            "tested": null,
+            "stage": null,
+            "median": null
+          },
+          {
+            "round": 5,
+            "phase": "control",
+            "valid": 0,
+            "total": 10,
+            "retained": null,
+            "tested": null,
+            "stage": null,
+            "median": null
+          },
+          {
+            "round": 6,
+            "phase": "control",
+            "valid": 0,
+            "total": 10,
+            "retained": null,
+            "tested": null,
+            "stage": null,
+            "median": null
+          },
+          {
+            "round": 7,
+            "phase": "control",
+            "valid": 0,
+            "total": 10,
+            "retained": null,
+            "tested": null,
+            "stage": null,
+            "median": null
+          },
+          {
+            "round": 8,
+            "phase": "control",
+            "valid": 0,
+            "total": 10,
+            "retained": null,
+            "tested": null,
+            "stage": null,
+            "median": null
+          },
+          {
+            "round": 9,
+            "phase": "control",
+            "valid": 0,
+            "total": 10,
+            "retained": null,
+            "tested": null,
+            "stage": null,
+            "median": null
+          },
+          {
+            "round": 10,
+            "phase": "control",
+            "valid": 0,
+            "total": 10,
+            "retained": null,
+            "tested": null,
+            "stage": null,
+            "median": null
+          }
+        ],
+        "candidate": null,
+        "actor": "a4a5140e11741394a254cf1d5ab8dfdd35254956df5e848e4a5c60e1df10f90d",
+        "review": null
+      }
+    },
+    {
+      "id": "48fb12b6a56c47fb9ef555d7c954ed30",
+      "name": null,
+      "track": "varano-short-1",
+      "profile": {
+        "algorithm": "neat",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-42-v2",
+        "population": 32,
+        "rollout": 256,
+        "seed": 2,
+        "traffic": false,
+        "version": 1
+      },
+      "checkpoint": null,
+      "modified": null,
+      "storedSteps": 0,
+      "storedSeconds": 0.0,
+      "training": {
+        "steps": null,
+        "seconds": null,
+        "protocol": null,
+        "state": {
+          "phase": null,
+          "phaseUpdates": null,
+          "updates": null,
+          "round": null,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": null,
+          "objective": null
+        },
+        "generation": null,
+        "rewardSpec": null,
+        "task": null,
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [],
+        "candidate": null,
+        "actor": null,
+        "review": null
+      }
+    },
+    {
+      "id": "6c50d6587b5f4ae1bd0af32586a13a68",
+      "name": null,
+      "track": "varano-short-1",
+      "profile": {
+        "algorithm": "ppo",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-42-v2",
+        "population": 32,
+        "rollout": 256,
+        "seed": 3,
+        "traffic": false,
+        "version": 1
+      },
+      "checkpoint": null,
+      "modified": null,
+      "storedSteps": 0,
+      "storedSeconds": 0.0,
+      "training": {
+        "steps": null,
+        "seconds": null,
+        "protocol": null,
+        "state": {
+          "phase": null,
+          "phaseUpdates": null,
+          "updates": null,
+          "round": null,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": null,
+          "objective": null
+        },
+        "generation": null,
+        "rewardSpec": null,
+        "task": null,
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [],
+        "candidate": null,
+        "actor": null,
+        "review": null
+      }
+    },
+    {
+      "id": "b7e1dbf2272b4051bd665914a7f430c6",
+      "name": null,
+      "track": "varano-short-1",
+      "profile": {
+        "algorithm": "pure_pursuit",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-42-v2",
+        "population": 32,
+        "rollout": 256,
+        "seed": 4,
+        "traffic": false,
+        "version": 1
+      },
+      "checkpoint": null,
+      "modified": null,
+      "storedSteps": 0,
+      "storedSeconds": 0.0,
+      "training": {
+        "steps": null,
+        "seconds": null,
+        "protocol": null,
+        "state": {
+          "phase": null,
+          "phaseUpdates": null,
+          "updates": null,
+          "round": null,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": null,
+          "objective": null
+        },
+        "generation": null,
+        "rewardSpec": null,
+        "task": null,
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [],
+        "candidate": null,
+        "actor": null,
+        "review": null
+      }
+    },
+    {
+      "id": "0fa2a5af6db04e909c9e413097e3be70",
+      "name": null,
+      "track": "varano-short-1",
+      "profile": {
+        "algorithm": "imitation",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-42-v2",
+        "population": 32,
+        "rollout": 256,
+        "seed": 5,
+        "traffic": false,
+        "version": 1
+      },
+      "checkpoint": null,
+      "modified": null,
+      "storedSteps": 0,
+      "storedSeconds": 0.0,
+      "training": {
+        "steps": null,
+        "seconds": null,
+        "protocol": null,
+        "state": {
+          "phase": null,
+          "phaseUpdates": null,
+          "updates": null,
+          "round": null,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": null,
+          "objective": null
+        },
+        "generation": null,
+        "rewardSpec": null,
+        "task": null,
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [],
+        "candidate": null,
+        "actor": null,
+        "review": null
+      }
+    },
+    {
+      "id": "594c3229110f46999ba153a8690f41c4",
+      "name": null,
+      "track": "varano-short-1",
+      "profile": {
+        "algorithm": "ppo_smooth",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-42-v2",
+        "population": 32,
+        "rollout": 256,
+        "seed": 6,
+        "traffic": false,
+        "version": 1
+      },
+      "checkpoint": null,
+      "modified": null,
+      "storedSteps": 0,
+      "storedSeconds": 0.0,
+      "training": {
+        "steps": null,
+        "seconds": null,
+        "protocol": null,
+        "state": {
+          "phase": null,
+          "phaseUpdates": null,
+          "updates": null,
+          "round": null,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": null,
+          "objective": null
+        },
+        "generation": null,
+        "rewardSpec": null,
+        "task": null,
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [],
+        "candidate": null,
+        "actor": null,
+        "review": null
+      }
+    },
+    {
+      "id": "6e985116769d4cc3affab28274153919",
+      "name": null,
+      "track": "mallory-oval-1",
+      "profile": {
+        "algorithm": "evolution",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 32,
+        "rollout": 256,
+        "seed": 1,
+        "traffic": false,
+        "version": 2
+      },
+      "checkpoint": "58a5c953329a916d50cb9ddfeddd96ebf937c4435c912eb318af9785ca7e1456",
+      "modified": "2026-10-13T09:50:12.839532+00:00",
+      "storedSteps": 1295,
+      "storedSeconds": 23.163418458920205,
+      "training": {
+        "steps": 1295,
+        "seconds": 23.163418458920205,
+        "protocol": null,
+        "state": {
+          "phase": "launch",
+          "phaseUpdates": 0,
+          "updates": 0,
+          "round": 0,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": "academy-progress-1",
+          "objective": null
+        },
+        "generation": 0,
+        "rewardSpec": null,
+        "task": {
+          "distance": 1.0,
+          "label": "Partenza \u00b7 1 m",
+          "laps": 1,
+          "limitSeconds": 15.0,
+          "opponents": 0,
+          "phase": "launch",
+          "rewardVersion": "academy-progress-1",
+          "stall": {
+            "creditMeters": 1.0,
+            "grace": 2.0,
+            "maxNoProgressSeconds": 15.0,
+            "slowSeconds": 4.0
+          },
+          "teacher": "traffic-pursuit-2",
+          "version": "academy-1"
+        },
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": {},
+        "statistics": {
+          "episodes": 0,
+          "success": 0,
+          "no_progress": 0,
+          "contact": 0,
+          "skill_failed": 0,
+          "timeout": 0,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": 0.0
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {
+          "running": 32
+        },
+        "episodes": [
+          {
+            "index": 0,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6833333333333338,
+            "validProgress": null,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 1,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6833333333333338,
+            "validProgress": null,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 2,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6833333333333338,
+            "validProgress": null,
+            "worldProgress": [
+              0.0005062722293587285
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 3,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6833333333333338,
+            "validProgress": null,
+            "worldProgress": [
+              0.0856000416289362
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.23701757657379172,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 4,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6833333333333338,
+            "validProgress": null,
+            "worldProgress": [
+              0.017800405563548338
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.044633979018225745,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 5,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6833333333333338,
+            "validProgress": null,
+            "worldProgress": [
+              0.19364685306356932
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.5388143278376732,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 6,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6833333333333338,
+            "validProgress": null,
+            "worldProgress": [
+              0.29200174118022915
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.8203979690800817,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 7,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6833333333333338,
+            "validProgress": null,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 8,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6833333333333338,
+            "validProgress": null,
+            "worldProgress": [
+              0.041704043687900594
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.11401899267205244,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 9,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6833333333333338,
+            "validProgress": null,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 10,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6833333333333338,
+            "validProgress": null,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 11,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6833333333333338,
+            "validProgress": null,
+            "worldProgress": [
+              0.15062116110379975
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.42254321682596385,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 12,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6833333333333338,
+            "validProgress": null,
+            "worldProgress": [
+              0.015719225521593216
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.03840214183696889,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 13,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6833333333333338,
+            "validProgress": null,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 14,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6833333333333338,
+            "validProgress": null,
+            "worldProgress": [
+              0.16353740283454954
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.4647333934536389,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 15,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6666666666666671,
+            "validProgress": null,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 16,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6666666666666671,
+            "validProgress": null,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 17,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6666666666666671,
+            "validProgress": null,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 18,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6666666666666671,
+            "validProgress": null,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 19,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6666666666666671,
+            "validProgress": null,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 20,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6666666666666671,
+            "validProgress": null,
+            "worldProgress": [
+              0.015184625670030982
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.016983611786032367,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 21,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6666666666666671,
+            "validProgress": null,
+            "worldProgress": [
+              0.0012119343281256079
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 22,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6666666666666671,
+            "validProgress": null,
+            "worldProgress": [
+              0.053422104269202464
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.14560505760789547,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 23,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6666666666666671,
+            "validProgress": null,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 24,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6666666666666671,
+            "validProgress": null,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 25,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6666666666666671,
+            "validProgress": null,
+            "worldProgress": [
+              0.12333182288284661
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.3181516116920126,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 26,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6666666666666671,
+            "validProgress": null,
+            "worldProgress": [
+              0.01511020066857327
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0413766496351855,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 27,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6666666666666671,
+            "validProgress": null,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 28,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6666666666666671,
+            "validProgress": null,
+            "worldProgress": [
+              0.32307282595013476
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.9340853588296759,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 29,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6666666666666671,
+            "validProgress": null,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 30,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6666666666666671,
+            "validProgress": null,
+            "worldProgress": [
+              0.3298018532641436
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.9585330268541703,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 31,
+            "phase": "launch",
+            "reason": "",
+            "age": 0.6666666666666671,
+            "validProgress": null,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          }
+        ],
+        "latestChecks": [],
+        "candidate": null,
+        "actor": "d574c82a96355bc39b566b63e4599aaa61df17945b65603f407b9a11ff1ba9fa",
+        "review": null
+      }
+    },
+    {
+      "id": "48fb12b6a56c47fb9ef555d7c954ed30",
+      "name": null,
+      "track": "mallory-oval-1",
+      "profile": {
+        "algorithm": "neat",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-42-v2",
+        "population": 32,
+        "rollout": 256,
+        "seed": 2,
+        "traffic": false,
+        "version": 1
+      },
+      "checkpoint": null,
+      "modified": null,
+      "storedSteps": 0,
+      "storedSeconds": 0.0,
+      "training": {
+        "steps": null,
+        "seconds": null,
+        "protocol": null,
+        "state": {
+          "phase": null,
+          "phaseUpdates": null,
+          "updates": null,
+          "round": null,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": null,
+          "objective": null
+        },
+        "generation": null,
+        "rewardSpec": null,
+        "task": null,
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [],
+        "candidate": null,
+        "actor": null,
+        "review": null
+      }
+    },
+    {
+      "id": "6c50d6587b5f4ae1bd0af32586a13a68",
+      "name": null,
+      "track": "mallory-oval-1",
+      "profile": {
+        "algorithm": "ppo",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-42-v2",
+        "population": 32,
+        "rollout": 256,
+        "seed": 3,
+        "traffic": false,
+        "version": 1
+      },
+      "checkpoint": null,
+      "modified": null,
+      "storedSteps": 0,
+      "storedSeconds": 0.0,
+      "training": {
+        "steps": null,
+        "seconds": null,
+        "protocol": null,
+        "state": {
+          "phase": null,
+          "phaseUpdates": null,
+          "updates": null,
+          "round": null,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": null,
+          "objective": null
+        },
+        "generation": null,
+        "rewardSpec": null,
+        "task": null,
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [],
+        "candidate": null,
+        "actor": null,
+        "review": null
+      }
+    },
+    {
+      "id": "b7e1dbf2272b4051bd665914a7f430c6",
+      "name": null,
+      "track": "mallory-oval-1",
+      "profile": {
+        "algorithm": "pure_pursuit",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-42-v2",
+        "population": 32,
+        "rollout": 256,
+        "seed": 4,
+        "traffic": false,
+        "version": 1
+      },
+      "checkpoint": null,
+      "modified": null,
+      "storedSteps": 0,
+      "storedSeconds": 0.0,
+      "training": {
+        "steps": null,
+        "seconds": null,
+        "protocol": null,
+        "state": {
+          "phase": null,
+          "phaseUpdates": null,
+          "updates": null,
+          "round": null,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": null,
+          "objective": null
+        },
+        "generation": null,
+        "rewardSpec": null,
+        "task": null,
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [],
+        "candidate": null,
+        "actor": null,
+        "review": null
+      }
+    },
+    {
+      "id": "0fa2a5af6db04e909c9e413097e3be70",
+      "name": null,
+      "track": "mallory-oval-1",
+      "profile": {
+        "algorithm": "imitation",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-42-v2",
+        "population": 32,
+        "rollout": 256,
+        "seed": 5,
+        "traffic": false,
+        "version": 1
+      },
+      "checkpoint": null,
+      "modified": null,
+      "storedSteps": 0,
+      "storedSeconds": 0.0,
+      "training": {
+        "steps": null,
+        "seconds": null,
+        "protocol": null,
+        "state": {
+          "phase": null,
+          "phaseUpdates": null,
+          "updates": null,
+          "round": null,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": null,
+          "objective": null
+        },
+        "generation": null,
+        "rewardSpec": null,
+        "task": null,
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [],
+        "candidate": null,
+        "actor": null,
+        "review": null
+      }
+    },
+    {
+      "id": "594c3229110f46999ba153a8690f41c4",
+      "name": null,
+      "track": "mallory-oval-1",
+      "profile": {
+        "algorithm": "ppo_smooth",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.995,
+        "hidden": 16,
+        "learningRate": 0.0003,
+        "mutation": 0.15,
+        "observation": "race-42-v2",
+        "population": 32,
+        "rollout": 256,
+        "seed": 6,
+        "traffic": false,
+        "version": 1
+      },
+      "checkpoint": null,
+      "modified": null,
+      "storedSteps": 0,
+      "storedSeconds": 0.0,
+      "training": {
+        "steps": null,
+        "seconds": null,
+        "protocol": null,
+        "state": {
+          "phase": null,
+          "phaseUpdates": null,
+          "updates": null,
+          "round": null,
+          "curveReady": null,
+          "pacePressure": null,
+          "rewardVersion": null,
+          "objective": null
+        },
+        "generation": null,
+        "rewardSpec": null,
+        "task": null,
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": null,
+        "statistics": {
+          "episodes": null,
+          "success": null,
+          "no_progress": null,
+          "contact": null,
+          "skill_failed": null,
+          "timeout": null,
+          "window": null,
+          "pedalCounts": null,
+          "simulatedSeconds": null
+        },
+        "epoch": {
+          "version": null,
+          "startedSteps": null,
+          "episodes": null,
+          "pedalCounts": null
+        },
+        "epochTasks": {},
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": null,
+          "fresh": null,
+          "skills": []
+        },
+        "episodeReasons": {},
+        "episodes": [],
+        "latestChecks": [],
+        "candidate": null,
+        "actor": null,
+        "review": null
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "driver": "6e985116769d4cc3affab28274153919",
+      "track": "oval-1",
+      "objective": "impara_infinito",
+      "checkpoint": "87d70a646da0dbff232f6786abe347b882dd5513ceb85f72591f00e70a2fce7c",
+      "modified": "2026-10-15T10:35:20.544885+00:00",
+      "training": {
+        "steps": 496161,
+        "seconds": 3372.2402382501896,
+        "protocol": "driving-memory-1",
+        "state": {
+          "phase": "control",
+          "phaseUpdates": 1,
+          "updates": 35,
+          "round": 0,
+          "curveReady": false,
+          "pacePressure": 0.0,
+          "rewardVersion": "balanced-driving-2",
+          "objective": "impara_infinito"
+        },
+        "generation": 160,
+        "rewardSpec": {
+          "cleanLap": 3.0,
+          "curriculum": "evo-progressive-1",
+          "drillProgress": 2.0,
+          "drillSuccess": 2.0,
+          "evoVersion": "evo-progressive-1",
+          "exit": 0.5,
+          "outside": 2.0,
+          "passReward": 0.5,
+          "progressPerLap": 10.0,
+          "recovery": 0.5,
+          "referenceSpeed": 9.0,
+          "retirement": 3.0,
+          "smooth": 0.1,
+          "stall": 3.0,
+          "timeControl": 0.5,
+          "timePace": 2.0,
+          "understeer": 1.0,
+          "version": "balanced-driving-2"
+        },
+        "task": {
+          "continuous": true,
+          "distance": null,
+          "label": "Giri continui",
+          "laps": 1,
+          "limitSeconds": 60.0,
+          "opponents": 0,
+          "phase": "control",
+          "rewardVersion": "valid-progress-recovery-1",
+          "stall": {
+            "creditMeters": 1.0,
+            "grace": 2.0,
+            "maxNoProgressSeconds": 15.0,
+            "slowSeconds": 4.0
+          },
+          "teacher": "traffic-pursuit-2",
+          "version": "driving-memory-1"
+        },
+        "plan": {
+          "level": null,
+          "generations": null,
+          "stageGenerations": null,
+          "case": null,
+          "reliable": null
+        },
+        "metric": {
+          "bestFitness": -1.272010514805237,
+          "diversity": 0.16106956650624635,
+          "fitness": -1.272010514805237,
+          "generation": 160,
+          "mutationScale": 1.0,
+          "selectionUnusedTime": {
+            "max": 0.7252521121012453,
+            "mean": 0.697565347061666
+          },
+          "stagnation": 0
+        },
+        "statistics": {
+          "episodes": 1120,
+          "success": 0,
+          "no_progress": 25,
+          "contact": 1095,
+          "skill_failed": 0,
+          "timeout": 0,
+          "window": 0,
+          "pedalCounts": {
+            "brake": 102,
+            "coast": 469,
+            "gas": 13799
+          },
+          "simulatedSeconds": 8215.166666666673
+        },
+        "epoch": {
+          "version": "balanced-driving-2",
+          "startedSteps": 481791,
+          "episodes": 32,
+          "pedalCounts": {
+            "brake": 102,
+            "coast": 469,
+            "gas": 13799
+          }
+        },
+        "epochTasks": {
+          "oval-1:Giri continui": {
+            "episodes": 32,
+            "success": null,
+            "no_progress": 1,
+            "contact": 31,
+            "skill_failed": null,
+            "timeout": null
+          }
+        },
+        "memory": {
+          "source": null,
+          "baseHash": null,
+          "status": "consolidated",
+          "fresh": false,
+          "skills": [
+            {
+              "track": "oval-1",
+              "phase": "control",
+              "valid": 20,
+              "total": 20
+            },
+            {
+              "track": "oval-1",
+              "phase": "launch",
+              "valid": 20,
+              "total": 20
+            }
+          ]
+        },
+        "episodeReasons": {
+          "running": 32
+        },
+        "episodes": [
+          {
+            "index": 0,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 1,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 2,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 3,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 4,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 5,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 6,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 7,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 8,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 9,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 10,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 11,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 12,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 13,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 14,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 15,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 16,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 17,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 18,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 19,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 20,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 21,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 22,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 23,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 24,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 25,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 26,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 27,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 28,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 29,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 30,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          },
+          {
+            "index": 31,
+            "phase": "control",
+            "reason": "",
+            "age": 0.0,
+            "validProgress": 0.0,
+            "worldProgress": [
+              0.0
+            ],
+            "checkpoint": [
+              0
+            ],
+            "trackLimits": [
+              0
+            ],
+            "finish": [
+              null
+            ],
+            "startDistance": 0.0,
+            "speed": 0.0,
+            "worldActive": [
+              true
+            ]
+          }
+        ],
+        "latestChecks": [],
+        "candidate": "7d0d307ebdcb3d9616f9e25852f6ebdd7e78eeff97b1af024ba881d4808d6204",
+        "actor": "aace7ab06273de45c05e856d4dd2ef3eeb8296d7a58130748bb7bc271a4409ab",
+        "review": {
+          "kind": "consolidation",
+          "finished": 0,
+          "total": 120
+        }
+      }
+    }
+  ],
+  "sessions": [
+    {
+      "id": "933973ad3eb24bd684099ca5cf9ca27d",
+      "mode": "impara",
+      "status": "running",
+      "updated": "2026-10-15T11:50:25.517600+00:00",
+      "driver": "6e985116769d4cc3affab28274153919",
+      "training": {
+        "seconds": 419.2495056695625,
+        "steps": 415518
+      }
+    },
+    {
+      "id": "21e4668584ca43d1b66724beb34237e3",
+      "mode": "impara",
+      "status": "interrupted",
+      "updated": "2026-10-15T10:42:34.968440+00:00",
+      "driver": "594c3229110f46999ba153a8690f41c4",
+      "training": {
+        "seconds": 25.570203833311098,
+        "steps": 0
+      }
+    },
+    {
+      "id": "f99e6e20478f474bb86d081d69ecc07d",
+      "mode": "impara",
+      "status": "interrupted",
+      "updated": "2026-10-15T10:42:07.509467+00:00",
+      "driver": "48fb12b6a56c47fb9ef555d7c954ed30",
+      "training": {
+        "seconds": 52.361181191387004,
+        "steps": 54013
+      }
+    },
+    {
+      "id": "5268d5f7ba9f469ba77cddf4f797fa37",
+      "mode": "impara",
+      "status": "interrupted",
+      "updated": "2026-10-15T10:40:48.012456+00:00",
+      "driver": "6e985116769d4cc3affab28274153919",
+      "training": {
+        "seconds": 311.6283764096661,
+        "steps": 243310
+      }
+    },
+    {
+      "id": "f671bbf5ee9a4f5a9fffcfc0563cf896",
+      "mode": "impara_infinito",
+      "status": "interrupted",
+      "updated": "2026-10-15T10:35:22.332567+00:00",
+      "driver": "6e985116769d4cc3affab28274153919",
+      "training": {
+        "seconds": 7.279489475869923,
+        "steps": 0
+      }
+    },
+    {
+      "id": "33fea24074764e93b56eb954464d7553",
+      "mode": "qualifica",
+      "status": "complete",
+      "updated": "2026-10-15T10:34:28.446288+00:00",
+      "driver": null,
+      "training": null
+    },
+    {
+      "id": "2dc967ba1598422ab311eccc4bff8578",
+      "mode": "impara",
+      "status": "interrupted",
+      "updated": "2026-10-15T10:34:00.655542+00:00",
+      "driver": "6e985116769d4cc3affab28274153919",
+      "training": {
+        "seconds": 2969.645905528989,
+        "steps": 2236552
+      }
+    },
+    {
+      "id": "b914250a5cc44d1fba1e93ee3787ad53",
+      "mode": "impara",
+      "status": "interrupted",
+      "updated": "2026-10-14T21:29:42.834399+00:00",
+      "driver": "6e985116769d4cc3affab28274153919",
+      "training": {
+        "seconds": 1872.9290987439672,
+        "steps": 1490542
+      }
+    },
+    {
+      "id": "6c2e503377ac4a70a513674fcf76eebb",
+      "mode": "impara_infinito",
+      "status": "interrupted",
+      "updated": "2026-10-14T20:58:23.533215+00:00",
+      "driver": "6e985116769d4cc3affab28274153919",
+      "training": {
+        "seconds": 24.821564306810615,
+        "steps": 14370
+      }
+    },
+    {
+      "id": "56fa9cf19bcb4acd83663a6b37b530c7",
+      "mode": "impara",
+      "status": "interrupted",
+      "updated": "2026-10-14T20:57:12.385772+00:00",
+      "driver": "6e985116769d4cc3affab28274153919",
+      "training": {
+        "seconds": 7138.00647322347,
+        "steps": 6552180
+      }
+    },
+    {
+      "id": "b0c2cbeb4db746d4a2c596c026fbca6e",
+      "mode": "impara",
+      "status": "interrupted",
+      "updated": "2026-10-14T18:57:39.810091+00:00",
+      "driver": "6e985116769d4cc3affab28274153919",
+      "training": {
+        "seconds": 1203.0517140496013,
+        "steps": 978660
+      }
+    },
+    {
+      "id": "8bcc0503095a4f2fa76bf05e3fb60a4a",
+      "mode": "impara",
+      "status": "interrupted",
+      "updated": "2026-10-14T16:36:23.800544+00:00",
+      "driver": "6e985116769d4cc3affab28274153919",
+      "training": {
+        "seconds": 562.9770552865011,
+        "steps": 350233
+      }
+    },
+    {
+      "id": "fccf9e8751744e51ad2f99fe6d8b3817",
+      "mode": "impara",
+      "status": "interrupted",
+      "updated": "2026-10-14T16:26:46.072461+00:00",
+      "driver": "6e985116769d4cc3affab28274153919",
+      "training": {
+        "seconds": 110.27540469970518,
+        "steps": 72686
+      }
+    },
+    {
+      "id": "db69293c2da64311805dc3f3ffedf21d",
+      "mode": "impara_infinito",
+      "status": "interrupted",
+      "updated": "2026-10-13T22:35:06.051183+00:00",
+      "driver": "6e985116769d4cc3affab28274153919",
+      "training": {
+        "seconds": 1769.8521101736114,
+        "steps": 262229
+      }
+    },
+    {
+      "id": "8b5c18f00261486788825c23cae9a612",
+      "mode": "qualifica",
+      "status": "complete",
+      "updated": "2026-10-13T21:56:50.452481+00:00",
+      "driver": null,
+      "training": null
+    },
+    {
+      "id": "a9f519b0883649d9ad52363831669631",
+      "mode": "impara_infinito",
+      "status": "interrupted",
+      "updated": "2026-10-13T21:56:29.099100+00:00",
+      "driver": "6e985116769d4cc3affab28274153919",
+      "training": {
+        "seconds": 1570.2870742938976,
+        "steps": 219562
+      }
+    },
+    {
+      "id": "3dea9e60e70d4afbb104e66d99d2bdd9",
+      "mode": "impara",
+      "status": "interrupted",
+      "updated": "2026-10-13T21:29:55.344613+00:00",
+      "driver": "6e985116769d4cc3affab28274153919",
+      "training": {
+        "seconds": 821.8367877429991,
+        "steps": 134600
+      }
+    },
+    {
+      "id": "4cd31bf9309c4edba1ee37a25fa35eef",
+      "mode": "impara",
+      "status": "interrupted",
+      "updated": "2026-10-13T21:15:32.649280+00:00",
+      "driver": "6e985116769d4cc3affab28274153919",
+      "training": {
+        "seconds": 2.0998663190111984,
+        "steps": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{"name": "distinct-A0", "code": 0, "seconds": 10.976159698999254, "nice": 0, "governor": "performance", "temperatureC": {"thermal_zone2": 49.786, "thermal_zone0": 50.592, "thermal_zone3": 51.77, "thermal_zone1": 50.22, "thermal_zone4": 49.662}, "reportStatus": "passed"}
+{"name": "distinct-B0", "code": 0, "seconds": 10.18015804499737, "nice": 0, "governor": "performance", "temperatureC": {"thermal_zone2": 50.034, "thermal_zone0": 50.406, "thermal_zone3": 51.336, "thermal_zone1": 50.468, "thermal_zone4": 49.972}, "reportStatus": "passed"}
+{"name": "distinct-B1", "code": 0, "seconds": 10.180065085995011, "nice": 0, "governor": "performance", "temperatureC": {"thermal_zone2": 49.724, "thermal_zone0": 50.468, "thermal_zone3": 51.708, "thermal_zone1": 49.972, "thermal_zone4": 49.786}, "reportStatus": "passed"}
+{"name": "distinct-A1", "code": 0, "seconds": 10.430746177007677, "nice": 0, "governor": "performance", "temperatureC": {"thermal_zone2": 49.848, "thermal_zone0": 50.034, "thermal_zone3": 51.522, "thermal_zone1": 49.786, "thermal_zone4": 49.662}, "reportStatus": "passed"}
+Traceback (most recent call last):
+  File "/var/lib/smartpc-dashboard/v093-proof/native_selected_qualification.py", line 78, in <module>
+    assert max(comparisons[tag]['openDetail']['p95Ms'] for tag in ('B0','B1'))<min(comparisons[tag]['openDetail']['p95Ms'] for tag in ('A0','A1'))*.75
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/design/evidence/v093-implementation-2026-10-21/launch_selected_qualification.py", line 30, in <module>
+    subprocess.run(SSH+['sudo -n python3 /var/lib/smartpc-dashboard/v093-proof/native_selected_qualification.py'],check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=8', '-i', '/home/giuseppe/.ssh/smartpc_ed25519', 'smartpc@192.168.1.179', 'sudo -n python3 /var/lib/smartpc-dashboard/v093-proof/native_selected_qualification.py']' returned non-zero exit status 1.

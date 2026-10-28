@@ -1,0 +1,9 @@
+ARM numeric and direct control tests passed
+Traceback (most recent call last):
+  File "/tmp/smartpc-direct-run.py", line 19, in <module>
+    subprocess.run(['runuser','-u','smartpc','--','env',*env,*args],cwd=S.parent,stdout=out,stderr=subprocess.STDOUT,check=True,timeout=650)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['runuser', '-u', 'smartpc', '--', 'env', 'HOME=/var/lib/smartpc-dashboard', 'XDG_CONFIG_HOME=/var/lib/smartpc-dashboard/.config', 'XDG_DATA_HOME=/var/lib/smartpc-dashboard/.local/share', 'XDG_CACHE_HOME=/var/cache/smartpc-dashboard', 'OPENBLAS_NUM_THREADS=1', 'OMP_NUM_THREADS=1', 'QT_QPA_PLATFORM=eglfs', 'QT_QPA_EGLFS_INTEGRATION=eglfs_kms', 'QT_QPA_EGLFS_KMS_CONFIG=/etc/smartpc/eglfs-kms.json', 'QT_QPA_EGLFS_HIDECURSOR=1', 'QSG_RHI_BACKEND=opengl', '/var/lib/smartpc-dashboard/game-runtime/bin/python', '/var/lib/smartpc-dashboard/smartpc-direct-project/dashboard/check_game_residual_ui.py', '--theme', 'base', '--race-seconds', '8', '--output', '/var/lib/smartpc-dashboard/v09-direct-proof/base']' died with <Signals.SIGTERM: 15>.

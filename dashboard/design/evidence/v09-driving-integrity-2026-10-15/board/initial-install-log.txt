@@ -1,0 +1,17 @@
+Native base-progressive
+Passed base-progressive
+Native apple-progressive
+Passed apple-progressive
+Native functional-progressive
+Passed functional-progressive
+Native apple-neural-qualification
+Passed apple-neural-qualification
+Native apple-settings
+Traceback (most recent call last):
+  File "/var/lib/smartpc-dashboard/v09-driving-integrity-proof/qualify-install.py", line 40, in <module>
+    subprocess.run(['runuser','-u','smartpc','--','env',*env,str(PY),str(script),*args],cwd=PROJECT,stdout=out,stderr=subprocess.STDOUT,check=True,timeout=320)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['runuser', '-u', 'smartpc', '--', 'env', 'HOME=/var/lib/smartpc-dashboard', 'XDG_CONFIG_HOME=/var/lib/smartpc-dashboard/.config', 'XDG_DATA_HOME=/var/lib/smartpc-dashboard/.local/share', 'XDG_CACHE_HOME=/var/cache/smartpc-dashboard', 'QT_QPA_PLATFORM=eglfs', 'QT_QPA_EGLFS_INTEGRATION=eglfs_kms', 'QT_QPA_EGLFS_KMS_CONFIG=/etc/smartpc/eglfs-kms.json', 'QT_QPA_EGLFS_HIDECURSOR=1', 'QSG_RHI_BACKEND=opengl', 'OPENBLAS_NUM_THREADS=1', '/var/lib/smartpc-dashboard/game-runtime/bin/python', '/var/lib/smartpc-dashboard/smartpc-v09-rc17-project/dashboard/check_game_settings_ui.py', '--theme', 'apple', '--capture-dir', '/var/lib/smartpc-dashboard/v09-driving-integrity-proof/apple-settings']' returned non-zero exit status 1.

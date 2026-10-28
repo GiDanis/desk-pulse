@@ -1,0 +1,1525 @@
+{
+  "status": "completed_with_unsupported_option",
+  "plannedCases": 11,
+  "measuredCases": 10,
+  "unsupportedCases": [
+    {
+      "caseId": "aa4-3d",
+      "requestedMsaaSamples": 4,
+      "status": "unsupportedInTestedConfiguration",
+      "reason": "Multisample renderbuffers are not supported, disabling MSAA for Offscreen View3D",
+      "performanceQualified": false,
+      "log": "board/measure/aa4-3d/run.log"
+    }
+  ],
+  "productionUnchanged": true,
+  "sourceUnchanged": true,
+  "nominalSixFish": {
+    "2d": {
+      "runs": 3,
+      "callbacksMedian": 59.97365193674111,
+      "p95MinMs": 17.985014,
+      "p95MaxMs": 18.067306,
+      "p99MaxMs": 18.575145,
+      "maxIntervalMs": 40.359614,
+      "cpuOneCorePercentMedian": 30.27966101125525,
+      "rssMiBMedian": 214.49609375,
+      "rssPeakMiB": 216.1015625,
+      "gatePassCount": 3,
+      "allNear60Gates": true,
+      "stallsOver50MsTotal": 0,
+      "missedSlotRatioMax": 0.0006943480072212193,
+      "poseHzMin": 59.97441857949777,
+      "temperatureMaxC": 61.442
+    },
+    "3d": {
+      "runs": 3,
+      "callbacksMedian": 59.97000207304286,
+      "p95MinMs": 18.94994,
+      "p95MaxMs": 19.742573,
+      "p99MaxMs": 20.837459,
+      "maxIntervalMs": 42.97968,
+      "cpuOneCorePercentMedian": 75.51769300580406,
+      "rssMiBMedian": 243.109375,
+      "rssPeakMiB": 243.78125,
+      "gatePassCount": 0,
+      "allNear60Gates": false,
+      "stallsOver50MsTotal": 0,
+      "missedSlotRatioMax": 0.0016650478701262662,
+      "poseHzMin": 59.96932372559966,
+      "temperatureMaxC": 61.876
+    },
+    "delta3dMinus2d": {
+      "cpuOneCorePercentagePoints": 45.23803199454881,
+      "rssMiB": 28.61328125,
+      "cpuRatio": 2.4940072142067042
+    }
+  },
+  "cases": [
+    {
+      "status": "passed",
+      "mode": "2d",
+      "population": 1,
+      "geometryQuality": null,
+      "msaaSamples": 0,
+      "resolutionScale": 1,
+      "window": [
+        960,
+        640
+      ],
+      "qtRhiBackend": "GraphicsApi.OpenGL",
+      "actualGlContext": {
+        "vendor": "Imagination Technologies",
+        "renderer": "PowerVR B-Series BXM-4-64",
+        "version": "OpenGL ES 3.2 build 24.2@6603887",
+        "openGLES": true,
+        "formatMajor": 2,
+        "formatMinor": 0
+      },
+      "qt": "6.8.2",
+      "platform": "eglfs",
+      "seconds": 60.01170545400237,
+      "warmupSeconds": 30.0,
+      "callbacks": 3599,
+      "callbacksPerSecond": 59.97163341339388,
+      "poseTicks": 3600,
+      "poseTicksPerSecond": 59.98829682917976,
+      "p50Ms": 16.657621,
+      "p95Ms": 17.384753,
+      "p99Ms": 17.919467,
+      "maxMs": 18.733809,
+      "stallsOver50Ms": 0,
+      "estimatedMissedSlots": 0,
+      "estimatedMissedSlotRatio": 0.0,
+      "discardedLongDeltas": 0,
+      "openingToMovingSeconds": 4.518963138994877,
+      "themeIdentity": {
+        "id": "studio.applecalm",
+        "version": "1.6.5",
+        "digest": "05f3f4835cc10be86873a06dafa98b5163ce0d1382734dff377636a40dda651e"
+      },
+      "assetRevision": "e2eaa60e5ab20c616bb264ef4b2b6ef28b2ad7bead745e8bf82b9e94233917e8",
+      "sourceManifestSha256": "929a5cbcb735949f440345f709de9136efef93ee25778355160efb14eec50cc5",
+      "checks": [
+        "privateProvidersAndState",
+        "savedAppleTheme",
+        "populationReady",
+        "actualPoseTicks",
+        "pauseStopsClock",
+        "resumeRestartsClock",
+        "realHeaderClock"
+      ],
+      "physicalFramesQualified": false,
+      "scope": "Actual Main isolated fixtures; 3D procedural solid meshes with part-transform rig, two lights, no textures on fish/shadows/postprocessing/skinning",
+      "near60SoftwareGate": true,
+      "qmlWarnings": [],
+      "capabilityWarnings": [],
+      "networkAttempts": [],
+      "caseId": "one-2d",
+      "phase": "measure",
+      "resources": {
+        "cpuOneCorePercent": 16.346803270428072,
+        "rssMedianMiB": 213.52734375,
+        "rssFirstMiB": 213.52734375,
+        "rssLastMiB": 213.48046875,
+        "rssPeakMiB": 213.52734375,
+        "threadsFirst": 7,
+        "threadsLast": 7,
+        "fdsFirst": 36,
+        "fdsLast": 36,
+        "temperatureMaxC": 60.45
+      },
+      "windows": {
+        "1": {
+          "completeWindows": 59,
+          "partialTailSeconds": 0.9834056770000004,
+          "worstCallbackRate": {
+            "offsetSeconds": 1,
+            "seconds": 1,
+            "callbacks": 59,
+            "callbacksPerSecond": 59.0,
+            "p95Ms": 17.807466,
+            "maxMs": 18.120803,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 14,
+            "seconds": 1,
+            "callbacks": 60,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 17.976468,
+            "maxMs": 18.008635,
+            "stallsOver50Ms": 0
+          }
+        },
+        "10": {
+          "completeWindows": 5,
+          "partialTailSeconds": 9.983405677,
+          "worstCallbackRate": {
+            "offsetSeconds": 0,
+            "seconds": 10,
+            "callbacks": 600,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 17.375379,
+            "maxMs": 18.120803,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 10,
+            "seconds": 10,
+            "callbacks": 600,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 17.492046,
+            "maxMs": 18.484639,
+            "stallsOver50Ms": 0
+          }
+        }
+      }
+    },
+    {
+      "status": "passed",
+      "mode": "3d",
+      "population": 1,
+      "geometryQuality": "low",
+      "msaaSamples": 0,
+      "resolutionScale": 1,
+      "window": [
+        960,
+        640
+      ],
+      "qtRhiBackend": "GraphicsApi.OpenGL",
+      "actualGlContext": {
+        "vendor": "Imagination Technologies",
+        "renderer": "PowerVR B-Series BXM-4-64",
+        "version": "OpenGL ES 3.2 build 24.2@6603887",
+        "openGLES": true,
+        "formatMajor": 2,
+        "formatMinor": 0
+      },
+      "qt": "6.8.2",
+      "platform": "eglfs",
+      "seconds": 60.01069122799527,
+      "warmupSeconds": 30.0,
+      "callbacks": 3598,
+      "callbacksPerSecond": 59.955983281884215,
+      "poseTicks": 3599,
+      "poseTicksPerSecond": 59.97264697929441,
+      "p50Ms": 16.660667,
+      "p95Ms": 17.372508,
+      "p99Ms": 17.890512,
+      "maxMs": 41.377248,
+      "stallsOver50Ms": 0,
+      "estimatedMissedSlots": 3,
+      "estimatedMissedSlotRatio": 0.0008333333333333334,
+      "discardedLongDeltas": 0,
+      "openingToMovingSeconds": 4.287464371998794,
+      "themeIdentity": {
+        "id": "studio.applecalm",
+        "version": "1.6.5",
+        "digest": "05f3f4835cc10be86873a06dafa98b5163ce0d1382734dff377636a40dda651e"
+      },
+      "assetRevision": "e2eaa60e5ab20c616bb264ef4b2b6ef28b2ad7bead745e8bf82b9e94233917e8",
+      "sourceManifestSha256": "929a5cbcb735949f440345f709de9136efef93ee25778355160efb14eec50cc5",
+      "checks": [
+        "privateProvidersAndState",
+        "savedAppleTheme",
+        "populationReady",
+        "actualPoseTicks",
+        "pauseStopsClock",
+        "resumeRestartsClock",
+        "realHeaderClock"
+      ],
+      "physicalFramesQualified": false,
+      "scope": "Actual Main isolated fixtures; 3D procedural solid meshes with part-transform rig, two lights, no textures on fish/shadows/postprocessing/skinning",
+      "near60SoftwareGate": true,
+      "postMeasurement3dStats": {
+        "graphicsApiName": "OpenGL",
+        "drawCallCount": 9.0,
+        "drawVertexCount": 2700.0,
+        "renderPassCount": 1,
+        "meshDataSize": 16656.0,
+        "imageDataSize": 0.0,
+        "pipelineCount": 1,
+        "renderTime": 0.1632929891347885,
+        "renderPrepareTime": 0.12945899367332458,
+        "syncTime": 0.0480009987950325,
+        "lastCompletedGpuTime": 0.0,
+        "vmemUsedBytes": 0.0
+      },
+      "meshes": {
+        "body": {
+          "vertices": 273,
+          "triangles": 480,
+          "bufferBytes": 12312
+        },
+        "eye": {
+          "vertices": 63,
+          "triangles": 96,
+          "bufferBytes": 2664
+        },
+        "tail": {
+          "vertices": 36,
+          "triangles": 12,
+          "bufferBytes": 1008
+        },
+        "fin": {
+          "vertices": 24,
+          "triangles": 8,
+          "bufferBytes": 672
+        }
+      },
+      "renderTarget": {
+        "width": 960,
+        "height": 640
+      },
+      "gpuTimingStatus": "Uncollected; a zero is not a measured GPU duration",
+      "qmlWarnings": [],
+      "capabilityWarnings": [
+        "Particles not supported due to missing RGBA32F and RGBA16F texture format support"
+      ],
+      "networkAttempts": [],
+      "caseId": "one-3d",
+      "phase": "measure",
+      "resources": {
+        "cpuOneCorePercent": 30.24459225553124,
+        "rssMedianMiB": 243.1328125,
+        "rssFirstMiB": 243.1328125,
+        "rssLastMiB": 242.828125,
+        "rssPeakMiB": 243.2578125,
+        "threadsFirst": 7,
+        "threadsLast": 7,
+        "fdsFirst": 38,
+        "fdsLast": 38,
+        "temperatureMaxC": 61.07
+      },
+      "windows": {
+        "1": {
+          "completeWindows": 59,
+          "partialTailSeconds": 0.9815875199999979,
+          "worstCallbackRate": {
+            "offsetSeconds": 4,
+            "seconds": 1,
+            "callbacks": 59,
+            "callbacksPerSecond": 59.0,
+            "p95Ms": 17.890512,
+            "maxMs": 18.026514,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 10,
+            "seconds": 1,
+            "callbacks": 59,
+            "callbacksPerSecond": 59.0,
+            "p95Ms": 18.560228,
+            "maxMs": 41.377248,
+            "stallsOver50Ms": 0
+          }
+        },
+        "10": {
+          "completeWindows": 5,
+          "partialTailSeconds": 9.981587519999998,
+          "worstCallbackRate": {
+            "offsetSeconds": 10,
+            "seconds": 10,
+            "callbacks": 599,
+            "callbacksPerSecond": 59.9,
+            "p95Ms": 17.009962,
+            "maxMs": 41.377248,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 30,
+            "seconds": 10,
+            "callbacks": 600,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 17.525926,
+            "maxMs": 28.083074,
+            "stallsOver50Ms": 0
+          }
+        }
+      },
+      "trianglesPerFish": 900
+    },
+    {
+      "status": "passed",
+      "mode": "2d",
+      "population": 6,
+      "geometryQuality": null,
+      "msaaSamples": 0,
+      "resolutionScale": 1,
+      "window": [
+        960,
+        640
+      ],
+      "qtRhiBackend": "GraphicsApi.OpenGL",
+      "actualGlContext": {
+        "vendor": "Imagination Technologies",
+        "renderer": "PowerVR B-Series BXM-4-64",
+        "version": "OpenGL ES 3.2 build 24.2@6603887",
+        "openGLES": true,
+        "formatMajor": 2,
+        "formatMinor": 0
+      },
+      "qt": "6.8.2",
+      "platform": "eglfs",
+      "seconds": 120.00269731099979,
+      "warmupSeconds": 60.0,
+      "callbacks": 7197,
+      "callbacksPerSecond": 59.97365193674111,
+      "poseTicks": 7198,
+      "poseTicksPerSecond": 59.98198508276539,
+      "p50Ms": 16.669709,
+      "p95Ms": 17.985014,
+      "p99Ms": 18.351934,
+      "maxMs": 27.55911,
+      "stallsOver50Ms": 0,
+      "estimatedMissedSlots": 5,
+      "estimatedMissedSlotRatio": 0.0006943480072212193,
+      "discardedLongDeltas": 0,
+      "openingToMovingSeconds": 4.498998408998887,
+      "themeIdentity": {
+        "id": "studio.applecalm",
+        "version": "1.6.5",
+        "digest": "05f3f4835cc10be86873a06dafa98b5163ce0d1382734dff377636a40dda651e"
+      },
+      "assetRevision": "e2eaa60e5ab20c616bb264ef4b2b6ef28b2ad7bead745e8bf82b9e94233917e8",
+      "sourceManifestSha256": "929a5cbcb735949f440345f709de9136efef93ee25778355160efb14eec50cc5",
+      "checks": [
+        "privateProvidersAndState",
+        "savedAppleTheme",
+        "populationReady",
+        "actualPoseTicks",
+        "pauseStopsClock",
+        "resumeRestartsClock",
+        "realHeaderClock"
+      ],
+      "physicalFramesQualified": false,
+      "scope": "Actual Main isolated fixtures; 3D procedural solid meshes with part-transform rig, two lights, no textures on fish/shadows/postprocessing/skinning",
+      "near60SoftwareGate": true,
+      "qmlWarnings": [],
+      "capabilityWarnings": [],
+      "networkAttempts": [],
+      "caseId": "nominal-2d-1",
+      "phase": "measure",
+      "resources": {
+        "cpuOneCorePercent": 28.982609857810274,
+        "rssMedianMiB": 215.64453125,
+        "rssFirstMiB": 215.9765625,
+        "rssLastMiB": 215.64453125,
+        "rssPeakMiB": 216.1015625,
+        "threadsFirst": 7,
+        "threadsLast": 7,
+        "fdsFirst": 37,
+        "fdsLast": 37,
+        "temperatureMaxC": 61.132
+      },
+      "windows": {
+        "1": {
+          "completeWindows": 119,
+          "partialTailSeconds": 0.9699799830000018,
+          "worstCallbackRate": {
+            "offsetSeconds": 57,
+            "seconds": 1,
+            "callbacks": 59,
+            "callbacksPerSecond": 59.0,
+            "p95Ms": 17.915388,
+            "maxMs": 18.078765,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 83,
+            "seconds": 1,
+            "callbacks": 60,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 18.309558,
+            "maxMs": 18.590853,
+            "stallsOver50Ms": 0
+          }
+        },
+        "10": {
+          "completeWindows": 11,
+          "partialTailSeconds": 9.969979983000002,
+          "worstCallbackRate": {
+            "offsetSeconds": 50,
+            "seconds": 10,
+            "callbacks": 599,
+            "callbacksPerSecond": 59.9,
+            "p95Ms": 17.77397,
+            "maxMs": 18.72498,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 80,
+            "seconds": 10,
+            "callbacks": 600,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 18.120015,
+            "maxMs": 26.881728,
+            "stallsOver50Ms": 0
+          }
+        }
+      }
+    },
+    {
+      "status": "passed",
+      "mode": "3d",
+      "population": 6,
+      "geometryQuality": "low",
+      "msaaSamples": 0,
+      "resolutionScale": 1,
+      "window": [
+        960,
+        640
+      ],
+      "qtRhiBackend": "GraphicsApi.OpenGL",
+      "actualGlContext": {
+        "vendor": "Imagination Technologies",
+        "renderer": "PowerVR B-Series BXM-4-64",
+        "version": "OpenGL ES 3.2 build 24.2@6603887",
+        "openGLES": true,
+        "formatMajor": 2,
+        "formatMinor": 0
+      },
+      "qt": "6.8.2",
+      "platform": "eglfs",
+      "seconds": 120.0098715080021,
+      "warmupSeconds": 60.0,
+      "callbacks": 7197,
+      "callbacksPerSecond": 59.970066708388345,
+      "poseTicks": 7198,
+      "poseTicksPerSecond": 59.97839935625667,
+      "p50Ms": 16.682,
+      "p95Ms": 19.375486,
+      "p99Ms": 20.837459,
+      "maxMs": 35.081685,
+      "stallsOver50Ms": 0,
+      "estimatedMissedSlots": 12,
+      "estimatedMissedSlotRatio": 0.001664816870144284,
+      "discardedLongDeltas": 0,
+      "openingToMovingSeconds": 4.325343502001488,
+      "themeIdentity": {
+        "id": "studio.applecalm",
+        "version": "1.6.5",
+        "digest": "05f3f4835cc10be86873a06dafa98b5163ce0d1382734dff377636a40dda651e"
+      },
+      "assetRevision": "e2eaa60e5ab20c616bb264ef4b2b6ef28b2ad7bead745e8bf82b9e94233917e8",
+      "sourceManifestSha256": "929a5cbcb735949f440345f709de9136efef93ee25778355160efb14eec50cc5",
+      "checks": [
+        "privateProvidersAndState",
+        "savedAppleTheme",
+        "populationReady",
+        "actualPoseTicks",
+        "pauseStopsClock",
+        "resumeRestartsClock",
+        "realHeaderClock"
+      ],
+      "physicalFramesQualified": false,
+      "scope": "Actual Main isolated fixtures; 3D procedural solid meshes with part-transform rig, two lights, no textures on fish/shadows/postprocessing/skinning",
+      "near60SoftwareGate": false,
+      "postMeasurement3dStats": {
+        "graphicsApiName": "OpenGL",
+        "drawCallCount": 54.0,
+        "drawVertexCount": 16200.0,
+        "renderPassCount": 1,
+        "meshDataSize": 16656.0,
+        "imageDataSize": 0.0,
+        "pipelineCount": 1,
+        "renderTime": 1.451598048210144,
+        "renderPrepareTime": 1.3212629556655884,
+        "syncTime": 0.1662519872188568,
+        "lastCompletedGpuTime": 0.0,
+        "vmemUsedBytes": 0.0
+      },
+      "meshes": {
+        "body": {
+          "vertices": 273,
+          "triangles": 480,
+          "bufferBytes": 12312
+        },
+        "eye": {
+          "vertices": 63,
+          "triangles": 96,
+          "bufferBytes": 2664
+        },
+        "tail": {
+          "vertices": 36,
+          "triangles": 12,
+          "bufferBytes": 1008
+        },
+        "fin": {
+          "vertices": 24,
+          "triangles": 8,
+          "bufferBytes": 672
+        }
+      },
+      "renderTarget": {
+        "width": 960,
+        "height": 640
+      },
+      "gpuTimingStatus": "Uncollected; a zero is not a measured GPU duration",
+      "qmlWarnings": [],
+      "capabilityWarnings": [
+        "Particles not supported due to missing RGBA32F and RGBA16F texture format support"
+      ],
+      "networkAttempts": [],
+      "caseId": "nominal-3d-1",
+      "phase": "measure",
+      "resources": {
+        "cpuOneCorePercent": 84.79299162515363,
+        "rssMedianMiB": 243.57421875,
+        "rssFirstMiB": 243.78125,
+        "rssLastMiB": 243.71484375,
+        "rssPeakMiB": 243.78125,
+        "threadsFirst": 7,
+        "threadsLast": 8,
+        "fdsFirst": 38,
+        "fdsLast": 38,
+        "temperatureMaxC": 61.628
+      },
+      "windows": {
+        "1": {
+          "completeWindows": 119,
+          "partialTailSeconds": 0.9815804739999976,
+          "worstCallbackRate": {
+            "offsetSeconds": 2,
+            "seconds": 1,
+            "callbacks": 59,
+            "callbacksPerSecond": 59.0,
+            "p95Ms": 20.557498,
+            "maxMs": 20.969461,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 57,
+            "seconds": 1,
+            "callbacks": 59,
+            "callbacksPerSecond": 59.0,
+            "p95Ms": 21.032711,
+            "maxMs": 30.811767,
+            "stallsOver50Ms": 0
+          }
+        },
+        "10": {
+          "completeWindows": 11,
+          "partialTailSeconds": 9.981580473999998,
+          "worstCallbackRate": {
+            "offsetSeconds": 50,
+            "seconds": 10,
+            "callbacks": 598,
+            "callbacksPerSecond": 59.8,
+            "p95Ms": 19.813657,
+            "maxMs": 35.081685,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 60,
+            "seconds": 10,
+            "callbacks": 600,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 20.002159,
+            "maxMs": 28.978166,
+            "stallsOver50Ms": 0
+          }
+        }
+      },
+      "trianglesPerFish": 900
+    },
+    {
+      "status": "passed",
+      "mode": "3d",
+      "population": 6,
+      "geometryQuality": "low",
+      "msaaSamples": 0,
+      "resolutionScale": 1,
+      "window": [
+        960,
+        640
+      ],
+      "qtRhiBackend": "GraphicsApi.OpenGL",
+      "actualGlContext": {
+        "vendor": "Imagination Technologies",
+        "renderer": "PowerVR B-Series BXM-4-64",
+        "version": "OpenGL ES 3.2 build 24.2@6603887",
+        "openGLES": true,
+        "formatMajor": 2,
+        "formatMinor": 0
+      },
+      "qt": "6.8.2",
+      "platform": "eglfs",
+      "seconds": 120.01135835600144,
+      "warmupSeconds": 60.0,
+      "callbacks": 7196,
+      "callbacksPerSecond": 59.960991180966396,
+      "poseTicks": 7197,
+      "poseTicksPerSecond": 59.96932372559966,
+      "p50Ms": 16.672876,
+      "p95Ms": 19.742573,
+      "p99Ms": 20.766833,
+      "maxMs": 40.614783,
+      "stallsOver50Ms": 0,
+      "estimatedMissedSlots": 12,
+      "estimatedMissedSlotRatio": 0.0016650478701262662,
+      "discardedLongDeltas": 0,
+      "openingToMovingSeconds": 4.318102719997114,
+      "themeIdentity": {
+        "id": "studio.applecalm",
+        "version": "1.6.5",
+        "digest": "05f3f4835cc10be86873a06dafa98b5163ce0d1382734dff377636a40dda651e"
+      },
+      "assetRevision": "e2eaa60e5ab20c616bb264ef4b2b6ef28b2ad7bead745e8bf82b9e94233917e8",
+      "sourceManifestSha256": "929a5cbcb735949f440345f709de9136efef93ee25778355160efb14eec50cc5",
+      "checks": [
+        "privateProvidersAndState",
+        "savedAppleTheme",
+        "populationReady",
+        "actualPoseTicks",
+        "pauseStopsClock",
+        "resumeRestartsClock",
+        "realHeaderClock"
+      ],
+      "physicalFramesQualified": false,
+      "scope": "Actual Main isolated fixtures; 3D procedural solid meshes with part-transform rig, two lights, no textures on fish/shadows/postprocessing/skinning",
+      "near60SoftwareGate": false,
+      "postMeasurement3dStats": {
+        "graphicsApiName": "OpenGL",
+        "drawCallCount": 54.0,
+        "drawVertexCount": 16200.0,
+        "renderPassCount": 1,
+        "meshDataSize": 16656.0,
+        "imageDataSize": 0.0,
+        "pipelineCount": 1,
+        "renderTime": 1.4885979890823364,
+        "renderPrepareTime": 1.3475970029830933,
+        "syncTime": 0.19479401409626007,
+        "lastCompletedGpuTime": 0.0,
+        "vmemUsedBytes": 0.0
+      },
+      "meshes": {
+        "body": {
+          "vertices": 273,
+          "triangles": 480,
+          "bufferBytes": 12312
+        },
+        "eye": {
+          "vertices": 63,
+          "triangles": 96,
+          "bufferBytes": 2664
+        },
+        "tail": {
+          "vertices": 36,
+          "triangles": 12,
+          "bufferBytes": 1008
+        },
+        "fin": {
+          "vertices": 24,
+          "triangles": 8,
+          "bufferBytes": 672
+        }
+      },
+      "renderTarget": {
+        "width": 960,
+        "height": 640
+      },
+      "gpuTimingStatus": "Uncollected; a zero is not a measured GPU duration",
+      "qmlWarnings": [],
+      "capabilityWarnings": [
+        "Particles not supported due to missing RGBA32F and RGBA16F texture format support"
+      ],
+      "networkAttempts": [],
+      "caseId": "nominal-3d-2",
+      "phase": "measure",
+      "resources": {
+        "cpuOneCorePercent": 75.51769300580406,
+        "rssMedianMiB": 243.10546875,
+        "rssFirstMiB": 243.1796875,
+        "rssLastMiB": 243.35546875,
+        "rssPeakMiB": 243.35546875,
+        "threadsFirst": 7,
+        "threadsLast": 7,
+        "fdsFirst": 38,
+        "fdsLast": 38,
+        "temperatureMaxC": 61.876
+      },
+      "windows": {
+        "1": {
+          "completeWindows": 119,
+          "partialTailSeconds": 0.9848614649999945,
+          "worstCallbackRate": {
+            "offsetSeconds": 4,
+            "seconds": 1,
+            "callbacks": 59,
+            "callbacksPerSecond": 59.0,
+            "p95Ms": 19.088983,
+            "maxMs": 20.387329,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 30,
+            "seconds": 1,
+            "callbacks": 60,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 21.098503,
+            "maxMs": 27.734153,
+            "stallsOver50Ms": 0
+          }
+        },
+        "10": {
+          "completeWindows": 11,
+          "partialTailSeconds": 9.984861464999994,
+          "worstCallbackRate": {
+            "offsetSeconds": 40,
+            "seconds": 10,
+            "callbacks": 599,
+            "callbacksPerSecond": 59.9,
+            "p95Ms": 19.610697,
+            "maxMs": 38.459636,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 100,
+            "seconds": 10,
+            "callbacks": 599,
+            "callbacksPerSecond": 59.9,
+            "p95Ms": 20.193203,
+            "maxMs": 40.614783,
+            "stallsOver50Ms": 0
+          }
+        }
+      },
+      "trianglesPerFish": 900
+    },
+    {
+      "status": "passed",
+      "mode": "2d",
+      "population": 6,
+      "geometryQuality": null,
+      "msaaSamples": 0,
+      "resolutionScale": 1,
+      "window": [
+        960,
+        640
+      ],
+      "qtRhiBackend": "GraphicsApi.OpenGL",
+      "actualGlContext": {
+        "vendor": "Imagination Technologies",
+        "renderer": "PowerVR B-Series BXM-4-64",
+        "version": "OpenGL ES 3.2 build 24.2@6603887",
+        "openGLES": true,
+        "formatMajor": 2,
+        "formatMinor": 0
+      },
+      "qt": "6.8.2",
+      "platform": "eglfs",
+      "seconds": 120.00116333700134,
+      "warmupSeconds": 60.0,
+      "callbacks": 7196,
+      "callbacksPerSecond": 59.966085326950946,
+      "poseTicks": 7197,
+      "poseTicksPerSecond": 59.97441857949777,
+      "p50Ms": 16.665417,
+      "p95Ms": 18.067306,
+      "p99Ms": 18.575145,
+      "maxMs": 40.359614,
+      "stallsOver50Ms": 0,
+      "estimatedMissedSlots": 4,
+      "estimatedMissedSlotRatio": 0.0005556327267676066,
+      "discardedLongDeltas": 0,
+      "openingToMovingSeconds": 4.508144126004481,
+      "themeIdentity": {
+        "id": "studio.applecalm",
+        "version": "1.6.5",
+        "digest": "05f3f4835cc10be86873a06dafa98b5163ce0d1382734dff377636a40dda651e"
+      },
+      "assetRevision": "e2eaa60e5ab20c616bb264ef4b2b6ef28b2ad7bead745e8bf82b9e94233917e8",
+      "sourceManifestSha256": "929a5cbcb735949f440345f709de9136efef93ee25778355160efb14eec50cc5",
+      "checks": [
+        "privateProvidersAndState",
+        "savedAppleTheme",
+        "populationReady",
+        "actualPoseTicks",
+        "pauseStopsClock",
+        "resumeRestartsClock",
+        "realHeaderClock"
+      ],
+      "physicalFramesQualified": false,
+      "scope": "Actual Main isolated fixtures; 3D procedural solid meshes with part-transform rig, two lights, no textures on fish/shadows/postprocessing/skinning",
+      "near60SoftwareGate": true,
+      "qmlWarnings": [],
+      "capabilityWarnings": [],
+      "networkAttempts": [],
+      "caseId": "nominal-2d-2",
+      "phase": "measure",
+      "resources": {
+        "cpuOneCorePercent": 31.666340068588827,
+        "rssMedianMiB": 214.1328125,
+        "rssFirstMiB": 214.296875,
+        "rssLastMiB": 214.1328125,
+        "rssPeakMiB": 214.3359375,
+        "threadsFirst": 7,
+        "threadsLast": 7,
+        "fdsFirst": 37,
+        "fdsLast": 37,
+        "temperatureMaxC": 61.442
+      },
+      "windows": {
+        "1": {
+          "completeWindows": 119,
+          "partialTailSeconds": 0.9670417039999961,
+          "worstCallbackRate": {
+            "offsetSeconds": 1,
+            "seconds": 1,
+            "callbacks": 59,
+            "callbacksPerSecond": 59.0,
+            "p95Ms": 18.186349,
+            "maxMs": 18.696438,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 69,
+            "seconds": 1,
+            "callbacks": 60,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 19.30836,
+            "maxMs": 22.798104,
+            "stallsOver50Ms": 0
+          }
+        },
+        "10": {
+          "completeWindows": 11,
+          "partialTailSeconds": 9.967041703999996,
+          "worstCallbackRate": {
+            "offsetSeconds": 30,
+            "seconds": 10,
+            "callbacks": 598,
+            "callbacksPerSecond": 59.8,
+            "p95Ms": 18.199308,
+            "maxMs": 40.359614,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 40,
+            "seconds": 10,
+            "callbacks": 600,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 18.255475,
+            "maxMs": 26.741185,
+            "stallsOver50Ms": 0
+          }
+        }
+      }
+    },
+    {
+      "status": "passed",
+      "mode": "2d",
+      "population": 6,
+      "geometryQuality": null,
+      "msaaSamples": 0,
+      "resolutionScale": 1,
+      "window": [
+        960,
+        640
+      ],
+      "qtRhiBackend": "GraphicsApi.OpenGL",
+      "actualGlContext": {
+        "vendor": "Imagination Technologies",
+        "renderer": "PowerVR B-Series BXM-4-64",
+        "version": "OpenGL ES 3.2 build 24.2@6603887",
+        "openGLES": true,
+        "formatMajor": 2,
+        "formatMinor": 0
+      },
+      "qt": "6.8.2",
+      "platform": "eglfs",
+      "seconds": 120.01449288799631,
+      "warmupSeconds": 60.0,
+      "callbacks": 7198,
+      "callbacksPerSecond": 59.97608977707004,
+      "poseTicks": 7199,
+      "poseTicksPerSecond": 59.984422104074355,
+      "p50Ms": 16.663834,
+      "p95Ms": 17.988138,
+      "p99Ms": 18.323267,
+      "maxMs": 23.670071,
+      "stallsOver50Ms": 0,
+      "estimatedMissedSlots": 0,
+      "estimatedMissedSlotRatio": 0.0,
+      "discardedLongDeltas": 0,
+      "openingToMovingSeconds": 4.478055532999861,
+      "themeIdentity": {
+        "id": "studio.applecalm",
+        "version": "1.6.5",
+        "digest": "05f3f4835cc10be86873a06dafa98b5163ce0d1382734dff377636a40dda651e"
+      },
+      "assetRevision": "e2eaa60e5ab20c616bb264ef4b2b6ef28b2ad7bead745e8bf82b9e94233917e8",
+      "sourceManifestSha256": "929a5cbcb735949f440345f709de9136efef93ee25778355160efb14eec50cc5",
+      "checks": [
+        "privateProvidersAndState",
+        "savedAppleTheme",
+        "populationReady",
+        "actualPoseTicks",
+        "pauseStopsClock",
+        "resumeRestartsClock",
+        "realHeaderClock"
+      ],
+      "physicalFramesQualified": false,
+      "scope": "Actual Main isolated fixtures; 3D procedural solid meshes with part-transform rig, two lights, no textures on fish/shadows/postprocessing/skinning",
+      "near60SoftwareGate": true,
+      "qmlWarnings": [],
+      "capabilityWarnings": [],
+      "networkAttempts": [],
+      "caseId": "nominal-2d-3",
+      "phase": "measure",
+      "resources": {
+        "cpuOneCorePercent": 30.27966101125525,
+        "rssMedianMiB": 214.49609375,
+        "rssFirstMiB": 214.8671875,
+        "rssLastMiB": 214.6328125,
+        "rssPeakMiB": 214.8671875,
+        "threadsFirst": 7,
+        "threadsLast": 7,
+        "fdsFirst": 37,
+        "fdsLast": 36,
+        "temperatureMaxC": 61.132
+      },
+      "windows": {
+        "1": {
+          "completeWindows": 119,
+          "partialTailSeconds": 0.9842542089999995,
+          "worstCallbackRate": {
+            "offsetSeconds": 3,
+            "seconds": 1,
+            "callbacks": 59,
+            "callbacksPerSecond": 59.0,
+            "p95Ms": 18.217474,
+            "maxMs": 18.267725,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 40,
+            "seconds": 1,
+            "callbacks": 60,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 18.406851,
+            "maxMs": 19.289485,
+            "stallsOver50Ms": 0
+          }
+        },
+        "10": {
+          "completeWindows": 11,
+          "partialTailSeconds": 9.984254209,
+          "worstCallbackRate": {
+            "offsetSeconds": 50,
+            "seconds": 10,
+            "callbacks": 599,
+            "callbacksPerSecond": 59.9,
+            "p95Ms": 17.914638,
+            "maxMs": 18.572978,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 40,
+            "seconds": 10,
+            "callbacks": 600,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 18.163848,
+            "maxMs": 19.331152,
+            "stallsOver50Ms": 0
+          }
+        }
+      }
+    },
+    {
+      "status": "passed",
+      "mode": "3d",
+      "population": 6,
+      "geometryQuality": "low",
+      "msaaSamples": 0,
+      "resolutionScale": 1,
+      "window": [
+        960,
+        640
+      ],
+      "qtRhiBackend": "GraphicsApi.OpenGL",
+      "actualGlContext": {
+        "vendor": "Imagination Technologies",
+        "renderer": "PowerVR B-Series BXM-4-64",
+        "version": "OpenGL ES 3.2 build 24.2@6603887",
+        "openGLES": true,
+        "formatMajor": 2,
+        "formatMinor": 0
+      },
+      "qt": "6.8.2",
+      "platform": "eglfs",
+      "seconds": 120.01000085399573,
+      "warmupSeconds": 60.0,
+      "callbacks": 7197,
+      "callbacksPerSecond": 59.97000207304286,
+      "poseTicks": 7198,
+      "poseTicksPerSecond": 59.97833471193032,
+      "p50Ms": 16.666917,
+      "p95Ms": 18.94994,
+      "p99Ms": 20.540081,
+      "maxMs": 42.97968,
+      "stallsOver50Ms": 0,
+      "estimatedMissedSlots": 11,
+      "estimatedMissedSlotRatio": 0.0015262938809490773,
+      "discardedLongDeltas": 0,
+      "openingToMovingSeconds": 4.425889593003376,
+      "themeIdentity": {
+        "id": "studio.applecalm",
+        "version": "1.6.5",
+        "digest": "05f3f4835cc10be86873a06dafa98b5163ce0d1382734dff377636a40dda651e"
+      },
+      "assetRevision": "e2eaa60e5ab20c616bb264ef4b2b6ef28b2ad7bead745e8bf82b9e94233917e8",
+      "sourceManifestSha256": "929a5cbcb735949f440345f709de9136efef93ee25778355160efb14eec50cc5",
+      "checks": [
+        "privateProvidersAndState",
+        "savedAppleTheme",
+        "populationReady",
+        "actualPoseTicks",
+        "pauseStopsClock",
+        "resumeRestartsClock",
+        "realHeaderClock"
+      ],
+      "physicalFramesQualified": false,
+      "scope": "Actual Main isolated fixtures; 3D procedural solid meshes with part-transform rig, two lights, no textures on fish/shadows/postprocessing/skinning",
+      "near60SoftwareGate": false,
+      "postMeasurement3dStats": {
+        "graphicsApiName": "OpenGL",
+        "drawCallCount": 54.0,
+        "drawVertexCount": 16200.0,
+        "renderPassCount": 1,
+        "meshDataSize": 16656.0,
+        "imageDataSize": 0.0,
+        "pipelineCount": 1,
+        "renderTime": 0.38083702325820923,
+        "renderPrepareTime": 0.3335860073566437,
+        "syncTime": 0.08500100672245026,
+        "lastCompletedGpuTime": 0.0,
+        "vmemUsedBytes": 0.0
+      },
+      "meshes": {
+        "body": {
+          "vertices": 273,
+          "triangles": 480,
+          "bufferBytes": 12312
+        },
+        "eye": {
+          "vertices": 63,
+          "triangles": 96,
+          "bufferBytes": 2664
+        },
+        "tail": {
+          "vertices": 36,
+          "triangles": 12,
+          "bufferBytes": 1008
+        },
+        "fin": {
+          "vertices": 24,
+          "triangles": 8,
+          "bufferBytes": 672
+        }
+      },
+      "renderTarget": {
+        "width": 960,
+        "height": 640
+      },
+      "gpuTimingStatus": "Uncollected; a zero is not a measured GPU duration",
+      "qmlWarnings": [],
+      "capabilityWarnings": [
+        "Particles not supported due to missing RGBA32F and RGBA16F texture format support"
+      ],
+      "networkAttempts": [],
+      "caseId": "nominal-3d-3",
+      "phase": "measure",
+      "resources": {
+        "cpuOneCorePercent": 53.6288228091894,
+        "rssMedianMiB": 243.109375,
+        "rssFirstMiB": 243.25,
+        "rssLastMiB": 243.015625,
+        "rssPeakMiB": 243.26171875,
+        "threadsFirst": 7,
+        "threadsLast": 7,
+        "fdsFirst": 38,
+        "fdsLast": 36,
+        "temperatureMaxC": 61.69
+      },
+      "windows": {
+        "1": {
+          "completeWindows": 119,
+          "partialTailSeconds": 0.9871944599999978,
+          "worstCallbackRate": {
+            "offsetSeconds": 18,
+            "seconds": 1,
+            "callbacks": 59,
+            "callbacksPerSecond": 59.0,
+            "p95Ms": 20.032951,
+            "maxMs": 42.97968,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 26,
+            "seconds": 1,
+            "callbacks": 60,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 20.654832,
+            "maxMs": 25.520964,
+            "stallsOver50Ms": 0
+          }
+        },
+        "10": {
+          "completeWindows": 11,
+          "partialTailSeconds": 9.987194459999998,
+          "worstCallbackRate": {
+            "offsetSeconds": 10,
+            "seconds": 10,
+            "callbacks": 599,
+            "callbacksPerSecond": 59.9,
+            "p95Ms": 19.814532,
+            "maxMs": 42.97968,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 30,
+            "seconds": 10,
+            "callbacks": 600,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 20.155993,
+            "maxMs": 32.862371,
+            "stallsOver50Ms": 0
+          }
+        }
+      },
+      "trianglesPerFish": 900
+    },
+    {
+      "status": "passed",
+      "mode": "3d",
+      "population": 6,
+      "geometryQuality": "high",
+      "msaaSamples": 0,
+      "resolutionScale": 1,
+      "window": [
+        960,
+        640
+      ],
+      "qtRhiBackend": "GraphicsApi.OpenGL",
+      "actualGlContext": {
+        "vendor": "Imagination Technologies",
+        "renderer": "PowerVR B-Series BXM-4-64",
+        "version": "OpenGL ES 3.2 build 24.2@6603887",
+        "openGLES": true,
+        "formatMajor": 2,
+        "formatMinor": 0
+      },
+      "qt": "6.8.2",
+      "platform": "eglfs",
+      "seconds": 60.0080624780021,
+      "warmupSeconds": 30.0,
+      "callbacks": 3598,
+      "callbacksPerSecond": 59.95860975046417,
+      "poseTicks": 3599,
+      "poseTicksPerSecond": 59.975274177854516,
+      "p50Ms": 16.668333,
+      "p95Ms": 18.788354,
+      "p99Ms": 20.625206,
+      "maxMs": 40.285903,
+      "stallsOver50Ms": 0,
+      "estimatedMissedSlots": 3,
+      "estimatedMissedSlotRatio": 0.0008333333333333334,
+      "discardedLongDeltas": 0,
+      "openingToMovingSeconds": 4.378826728003332,
+      "themeIdentity": {
+        "id": "studio.applecalm",
+        "version": "1.6.5",
+        "digest": "05f3f4835cc10be86873a06dafa98b5163ce0d1382734dff377636a40dda651e"
+      },
+      "assetRevision": "e2eaa60e5ab20c616bb264ef4b2b6ef28b2ad7bead745e8bf82b9e94233917e8",
+      "sourceManifestSha256": "929a5cbcb735949f440345f709de9136efef93ee25778355160efb14eec50cc5",
+      "checks": [
+        "privateProvidersAndState",
+        "savedAppleTheme",
+        "populationReady",
+        "actualPoseTicks",
+        "pauseStopsClock",
+        "resumeRestartsClock",
+        "realHeaderClock"
+      ],
+      "physicalFramesQualified": false,
+      "scope": "Actual Main isolated fixtures; 3D procedural solid meshes with part-transform rig, two lights, no textures on fish/shadows/postprocessing/skinning",
+      "near60SoftwareGate": false,
+      "postMeasurement3dStats": {
+        "graphicsApiName": "OpenGL",
+        "drawCallCount": 54.0,
+        "drawVertexCount": 62856.0,
+        "renderPassCount": 1,
+        "meshDataSize": 80016.0,
+        "imageDataSize": 0.0,
+        "pipelineCount": 1,
+        "renderTime": 1.426098108291626,
+        "renderPrepareTime": 1.299638032913208,
+        "syncTime": 0.17300200462341309,
+        "lastCompletedGpuTime": 0.0,
+        "vmemUsedBytes": 0.0
+      },
+      "meshes": {
+        "body": {
+          "vertices": 1617,
+          "triangles": 3072,
+          "bufferBytes": 75672
+        },
+        "eye": {
+          "vertices": 63,
+          "triangles": 96,
+          "bufferBytes": 2664
+        },
+        "tail": {
+          "vertices": 36,
+          "triangles": 12,
+          "bufferBytes": 1008
+        },
+        "fin": {
+          "vertices": 24,
+          "triangles": 8,
+          "bufferBytes": 672
+        }
+      },
+      "renderTarget": {
+        "width": 960,
+        "height": 640
+      },
+      "gpuTimingStatus": "Uncollected; a zero is not a measured GPU duration",
+      "qmlWarnings": [],
+      "capabilityWarnings": [
+        "Particles not supported due to missing RGBA32F and RGBA16F texture format support"
+      ],
+      "networkAttempts": [],
+      "caseId": "highmesh-3d",
+      "phase": "supplement",
+      "resources": {
+        "cpuOneCorePercent": 65.2578182281838,
+        "rssMedianMiB": 243.2421875,
+        "rssFirstMiB": 243.1328125,
+        "rssLastMiB": 243.1875,
+        "rssPeakMiB": 243.2421875,
+        "threadsFirst": 7,
+        "threadsLast": 7,
+        "fdsFirst": 38,
+        "fdsLast": 38,
+        "temperatureMaxC": 61.69
+      },
+      "windows": {
+        "1": {
+          "completeWindows": 59,
+          "partialTailSeconds": 0.979216147999999,
+          "worstCallbackRate": {
+            "offsetSeconds": 5,
+            "seconds": 1,
+            "callbacks": 58,
+            "callbacksPerSecond": 58.0,
+            "p95Ms": 20.931084,
+            "maxMs": 40.285903,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 55,
+            "seconds": 1,
+            "callbacks": 60,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 21.353547,
+            "maxMs": 22.987771,
+            "stallsOver50Ms": 0
+          }
+        },
+        "10": {
+          "completeWindows": 5,
+          "partialTailSeconds": 9.979216147999999,
+          "worstCallbackRate": {
+            "offsetSeconds": 0,
+            "seconds": 10,
+            "callbacks": 599,
+            "callbacksPerSecond": 59.9,
+            "p95Ms": 20.221578,
+            "maxMs": 40.285903,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 0,
+            "seconds": 10,
+            "callbacks": 599,
+            "callbacksPerSecond": 59.9,
+            "p95Ms": 20.221578,
+            "maxMs": 40.285903,
+            "stallsOver50Ms": 0
+          }
+        }
+      },
+      "trianglesPerFish": 3492
+    },
+    {
+      "status": "passed",
+      "mode": "3d",
+      "population": 16,
+      "geometryQuality": "low",
+      "msaaSamples": 0,
+      "resolutionScale": 1,
+      "window": [
+        960,
+        640
+      ],
+      "qtRhiBackend": "GraphicsApi.OpenGL",
+      "actualGlContext": {
+        "vendor": "Imagination Technologies",
+        "renderer": "PowerVR B-Series BXM-4-64",
+        "version": "OpenGL ES 3.2 build 24.2@6603887",
+        "openGLES": true,
+        "formatMajor": 2,
+        "formatMinor": 0
+      },
+      "qt": "6.8.2",
+      "platform": "eglfs",
+      "seconds": 30.007873069997004,
+      "warmupSeconds": 15.0,
+      "callbacks": 1799,
+      "callbacksPerSecond": 59.950933403497615,
+      "poseTicks": 1800,
+      "poseTicksPerSecond": 59.984257991270546,
+      "p50Ms": 16.666875,
+      "p95Ms": 19.236485,
+      "p99Ms": 20.929876,
+      "maxMs": 32.24499,
+      "stallsOver50Ms": 0,
+      "estimatedMissedSlots": 6,
+      "estimatedMissedSlotRatio": 0.0033259423503325942,
+      "discardedLongDeltas": 0,
+      "openingToMovingSeconds": 4.350870490001398,
+      "themeIdentity": {
+        "id": "studio.applecalm",
+        "version": "1.6.5",
+        "digest": "05f3f4835cc10be86873a06dafa98b5163ce0d1382734dff377636a40dda651e"
+      },
+      "assetRevision": "e2eaa60e5ab20c616bb264ef4b2b6ef28b2ad7bead745e8bf82b9e94233917e8",
+      "sourceManifestSha256": "929a5cbcb735949f440345f709de9136efef93ee25778355160efb14eec50cc5",
+      "checks": [
+        "privateProvidersAndState",
+        "savedAppleTheme",
+        "populationReady",
+        "actualPoseTicks",
+        "pauseStopsClock",
+        "resumeRestartsClock",
+        "realHeaderClock"
+      ],
+      "physicalFramesQualified": false,
+      "scope": "Actual Main isolated fixtures; 3D procedural solid meshes with part-transform rig, two lights, no textures on fish/shadows/postprocessing/skinning",
+      "near60SoftwareGate": false,
+      "postMeasurement3dStats": {
+        "graphicsApiName": "OpenGL",
+        "drawCallCount": 144.0,
+        "drawVertexCount": 43200.0,
+        "renderPassCount": 1,
+        "meshDataSize": 16656.0,
+        "imageDataSize": 0.0,
+        "pipelineCount": 1,
+        "renderTime": 3.501993179321289,
+        "renderPrepareTime": 3.2597830295562744,
+        "syncTime": 0.383171021938324,
+        "lastCompletedGpuTime": 0.0,
+        "vmemUsedBytes": 0.0
+      },
+      "meshes": {
+        "body": {
+          "vertices": 273,
+          "triangles": 480,
+          "bufferBytes": 12312
+        },
+        "eye": {
+          "vertices": 63,
+          "triangles": 96,
+          "bufferBytes": 2664
+        },
+        "tail": {
+          "vertices": 36,
+          "triangles": 12,
+          "bufferBytes": 1008
+        },
+        "fin": {
+          "vertices": 24,
+          "triangles": 8,
+          "bufferBytes": 672
+        }
+      },
+      "renderTarget": {
+        "width": 960,
+        "height": 640
+      },
+      "gpuTimingStatus": "Uncollected; a zero is not a measured GPU duration",
+      "qmlWarnings": [],
+      "capabilityWarnings": [
+        "Particles not supported due to missing RGBA32F and RGBA16F texture format support"
+      ],
+      "networkAttempts": [],
+      "caseId": "stress16-3d",
+      "phase": "supplement",
+      "resources": {
+        "cpuOneCorePercent": 86.51036689721178,
+        "rssMedianMiB": 243.373046875,
+        "rssFirstMiB": 243.44140625,
+        "rssLastMiB": 243.20703125,
+        "rssPeakMiB": 243.44140625,
+        "threadsFirst": 12,
+        "threadsLast": 7,
+        "fdsFirst": 43,
+        "fdsLast": 36,
+        "temperatureMaxC": 62.31
+      },
+      "windows": {
+        "1": {
+          "completeWindows": 29,
+          "partialTailSeconds": 0.9751363260000012,
+          "worstCallbackRate": {
+            "offsetSeconds": 0,
+            "seconds": 1,
+            "callbacks": 60,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 19.566404,
+            "maxMs": 22.79252,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 6,
+            "seconds": 1,
+            "callbacks": 60,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 20.90221,
+            "maxMs": 27.893237,
+            "stallsOver50Ms": 0
+          }
+        },
+        "10": {
+          "completeWindows": 2,
+          "partialTailSeconds": 9.975136326000001,
+          "worstCallbackRate": {
+            "offsetSeconds": 0,
+            "seconds": 10,
+            "callbacks": 600,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 20.365329,
+            "maxMs": 27.893237,
+            "stallsOver50Ms": 0
+          },
+          "worstP95": {
+            "offsetSeconds": 0,
+            "seconds": 10,
+            "callbacks": 600,
+            "callbacksPerSecond": 60.0,
+            "p95Ms": 20.365329,
+            "maxMs": 27.893237,
+            "stallsOver50Ms": 0
+          }
+        }
+      },
+      "trianglesPerFish": 900
+    }
+  ],
+  "scope": "Actual Main private fixture workload. CPU percent of one core, process RSS not GPU VRAM; queue and pose timing not optical FPS. Render counters sampled after measurement. Software gates may fail. MSAA disabled by Qt is an unsupported option, not a passed AA performance test; original incomplete receipt retained."
+}

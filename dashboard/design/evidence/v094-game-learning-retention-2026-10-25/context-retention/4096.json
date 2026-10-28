@@ -1,0 +1,5597 @@
+{
+  "bank": {
+    "version": "sustained-overtaking-bank-3",
+    "split": "development",
+    "cases": [
+      {
+        "family": "solo",
+        "bots": 1,
+        "seed": 982100,
+        "duration": 180.0
+      },
+      {
+        "family": "solo",
+        "bots": 1,
+        "seed": 982101,
+        "duration": 180.0
+      },
+      {
+        "family": "solo",
+        "bots": 1,
+        "seed": 982102,
+        "duration": 180.0
+      },
+      {
+        "family": "attack",
+        "bots": 1,
+        "seed": 983100,
+        "duration": 180.0
+      },
+      {
+        "family": "attack",
+        "bots": 1,
+        "seed": 983101,
+        "duration": 180.0
+      },
+      {
+        "family": "attack",
+        "bots": 1,
+        "seed": 983102,
+        "duration": 180.0
+      },
+      {
+        "family": "complete",
+        "bots": 1,
+        "seed": 984100,
+        "duration": 180.0
+      },
+      {
+        "family": "complete",
+        "bots": 1,
+        "seed": 984101,
+        "duration": 180.0
+      },
+      {
+        "family": "complete",
+        "bots": 1,
+        "seed": 984102,
+        "duration": 180.0
+      },
+      {
+        "family": "corner",
+        "bots": 1,
+        "seed": 985100,
+        "duration": 180.0
+      },
+      {
+        "family": "corner",
+        "bots": 1,
+        "seed": 985101,
+        "duration": 180.0
+      },
+      {
+        "family": "corner",
+        "bots": 1,
+        "seed": 985102,
+        "duration": 180.0
+      },
+      {
+        "family": "defend",
+        "bots": 1,
+        "seed": 986100,
+        "duration": 180.0
+      },
+      {
+        "family": "defend",
+        "bots": 1,
+        "seed": 986101,
+        "duration": 180.0
+      },
+      {
+        "family": "defend",
+        "bots": 1,
+        "seed": 986102,
+        "duration": 180.0
+      },
+      {
+        "family": "traffic",
+        "bots": 1,
+        "seed": 987100,
+        "duration": 180.0
+      },
+      {
+        "family": "traffic",
+        "bots": 1,
+        "seed": 987101,
+        "duration": 180.0
+      },
+      {
+        "family": "traffic",
+        "bots": 1,
+        "seed": 987102,
+        "duration": 180.0
+      },
+      {
+        "family": "traffic",
+        "bots": 2,
+        "seed": 987200,
+        "duration": 180.0
+      },
+      {
+        "family": "traffic",
+        "bots": 2,
+        "seed": 987201,
+        "duration": 180.0
+      },
+      {
+        "family": "traffic",
+        "bots": 2,
+        "seed": 987202,
+        "duration": 180.0
+      },
+      {
+        "family": "traffic",
+        "bots": 3,
+        "seed": 987300,
+        "duration": 180.0
+      },
+      {
+        "family": "traffic",
+        "bots": 3,
+        "seed": 987301,
+        "duration": 180.0
+      },
+      {
+        "family": "traffic",
+        "bots": 3,
+        "seed": 987302,
+        "duration": 180.0
+      },
+      {
+        "family": "recover",
+        "bots": 1,
+        "seed": 988100,
+        "duration": 180.0
+      },
+      {
+        "family": "recover",
+        "bots": 1,
+        "seed": 988101,
+        "duration": 180.0
+      },
+      {
+        "family": "recover",
+        "bots": 1,
+        "seed": 988102,
+        "duration": 180.0
+      }
+    ],
+    "configuration": {
+      "track": {
+        "id": "oval-1",
+        "name": "Ovale",
+        "revision": 2,
+        "half_straight": 36.0,
+        "radius": 31.0,
+        "road_width": 12.0
+      },
+      "vehicle": {
+        "id": "standard-1",
+        "length": 4.4,
+        "width": 1.8,
+        "wheelbase": 2.65,
+        "mass": 1200.0,
+        "power": 85000.0,
+        "drive_force": 6500.0,
+        "brake_force": 10000.0,
+        "yaw_inertia": 1700.0,
+        "corner_stiffness": 38000.0,
+        "max_steer": 0.52,
+        "steer_rate": 1.8,
+        "cg_front": 1.1,
+        "cg_height": 0.53,
+        "drive_front": 1.0,
+        "brake_front": 0.68,
+        "air_density": 1.225,
+        "drag_area": 0.65,
+        "restitution": 0.1
+      },
+      "surface": {
+        "id": "asphalt",
+        "grip": 0.95,
+        "rolling": 0.015
+      },
+      "condition": {
+        "id": "dry",
+        "grip_factor": 1.0
+      },
+      "tire": {
+        "id": "standard",
+        "grip_factor": 1.0
+      },
+      "physics": "f2-1",
+      "observation": "race-68-v3",
+      "action": "steer-throttle-brake-v1",
+      "decisionHz": 60,
+      "substeps": 2,
+      "roadRules": {
+        "runoffMeters": 6.0,
+        "offroadGrip": 0.45,
+        "offroadRolling": 0.045,
+        "contacts": "impulse-1",
+        "severeImpactSpeed": 12.0,
+        "retiredCars": "ghost",
+        "grid": "staggered-6m-v2"
+      }
+    },
+    "action": "direct-steer-pedal-v1",
+    "features": "direct-physical-90-road-v2",
+    "sourceHashes": {
+      "game_simulation.py": "c60a33b9d481e69e3ba3012ac866e6dbfede7ac658685c939702883e9dda0d35",
+      "game_academy.py": "31ae5e869faaeea60760488fa124216e5e96319281842b20713e3336e868c265",
+      "game_direct.py": "1e53f5fbb83faabc662344aebcd858a1cd1a35d1492a5b7fd1067b0cf93644c3",
+      "game_temporal.py": "9b529aac7f588016a8938be2928f0cbd5b28904db692795fc1dcba71dce14286",
+      "game_control.py": "38e99d203a46bcaabf02ea719601a1aeede10640ff8b7748318b70b5c8e33287",
+      "game_driving_school.py": "b5ca0feb5d11bdcd330bcac9511d587b8382ed7f6572fa02000b9f9a9358a449",
+      "game_rewards.py": "a9731325245a88c425a176c925a3c887ddcff3b7ea07c96c14a497219d31afd6",
+      "game_catalog.py": "7278e4822985e1be315493cd020c25d98308b93f6ac0ca0ced203bc29c5609b1",
+      "game_racecraft.py": "ca91dd96fa57446371639fca39094a29b62e74ce815da2511fa3182177c0773f",
+      "game_geometry.py": "443450f99c044c4c67253710eb5a591b792cf58542c5e53aae58ab11e48321dd",
+      "game_contacts.py": "96bfd6d8bf17e440938b51ec889b31d999b7e10c8515ca8c1ca52f7d5bb85d4f",
+      "game_overtaking.py": "95ae6fca3b16bab91ce4a6e2da1f63704353842202d34e542b953f056c54fe96",
+      "game_protocol.py": "fbe0fd9a6b9f11b37f83c9b51829efccab66f8ca7e50f403260f26a5f4b95b58",
+      "game_direct_bootstrap.py": "dd1739dc7b8a0124eb7ac1883d3838e7d976df0b226d22a90231fad38e14ad4c",
+      "game_racing_presets.py": "8c60f0ae8258e2b42f1324dc9b4886cb7d91ef76f5d2bcbd257e72a71f800a02",
+      "game_lab/environment.py": "77db13963d162cd5de249db36ad2a21e1b333e6fcdea39b789748dfb0f02d219",
+      "game_lab/evaluation.py": "3bd06e612ef5ab5624ff712b59584365f08c2a7e0b703e43227cee8882ceeae0",
+      "game_lab/teacher.py": "018084ffd5fa7c861729c837a1bd163669c632d95521c295bddc5a7e43a57df7"
+    },
+    "hash": "cdafae4e0c236b35719d6bd9be5c72a2db85ced4f0d7748a91e6ca3af041eacf"
+  },
+  "policyHash": "0285d07f60715a8b438658ef81afa57ee16b25ab05b1b409bedaa61af8799220",
+  "controller": "network",
+  "rows": [
+    {
+      "family": "solo",
+      "bots": 1,
+      "seed": 982100,
+      "duration": 180.0,
+      "result": {
+        "seed": 982100,
+        "time": null,
+        "attack": {},
+        "goalMeters": null,
+        "manoeuvre": "Traiettorie e passo",
+        "progress": 2575.2613895131476,
+        "status": "window",
+        "reason": "window",
+        "terminationCause": "collection_window",
+        "passes": 0,
+        "passAttempts": 0,
+        "cleanSeries": 7,
+        "bestSeries": 7,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 25.837776584227235,
+            "clean": true,
+            "standingStart": true,
+            "end": 25.837776584227235,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 23.448921500358303,
+            "clean": true,
+            "standingStart": false,
+            "end": 49.28669808458554,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 23.44532335967206,
+            "clean": true,
+            "standingStart": false,
+            "end": 72.7320214442576,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 23.449035429067905,
+            "clean": true,
+            "standingStart": false,
+            "end": 96.1810568733255,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.447341802463043,
+            "clean": true,
+            "standingStart": false,
+            "end": 119.62839867578855,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 23.449218013143778,
+            "clean": true,
+            "standingStart": false,
+            "end": 143.07761668893232,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 23.447735391457115,
+            "clean": true,
+            "standingStart": false,
+            "end": 166.52535208038944,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2575.2613895131476,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.6666666666666671,
+        "tenMeters": 2.116666666666664,
+        "stationarySeconds": 0.09999999999999999,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.1985085205793193,
+        "rewardTerms": {
+          "progress": 7.601602612768433,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 0.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 0.6820831495952674
+        },
+        "pedalCounts": {
+          "gas": 7872,
+          "coast": 594,
+          "brake": 2334
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": false,
+      "firstPass": null,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false
+      ],
+      "cleanLaps": 7,
+      "flyingMedian": 23.44832844590771
+    },
+    {
+      "family": "solo",
+      "bots": 1,
+      "seed": 982101,
+      "duration": 180.0,
+      "result": {
+        "seed": 982101,
+        "time": null,
+        "attack": {},
+        "goalMeters": null,
+        "manoeuvre": "Traiettorie e passo",
+        "progress": 2575.252767762033,
+        "status": "window",
+        "reason": "window",
+        "terminationCause": "collection_window",
+        "passes": 0,
+        "passAttempts": 0,
+        "cleanSeries": 7,
+        "bestSeries": 7,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 25.83859224487293,
+            "clean": true,
+            "standingStart": true,
+            "end": 25.83859224487293,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 23.4489212702043,
+            "clean": true,
+            "standingStart": false,
+            "end": 49.28751351507723,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 23.44526080187699,
+            "clean": true,
+            "standingStart": false,
+            "end": 72.73277431695422,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 23.449010588835833,
+            "clean": true,
+            "standingStart": false,
+            "end": 96.18178490579005,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.447262719948654,
+            "clean": true,
+            "standingStart": false,
+            "end": 119.6290476257387,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 23.449175431593403,
+            "clean": true,
+            "standingStart": false,
+            "end": 143.0782230573321,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 23.447664287043892,
+            "clean": true,
+            "standingStart": false,
+            "end": 166.525887344376,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2575.252767762033,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.6666666666666671,
+        "tenMeters": 2.116666666666664,
+        "stationarySeconds": 0.09999999999999999,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.19850633093887202,
+        "rewardTerms": {
+          "progress": 7.601577163264091,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 0.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 0.5517202411626566
+        },
+        "pedalCounts": {
+          "gas": 7872,
+          "coast": 594,
+          "brake": 2334
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": false,
+      "firstPass": null,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false
+      ],
+      "cleanLaps": 7,
+      "flyingMedian": 23.448292778624094
+    },
+    {
+      "family": "solo",
+      "bots": 1,
+      "seed": 982102,
+      "duration": 180.0,
+      "result": {
+        "seed": 982102,
+        "time": null,
+        "attack": {},
+        "goalMeters": null,
+        "manoeuvre": "Traiettorie e passo",
+        "progress": 2575.2325267011443,
+        "status": "window",
+        "reason": "window",
+        "terminationCause": "collection_window",
+        "passes": 0,
+        "passAttempts": 0,
+        "cleanSeries": 7,
+        "bestSeries": 7,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 25.840462868101497,
+            "clean": true,
+            "standingStart": true,
+            "end": 25.840462868101497,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 23.448937797189558,
+            "clean": true,
+            "standingStart": false,
+            "end": 49.289400665291055,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 23.445120112990367,
+            "clean": true,
+            "standingStart": false,
+            "end": 72.73452077828142,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 23.4489653826394,
+            "clean": true,
+            "standingStart": false,
+            "end": 96.18348616092082,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.447081163508656,
+            "clean": true,
+            "standingStart": false,
+            "end": 119.63056732442948,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 23.449090676768122,
+            "clean": true,
+            "standingStart": false,
+            "end": 143.0796580011976,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 23.44749777024998,
+            "clean": true,
+            "standingStart": false,
+            "end": 166.52715577144758,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2575.2325267011443,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.6666666666666671,
+        "tenMeters": 2.116666666666664,
+        "stationarySeconds": 0.09999999999999999,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.1985074622160282,
+        "rewardTerms": {
+          "progress": 7.601517416124681,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 0.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 4.596234187990325
+        },
+        "pedalCounts": {
+          "gas": 7878,
+          "coast": 588,
+          "brake": 2334
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": false,
+      "firstPass": null,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false
+      ],
+      "cleanLaps": 7,
+      "flyingMedian": 23.44821778371977
+    },
+    {
+      "family": "attack",
+      "bots": 1,
+      "seed": 983100,
+      "duration": 180.0,
+      "result": {
+        "seed": 983100,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 4,
+          "attacks": 4,
+          "passes": 3,
+          "queueSeconds": 4.716666666666655,
+          "alongsideSeconds": 3.2000000000006708,
+          "idleAlongsideSeconds": 0.0,
+          "passTimes": [
+            22.583333333333332,
+            18.199999999998973,
+            17.800000000001376
+          ],
+          "attackLatencies": [
+            1.8999999999999981,
+            0.7999999999999545,
+            0.7999999999999545,
+            0.8000000000006366
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 0,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 4.716666666666655,
+          "followingWithoutClosingSeconds": 0.0,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 1.9166666666666647,
+              "latency": 1.8999999999999981,
+              "passTime": 22.599999999999998
+            },
+            {
+              "id": 2,
+              "rival": 1,
+              "time": 58.716666666664615,
+              "kind": "approach",
+              "attackTime": 59.51666666666457,
+              "latency": 0.7999999999999545,
+              "passTime": 76.91666666666359
+            },
+            {
+              "id": 3,
+              "rival": 1,
+              "time": 113.01666666666154,
+              "kind": "approach",
+              "attackTime": 113.81666666666149,
+              "latency": 0.7999999999999545,
+              "passTime": 130.8166666666629
+            },
+            {
+              "id": 4,
+              "rival": 1,
+              "time": 166.91666666669164,
+              "kind": "approach",
+              "attackTime": 167.71666666669228,
+              "latency": 0.8000000000006366,
+              "passTime": null
+            }
+          ],
+          "nextOpportunity": 4
+        },
+        "goalMeters": null,
+        "manoeuvre": "Avvicinamento",
+        "progress": 2153.3185991887235,
+        "status": "timeout",
+        "reason": "timeout",
+        "terminationCause": "time_limit",
+        "passes": 3,
+        "passAttempts": 4,
+        "cleanSeries": 6,
+        "bestSeries": 6,
+        "laps": 6,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 34.215117609945544,
+            "clean": true,
+            "standingStart": true,
+            "end": 34.215117609945544,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 23.61857629178631,
+            "clean": true,
+            "standingStart": false,
+            "end": 57.833693901731856,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 30.553769962314,
+            "clean": true,
+            "standingStart": false,
+            "end": 88.38746386404586,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 23.5918973601361,
+            "clean": true,
+            "standingStart": false,
+            "end": 111.97936122418196,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 30.306656716885442,
+            "clean": true,
+            "standingStart": false,
+            "end": 142.2860179410674,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 23.594820893150768,
+            "clean": true,
+            "standingStart": false,
+            "end": 165.88083883421817,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2153.3185991887235,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.13333333333333333,
+        "tenMeters": 1.2166666666666672,
+        "stationarySeconds": 0.0,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.1399379127388943,
+        "rewardTerms": {
+          "progress": 6.356120724820972,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 1.5,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 4.832104061727122
+        },
+        "pedalCounts": {
+          "gas": 6114,
+          "coast": 1596,
+          "brake": 3090
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 22.599999999999998,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false
+      ],
+      "cleanLaps": 6,
+      "flyingMedian": 23.61857629178631
+    },
+    {
+      "family": "attack",
+      "bots": 1,
+      "seed": 983101,
+      "duration": 180.0,
+      "result": {
+        "seed": 983101,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 4,
+          "attacks": 4,
+          "passes": 4,
+          "queueSeconds": 3.7166666666666583,
+          "alongsideSeconds": 8.60000000000224,
+          "idleAlongsideSeconds": 0.0,
+          "passTimes": [
+            12.750000000000213,
+            4.349999999999753,
+            10.349999999999412,
+            13.750000000010942
+          ],
+          "attackLatencies": [
+            1.8999999999999981,
+            2.9999999999998295,
+            0.8999999999999488,
+            0.9000000000007162
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 0,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 3.7166666666666583,
+          "followingWithoutClosingSeconds": 0.0,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 1.9166666666666647,
+              "latency": 1.8999999999999981,
+              "passTime": 12.76666666666688
+            },
+            {
+              "id": 2,
+              "rival": 1,
+              "time": 50.616666666665076,
+              "kind": "approach",
+              "attackTime": 53.616666666664905,
+              "latency": 2.9999999999998295,
+              "passTime": 54.96666666666483
+            },
+            {
+              "id": 3,
+              "rival": 1,
+              "time": 91.31666666666277,
+              "kind": "approach",
+              "attackTime": 92.21666666666272,
+              "latency": 0.8999999999999488,
+              "passTime": 101.66666666666218
+            },
+            {
+              "id": 4,
+              "rival": 1,
+              "time": 137.61666666666832,
+              "kind": "approach",
+              "attackTime": 138.51666666666904,
+              "latency": 0.9000000000007162,
+              "passTime": 151.36666666667927
+            }
+          ],
+          "nextOpportunity": 4
+        },
+        "goalMeters": null,
+        "manoeuvre": "Sorpasso completato",
+        "progress": 2433.2193192451214,
+        "status": "timeout",
+        "reason": "timeout",
+        "terminationCause": "time_limit",
+        "passes": 4,
+        "passAttempts": 4,
+        "cleanSeries": 7,
+        "bestSeries": 7,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 29.141177912539746,
+            "clean": true,
+            "standingStart": true,
+            "end": 29.141177912539746,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 23.69435696354239,
+            "clean": true,
+            "standingStart": false,
+            "end": 52.835534876082136,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 23.514299031434632,
+            "clean": true,
+            "standingStart": false,
+            "end": 76.34983390751677,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 25.354663582536617,
+            "clean": true,
+            "standingStart": false,
+            "end": 101.70449749005338,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.386513611022025,
+            "clean": true,
+            "standingStart": false,
+            "end": 125.09101110107541,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 27.733796689282414,
+            "clean": true,
+            "standingStart": false,
+            "end": 152.82480779035782,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 23.322138402008648,
+            "clean": true,
+            "standingStart": false,
+            "end": 176.14694619236647,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2433.2193192451214,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.13333333333333333,
+        "tenMeters": 1.2333333333333338,
+        "stationarySeconds": 0.0,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.17058389634786045,
+        "rewardTerms": {
+          "progress": 7.182325805812265,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 2.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 4.958417183489905
+        },
+        "pedalCounts": {
+          "gas": 7158,
+          "coast": 1170,
+          "brake": 2472
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 12.76666666666688,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false
+      ],
+      "cleanLaps": 7,
+      "flyingMedian": 23.60432799748851
+    },
+    {
+      "family": "attack",
+      "bots": 1,
+      "seed": 983102,
+      "duration": 180.0,
+      "result": {
+        "seed": 983102,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 5,
+          "attacks": 4,
+          "passes": 4,
+          "queueSeconds": 3.9166666666666576,
+          "alongsideSeconds": 6.800000000001517,
+          "idleAlongsideSeconds": 0.0,
+          "passTimes": [
+            10.000000000000076,
+            5.866666666666333,
+            12.41666666666596,
+            5.866666666671335
+          ],
+          "attackLatencies": [
+            1.8999999999999981,
+            4.699999999999733,
+            1.299999999999926,
+            1.6000000000012733
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 0,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 1.7166666666666655,
+          "followingWithoutClosingSeconds": 2.199999999999992,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 1.9166666666666647,
+              "latency": 1.8999999999999981,
+              "passTime": 10.016666666666744
+            },
+            {
+              "id": 2,
+              "rival": 1,
+              "time": 47.816666666665235,
+              "kind": "approach",
+              "attackTime": 52.51666666666497,
+              "latency": 4.699999999999733,
+              "passTime": 53.68333333333157
+            },
+            {
+              "id": 3,
+              "rival": 1,
+              "time": 89.51666666666287,
+              "kind": "approach",
+              "attackTime": 90.8166666666628,
+              "latency": 1.299999999999926,
+              "passTime": 101.93333333332883
+            },
+            {
+              "id": 4,
+              "rival": 1,
+              "time": 137.41666666666816,
+              "kind": "approach",
+              "attackTime": 139.01666666666944,
+              "latency": 1.6000000000012733,
+              "passTime": 143.2833333333395
+            },
+            {
+              "id": 5,
+              "rival": 1,
+              "time": 179.21666666670143,
+              "kind": "approach",
+              "attackTime": null,
+              "latency": null,
+              "passTime": null
+            }
+          ],
+          "nextOpportunity": 5
+        },
+        "goalMeters": null,
+        "manoeuvre": "Avvicinamento",
+        "progress": 2457.7557024863327,
+        "status": "timeout",
+        "reason": "timeout",
+        "terminationCause": "time_limit",
+        "passes": 4,
+        "passAttempts": 5,
+        "cleanSeries": 7,
+        "bestSeries": 7,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 28.68124622896558,
+            "clean": true,
+            "standingStart": true,
+            "end": 28.68124622896558,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 23.879579257109366,
+            "clean": true,
+            "standingStart": false,
+            "end": 52.56082548607495,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 23.36685035398193,
+            "clean": true,
+            "standingStart": false,
+            "end": 75.92767584005688,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 26.862393504351587,
+            "clean": true,
+            "standingStart": false,
+            "end": 102.79006934440847,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.330187602986484,
+            "clean": true,
+            "standingStart": false,
+            "end": 126.12025694739495,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 24.413718400576073,
+            "clean": true,
+            "standingStart": false,
+            "end": 150.53397534797102,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 23.35071228891192,
+            "clean": true,
+            "standingStart": false,
+            "end": 173.88468763688294,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2457.7557024863327,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.13333333333333333,
+        "tenMeters": 1.3166666666666669,
+        "stationarySeconds": 0.0,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.17438219790460996,
+        "rewardTerms": {
+          "progress": 7.254751787778146,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 2.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 5.567491170368574
+        },
+        "pedalCounts": {
+          "gas": 7128,
+          "coast": 1056,
+          "brake": 2616
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 10.016666666666744,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false
+      ],
+      "cleanLaps": 7,
+      "flyingMedian": 23.62321480554565
+    },
+    {
+      "family": "complete",
+      "bots": 1,
+      "seed": 984100,
+      "duration": 180.0,
+      "result": {
+        "seed": 984100,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 5,
+          "attacks": 4,
+          "passes": 4,
+          "queueSeconds": 0.0,
+          "alongsideSeconds": 8.11666666666951,
+          "idleAlongsideSeconds": 0.0,
+          "passTimes": [
+            1.6166666666666658,
+            16.683333333332385,
+            5.1000000000008185,
+            8.916666666673763
+          ],
+          "attackLatencies": [
+            1.4999999999999147,
+            1.1999999999999318,
+            1.1999999999999318,
+            0.9000000000007162
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 1,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 0.0,
+          "followingWithoutClosingSeconds": 0.0,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 0.016666666666666666,
+              "kind": "already-alongside",
+              "attackTime": null,
+              "latency": null,
+              "passTime": 1.6333333333333324
+            },
+            {
+              "id": 2,
+              "rival": 1,
+              "time": 35.41666666666594,
+              "kind": "approach",
+              "attackTime": 36.916666666665854,
+              "latency": 1.4999999999999147,
+              "passTime": null
+            },
+            {
+              "id": 3,
+              "rival": 1,
+              "time": 74.8166666666637,
+              "kind": "approach",
+              "attackTime": 76.01666666666364,
+              "latency": 1.1999999999999318,
+              "passTime": 91.49999999999609
+            },
+            {
+              "id": 4,
+              "rival": 1,
+              "time": 124.2166666666609,
+              "kind": "approach",
+              "attackTime": 125.41666666666083,
+              "latency": 1.1999999999999318,
+              "passTime": 129.31666666666172
+            },
+            {
+              "id": 5,
+              "rival": 1,
+              "time": 162.7166666666883,
+              "kind": "approach",
+              "attackTime": 163.616666666689,
+              "latency": 0.9000000000007162,
+              "passTime": 171.63333333336206
+            }
+          ],
+          "nextOpportunity": 5
+        },
+        "goalMeters": null,
+        "manoeuvre": "Sorpasso completato",
+        "progress": 2372.697635195166,
+        "status": "timeout",
+        "reason": "timeout",
+        "terminationCause": "time_limit",
+        "passes": 4,
+        "passAttempts": 3,
+        "cleanSeries": 7,
+        "bestSeries": 7,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 24.227436149801896,
+            "clean": true,
+            "standingStart": true,
+            "end": 24.227436149801896,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 25.381789302703652,
+            "clean": true,
+            "standingStart": false,
+            "end": 49.60922545250555,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 23.47554806805936,
+            "clean": true,
+            "standingStart": false,
+            "end": 73.08477352056491,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 30.427126429940344,
+            "clean": true,
+            "standingStart": false,
+            "end": 103.51189995050525,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 24.223727074752645,
+            "clean": true,
+            "standingStart": false,
+            "end": 127.7356270252579,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 23.481798125861033,
+            "clean": true,
+            "standingStart": false,
+            "end": 151.21742515111893,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 28.722442989398644,
+            "clean": true,
+            "standingStart": false,
+            "end": 179.93986814051758,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2372.697635195166,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.13333333333333333,
+        "tenMeters": 0.9833333333333347,
+        "stationarySeconds": 0.0,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.17537237449276488,
+        "rewardTerms": {
+          "progress": 7.003679166882065,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 2.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 6.786057581510834
+        },
+        "pedalCounts": {
+          "gas": 6966,
+          "coast": 1110,
+          "brake": 2724
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 1.6333333333333324,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false
+      ],
+      "cleanLaps": 7,
+      "flyingMedian": 24.80275818872815
+    },
+    {
+      "family": "complete",
+      "bots": 1,
+      "seed": 984101,
+      "duration": 180.0,
+      "result": {
+        "seed": 984101,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 4,
+          "attacks": 3,
+          "passes": 3,
+          "queueSeconds": 0.0,
+          "alongsideSeconds": 6.416666666668247,
+          "idleAlongsideSeconds": 0.0,
+          "passTimes": [
+            1.7666666666666653,
+            9.783333333332777,
+            9.60000000000764
+          ],
+          "attackLatencies": [
+            1.1999999999999318,
+            1.1999999999999318,
+            0.9000000000007162
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 1,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 0.0,
+          "followingWithoutClosingSeconds": 0.0,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 0.016666666666666666,
+              "kind": "already-alongside",
+              "attackTime": null,
+              "latency": null,
+              "passTime": 1.7833333333333319
+            },
+            {
+              "id": 2,
+              "rival": 1,
+              "time": 39.716666666665695,
+              "kind": "approach",
+              "attackTime": 40.91666666666563,
+              "latency": 1.1999999999999318,
+              "passTime": null
+            },
+            {
+              "id": 3,
+              "rival": 1,
+              "time": 85.5166666666631,
+              "kind": "approach",
+              "attackTime": 86.71666666666303,
+              "latency": 1.1999999999999318,
+              "passTime": 95.29999999999588
+            },
+            {
+              "id": 4,
+              "rival": 1,
+              "time": 132.41666666666418,
+              "kind": "approach",
+              "attackTime": 133.3166666666649,
+              "latency": 0.9000000000007162,
+              "passTime": 142.01666666667182
+            }
+          ],
+          "nextOpportunity": 4
+        },
+        "goalMeters": null,
+        "manoeuvre": "Sorpasso completato",
+        "progress": 2532.6363748815343,
+        "status": "timeout",
+        "reason": "timeout",
+        "terminationCause": "time_limit",
+        "passes": 3,
+        "passAttempts": 2,
+        "cleanSeries": 7,
+        "bestSeries": 7,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 24.223816851894515,
+            "clean": true,
+            "standingStart": true,
+            "end": 24.223816851894515,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 24.156452563446248,
+            "clean": true,
+            "standingStart": false,
+            "end": 48.38026941534076,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 23.382231908200666,
+            "clean": true,
+            "standingStart": false,
+            "end": 71.76250132354143,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 24.791259046526832,
+            "clean": true,
+            "standingStart": false,
+            "end": 96.55376037006826,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.282296571763055,
+            "clean": true,
+            "standingStart": false,
+            "end": 119.83605694183132,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 25.273696322185458,
+            "clean": true,
+            "standingStart": false,
+            "end": 145.10975326401677,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 23.3971773571038,
+            "clean": true,
+            "standingStart": false,
+            "end": 168.50693062112057,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2532.6363748815343,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.13333333333333333,
+        "tenMeters": 0.9833333333333347,
+        "stationarySeconds": 0.0,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.1790455180477367,
+        "rewardTerms": {
+          "progress": 7.475782987656788,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 1.5,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 6.960783560491964
+        },
+        "pedalCounts": {
+          "gas": 7704,
+          "coast": 762,
+          "brake": 2334
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 1.7833333333333319,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false
+      ],
+      "cleanLaps": 7,
+      "flyingMedian": 23.776814960275026
+    },
+    {
+      "family": "complete",
+      "bots": 1,
+      "seed": 984102,
+      "duration": 180.0,
+      "result": {
+        "seed": 984102,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 5,
+          "attacks": 4,
+          "passes": 4,
+          "queueSeconds": 0.0,
+          "alongsideSeconds": 7.9166666666684975,
+          "idleAlongsideSeconds": 0.0,
+          "passTimes": [
+            1.6833333333333322,
+            6.233333333332979,
+            6.883333333334718,
+            10.100000000008038
+          ],
+          "attackLatencies": [
+            0.7999999999999545,
+            1.0999999999999375,
+            0.8999999999999488,
+            0.9000000000007162
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 1,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 0.0,
+          "followingWithoutClosingSeconds": 0.0,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 0.016666666666666666,
+              "kind": "already-alongside",
+              "attackTime": null,
+              "latency": null,
+              "passTime": 1.6999999999999988
+            },
+            {
+              "id": 2,
+              "rival": 1,
+              "time": 36.61666666666587,
+              "kind": "approach",
+              "attackTime": 37.416666666665826,
+              "latency": 0.7999999999999545,
+              "passTime": null
+            },
+            {
+              "id": 3,
+              "rival": 1,
+              "time": 82.91666666666325,
+              "kind": "approach",
+              "attackTime": 84.01666666666318,
+              "latency": 1.0999999999999375,
+              "passTime": 89.14999999999623
+            },
+            {
+              "id": 4,
+              "rival": 1,
+              "time": 123.21666666666096,
+              "kind": "approach",
+              "attackTime": 124.1166666666609,
+              "latency": 0.8999999999999488,
+              "passTime": 130.09999999999567
+            },
+            {
+              "id": 5,
+              "rival": 1,
+              "time": 163.31666666668877,
+              "kind": "approach",
+              "attackTime": 164.2166666666895,
+              "latency": 0.9000000000007162,
+              "passTime": 173.4166666666968
+            }
+          ],
+          "nextOpportunity": 5
+        },
+        "goalMeters": null,
+        "manoeuvre": "Sorpasso completato",
+        "progress": 2461.3061461356183,
+        "status": "timeout",
+        "reason": "timeout",
+        "terminationCause": "time_limit",
+        "passes": 4,
+        "passAttempts": 3,
+        "cleanSeries": 7,
+        "bestSeries": 7,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 24.41640144952988,
+            "clean": true,
+            "standingStart": true,
+            "end": 24.41640144952988,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 28.19031835320886,
+            "clean": true,
+            "standingStart": false,
+            "end": 52.60671980273874,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 23.455305885395703,
+            "clean": true,
+            "standingStart": false,
+            "end": 76.06202568813444,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 24.0070033874876,
+            "clean": true,
+            "standingStart": false,
+            "end": 100.06902907562204,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.791848342006745,
+            "clean": true,
+            "standingStart": false,
+            "end": 123.86087741762879,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 24.468055308762985,
+            "clean": true,
+            "standingStart": false,
+            "end": 148.32893272639177,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 25.554746136531406,
+            "clean": true,
+            "standingStart": false,
+            "end": 173.88367886292318,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2461.3061461356183,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.13333333333333333,
+        "tenMeters": 1.0000000000000013,
+        "stationarySeconds": 0.0,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.171567965555911,
+        "rewardTerms": {
+          "progress": 7.26523191295331,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 2.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 2.563284432385896
+        },
+        "pedalCounts": {
+          "gas": 7002,
+          "coast": 1128,
+          "brake": 2670
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 1.6999999999999988,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false
+      ],
+      "cleanLaps": 7,
+      "flyingMedian": 24.237529348125292
+    },
+    {
+      "family": "corner",
+      "bots": 1,
+      "seed": 985100,
+      "duration": 180.0,
+      "result": {
+        "seed": 985100,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 4,
+          "attacks": 4,
+          "passes": 4,
+          "queueSeconds": 4.616666666666656,
+          "alongsideSeconds": 3.5000000000006644,
+          "idleAlongsideSeconds": 0.0,
+          "passTimes": [
+            12.383333333333528,
+            12.233333333332638,
+            11.299999999999358,
+            11.133333333342193
+          ],
+          "attackLatencies": [
+            2.0999999999999974,
+            0.7999999999999545,
+            1.0999999999999375,
+            1.1000000000008754
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 0,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 3.816666666666658,
+          "followingWithoutClosingSeconds": 0.7999999999999976,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 2.116666666666664,
+              "latency": 2.0999999999999974,
+              "passTime": 12.400000000000196
+            },
+            {
+              "id": 2,
+              "rival": 1,
+              "time": 50.31666666666509,
+              "kind": "approach",
+              "attackTime": 51.11666666666505,
+              "latency": 0.7999999999999545,
+              "passTime": 62.54999999999773
+            },
+            {
+              "id": 3,
+              "rival": 1,
+              "time": 100.61666666666224,
+              "kind": "approach",
+              "attackTime": 101.71666666666218,
+              "latency": 1.0999999999999375,
+              "passTime": 111.9166666666616
+            },
+            {
+              "id": 4,
+              "rival": 1,
+              "time": 150.0166666666782,
+              "kind": "approach",
+              "attackTime": 151.11666666667907,
+              "latency": 1.1000000000008754,
+              "passTime": 161.15000000002038
+            }
+          ],
+          "nextOpportunity": 4
+        },
+        "goalMeters": null,
+        "manoeuvre": "Sorpasso completato",
+        "progress": 2421.823037798753,
+        "status": "timeout",
+        "reason": "timeout",
+        "terminationCause": "time_limit",
+        "passes": 4,
+        "passAttempts": 4,
+        "cleanSeries": 6,
+        "bestSeries": 6,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 23.81205480365695,
+            "clean": false,
+            "standingStart": true,
+            "end": 23.81205480365695,
+            "invalidReason": "fuori pista, contatto o settore mancante"
+          },
+          {
+            "lap": 2,
+            "time": 23.427109893510938,
+            "clean": true,
+            "standingStart": false,
+            "end": 47.23916469716789,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 26.39534099947202,
+            "clean": true,
+            "standingStart": false,
+            "end": 73.6345056966399,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 23.428900275914685,
+            "clean": true,
+            "standingStart": false,
+            "end": 97.06340597255459,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 25.87969342569947,
+            "clean": true,
+            "standingStart": false,
+            "end": 122.94309939825406,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 23.42874122816086,
+            "clean": true,
+            "standingStart": false,
+            "end": 146.37184062641492,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 25.80548235069213,
+            "clean": true,
+            "standingStart": false,
+            "end": 172.17732297710705,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2421.823037798753,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.13333333333333333,
+        "tenMeters": 1.1666666666666674,
+        "stationarySeconds": 0.0,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.17432699336054563,
+        "rewardTerms": {
+          "progress": 7.148686501013426,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 2.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 19.300650327591466
+        },
+        "pedalCounts": {
+          "gas": 7194,
+          "coast": 966,
+          "brake": 2640
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 12.400000000000196,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false
+      ],
+      "cleanLaps": 6,
+      "flyingMedian": 24.617191313303408
+    },
+    {
+      "family": "corner",
+      "bots": 1,
+      "seed": 985101,
+      "duration": 180.0,
+      "result": {
+        "seed": 985101,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 4,
+          "attacks": 4,
+          "passes": 4,
+          "queueSeconds": 5.316666666666653,
+          "alongsideSeconds": 8.10000000000247,
+          "idleAlongsideSeconds": 0.0,
+          "passTimes": [
+            14.733333333333645,
+            7.383333333332914,
+            11.199999999999363,
+            8.366666666673325
+          ],
+          "attackLatencies": [
+            2.3999999999999964,
+            1.7999999999998977,
+            1.3999999999999204,
+            1.4000000000011141
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 0,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 3.9166666666666576,
+          "followingWithoutClosingSeconds": 1.3999999999999955,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 2.416666666666663,
+              "latency": 2.3999999999999964,
+              "passTime": 14.750000000000313
+            },
+            {
+              "id": 2,
+              "rival": 1,
+              "time": 49.216666666665155,
+              "kind": "approach",
+              "attackTime": 51.01666666666505,
+              "latency": 1.7999999999998977,
+              "passTime": 56.59999999999807
+            },
+            {
+              "id": 3,
+              "rival": 1,
+              "time": 92.21666666666272,
+              "kind": "approach",
+              "attackTime": 93.61666666666264,
+              "latency": 1.3999999999999204,
+              "passTime": 103.41666666666208
+            },
+            {
+              "id": 4,
+              "rival": 1,
+              "time": 137.81666666666848,
+              "kind": "approach",
+              "attackTime": 139.2166666666696,
+              "latency": 1.4000000000011141,
+              "passTime": 146.1833333333418
+            }
+          ],
+          "nextOpportunity": 4
+        },
+        "goalMeters": null,
+        "manoeuvre": "Sorpasso completato",
+        "progress": 2343.5525170196574,
+        "status": "timeout",
+        "reason": "timeout",
+        "terminationCause": "time_limit",
+        "passes": 4,
+        "passAttempts": 4,
+        "cleanSeries": 6,
+        "bestSeries": 6,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 26.27466680700023,
+            "clean": false,
+            "standingStart": true,
+            "end": 26.27466680700023,
+            "invalidReason": "fuori pista, contatto o settore mancante"
+          },
+          {
+            "lap": 2,
+            "time": 24.048496667451595,
+            "clean": true,
+            "standingStart": false,
+            "end": 50.323163474451825,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 26.03991907146915,
+            "clean": true,
+            "standingStart": false,
+            "end": 76.36308254592097,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 26.58600020244377,
+            "clean": true,
+            "standingStart": false,
+            "end": 102.94908274836475,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.506010978453574,
+            "clean": true,
+            "standingStart": false,
+            "end": 126.45509372681832,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 28.308571543645314,
+            "clean": true,
+            "standingStart": false,
+            "end": 154.76366527046363,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 23.525203513458763,
+            "clean": true,
+            "standingStart": false,
+            "end": 178.2888687839224,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2343.5525170196574,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.13333333333333333,
+        "tenMeters": 1.2500000000000004,
+        "stationarySeconds": 0.0,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.16944855966041325,
+        "rewardTerms": {
+          "progress": 6.9176492176992195,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 2.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 17.885440158510168
+        },
+        "pedalCounts": {
+          "gas": 6768,
+          "coast": 1308,
+          "brake": 2724
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 14.750000000000313,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false
+      ],
+      "cleanLaps": 6,
+      "flyingMedian": 25.044207869460372
+    },
+    {
+      "family": "corner",
+      "bots": 1,
+      "seed": 985102,
+      "duration": 180.0,
+      "result": {
+        "seed": 985102,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 4,
+          "attacks": 4,
+          "passes": 4,
+          "queueSeconds": 3.816666666666658,
+          "alongsideSeconds": 7.200000000000518,
+          "idleAlongsideSeconds": 0.0,
+          "passTimes": [
+            10.950000000000124,
+            12.816666666665938,
+            4.249999999999758,
+            9.48333333334088
+          ],
+          "attackLatencies": [
+            1.9999999999999978,
+            0.7999999999999545,
+            2.6999999999998465,
+            1.3000000000010346
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 0,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 3.816666666666658,
+          "followingWithoutClosingSeconds": 0.0,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 2.0166666666666644,
+              "latency": 1.9999999999999978,
+              "passTime": 10.966666666666791
+            },
+            {
+              "id": 2,
+              "rival": 1,
+              "time": 46.81666666666529,
+              "kind": "approach",
+              "attackTime": 47.616666666665246,
+              "latency": 0.7999999999999545,
+              "passTime": 59.63333333333123
+            },
+            {
+              "id": 3,
+              "rival": 1,
+              "time": 96.31666666666248,
+              "kind": "approach",
+              "attackTime": 99.01666666666233,
+              "latency": 2.6999999999998465,
+              "passTime": 100.56666666666224
+            },
+            {
+              "id": 4,
+              "rival": 1,
+              "time": 137.11666666666792,
+              "kind": "approach",
+              "attackTime": 138.41666666666896,
+              "latency": 1.3000000000010346,
+              "passTime": 146.6000000000088
+            }
+          ],
+          "nextOpportunity": 4
+        },
+        "goalMeters": null,
+        "manoeuvre": "Sorpasso completato",
+        "progress": 2452.345979738031,
+        "status": "timeout",
+        "reason": "timeout",
+        "terminationCause": "time_limit",
+        "passes": 4,
+        "passAttempts": 4,
+        "cleanSeries": 6,
+        "bestSeries": 6,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 23.302241800802918,
+            "clean": false,
+            "standingStart": true,
+            "end": 23.302241800802918,
+            "invalidReason": "fuori pista, contatto o settore mancante"
+          },
+          {
+            "lap": 2,
+            "time": 23.703775217371962,
+            "clean": true,
+            "standingStart": false,
+            "end": 47.00601701817488,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 27.210108243128467,
+            "clean": true,
+            "standingStart": false,
+            "end": 74.21612526130335,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 23.609256066064887,
+            "clean": true,
+            "standingStart": false,
+            "end": 97.82538132736823,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.62298508120736,
+            "clean": true,
+            "standingStart": false,
+            "end": 121.4483664085756,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 24.96355423201885,
+            "clean": true,
+            "standingStart": false,
+            "end": 146.41192064059445,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 23.39446318913795,
+            "clean": true,
+            "standingStart": false,
+            "end": 169.8063838297324,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2452.345979738031,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.13333333333333333,
+        "tenMeters": 1.3000000000000003,
+        "stationarySeconds": 0.0,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.17593634006703687,
+        "rewardTerms": {
+          "progress": 7.23878348151407,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 2.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 16.97690339844552
+        },
+        "pedalCounts": {
+          "gas": 7230,
+          "coast": 1104,
+          "brake": 2466
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 10.966666666666791,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false
+      ],
+      "cleanLaps": 6,
+      "flyingMedian": 23.66338014928966
+    },
+    {
+      "family": "defend",
+      "bots": 1,
+      "seed": 986100,
+      "duration": 180.0,
+      "result": {
+        "seed": 986100,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 2,
+          "attacks": 1,
+          "passes": 1,
+          "queueSeconds": 0.0,
+          "alongsideSeconds": 1.3999999999999204,
+          "idleAlongsideSeconds": 0.0,
+          "passTimes": [
+            17.466666666665674
+          ],
+          "attackLatencies": [
+            15.599999999999113
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 0,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 0.0,
+          "followingWithoutClosingSeconds": 0.0,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 70.81666666666393,
+              "kind": "approach",
+              "attackTime": 86.41666666666305,
+              "latency": 15.599999999999113,
+              "passTime": 88.28333333332961
+            },
+            {
+              "id": 2,
+              "rival": 1,
+              "time": 166.116666666691,
+              "kind": "approach",
+              "attackTime": null,
+              "latency": null,
+              "passTime": null
+            }
+          ],
+          "nextOpportunity": 2
+        },
+        "goalMeters": null,
+        "manoeuvre": "Avvicinamento",
+        "progress": 2457.477218036145,
+        "status": "timeout",
+        "reason": "timeout",
+        "terminationCause": "time_limit",
+        "passes": 1,
+        "passAttempts": 2,
+        "cleanSeries": 7,
+        "bestSeries": 7,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 24.23889165482081,
+            "clean": true,
+            "standingStart": true,
+            "end": 24.23889165482081,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 23.37724202153644,
+            "clean": true,
+            "standingStart": false,
+            "end": 47.61613367635725,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 23.85163870470562,
+            "clean": true,
+            "standingStart": false,
+            "end": 71.46777238106287,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 29.504868741229856,
+            "clean": true,
+            "standingStart": false,
+            "end": 100.97264112229273,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.47810599654693,
+            "clean": true,
+            "standingStart": false,
+            "end": 124.45074711883966,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 23.470818915612128,
+            "clean": true,
+            "standingStart": false,
+            "end": 147.92156603445179,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 24.18295905051866,
+            "clean": true,
+            "standingStart": false,
+            "end": 172.10452508497045,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2457.477218036145,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.13333333333333333,
+        "tenMeters": 0.9833333333333347,
+        "stationarySeconds": 0.0,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.17528960914097214,
+        "rewardTerms": {
+          "progress": 7.253929763212865,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 0.5,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 0.4562750941646674
+        },
+        "pedalCounts": {
+          "gas": 6984,
+          "coast": 1158,
+          "brake": 2658
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 88.28333333332961,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false
+      ],
+      "cleanLaps": 7,
+      "flyingMedian": 23.664872350626275
+    },
+    {
+      "family": "defend",
+      "bots": 1,
+      "seed": 986101,
+      "duration": 180.0,
+      "result": {
+        "seed": 986101,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 2,
+          "attacks": 2,
+          "passes": 2,
+          "queueSeconds": 0.0,
+          "alongsideSeconds": 2.1000000000007333,
+          "idleAlongsideSeconds": 0.0,
+          "passTimes": [
+            14.399999999999181,
+            14.30000000001138
+          ],
+          "attackLatencies": [
+            12.799999999999272,
+            12.800000000010186
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 0,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 0.0,
+          "followingWithoutClosingSeconds": 0.0,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 70.61666666666395,
+              "kind": "approach",
+              "attackTime": 83.41666666666322,
+              "latency": 12.799999999999272,
+              "passTime": 85.01666666666313
+            },
+            {
+              "id": 2,
+              "rival": 1,
+              "time": 154.816666666682,
+              "kind": "approach",
+              "attackTime": 167.6166666666922,
+              "latency": 12.800000000010186,
+              "passTime": 169.1166666666934
+            }
+          ],
+          "nextOpportunity": 2
+        },
+        "goalMeters": null,
+        "manoeuvre": "Sorpasso completato",
+        "progress": 2547.7537056297074,
+        "status": "timeout",
+        "reason": "timeout",
+        "terminationCause": "time_limit",
+        "passes": 2,
+        "passAttempts": 2,
+        "cleanSeries": 7,
+        "bestSeries": 7,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 24.240439530982986,
+            "clean": true,
+            "standingStart": true,
+            "end": 24.240439530982986,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 23.33752492049042,
+            "clean": true,
+            "standingStart": false,
+            "end": 47.577964451473406,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 23.624360961449142,
+            "clean": true,
+            "standingStart": false,
+            "end": 71.20232541292255,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 24.856398485353466,
+            "clean": true,
+            "standingStart": false,
+            "end": 96.05872389827601,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.32827004866361,
+            "clean": true,
+            "standingStart": false,
+            "end": 119.38699394693963,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 23.47749721636363,
+            "clean": true,
+            "standingStart": false,
+            "end": 142.86449116330326,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 24.894596859930544,
+            "clean": true,
+            "standingStart": false,
+            "end": 167.7590880232338,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2547.7537056297074,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.13333333333333333,
+        "tenMeters": 0.9833333333333347,
+        "stationarySeconds": 0.0,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.19625388493954027,
+        "rewardTerms": {
+          "progress": 7.520406007821421,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 1.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 0.4562750941646674
+        },
+        "pedalCounts": {
+          "gas": 7500,
+          "coast": 960,
+          "brake": 2340
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 85.01666666666313,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false
+      ],
+      "cleanLaps": 7,
+      "flyingMedian": 23.550929088906386
+    },
+    {
+      "family": "defend",
+      "bots": 1,
+      "seed": 986102,
+      "duration": 180.0,
+      "result": {
+        "seed": 986102,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 2,
+          "attacks": 2,
+          "passes": 2,
+          "queueSeconds": 0.0,
+          "alongsideSeconds": 2.1000000000007333,
+          "idleAlongsideSeconds": 0.0,
+          "passTimes": [
+            14.399999999999181,
+            14.30000000001138
+          ],
+          "attackLatencies": [
+            12.799999999999272,
+            12.800000000010186
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 0,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 0.0,
+          "followingWithoutClosingSeconds": 0.0,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 70.61666666666395,
+              "kind": "approach",
+              "attackTime": 83.41666666666322,
+              "latency": 12.799999999999272,
+              "passTime": 85.01666666666313
+            },
+            {
+              "id": 2,
+              "rival": 1,
+              "time": 154.816666666682,
+              "kind": "approach",
+              "attackTime": 167.6166666666922,
+              "latency": 12.800000000010186,
+              "passTime": 169.1166666666934
+            }
+          ],
+          "nextOpportunity": 2
+        },
+        "goalMeters": null,
+        "manoeuvre": "Sorpasso completato",
+        "progress": 2547.7537056297074,
+        "status": "timeout",
+        "reason": "timeout",
+        "terminationCause": "time_limit",
+        "passes": 2,
+        "passAttempts": 2,
+        "cleanSeries": 7,
+        "bestSeries": 7,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 24.240439530982986,
+            "clean": true,
+            "standingStart": true,
+            "end": 24.240439530982986,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 23.33752492049042,
+            "clean": true,
+            "standingStart": false,
+            "end": 47.577964451473406,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 23.624360961449142,
+            "clean": true,
+            "standingStart": false,
+            "end": 71.20232541292255,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 24.856398485353466,
+            "clean": true,
+            "standingStart": false,
+            "end": 96.05872389827601,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.32827004866361,
+            "clean": true,
+            "standingStart": false,
+            "end": 119.38699394693963,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 23.47749721636363,
+            "clean": true,
+            "standingStart": false,
+            "end": 142.86449116330326,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 24.894596859930544,
+            "clean": true,
+            "standingStart": false,
+            "end": 167.7590880232338,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2547.7537056297074,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.13333333333333333,
+        "tenMeters": 0.9833333333333347,
+        "stationarySeconds": 0.0,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.19625388493954027,
+        "rewardTerms": {
+          "progress": 7.520406007821421,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 1.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 0.4562750941646674
+        },
+        "pedalCounts": {
+          "gas": 7500,
+          "coast": 960,
+          "brake": 2340
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 85.01666666666313,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false
+      ],
+      "cleanLaps": 7,
+      "flyingMedian": 23.550929088906386
+    },
+    {
+      "family": "traffic",
+      "bots": 1,
+      "seed": 987100,
+      "duration": 180.0,
+      "result": {
+        "seed": 987100,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 4,
+          "attacks": 4,
+          "passes": 4,
+          "queueSeconds": 2.416666666666663,
+          "alongsideSeconds": 6.5000000000009255,
+          "idleAlongsideSeconds": 0.0,
+          "passTimes": [
+            7.333333333333313,
+            4.833333333333059,
+            4.666666666666401,
+            4.633333333337021
+          ],
+          "attackLatencies": [
+            1.7999999999999985,
+            2.6999999999998465,
+            2.6999999999998465,
+            2.8000000000022283
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 0,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 0.7999999999999972,
+          "followingWithoutClosingSeconds": 1.6166666666666658,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 1.816666666666665,
+              "latency": 1.7999999999999985,
+              "passTime": 7.349999999999979
+            },
+            {
+              "id": 2,
+              "rival": 1,
+              "time": 48.11666666666522,
+              "kind": "approach",
+              "attackTime": 50.816666666665064,
+              "latency": 2.6999999999998465,
+              "passTime": 52.949999999998276
+            },
+            {
+              "id": 3,
+              "rival": 1,
+              "time": 95.01666666666256,
+              "kind": "approach",
+              "attackTime": 97.7166666666624,
+              "latency": 2.6999999999998465,
+              "passTime": 99.68333333332896
+            },
+            {
+              "id": 4,
+              "rival": 1,
+              "time": 141.91666666667174,
+              "kind": "approach",
+              "attackTime": 144.71666666667397,
+              "latency": 2.8000000000022283,
+              "passTime": 146.55000000000877
+            }
+          ],
+          "nextOpportunity": 4
+        },
+        "goalMeters": null,
+        "manoeuvre": "Sorpasso completato",
+        "progress": 2565.134378751629,
+        "status": "window",
+        "reason": "window",
+        "terminationCause": "collection_window",
+        "passes": 4,
+        "passAttempts": 4,
+        "cleanSeries": 7,
+        "bestSeries": 7,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 25.87046641220275,
+            "clean": true,
+            "standingStart": true,
+            "end": 25.87046641220275,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 23.434293146715138,
+            "clean": true,
+            "standingStart": false,
+            "end": 49.30475955891789,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 23.5854975083737,
+            "clean": true,
+            "standingStart": false,
+            "end": 72.89025706729159,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 23.453608714056685,
+            "clean": true,
+            "standingStart": false,
+            "end": 96.34386578134827,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.633009695766333,
+            "clean": true,
+            "standingStart": false,
+            "end": 119.9768754771146,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 23.464089461580798,
+            "clean": true,
+            "standingStart": false,
+            "end": 143.4409649386954,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 23.640438909772712,
+            "clean": true,
+            "standingStart": false,
+            "end": 167.0814038484681,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2565.134378751629,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.6666666666666671,
+        "tenMeters": 2.1333333333333306,
+        "stationarySeconds": 0.09999999999999999,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.2025670546272615,
+        "rewardTerms": {
+          "progress": 7.571709914583361,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 2.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 14.52697976417648
+        },
+        "pedalCounts": {
+          "gas": 7656,
+          "coast": 930,
+          "brake": 2214
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 7.349999999999979,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false
+      ],
+      "cleanLaps": 7,
+      "flyingMedian": 23.52479348497725
+    },
+    {
+      "family": "traffic",
+      "bots": 1,
+      "seed": 987101,
+      "duration": 180.0,
+      "result": {
+        "seed": 987101,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 4,
+          "attacks": 4,
+          "passes": 4,
+          "queueSeconds": 2.3166666666666633,
+          "alongsideSeconds": 4.100000000000625,
+          "idleAlongsideSeconds": 0.0,
+          "passTimes": [
+            6.766666666666648,
+            4.733333333333064,
+            5.999999999999659,
+            8.250000000006565
+          ],
+          "attackLatencies": [
+            1.8999999999999981,
+            3.499999999999801,
+            4.799999999999727,
+            1.200000000000955
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 0,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 0.6999999999999975,
+          "followingWithoutClosingSeconds": 1.6166666666666658,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 1.9166666666666647,
+              "latency": 1.8999999999999981,
+              "passTime": 6.783333333333315
+            },
+            {
+              "id": 2,
+              "rival": 1,
+              "time": 46.31666666666532,
+              "kind": "approach",
+              "attackTime": 49.81666666666512,
+              "latency": 3.499999999999801,
+              "passTime": 51.049999999998384
+            },
+            {
+              "id": 3,
+              "rival": 1,
+              "time": 91.01666666666279,
+              "kind": "approach",
+              "attackTime": 95.81666666666251,
+              "latency": 4.799999999999727,
+              "passTime": 97.01666666666245
+            },
+            {
+              "id": 4,
+              "rival": 1,
+              "time": 135.41666666666657,
+              "kind": "approach",
+              "attackTime": 136.61666666666753,
+              "latency": 1.200000000000955,
+              "passTime": 143.66666666667314
+            }
+          ],
+          "nextOpportunity": 4
+        },
+        "goalMeters": null,
+        "manoeuvre": "Sorpasso completato",
+        "progress": 2568.8092317976243,
+        "status": "window",
+        "reason": "window",
+        "terminationCause": "collection_window",
+        "passes": 4,
+        "passAttempts": 4,
+        "cleanSeries": 7,
+        "bestSeries": 7,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 25.639447342632025,
+            "clean": true,
+            "standingStart": true,
+            "end": 25.639447342632025,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 23.506746921562495,
+            "clean": true,
+            "standingStart": false,
+            "end": 49.14619426419452,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 23.45009853430524,
+            "clean": true,
+            "standingStart": false,
+            "end": 72.59629279849976,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 23.45698204154884,
+            "clean": true,
+            "standingStart": false,
+            "end": 96.0532748400486,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.35399605128731,
+            "clean": true,
+            "standingStart": false,
+            "end": 119.40727089133591,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 23.959471069036198,
+            "clean": true,
+            "standingStart": false,
+            "end": 143.3667419603721,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 23.378312705594652,
+            "clean": true,
+            "standingStart": false,
+            "end": 166.74505466596676,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2568.8092317976243,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.6666666666666671,
+        "tenMeters": 2.1333333333333306,
+        "stationarySeconds": 0.09999999999999999,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.20165771705219185,
+        "rewardTerms": {
+          "progress": 7.582557268809088,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 2.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 13.36016778681705
+        },
+        "pedalCounts": {
+          "gas": 7626,
+          "coast": 888,
+          "brake": 2286
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 6.783333333333315,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false
+      ],
+      "cleanLaps": 7,
+      "flyingMedian": 23.45354028792704
+    },
+    {
+      "family": "traffic",
+      "bots": 1,
+      "seed": 987102,
+      "duration": 180.0,
+      "result": {
+        "seed": 987102,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 5,
+          "attacks": 5,
+          "passes": 5,
+          "queueSeconds": 2.0166666666666644,
+          "alongsideSeconds": 6.500000000001837,
+          "idleAlongsideSeconds": 0.0,
+          "passTimes": [
+            5.549999999999986,
+            11.433333333332683,
+            4.116666666666433,
+            11.683333333339561,
+            4.050000000003223
+          ],
+          "attackLatencies": [
+            1.7999999999999985,
+            0.8999999999999488,
+            2.6999999999998465,
+            1.0999999999999375,
+            2.7000000000021487
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 0,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 0.5999999999999979,
+          "followingWithoutClosingSeconds": 1.4166666666666665,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 1.816666666666665,
+              "latency": 1.7999999999999985,
+              "passTime": 5.566666666666652
+            },
+            {
+              "id": 2,
+              "rival": 1,
+              "time": 39.51666666666571,
+              "kind": "approach",
+              "attackTime": 40.416666666665655,
+              "latency": 0.8999999999999488,
+              "passTime": 50.94999999999839
+            },
+            {
+              "id": 3,
+              "rival": 1,
+              "time": 85.31666666666311,
+              "kind": "approach",
+              "attackTime": 88.01666666666296,
+              "latency": 2.6999999999998465,
+              "passTime": 89.43333333332954
+            },
+            {
+              "id": 4,
+              "rival": 1,
+              "time": 124.41666666666089,
+              "kind": "approach",
+              "attackTime": 125.51666666666083,
+              "latency": 1.0999999999999375,
+              "passTime": 136.10000000000045
+            },
+            {
+              "id": 5,
+              "rival": 1,
+              "time": 170.5166666666945,
+              "kind": "approach",
+              "attackTime": 173.21666666669665,
+              "latency": 2.7000000000021487,
+              "passTime": 174.56666666669773
+            }
+          ],
+          "nextOpportunity": 5
+        },
+        "goalMeters": null,
+        "manoeuvre": "Sorpasso completato",
+        "progress": 2479.828451210385,
+        "status": "window",
+        "reason": "window",
+        "terminationCause": "collection_window",
+        "passes": 5,
+        "passAttempts": 5,
+        "cleanSeries": 7,
+        "bestSeries": 7,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 25.43125732469283,
+            "clean": true,
+            "standingStart": true,
+            "end": 25.43125732469283,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 26.261353226658997,
+            "clean": true,
+            "standingStart": false,
+            "end": 51.69261055135183,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 23.34528311337771,
+            "clean": true,
+            "standingStart": false,
+            "end": 75.03789366472954,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 23.837668779343787,
+            "clean": true,
+            "standingStart": false,
+            "end": 98.87556244407332,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.323663318868086,
+            "clean": true,
+            "standingStart": false,
+            "end": 122.19922576294141,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 26.366870718753603,
+            "clean": true,
+            "standingStart": false,
+            "end": 148.566096481695,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 23.562245198888718,
+            "clean": true,
+            "standingStart": false,
+            "end": 172.12834168058373,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2479.828451210385,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.6666666666666671,
+        "tenMeters": 2.1333333333333306,
+        "stationarySeconds": 0.09999999999999999,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.18575100160953711,
+        "rewardTerms": {
+          "progress": 7.319905664994257,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 2.5,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 15.086722177137958
+        },
+        "pedalCounts": {
+          "gas": 7386,
+          "coast": 894,
+          "brake": 2520
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 5.566666666666652,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false
+      ],
+      "cleanLaps": 7,
+      "flyingMedian": 23.699956989116252
+    },
+    {
+      "family": "traffic",
+      "bots": 2,
+      "seed": 987200,
+      "duration": 180.0,
+      "result": {
+        "seed": 987200,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 4,
+          "attacks": 4,
+          "passes": 2,
+          "queueSeconds": 131.41666666670372,
+          "alongsideSeconds": 127.80000000003741,
+          "idleAlongsideSeconds": 48.90000000001555,
+          "passTimes": [
+            9.883333333333404,
+            12.000000000000176
+          ],
+          "attackLatencies": [
+            2.0999999999999974,
+            2.0999999999999974,
+            5.499999999999687,
+            7.699999999999562
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 0,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 48.00000000001149,
+          "followingWithoutClosingSeconds": 84.91666666669222,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 2.116666666666664,
+              "latency": 2.0999999999999974,
+              "passTime": 9.900000000000071
+            },
+            {
+              "id": 2,
+              "rival": 2,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 2.116666666666664,
+              "latency": 2.0999999999999974,
+              "passTime": 12.016666666666843
+            },
+            {
+              "id": 3,
+              "rival": 1,
+              "time": 49.01666666666517,
+              "kind": "approach",
+              "attackTime": 56.71666666666473,
+              "latency": 7.699999999999562,
+              "passTime": null
+            },
+            {
+              "id": 4,
+              "rival": 2,
+              "time": 50.91666666666506,
+              "kind": "approach",
+              "attackTime": 56.416666666664746,
+              "latency": 5.499999999999687,
+              "passTime": null
+            }
+          ],
+          "nextOpportunity": 4
+        },
+        "goalMeters": null,
+        "manoeuvre": "Affiancato",
+        "progress": 1529.0669047736592,
+        "status": "window",
+        "reason": "window",
+        "terminationCause": "collection_window",
+        "passes": 2,
+        "passAttempts": 4,
+        "cleanSeries": 4,
+        "bestSeries": 4,
+        "laps": 4,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 28.432586219104266,
+            "clean": true,
+            "standingStart": true,
+            "end": 28.432586219104266,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 24.473383431885352,
+            "clean": true,
+            "standingStart": false,
+            "end": 52.90596965098962,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 49.01559423427953,
+            "clean": true,
+            "standingStart": false,
+            "end": 101.92156388526915,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 51.61117380845222,
+            "clean": true,
+            "standingStart": false,
+            "end": 153.53273769372137,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 1529.0669047736592,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.6666666666666671,
+        "tenMeters": 2.2666666666666635,
+        "stationarySeconds": 0.09999999999999999,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.08770492721009823,
+        "rewardTerms": {
+          "progress": 4.5134676525486945,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 1.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 13.879722371467516
+        },
+        "pedalCounts": {
+          "gas": 4518,
+          "coast": 4224,
+          "brake": 2058
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 9.900000000000071,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false,
+        false
+      ],
+      "cleanLaps": 4,
+      "flyingMedian": 49.01559423427953
+    },
+    {
+      "family": "traffic",
+      "bots": 2,
+      "seed": 987201,
+      "duration": 180.0,
+      "result": {
+        "seed": 987201,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 4,
+          "attacks": 4,
+          "passes": 2,
+          "queueSeconds": 131.41666666670375,
+          "alongsideSeconds": 127.10000000003751,
+          "idleAlongsideSeconds": 43.00000000001461,
+          "passTimes": [
+            11.383333333333479,
+            13.466666666666915
+          ],
+          "attackLatencies": [
+            1.9999999999999978,
+            1.9999999999999978,
+            7.899999999999551,
+            6.399999999999636
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 0,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 51.10000000001193,
+          "followingWithoutClosingSeconds": 81.31666666669182,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 2.0166666666666644,
+              "latency": 1.9999999999999978,
+              "passTime": 11.400000000000146
+            },
+            {
+              "id": 2,
+              "rival": 2,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 2.0166666666666644,
+              "latency": 1.9999999999999978,
+              "passTime": 13.483333333333583
+            },
+            {
+              "id": 3,
+              "rival": 1,
+              "time": 49.51666666666514,
+              "kind": "approach",
+              "attackTime": 57.41666666666469,
+              "latency": 7.899999999999551,
+              "passTime": null
+            },
+            {
+              "id": 4,
+              "rival": 2,
+              "time": 51.516666666665024,
+              "kind": "approach",
+              "attackTime": 57.91666666666466,
+              "latency": 6.399999999999636,
+              "passTime": null
+            }
+          ],
+          "nextOpportunity": 4
+        },
+        "goalMeters": null,
+        "manoeuvre": "Affiancato",
+        "progress": 1497.0811719264852,
+        "status": "window",
+        "reason": "window",
+        "terminationCause": "collection_window",
+        "passes": 2,
+        "passAttempts": 4,
+        "cleanSeries": 4,
+        "bestSeries": 4,
+        "laps": 4,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 29.357400130082087,
+            "clean": true,
+            "standingStart": true,
+            "end": 29.357400130082087,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 24.64898331892562,
+            "clean": true,
+            "standingStart": false,
+            "end": 54.00638344900771,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 50.636813222622,
+            "clean": true,
+            "standingStart": false,
+            "end": 104.64319667162971,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 53.00522550194725,
+            "clean": true,
+            "standingStart": false,
+            "end": 157.64842217357696,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 1497.0811719264852,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.6666666666666671,
+        "tenMeters": 2.2666666666666635,
+        "stationarySeconds": 0.09999999999999999,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.08683793099761179,
+        "rewardTerms": {
+          "progress": 4.419052836494463,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 1.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 12.312999425696464
+        },
+        "pedalCounts": {
+          "gas": 4818,
+          "coast": 3720,
+          "brake": 2262
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 11.400000000000146,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false,
+        false
+      ],
+      "cleanLaps": 4,
+      "flyingMedian": 50.636813222622
+    },
+    {
+      "family": "traffic",
+      "bots": 2,
+      "seed": 987202,
+      "duration": 180.0,
+      "result": {
+        "seed": 987202,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 8,
+          "attacks": 8,
+          "passes": 8,
+          "queueSeconds": 44.516666666696686,
+          "alongsideSeconds": 40.80000000002515,
+          "idleAlongsideSeconds": 12.700000000010107,
+          "passTimes": [
+            10.766666666666781,
+            12.533333333333536,
+            11.94999999999932,
+            12.41666666666596,
+            6.366666666666305,
+            5.8499999999996675,
+            47.61666666670456,
+            46.333333333370206
+          ],
+          "attackLatencies": [
+            1.8999999999999981,
+            1.8999999999999981,
+            1.6999999999999034,
+            1.3999999999999204,
+            4.999999999999716,
+            4.299999999999756,
+            5.6000000000044565,
+            38.40000000003056
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 0,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 18.100000000011242,
+          "followingWithoutClosingSeconds": 26.91666666668544,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 1.9166666666666647,
+              "latency": 1.8999999999999981,
+              "passTime": 10.783333333333449
+            },
+            {
+              "id": 2,
+              "rival": 2,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 1.9166666666666647,
+              "latency": 1.8999999999999981,
+              "passTime": 12.550000000000203
+            },
+            {
+              "id": 3,
+              "rival": 1,
+              "time": 43.916666666665456,
+              "kind": "approach",
+              "attackTime": 45.61666666666536,
+              "latency": 1.6999999999999034,
+              "passTime": 56.33333333333142
+            },
+            {
+              "id": 4,
+              "rival": 2,
+              "time": 44.316666666665434,
+              "kind": "approach",
+              "attackTime": 45.716666666665354,
+              "latency": 1.3999999999999204,
+              "passTime": 56.266666666664754
+            },
+            {
+              "id": 5,
+              "rival": 2,
+              "time": 88.41666666666293,
+              "kind": "approach",
+              "attackTime": 93.41666666666265,
+              "latency": 4.999999999999716,
+              "passTime": 94.78333333332924
+            },
+            {
+              "id": 6,
+              "rival": 1,
+              "time": 89.71666666666286,
+              "kind": "approach",
+              "attackTime": 94.01666666666262,
+              "latency": 4.299999999999756,
+              "passTime": 95.56666666666253
+            },
+            {
+              "id": 7,
+              "rival": 2,
+              "time": 128.01666666666068,
+              "kind": "approach",
+              "attackTime": 133.61666666666514,
+              "latency": 5.6000000000044565,
+              "passTime": 175.63333333336524
+            },
+            {
+              "id": 8,
+              "rival": 1,
+              "time": 129.31666666666172,
+              "kind": "approach",
+              "attackTime": 167.71666666669228,
+              "latency": 38.40000000003056,
+              "passTime": 175.65000000003192
+            }
+          ],
+          "nextOpportunity": 8
+        },
+        "goalMeters": null,
+        "manoeuvre": "Sorpasso completato",
+        "progress": 2065.209198133041,
+        "status": "window",
+        "reason": "window",
+        "terminationCause": "collection_window",
+        "passes": 8,
+        "passAttempts": 8,
+        "cleanSeries": 6,
+        "bestSeries": 6,
+        "laps": 6,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 29.30358316510412,
+            "clean": true,
+            "standingStart": true,
+            "end": 29.30358316510412,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 27.528426968360716,
+            "clean": true,
+            "standingStart": false,
+            "end": 56.832010133464834,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 23.62449510485463,
+            "clean": true,
+            "standingStart": false,
+            "end": 80.45650523831947,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 24.791876763084645,
+            "clean": true,
+            "standingStart": false,
+            "end": 105.24838200140411,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.911073267162664,
+            "clean": true,
+            "standingStart": false,
+            "end": 129.15945526856677,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 49.233569247870975,
+            "clean": true,
+            "standingStart": false,
+            "end": 178.39302451643775,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 2065.209198133041,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.6666666666666671,
+        "tenMeters": 2.3999999999999964,
+        "stationarySeconds": 0.09999999999999999,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.15874551984763804,
+        "rewardTerms": {
+          "progress": 6.0960412408502735,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 4.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 10.563975138317991
+        },
+        "pedalCounts": {
+          "gas": 6480,
+          "coast": 1950,
+          "brake": 2370
+        },
+        "understeerSeconds": 0.36666666666666664
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 10.783333333333449,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false,
+        false
+      ],
+      "cleanLaps": 6,
+      "flyingMedian": 24.791876763084645
+    },
+    {
+      "family": "traffic",
+      "bots": 3,
+      "seed": 987300,
+      "duration": 180.0,
+      "result": {
+        "seed": 987300,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 6,
+          "attacks": 5,
+          "passes": 4,
+          "queueSeconds": 119.11666666670442,
+          "alongsideSeconds": 116.90000000003829,
+          "idleAlongsideSeconds": 35.90000000001331,
+          "passTimes": [
+            14.533333333333635,
+            21.400000000000066,
+            21.9666666666667,
+            10.466666666666079
+          ],
+          "attackLatencies": [
+            2.0999999999999974,
+            2.0999999999999974,
+            2.0999999999999974,
+            7.199999999999591,
+            14.299999999999194
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 0,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 34.400000000009165,
+          "followingWithoutClosingSeconds": 85.51666666669524,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 2.116666666666664,
+              "latency": 2.0999999999999974,
+              "passTime": 14.550000000000303
+            },
+            {
+              "id": 2,
+              "rival": 2,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 2.116666666666664,
+              "latency": 2.0999999999999974,
+              "passTime": 21.416666666666732
+            },
+            {
+              "id": 3,
+              "rival": 3,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 2.116666666666664,
+              "latency": 2.0999999999999974,
+              "passTime": 21.983333333333366
+            },
+            {
+              "id": 4,
+              "rival": 1,
+              "time": 56.51666666666474,
+              "kind": "approach",
+              "attackTime": 63.71666666666433,
+              "latency": 7.199999999999591,
+              "passTime": 66.98333333333082
+            },
+            {
+              "id": 5,
+              "rival": 3,
+              "time": 60.51666666666451,
+              "kind": "approach",
+              "attackTime": 74.8166666666637,
+              "latency": 14.299999999999194,
+              "passTime": null
+            },
+            {
+              "id": 6,
+              "rival": 2,
+              "time": 63.21666666666436,
+              "kind": "approach",
+              "attackTime": null,
+              "latency": null,
+              "passTime": null
+            }
+          ],
+          "nextOpportunity": 6
+        },
+        "goalMeters": null,
+        "manoeuvre": "Avvicinamento",
+        "progress": 1562.1630534696474,
+        "status": "window",
+        "reason": "window",
+        "terminationCause": "collection_window",
+        "passes": 4,
+        "passAttempts": 6,
+        "cleanSeries": 4,
+        "bestSeries": 4,
+        "laps": 4,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 33.14574127830936,
+            "clean": true,
+            "standingStart": true,
+            "end": 33.14574127830936,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 23.580997463844604,
+            "clean": true,
+            "standingStart": false,
+            "end": 56.72673874215396,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 41.797169077449205,
+            "clean": true,
+            "standingStart": false,
+            "end": 98.52390781960317,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 50.709196109952686,
+            "clean": true,
+            "standingStart": false,
+            "end": 149.23310392955585,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 1562.1630534696474,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.6666666666666671,
+        "tenMeters": 2.3499999999999965,
+        "stationarySeconds": 0.09999999999999999,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.09072192343816295,
+        "rewardTerms": {
+          "progress": 4.611160170840016,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 2.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.26654182138175386,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 11.468695387120885
+        },
+        "pedalCounts": {
+          "gas": 4974,
+          "coast": 3924,
+          "brake": 1902
+        },
+        "understeerSeconds": 0.05
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 14.550000000000303,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "cleanLaps": 4,
+      "flyingMedian": 41.797169077449205
+    },
+    {
+      "family": "traffic",
+      "bots": 3,
+      "seed": 987301,
+      "duration": 180.0,
+      "result": {
+        "seed": 987301,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 9,
+          "attacks": 9,
+          "passes": 9,
+          "queueSeconds": 44.41666666668034,
+          "alongsideSeconds": 48.10000000000363,
+          "idleAlongsideSeconds": 3.1999999999999034,
+          "passTimes": [
+            11.800000000000166,
+            21.650000000000052,
+            22.266666666666683,
+            8.666666666666174,
+            29.466666666665,
+            36.39999999999794,
+            6.349999999999767,
+            30.900000000022885,
+            31.400000000024477
+          ],
+          "attackLatencies": [
+            1.9999999999999978,
+            1.9999999999999978,
+            1.9999999999999978,
+            6.199999999999648,
+            7.0999999999996035,
+            7.299999999999592,
+            3.9999999999997726,
+            19.700000000013972,
+            18.40000000001413
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 0,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 27.800000000010055,
+          "followingWithoutClosingSeconds": 16.71666666667029,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 2.0166666666666644,
+              "latency": 1.9999999999999978,
+              "passTime": 11.816666666666833
+            },
+            {
+              "id": 2,
+              "rival": 2,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 2.0166666666666644,
+              "latency": 1.9999999999999978,
+              "passTime": 21.666666666666718
+            },
+            {
+              "id": 3,
+              "rival": 3,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 2.0166666666666644,
+              "latency": 1.9999999999999978,
+              "passTime": 22.28333333333335
+            },
+            {
+              "id": 4,
+              "rival": 1,
+              "time": 51.516666666665024,
+              "kind": "approach",
+              "attackTime": 57.71666666666467,
+              "latency": 6.199999999999648,
+              "passTime": 60.1833333333312
+            },
+            {
+              "id": 5,
+              "rival": 3,
+              "time": 56.81666666666472,
+              "kind": "approach",
+              "attackTime": 64.11666666666432,
+              "latency": 7.299999999999592,
+              "passTime": 86.28333333332972
+            },
+            {
+              "id": 6,
+              "rival": 2,
+              "time": 56.91666666666472,
+              "kind": "approach",
+              "attackTime": 64.01666666666432,
+              "latency": 7.0999999999996035,
+              "passTime": 93.31666666666266
+            },
+            {
+              "id": 7,
+              "rival": 1,
+              "time": 121.81666666666104,
+              "kind": "approach",
+              "attackTime": 125.81666666666081,
+              "latency": 3.9999999999997726,
+              "passTime": 128.1666666666608
+            },
+            {
+              "id": 8,
+              "rival": 3,
+              "time": 126.0166666666608,
+              "kind": "approach",
+              "attackTime": 145.71666666667477,
+              "latency": 19.700000000013972,
+              "passTime": 156.91666666668368
+            },
+            {
+              "id": 9,
+              "rival": 2,
+              "time": 127.41666666666072,
+              "kind": "approach",
+              "attackTime": 145.81666666667485,
+              "latency": 18.40000000001413,
+              "passTime": 158.8166666666852
+            }
+          ],
+          "nextOpportunity": 9
+        },
+        "goalMeters": null,
+        "manoeuvre": "Sorpasso completato",
+        "progress": 1934.1619666621673,
+        "status": "window",
+        "reason": "window",
+        "terminationCause": "collection_window",
+        "passes": 9,
+        "passAttempts": 9,
+        "cleanSeries": 5,
+        "bestSeries": 5,
+        "laps": 5,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 34.401013824557076,
+            "clean": true,
+            "standingStart": true,
+            "end": 34.401013824557076,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 25.15114845891184,
+            "clean": true,
+            "standingStart": false,
+            "end": 59.55216228346892,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 41.40594768790241,
+            "clean": true,
+            "standingStart": false,
+            "end": 100.95810997137133,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 23.790960220049058,
+            "clean": true,
+            "standingStart": false,
+            "end": 124.74907019142039,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 39.2379955342232,
+            "clean": true,
+            "standingStart": false,
+            "end": 163.9870657256436,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 1934.1619666621673,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.6666666666666671,
+        "tenMeters": 2.499999999999996,
+        "stationarySeconds": 0.09999999999999999,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.14260915957244544,
+        "rewardTerms": {
+          "progress": 5.709218768692049,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 4.5,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 3.9465678602153424,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 9.688756793351946
+        },
+        "pedalCounts": {
+          "gas": 5574,
+          "coast": 2346,
+          "brake": 2880
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 11.816666666666833,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "cleanLaps": 5,
+      "flyingMedian": 32.19457199656752
+    },
+    {
+      "family": "traffic",
+      "bots": 3,
+      "seed": 987302,
+      "duration": 180.0,
+      "result": {
+        "seed": 987302,
+        "time": null,
+        "attack": {
+          "version": "attack-1",
+          "ticks": 10800,
+          "opportunities": 6,
+          "attacks": 5,
+          "passes": 4,
+          "queueSeconds": 131.51666666670374,
+          "alongsideSeconds": 131.1000000000374,
+          "idleAlongsideSeconds": 42.50000000001293,
+          "passTimes": [
+            10.350000000000094,
+            12.183333333333518,
+            13.8333333333336,
+            10.449999999999406
+          ],
+          "attackLatencies": [
+            2.0999999999999974,
+            2.0999999999999974,
+            2.0999999999999974,
+            7.499999999999574,
+            10.19999999999942
+          ],
+          "lastSampleTime": 179.91666666670199,
+          "startedAlongside": 0,
+          "delayDiagnostics": "closing-versus-following-1",
+          "closingApproachSeconds": 17.800000000001788,
+          "followingWithoutClosingSeconds": 114.61666666670195,
+          "opportunityEvents": [
+            {
+              "id": 1,
+              "rival": 1,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 2.116666666666664,
+              "latency": 2.0999999999999974,
+              "passTime": 10.366666666666761
+            },
+            {
+              "id": 2,
+              "rival": 2,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 2.116666666666664,
+              "latency": 2.0999999999999974,
+              "passTime": 12.200000000000186
+            },
+            {
+              "id": 3,
+              "rival": 3,
+              "time": 0.016666666666666666,
+              "kind": "approach",
+              "attackTime": 2.116666666666664,
+              "latency": 2.0999999999999974,
+              "passTime": 13.850000000000268
+            },
+            {
+              "id": 4,
+              "rival": 1,
+              "time": 43.51666666666548,
+              "kind": "approach",
+              "attackTime": 51.01666666666505,
+              "latency": 7.499999999999574,
+              "passTime": 53.966666666664885
+            },
+            {
+              "id": 5,
+              "rival": 2,
+              "time": 46.916666666665286,
+              "kind": "approach",
+              "attackTime": 57.116666666664706,
+              "latency": 10.19999999999942,
+              "passTime": null
+            },
+            {
+              "id": 6,
+              "rival": 3,
+              "time": 49.81666666666512,
+              "kind": "approach",
+              "attackTime": null,
+              "latency": null,
+              "passTime": null
+            }
+          ],
+          "nextOpportunity": 6
+        },
+        "goalMeters": null,
+        "manoeuvre": "Affiancato",
+        "progress": 1359.6629752296913,
+        "status": "window",
+        "reason": "window",
+        "terminationCause": "collection_window",
+        "passes": 4,
+        "passAttempts": 6,
+        "cleanSeries": 4,
+        "bestSeries": 4,
+        "laps": 4,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 29.429595640073565,
+            "clean": true,
+            "standingStart": true,
+            "end": 29.429595640073565,
+            "invalidReason": ""
+          },
+          {
+            "lap": 2,
+            "time": 28.87551615018804,
+            "clean": true,
+            "standingStart": false,
+            "end": 58.305111790261606,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 60.12943841518761,
+            "clean": true,
+            "standingStart": false,
+            "end": 118.43455020544921,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 60.78081653006571,
+            "clean": true,
+            "standingStart": false,
+            "end": 179.21536673551492,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 0,
+        "validProgress": 1359.6629752296913,
+        "reentryTime": null,
+        "offroadSeconds": 0.0,
+        "firstMeter": 0.6666666666666671,
+        "tenMeters": 2.5166666666666626,
+        "stationarySeconds": 0.09999999999999999,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.0737461114366575,
+        "rewardTerms": {
+          "progress": 4.013424682666645,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": 0.0,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 2.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.4175146295450993,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 14.34746954308679
+        },
+        "pedalCounts": {
+          "gas": 3846,
+          "coast": 5772,
+          "brake": 1182
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": true,
+      "firstPass": 10.366666666666761,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 0,
+      "retirements": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "cleanLaps": 4,
+      "flyingMedian": 60.12943841518761
+    },
+    {
+      "family": "recover",
+      "bots": 1,
+      "seed": 988100,
+      "duration": 180.0,
+      "result": {
+        "seed": 988100,
+        "time": null,
+        "attack": {},
+        "goalMeters": null,
+        "manoeuvre": "Traiettorie e passo",
+        "progress": 2569.2374858405774,
+        "status": "timeout",
+        "reason": "timeout",
+        "terminationCause": "time_limit",
+        "passes": 0,
+        "passAttempts": 0,
+        "cleanSeries": 6,
+        "bestSeries": 6,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 26.19357729078203,
+            "clean": false,
+            "standingStart": true,
+            "end": 26.19357729078203,
+            "invalidReason": "fuori pista, contatto o settore mancante"
+          },
+          {
+            "lap": 2,
+            "time": 23.44635456717392,
+            "clean": true,
+            "standingStart": false,
+            "end": 49.63993185795595,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 23.448934615158414,
+            "clean": true,
+            "standingStart": false,
+            "end": 73.08886647311436,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 23.445159241270957,
+            "clean": true,
+            "standingStart": false,
+            "end": 96.53402571438532,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.448976476334167,
+            "clean": true,
+            "standingStart": false,
+            "end": 119.98300219071949,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 23.44713211618965,
+            "clean": true,
+            "standingStart": false,
+            "end": 143.43013430690914,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 23.449108989371695,
+            "clean": true,
+            "standingStart": false,
+            "end": 166.87924329628083,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 1,
+        "validProgress": 2554.6044389949047,
+        "reentryTime": 4.383333333333323,
+        "offroadSeconds": 2.3499999999999943,
+        "firstMeter": 0.24999999999999997,
+        "tenMeters": 1.7833333333333319,
+        "stationarySeconds": 0.0,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.20146811092209085,
+        "rewardTerms": {
+          "progress": 7.540627859032433,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": -0.12486025373171586,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 0.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 40.69975131767038
+        },
+        "pedalCounts": {
+          "gas": 7938,
+          "coast": 534,
+          "brake": 2328
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": false,
+      "firstPass": null,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 1,
+      "retirements": [
+        false
+      ],
+      "cleanLaps": 6,
+      "flyingMedian": 23.448033365674032
+    },
+    {
+      "family": "recover",
+      "bots": 1,
+      "seed": 988101,
+      "duration": 180.0,
+      "result": {
+        "seed": 988101,
+        "time": null,
+        "attack": {},
+        "goalMeters": null,
+        "manoeuvre": "Traiettorie e passo",
+        "progress": 2576.8750785814887,
+        "status": "timeout",
+        "reason": "timeout",
+        "terminationCause": "time_limit",
+        "passes": 0,
+        "passAttempts": 0,
+        "cleanSeries": 6,
+        "bestSeries": 6,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 25.735858236194527,
+            "clean": false,
+            "standingStart": true,
+            "end": 25.735858236194527,
+            "invalidReason": "fuori pista, contatto o settore mancante"
+          },
+          {
+            "lap": 2,
+            "time": 23.449153095262357,
+            "clean": true,
+            "standingStart": false,
+            "end": 49.185011331456884,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 23.446958424263848,
+            "clean": true,
+            "standingStart": false,
+            "end": 72.63196975572073,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 23.449036994950077,
+            "clean": true,
+            "standingStart": false,
+            "end": 96.08100675067081,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.44734727161864,
+            "clean": true,
+            "standingStart": false,
+            "end": 119.52835402228945,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 23.449220992685696,
+            "clean": true,
+            "standingStart": false,
+            "end": 142.97757501497514,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 23.44774029407523,
+            "clean": true,
+            "standingStart": false,
+            "end": 166.42531530905038,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 1,
+        "validProgress": 2562.093058447328,
+        "reentryTime": 4.39999999999999,
+        "offroadSeconds": 2.366666666666661,
+        "firstMeter": 0.24999999999999997,
+        "tenMeters": 1.7833333333333319,
+        "stationarySeconds": 0.0,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.1985230066176334,
+        "rewardTerms": {
+          "progress": 7.562732609030797,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": -0.1257457874461252,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 0.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 40.03888477386913
+        },
+        "pedalCounts": {
+          "gas": 7914,
+          "coast": 564,
+          "brake": 2322
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": false,
+      "firstPass": null,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 1,
+      "retirements": [
+        false
+      ],
+      "cleanLaps": 6,
+      "flyingMedian": 23.448388644512654
+    },
+    {
+      "family": "recover",
+      "bots": 1,
+      "seed": 988102,
+      "duration": 180.0,
+      "result": {
+        "seed": 988102,
+        "time": null,
+        "attack": {},
+        "goalMeters": null,
+        "manoeuvre": "Traiettorie e passo",
+        "progress": 2569.2374858405774,
+        "status": "timeout",
+        "reason": "timeout",
+        "terminationCause": "time_limit",
+        "passes": 0,
+        "passAttempts": 0,
+        "cleanSeries": 6,
+        "bestSeries": 6,
+        "laps": 7,
+        "lapTimes": [
+          {
+            "lap": 1,
+            "time": 26.19357729078203,
+            "clean": false,
+            "standingStart": true,
+            "end": 26.19357729078203,
+            "invalidReason": "fuori pista, contatto o settore mancante"
+          },
+          {
+            "lap": 2,
+            "time": 23.44635456717392,
+            "clean": true,
+            "standingStart": false,
+            "end": 49.63993185795595,
+            "invalidReason": ""
+          },
+          {
+            "lap": 3,
+            "time": 23.448934615158414,
+            "clean": true,
+            "standingStart": false,
+            "end": 73.08886647311436,
+            "invalidReason": ""
+          },
+          {
+            "lap": 4,
+            "time": 23.445159241270957,
+            "clean": true,
+            "standingStart": false,
+            "end": 96.53402571438532,
+            "invalidReason": ""
+          },
+          {
+            "lap": 5,
+            "time": 23.448976476334167,
+            "clean": true,
+            "standingStart": false,
+            "end": 119.98300219071949,
+            "invalidReason": ""
+          },
+          {
+            "lap": 6,
+            "time": 23.44713211618965,
+            "clean": true,
+            "standingStart": false,
+            "end": 143.43013430690914,
+            "invalidReason": ""
+          },
+          {
+            "lap": 7,
+            "time": 23.449108989371695,
+            "clean": true,
+            "standingStart": false,
+            "end": 166.87924329628083,
+            "invalidReason": ""
+          }
+        ],
+        "contacts": 0,
+        "trackLimits": 1,
+        "validProgress": 2554.6044389949047,
+        "reentryTime": 4.383333333333323,
+        "offroadSeconds": 2.3499999999999943,
+        "firstMeter": 0.24999999999999997,
+        "tenMeters": 1.7833333333333319,
+        "stationarySeconds": 0.0,
+        "blockedSeconds": 0.0,
+        "brakeAtRest": 0,
+        "meanPedal": 0.20146811092209085,
+        "rewardTerms": {
+          "progress": 7.540627859032433,
+          "time": -4.7818820578099235,
+          "finish": 0.0,
+          "contact": 0.0,
+          "offroad": -0.12486025373171586,
+          "exit": 0.0,
+          "retirement": 0.0,
+          "understeer": 0.0,
+          "control": 0.0,
+          "task": 0.0,
+          "stall": 0.0,
+          "recovery": 0.0,
+          "shaping": 0.0
+        },
+        "rewardVersion": "direct-driving-3",
+        "racecraft": {
+          "version": "racecraft-1",
+          "violations": 0,
+          "weaves": 0,
+          "unnecessaryBrake": 0,
+          "moveDirection": 0,
+          "lastTarget": 0.0,
+          "armed": false,
+          "brakeSeconds": 0.0,
+          "reported": 0,
+          "diagnosticTicks": 10800,
+          "spaceSeconds": 0.0,
+          "spaceReported": false
+        },
+        "commandDiagnostics": {
+          "initialSamples": 120,
+          "initialSteerSaturated": 0,
+          "initialSteerAbs": 40.69975131767038
+        },
+        "pedalCounts": {
+          "gas": 7938,
+          "coast": 534,
+          "brake": 2328
+        },
+        "understeerSeconds": 0.0
+      },
+      "clean": true,
+      "windowComplete": true,
+      "cleanPass": false,
+      "firstPass": null,
+      "firstFailure": null,
+      "globalContacts": 0,
+      "rivalContacts": 0,
+      "globalTrackLimits": 1,
+      "retirements": [
+        false
+      ],
+      "cleanLaps": 6,
+      "flyingMedian": 23.448033365674032
+    }
+  ],
+  "qualified": false,
+  "wallSeconds": 295.50233930698596,
+  "summary": {
+    "solo": {
+      "total": 3,
+      "valid": 3,
+      "rate": 1.0,
+      "contacts": 0,
+      "limits": 0,
+      "medianPass": null
+    },
+    "attack": {
+      "total": 3,
+      "valid": 3,
+      "rate": 1.0,
+      "contacts": 0,
+      "limits": 0,
+      "medianPass": 12.76666666666688
+    },
+    "complete": {
+      "total": 3,
+      "valid": 3,
+      "rate": 1.0,
+      "contacts": 0,
+      "limits": 0,
+      "medianPass": 1.6999999999999988
+    },
+    "corner": {
+      "total": 3,
+      "valid": 3,
+      "rate": 1.0,
+      "contacts": 0,
+      "limits": 0,
+      "medianPass": 12.400000000000196
+    },
+    "defend": {
+      "total": 3,
+      "valid": 3,
+      "rate": 1.0,
+      "contacts": 0,
+      "limits": 0,
+      "medianPass": null
+    },
+    "traffic": {
+      "total": 9,
+      "valid": 9,
+      "rate": 1.0,
+      "contacts": 0,
+      "limits": 0,
+      "medianPass": 10.366666666666761
+    },
+    "recover": {
+      "total": 3,
+      "valid": 3,
+      "rate": 1.0,
+      "contacts": 0,
+      "limits": 3,
+      "medianPass": null
+    }
+  }
+}

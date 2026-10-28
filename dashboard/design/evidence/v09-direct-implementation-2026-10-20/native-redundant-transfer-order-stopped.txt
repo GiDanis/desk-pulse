@@ -1,0 +1,11 @@
+-rw-rw-r-- 1 smartpc smartpc 1371035 Oct 20 21:45 /tmp/smartpc-direct-project.tar.gz
+-rw-rw-r-- 1 smartpc smartpc 1370917 Oct 20 21:45 /tmp/smartpc-direct-runtime.tar.gz
+Prepared exact rc.25 ARM packages
+Traceback (most recent call last):
+  File "/tmp/smartpc-direct-run.py", line 12, in <module>
+    subprocess.run(['runuser','-u','smartpc','--','env',*base,'QT_QPA_PLATFORM=offscreen','PYTHONPATH='+str(S),str(PY),'-m','unittest','check_game_direct','check_game_incentives','check_game_overtaking.OvertakingChecks.test_detached_replay_and_bounded_durable_writer','-v'],cwd=S,stdout=out,stderr=subprocess.STDOUT,check=True,timeout=500)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['runuser', '-u', 'smartpc', '--', 'env', 'HOME=/var/lib/smartpc-dashboard', 'XDG_CONFIG_HOME=/var/lib/smartpc-dashboard/.config', 'XDG_DATA_HOME=/var/lib/smartpc-dashboard/.local/share', 'XDG_CACHE_HOME=/var/cache/smartpc-dashboard', 'OPENBLAS_NUM_THREADS=1', 'OMP_NUM_THREADS=1', 'QT_QPA_PLATFORM=offscreen', 'PYTHONPATH=/var/lib/smartpc-dashboard/smartpc-direct-project/dashboard', '/var/lib/smartpc-dashboard/game-runtime/bin/python', '-m', 'unittest', 'check_game_direct', 'check_game_incentives', 'check_game_overtaking.OvertakingChecks.test_detached_replay_and_bounded_durable_writer', '-v']' returned non-zero exit status 143.

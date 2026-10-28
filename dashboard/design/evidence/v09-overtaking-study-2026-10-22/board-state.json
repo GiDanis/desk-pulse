@@ -1,0 +1,461 @@
+{
+  "capturedAt": "2026-10-21T23:47:39.211346+00:00",
+  "sessions": [
+    {
+      "id": "2100e9423c8e424bb69f098423437a08",
+      "mode": "impara",
+      "status": "paused",
+      "updated": "2026-10-21T23:44:10.500158+00:00"
+    },
+    {
+      "id": "62531e7a33b447bc95d45046bef8cb25",
+      "mode": "impara",
+      "status": "interrupted",
+      "updated": "2026-10-21T23:02:53.829748+00:00"
+    },
+    {
+      "id": "251b391514f5499ab45ddf351ad5c1f5",
+      "mode": "impara_sorpasso",
+      "status": "interrupted",
+      "updated": "2026-10-21T22:05:32.613743+00:00"
+    },
+    {
+      "id": "6556eeb9a08f4154a1a88bcc1633ad05",
+      "mode": "impara",
+      "status": "interrupted",
+      "updated": "2026-10-21T22:00:38.594316+00:00"
+    }
+  ],
+  "version": "\"\"\"Software version shared by runtime, installer and recursive release manifest.\"\"\"\nVERSION = '0.9.0-rc.28'\n",
+  "sourceHashes": {
+    "game_academy.py": "77a3af0adbc716beac1cdd2a12c882dd1668ae65fac9593bbde9d5317f1e7102",
+    "game_rewards.py": "cfad04f92702a7947802e72e52b763243efc37ef9d5488d28a98a72dbf62fa39",
+    "game_racecraft.py": "ca91dd96fa57446371639fca39094a29b62e74ce815da2511fa3182177c0773f",
+    "game_direct.py": "b37ebe930eecb5ebefe2400d35259beb77f53380f7ce16424d3a963ee4320e57",
+    "game_direct_trainer.py": "3caf1f4636172476d6175f7628d7e18e7919619c829f153b612ade7becd66a04",
+    "game_residual_trainer.py": "d9cfc784aa67a6cace959a3e30f620b8b3a0e0b51305df69928a0952236eede0",
+    "game_neural_mixture.py": "58a5d05ffba54ca15e8952b9ade90f05aafc7a6effa09239984e8ed692b36e16",
+    "game_racing_learning.py": "c2f269aadd148fbc46a7092d2134a8c6262770573c82feb422e0d33cc409b7a7",
+    "game_racing_objective.py": "7993090476122dd610b5e2d94075fc2cf2dc273e8731da620c937a2323943f89",
+    "game_school_lessons.py": "b3b334fab5a39e5d5ee5db2f23051bbebd6431f27a8c856285c165ce5fdf88cc",
+    "game_simulation.py": "b8e62d192449c8f74c566c5ecdfca40013515bb549dd7b0eddcf2ca09e33282f",
+    "game_control.py": "38e99d203a46bcaabf02ea719601a1aeede10640ff8b7748318b70b5c8e33287",
+    "game-direct-base.json": "3af6552e574e98098893145d257db84e968bf9e698b8b784916c42c722b5e309",
+    "game-direct-tactical-base.json": "d489402981b3f63a20f925033b56491d228766b83c493f711b6194fd4eb884e9"
+  },
+  "service": "MainPID=262504\nNRestarts=0\nActiveState=active\n",
+  "drivers": [
+    {
+      "id": "0e81c7b8396b4d47aa345b67dbabc325",
+      "name": "Maestro",
+      "profile": {
+        "algorithm": "race_master",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "gamma": 0.9975031223974601,
+        "hidden": 32,
+        "learningRate": 0.0001,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 1,
+        "recipeVersion": 1,
+        "rollout": 128,
+        "seed": 1,
+        "traffic": false,
+        "version": 2
+      },
+      "checkpoint": null,
+      "steps": 0,
+      "seconds": 0.0,
+      "savedSteps": null,
+      "updates": null,
+      "objective": null,
+      "phase": null,
+      "stats": null,
+      "epochStart": null,
+      "evaluations": []
+    },
+    {
+      "id": "d26beef89da244a1984e87cd0404308e",
+      "name": "Crono",
+      "profile": {
+        "algorithm": "residual_ppo",
+        "controlMode": "direct",
+        "episodeExploration": "coherent-pedal-1",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "expertLearning": "routed-1",
+        "gamma": 0.9975031223974601,
+        "hidden": 128,
+        "learningRate": 0.0001,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 1,
+        "raceValidationEvery": 4,
+        "racingAnchor": "steering-retained-1",
+        "racingCurriculum": "graduated-1",
+        "racingObjective": "valid-time-1",
+        "recipeVersion": 1,
+        "rollout": 128,
+        "seed": 2,
+        "traffic": false,
+        "version": 2
+      },
+      "checkpoint": "e15565e67fc980f6cf82ab2607959e38b8ea986b18e1ec345c482d42c6c6534d",
+      "steps": 956419,
+      "seconds": 8508.92499980687,
+      "savedSteps": 956419,
+      "updates": 631,
+      "objective": "impara_sorpasso",
+      "phase": "defend",
+      "stats": {
+        "cleanLaps": 324,
+        "contacts": 0,
+        "episodes": 344,
+        "passes": 0,
+        "success": 336,
+        "trackLimits": 4,
+        "windows": 4
+      },
+      "epochStart": {
+        "decisions": 78877,
+        "steps": 472473
+      },
+      "evaluations": [
+        {
+          "decision": "race_improved",
+          "accepted": false,
+          "raceAccepted": true,
+          "raceProposed": true,
+          "raceDecisionLabel": "Pronto per la gara",
+          "regressions": []
+        },
+        {
+          "decision": "no_gain",
+          "accepted": false,
+          "raceAccepted": false,
+          "raceProposed": false,
+          "raceDecisionLabel": "Gara precedente conservata",
+          "regressions": []
+        },
+        {
+          "decision": "no_gain",
+          "accepted": false,
+          "raceAccepted": false,
+          "raceProposed": false,
+          "raceDecisionLabel": "Gara precedente conservata",
+          "regressions": []
+        }
+      ]
+    },
+    {
+      "id": "2c20bdbb28ff4ff6856ea4cdc7708b42",
+      "name": "Memoria",
+      "profile": {
+        "algorithm": "residual_sac",
+        "controlMode": "direct",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "expertLearning": "routed-1",
+        "gamma": 0.9975031223974601,
+        "hidden": 128,
+        "learningRate": 0.0001,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 1,
+        "raceValidationEvery": 4,
+        "racingAnchor": "steering-retained-1",
+        "racingCurriculum": "graduated-1",
+        "racingObjective": "valid-time-1",
+        "recipeVersion": 1,
+        "rollout": 128,
+        "seed": 3,
+        "traffic": false,
+        "version": 2
+      },
+      "checkpoint": "92e26a8161d6e0bcb8582d23c711db076e7fd90913e1dd3c1b1d84efa41f26c8",
+      "steps": 404774,
+      "seconds": 3906.881808834849,
+      "savedSteps": 404774,
+      "updates": 12257,
+      "objective": "impara_sorpasso",
+      "phase": "corner",
+      "stats": {
+        "cleanLaps": 139,
+        "contacts": 0,
+        "episodes": 216,
+        "passes": 6,
+        "success": 143,
+        "trackLimits": 154,
+        "windows": 7
+      },
+      "epochStart": {
+        "decisions": 18432,
+        "steps": 110409
+      },
+      "evaluations": [
+        {
+          "decision": "solo_invalid",
+          "accepted": false,
+          "raceAccepted": false,
+          "raceProposed": false,
+          "raceDecisionLabel": "Gara precedente conservata",
+          "regressions": []
+        },
+        {
+          "decision": "solo_invalid",
+          "accepted": false,
+          "raceAccepted": false,
+          "raceProposed": false,
+          "raceDecisionLabel": "Gara precedente conservata",
+          "regressions": []
+        },
+        {
+          "decision": "solo_invalid",
+          "accepted": false,
+          "raceAccepted": false,
+          "raceProposed": false,
+          "raceDecisionLabel": "Gara precedente conservata",
+          "regressions": []
+        }
+      ]
+    },
+    {
+      "id": "c89159135317425b8b4180bc68945c10",
+      "name": "Linea",
+      "profile": {
+        "algorithm": "residual_td3",
+        "controlMode": "direct",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "expertLearning": "routed-1",
+        "gamma": 0.9975031223974601,
+        "hidden": 128,
+        "learningRate": 0.0001,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 1,
+        "raceValidationEvery": 4,
+        "racingAnchor": "steering-retained-1",
+        "racingCurriculum": "graduated-1",
+        "racingObjective": "valid-time-1",
+        "recipeVersion": 1,
+        "rollout": 128,
+        "seed": 4,
+        "traffic": false,
+        "version": 2
+      },
+      "checkpoint": "19e030dbeccd16245f2fc5a7329f2c4193801a6d14734171c59276cb1526917d",
+      "steps": 656653,
+      "seconds": 5298.815496135649,
+      "savedSteps": 656653,
+      "updates": 22047,
+      "objective": "impara",
+      "phase": "pace",
+      "stats": {
+        "cleanLaps": 289,
+        "contacts": 0,
+        "episodes": 401,
+        "passes": 0,
+        "success": 309,
+        "trackLimits": 149,
+        "windows": 0
+      },
+      "epochStart": {
+        "decisions": 21367,
+        "steps": 127837
+      },
+      "evaluations": [
+        {
+          "decision": "solo_invalid",
+          "accepted": false,
+          "raceAccepted": false,
+          "raceProposed": false,
+          "raceDecisionLabel": "Gara precedente conservata",
+          "regressions": []
+        },
+        {
+          "decision": "solo_invalid",
+          "accepted": false,
+          "raceAccepted": false,
+          "raceProposed": false,
+          "raceDecisionLabel": "Gara precedente conservata",
+          "regressions": []
+        },
+        {
+          "decision": "solo_invalid",
+          "accepted": false,
+          "raceAccepted": false,
+          "raceProposed": false,
+          "raceDecisionLabel": "Gara precedente conservata",
+          "regressions": []
+        }
+      ]
+    },
+    {
+      "id": "75c83293476840819581efb2a0de199e",
+      "name": "Tattico",
+      "profile": {
+        "algorithm": "residual_tactic",
+        "controlMode": "direct",
+        "episodeSeconds": 60,
+        "epochs": 4,
+        "expertLearning": "routed-1",
+        "gamma": 0.9975031223974601,
+        "hidden": 128,
+        "learningRate": 0.0001,
+        "mutation": 0.15,
+        "observation": "race-68-v3",
+        "population": 1,
+        "raceValidationEvery": 4,
+        "racingAnchor": "steering-retained-1",
+        "racingCurriculum": "graduated-1",
+        "racingObjective": "valid-time-1",
+        "recipeVersion": 1,
+        "rollout": 128,
+        "seed": 5,
+        "traffic": false,
+        "version": 2
+      },
+      "checkpoint": "852fe68f346911629134318444a290cbe10fcab774d9a07e6a0233df355476f6",
+      "steps": 240274,
+      "seconds": 3316.0972864014184,
+      "savedSteps": 240274,
+      "updates": 5601,
+      "objective": "impara",
+      "phase": "corner",
+      "stats": {
+        "cleanLaps": 56,
+        "contacts": 32,
+        "episodes": 77,
+        "passes": 9,
+        "success": 63,
+        "trackLimits": 4,
+        "windows": 0
+      },
+      "epochStart": {
+        "decisions": 17577,
+        "steps": 105297
+      },
+      "evaluations": [
+        {
+          "decision": "no_gain",
+          "accepted": false,
+          "raceAccepted": false,
+          "raceProposed": false,
+          "raceDecisionLabel": "Gara precedente conservata",
+          "regressions": [
+            {
+              "phase": "overtake",
+              "seed": 93101
+            },
+            {
+              "phase": "overtake",
+              "seed": 93102
+            },
+            {
+              "phase": "corner",
+              "seed": 93201
+            },
+            {
+              "phase": "corner",
+              "seed": 93202
+            },
+            {
+              "phase": "corner",
+              "seed": 93203
+            },
+            {
+              "phase": "corner",
+              "seed": 93204
+            }
+          ]
+        },
+        {
+          "decision": "no_gain",
+          "accepted": false,
+          "raceAccepted": false,
+          "raceProposed": false,
+          "raceDecisionLabel": "Gara precedente conservata",
+          "regressions": [
+            {
+              "phase": "overtake",
+              "seed": 93101
+            },
+            {
+              "phase": "overtake",
+              "seed": 93102
+            },
+            {
+              "phase": "corner",
+              "seed": 93201
+            },
+            {
+              "phase": "corner",
+              "seed": 93202
+            },
+            {
+              "phase": "corner",
+              "seed": 93203
+            },
+            {
+              "phase": "corner",
+              "seed": 93204
+            }
+          ]
+        },
+        {
+          "decision": "no_gain",
+          "accepted": false,
+          "raceAccepted": false,
+          "raceProposed": false,
+          "raceDecisionLabel": "Gara precedente conservata",
+          "regressions": [
+            {
+              "phase": "overtake",
+              "seed": 93101
+            },
+            {
+              "phase": "overtake",
+              "seed": 93102
+            },
+            {
+              "phase": "corner",
+              "seed": 93201
+            },
+            {
+              "phase": "corner",
+              "seed": 93202
+            },
+            {
+              "phase": "corner",
+              "seed": 93203
+            },
+            {
+              "phase": "corner",
+              "seed": 93204
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "productionChanges": false,
+  "modelsPrivate": true,
+  "sourceParity": {
+    "game_academy.py": true,
+    "game_rewards.py": true,
+    "game_racecraft.py": true,
+    "game_direct.py": true,
+    "game_direct_trainer.py": true,
+    "game_residual_trainer.py": true,
+    "game_neural_mixture.py": true,
+    "game_racing_learning.py": true,
+    "game_racing_objective.py": true,
+    "game_school_lessons.py": true,
+    "game_simulation.py": true,
+    "game_control.py": true,
+    "game-direct-base.json": true,
+    "game-direct-tactical-base.json": true
+  }
+}

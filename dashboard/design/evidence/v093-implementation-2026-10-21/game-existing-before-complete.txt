@@ -1,0 +1,86 @@
+FE...E....FFF..FF.
+======================================================================
+ERROR: test_driver_dossier_and_reset_preserve_provenance (__main__.GameChecks.test_driver_dossier_and_reset_preserve_provenance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 34, in test_driver_dossier_and_reset_preserve_provenance
+    store.set_profile(driver['id'],{**driver['profile'],'algorithm':'ppo'},allow_reconfigure=True)
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 347, in set_profile
+    validate_profile(profile)
+  File "/tmp/smartpc-v093-baseline-legacy/game_store.py", line 60, in validate_profile
+    raise ValueError('Parametro non valido: '+key)
+ValueError: Parametro non valido: population
+
+======================================================================
+ERROR: test_neat_graph_and_resume_generation (__main__.GameChecks.test_neat_graph_and_resume_generation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 175, in test_neat_graph_and_resume_generation
+    profile={**default_profile(),'algorithm':'neat'};a=NEAT(profile)
+                                                       ^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/game_neat.py", line 63, in __init__
+    config=neat.Config(neat.DefaultGenome,neat.DefaultReproduction,neat.DefaultSpeciesSet,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/.cache/smartpc-population-py312/lib/python3.12/site-packages/neat/config.py", line 179, in __init__
+    raise Exception('No such config file: ' + os.path.abspath(filename))
+Exception: No such config file: /tmp/smartpc-v093-baseline-legacy/game-neat-config.txt
+
+======================================================================
+FAIL: test_artifact_corruption_and_interrupted_session (__main__.GameChecks.test_artifact_corruption_and_interrupted_session)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 204, in test_artifact_corruption_and_interrupted_session
+    self.assertIsNone(store.driver(drivers[1]['id'])['policy'])
+AssertionError: '58aee4080f102af6728417621536cae9a41c0b31f863f51f134c4d70e76d522b' is not None
+
+======================================================================
+FAIL: test_real_workers_pause_and_resume (__main__.GameChecks.test_real_workers_pause_and_resume) (method='evolution')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 335, in test_real_workers_pause_and_resume
+    self.assertIsNone(store.drivers()[1]['policy'])
+AssertionError: '58aee4080f102af6728417621536cae9a41c0b31f863f51f134c4d70e76d522b' is not None
+
+======================================================================
+FAIL: test_real_workers_pause_and_resume (__main__.GameChecks.test_real_workers_pause_and_resume) (method='ppo')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 335, in test_real_workers_pause_and_resume
+    self.assertIsNone(store.drivers()[1]['policy'])
+AssertionError: '58aee4080f102af6728417621536cae9a41c0b31f863f51f134c4d70e76d522b' is not None
+
+======================================================================
+FAIL: test_real_workers_pause_and_resume (__main__.GameChecks.test_real_workers_pause_and_resume) (method='neat')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 323, in test_real_workers_pause_and_resume
+    receive('ready');time.sleep(.15)
+    ^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 319, in receive
+    self.assertNotEqual(message['type'],'error',message)
+AssertionError: 'error' == 'error' : {'type': 'error', 'session': 'test', 'message': 'No such config file: /tmp/smartpc-v093-baseline-legacy/game-neat-config.txt'}
+
+======================================================================
+FAIL: test_session_stats_reject_another_driver_and_unknown_duration_is_explicit (__main__.GameChecks.test_session_stats_reject_another_driver_and_unknown_duration_is_explicit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 64, in test_session_stats_reject_another_driver_and_unknown_duration_is_explicit
+    self.assertIsNone(store.driver(driver['id'])['policy'])
+AssertionError: 'b681f5815a3247723c22b6a25ca1c02d21be89227a48af8d94d2f8c768ecf06f' is not None
+
+======================================================================
+FAIL: test_worker_publishes_during_neat_evaluation (__main__.GameChecks.test_worker_publishes_during_neat_evaluation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 286, in test_worker_publishes_during_neat_evaluation
+    receive('ready');deadline=time.monotonic()+30;seen=None;last=None;count=0
+    ^^^^^^^^^^^^^^^^
+  File "/tmp/smartpc-v093-baseline-legacy/check_game.py", line 282, in receive
+    message=parent.recv();self.assertNotEqual(message['type'],'error',message)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'error' == 'error' : {'type': 'error', 'session': 'frame-test', 'message': 'No such config file: /tmp/smartpc-v093-baseline-legacy/game-neat-config.txt'}
+
+----------------------------------------------------------------------
+Ran 16 tests in 13.479s
+
+FAILED (failures=6, errors=2)

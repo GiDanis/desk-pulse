@@ -1,0 +1,642 @@
+{
+  "date": "2026-10-12",
+  "scope": "PC fixed-command probes and untrained PPO initial sampling only",
+  "gamma": 0.995,
+  "decision_hz": 60.0,
+  "rollout_seconds": 4.266666666666667,
+  "discount_e_fold_s": 3.3249930381392687,
+  "gae_coefficient": 0.9452499999999999,
+  "gae_e_fold_s": 0.29600247129235513,
+  "future_reward_weights": {
+    "1": 0.7402609576967045,
+    "5": 0.22229219984074694,
+    "10": 0.04941382211003858,
+    "30": 0.00012065500508971954,
+    "60": 1.4557630253200248e-08
+  },
+  "candidate_gamma_by_tau_s": {
+    "20": 0.9991670137924583,
+    "40": 0.9995834201268338,
+    "60": 0.9997222607988971
+  },
+  "budgets": [
+    {
+      "track": "oval-1",
+      "phase": "control",
+      "version": "driving-task-2",
+      "laps": 1,
+      "limitSeconds": 87.114534305803,
+      "stationary_undiscounted_reward": -1.74229068611606,
+      "stationary_discounted_infinite_reward": -0.06666666666666661
+    },
+    {
+      "track": "oval-1",
+      "phase": "pace",
+      "version": "driving-task-2",
+      "laps": 3,
+      "limitSeconds": 261.34360291740904,
+      "stationary_undiscounted_reward": -78.40308087522273,
+      "stationary_discounted_infinite_reward": -0.9999999999999993
+    },
+    {
+      "track": "technical-1",
+      "phase": "control",
+      "version": "driving-task-2",
+      "laps": 1,
+      "limitSeconds": 69.956279245246,
+      "stationary_undiscounted_reward": -1.39912558490492,
+      "stationary_discounted_infinite_reward": -0.06666666666666661
+    },
+    {
+      "track": "technical-1",
+      "phase": "pace",
+      "version": "driving-task-2",
+      "laps": 3,
+      "limitSeconds": 209.868837735738,
+      "stationary_undiscounted_reward": -62.96065132072141,
+      "stationary_discounted_infinite_reward": -0.9999999999999993
+    },
+    {
+      "track": "mallory-oval-1",
+      "phase": "control",
+      "version": "driving-task-2",
+      "laps": 1,
+      "limitSeconds": 413.83131428571704,
+      "stationary_undiscounted_reward": -8.276626285714341,
+      "stationary_discounted_infinite_reward": -0.06666666666666661
+    },
+    {
+      "track": "mallory-oval-1",
+      "phase": "pace",
+      "version": "driving-task-2",
+      "laps": 3,
+      "limitSeconds": 1241.493942857151,
+      "stationary_undiscounted_reward": -372.44818285714535,
+      "stationary_discounted_infinite_reward": -0.9999999999999993
+    },
+    {
+      "track": "varano-short-1",
+      "phase": "control",
+      "version": "driving-task-2",
+      "laps": 1,
+      "limitSeconds": 421.71428571428527,
+      "stationary_undiscounted_reward": -8.434285714285705,
+      "stationary_discounted_infinite_reward": -0.06666666666666661
+    },
+    {
+      "track": "varano-short-1",
+      "phase": "pace",
+      "version": "driving-task-2",
+      "laps": 3,
+      "limitSeconds": 1265.1428571428557,
+      "stationary_undiscounted_reward": -379.5428571428568,
+      "stationary_discounted_infinite_reward": -0.9999999999999993
+    }
+  ],
+  "probes": [
+    {
+      "track": "oval-1",
+      "phase": "control",
+      "command": "idle",
+      "action": [
+        0.0,
+        0.0
+      ],
+      "simulated_s": 14.999999999999789,
+      "progress_m": 0.0,
+      "speed_m_s": 0.0,
+      "retired": false,
+      "finished": false,
+      "cumulative_reward": -0.3000000000000002,
+      "discounted_reward": -0.065934379518708
+    },
+    {
+      "track": "oval-1",
+      "phase": "control",
+      "command": "brake_at_rest",
+      "action": [
+        0.0,
+        -1.0
+      ],
+      "simulated_s": 14.999999999999789,
+      "progress_m": 0.0,
+      "speed_m_s": 0.0,
+      "retired": false,
+      "finished": false,
+      "cumulative_reward": -0.3000000000000002,
+      "discounted_reward": -0.065934379518708
+    },
+    {
+      "track": "oval-1",
+      "phase": "control",
+      "command": "tiny_gas",
+      "action": [
+        0.0,
+        0.02
+      ],
+      "simulated_s": 14.999999999999789,
+      "progress_m": 3.593558128547926,
+      "speed_m_s": 0.305058230158445,
+      "retired": false,
+      "finished": false,
+      "cumulative_reward": 0.059355812854792675,
+      "discounted_reward": -0.01476488355321663
+    },
+    {
+      "track": "oval-1",
+      "phase": "control",
+      "command": "gentle_gas",
+      "action": [
+        0.0,
+        0.05
+      ],
+      "simulated_s": 14.999999999999789,
+      "progress_m": 16.28641954258299,
+      "speed_m_s": 2.0215876879813908,
+      "retired": false,
+      "finished": false,
+      "cumulative_reward": 1.328641954258296,
+      "discounted_reward": 0.10477835505334457
+    },
+    {
+      "track": "oval-1",
+      "phase": "control",
+      "command": "launch",
+      "action": [
+        0.0,
+        0.2
+      ],
+      "simulated_s": 10.383333333333384,
+      "progress_m": 49.48773648332656,
+      "speed_m_s": 0.0,
+      "retired": true,
+      "finished": false,
+      "cumulative_reward": -0.2587263516673426,
+      "discounted_reward": 0.5675985236479751
+    },
+    {
+      "track": "oval-1",
+      "phase": "control",
+      "command": "strong_gas",
+      "action": [
+        0.0,
+        0.7
+      ],
+      "simulated_s": 5.316666666666721,
+      "progress_m": 49.47767414346504,
+      "speed_m_s": 0.0,
+      "retired": true,
+      "finished": false,
+      "cumulative_reward": -0.15839925232016494,
+      "discounted_reward": 0.8057550725929084
+    },
+    {
+      "track": "oval-1",
+      "phase": "control",
+      "command": "hard_turn",
+      "action": [
+        0.8,
+        1.0
+      ],
+      "simulated_s": 1.6166666666666634,
+      "progress_m": 4.602839285350996,
+      "speed_m_s": 0.0,
+      "retired": true,
+      "finished": false,
+      "cumulative_reward": -4.578516071464901,
+      "discounted_reward": -2.7794529203992413
+    },
+    {
+      "track": "oval-1",
+      "phase": "pace",
+      "command": "idle",
+      "action": [
+        0.0,
+        0.0
+      ],
+      "simulated_s": 14.999999999999789,
+      "progress_m": 0.0,
+      "speed_m_s": 0.0,
+      "retired": false,
+      "finished": false,
+      "cumulative_reward": -4.499999999999926,
+      "discounted_reward": -0.9890156927806197
+    },
+    {
+      "track": "oval-1",
+      "phase": "pace",
+      "command": "brake_at_rest",
+      "action": [
+        0.0,
+        -1.0
+      ],
+      "simulated_s": 14.999999999999789,
+      "progress_m": 0.0,
+      "speed_m_s": 0.0,
+      "retired": false,
+      "finished": false,
+      "cumulative_reward": -4.499999999999926,
+      "discounted_reward": -0.9890156927806197
+    },
+    {
+      "track": "oval-1",
+      "phase": "pace",
+      "command": "tiny_gas",
+      "action": [
+        0.0,
+        0.02
+      ],
+      "simulated_s": 14.999999999999789,
+      "progress_m": 3.593558128547926,
+      "speed_m_s": 0.305058230158445,
+      "retired": false,
+      "finished": false,
+      "cumulative_reward": -4.1406441871452015,
+      "discounted_reward": -0.9378461968151307
+    },
+    {
+      "track": "oval-1",
+      "phase": "pace",
+      "command": "gentle_gas",
+      "action": [
+        0.0,
+        0.05
+      ],
+      "simulated_s": 14.999999999999789,
+      "progress_m": 16.28641954258299,
+      "speed_m_s": 2.0215876879813908,
+      "retired": false,
+      "finished": false,
+      "cumulative_reward": -2.871358045741693,
+      "discounted_reward": -0.8183029582085675
+    },
+    {
+      "track": "oval-1",
+      "phase": "pace",
+      "command": "launch",
+      "action": [
+        0.0,
+        0.2
+      ],
+      "simulated_s": 10.383333333333384,
+      "progress_m": 49.48773648332656,
+      "speed_m_s": 0.0,
+      "retired": true,
+      "finished": false,
+      "cumulative_reward": -3.1637263516673446,
+      "discounted_reward": -0.3245339854020173
+    },
+    {
+      "track": "oval-1",
+      "phase": "pace",
+      "command": "strong_gas",
+      "action": [
+        0.0,
+        0.7
+      ],
+      "simulated_s": 5.316666666666721,
+      "progress_m": 49.47767414346504,
+      "speed_m_s": 0.0,
+      "retired": true,
+      "finished": false,
+      "cumulative_reward": -1.6447325856534958,
+      "discounted_reward": 0.0615207940882454
+    },
+    {
+      "track": "oval-1",
+      "phase": "pace",
+      "command": "hard_turn",
+      "action": [
+        0.8,
+        1.0
+      ],
+      "simulated_s": 1.6166666666666634,
+      "progress_m": 4.602839285350996,
+      "speed_m_s": 0.0,
+      "retired": true,
+      "finished": false,
+      "cumulative_reward": -5.031182738131569,
+      "discounted_reward": -3.138834206965897
+    },
+    {
+      "track": "mallory-oval-1",
+      "phase": "control",
+      "command": "idle",
+      "action": [
+        0.0,
+        0.0
+      ],
+      "simulated_s": 14.999999999999789,
+      "progress_m": 0.0,
+      "speed_m_s": 0.0,
+      "retired": false,
+      "finished": false,
+      "cumulative_reward": -0.3000000000000002,
+      "discounted_reward": -0.065934379518708
+    },
+    {
+      "track": "mallory-oval-1",
+      "phase": "control",
+      "command": "brake_at_rest",
+      "action": [
+        0.0,
+        -1.0
+      ],
+      "simulated_s": 14.999999999999789,
+      "progress_m": 0.0,
+      "speed_m_s": 0.0,
+      "retired": false,
+      "finished": false,
+      "cumulative_reward": -0.3000000000000002,
+      "discounted_reward": -0.065934379518708
+    },
+    {
+      "track": "mallory-oval-1",
+      "phase": "control",
+      "command": "tiny_gas",
+      "action": [
+        0.0,
+        0.02
+      ],
+      "simulated_s": 14.999999999999789,
+      "progress_m": 3.5935581285500575,
+      "speed_m_s": 0.305058230158445,
+      "retired": false,
+      "finished": false,
+      "cumulative_reward": 0.059355812855005824,
+      "discounted_reward": -0.014764883553156274
+    },
+    {
+      "track": "mallory-oval-1",
+      "phase": "control",
+      "command": "gentle_gas",
+      "action": [
+        0.0,
+        0.05
+      ],
+      "simulated_s": 14.999999999999789,
+      "progress_m": 16.28641954258603,
+      "speed_m_s": 2.0215876879813908,
+      "retired": false,
+      "finished": false,
+      "cumulative_reward": 1.3286419542586017,
+      "discounted_reward": 0.10477835505343654
+    },
+    {
+      "track": "mallory-oval-1",
+      "phase": "control",
+      "command": "launch",
+      "action": [
+        0.0,
+        0.2
+      ],
+      "simulated_s": 14.999999999999789,
+      "progress_m": 104.6558140967278,
+      "speed_m_s": 13.734682613688634,
+      "retired": false,
+      "finished": false,
+      "cumulative_reward": 10.165581409672773,
+      "discounted_reward": 0.915986419379377
+    },
+    {
+      "track": "mallory-oval-1",
+      "phase": "control",
+      "command": "strong_gas",
+      "action": [
+        0.0,
+        0.7
+      ],
+      "simulated_s": 14.866666666666996,
+      "progress_m": 302.6272816494494,
+      "speed_m_s": 0.0,
+      "retired": true,
+      "finished": false,
+      "cumulative_reward": 24.96550594272279,
+      "discounted_reward": 3.2612009044299564
+    },
+    {
+      "track": "mallory-oval-1",
+      "phase": "control",
+      "command": "hard_turn",
+      "action": [
+        0.8,
+        1.0
+      ],
+      "simulated_s": 1.7666666666666628,
+      "progress_m": 5.168857519140829,
+      "speed_m_s": 0.0,
+      "retired": true,
+      "finished": false,
+      "cumulative_reward": -4.525314248085917,
+      "discounted_reward": -2.6109316467492203
+    },
+    {
+      "track": "mallory-oval-1",
+      "phase": "pace",
+      "command": "idle",
+      "action": [
+        0.0,
+        0.0
+      ],
+      "simulated_s": 14.999999999999789,
+      "progress_m": 0.0,
+      "speed_m_s": 0.0,
+      "retired": false,
+      "finished": false,
+      "cumulative_reward": -4.499999999999926,
+      "discounted_reward": -0.9890156927806197
+    },
+    {
+      "track": "mallory-oval-1",
+      "phase": "pace",
+      "command": "brake_at_rest",
+      "action": [
+        0.0,
+        -1.0
+      ],
+      "simulated_s": 14.999999999999789,
+      "progress_m": 0.0,
+      "speed_m_s": 0.0,
+      "retired": false,
+      "finished": false,
+      "cumulative_reward": -4.499999999999926,
+      "discounted_reward": -0.9890156927806197
+    },
+    {
+      "track": "mallory-oval-1",
+      "phase": "pace",
+      "command": "tiny_gas",
+      "action": [
+        0.0,
+        0.02
+      ],
+      "simulated_s": 14.999999999999789,
+      "progress_m": 3.5935581285500575,
+      "speed_m_s": 0.305058230158445,
+      "retired": false,
+      "finished": false,
+      "cumulative_reward": -4.140644187144992,
+      "discounted_reward": -0.937846196815068
+    },
+    {
+      "track": "mallory-oval-1",
+      "phase": "pace",
+      "command": "gentle_gas",
+      "action": [
+        0.0,
+        0.05
+      ],
+      "simulated_s": 14.999999999999789,
+      "progress_m": 16.28641954258603,
+      "speed_m_s": 2.0215876879813908,
+      "retired": false,
+      "finished": false,
+      "cumulative_reward": -2.871358045741389,
+      "discounted_reward": -0.8183029582084748
+    },
+    {
+      "track": "mallory-oval-1",
+      "phase": "pace",
+      "command": "launch",
+      "action": [
+        0.0,
+        0.2
+      ],
+      "simulated_s": 14.999999999999789,
+      "progress_m": 104.6558140967278,
+      "speed_m_s": 13.734682613688634,
+      "retired": false,
+      "finished": false,
+      "cumulative_reward": 5.965581409672772,
+      "discounted_reward": -0.007094893882534081
+    },
+    {
+      "track": "mallory-oval-1",
+      "phase": "pace",
+      "command": "strong_gas",
+      "action": [
+        0.0,
+        0.7
+      ],
+      "simulated_s": 14.866666666666996,
+      "progress_m": 302.6272816494494,
+      "speed_m_s": 0.0,
+      "retired": true,
+      "finished": false,
+      "cumulative_reward": 20.804394831611667,
+      "discounted_reward": 2.338556929891335
+    },
+    {
+      "track": "mallory-oval-1",
+      "phase": "pace",
+      "command": "hard_turn",
+      "action": [
+        0.8,
+        1.0
+      ],
+      "simulated_s": 1.7666666666666628,
+      "progress_m": 5.168857519140829,
+      "speed_m_s": 0.0,
+      "retired": true,
+      "finished": false,
+      "cumulative_reward": -5.017647581419251,
+      "discounted_reward": -2.9942517207546087
+    }
+  ],
+  "untrained_ppo_initial_samples": [
+    {
+      "seed": 1,
+      "raw_mean": [
+        0.27409700890452776,
+        0.36955039966253733
+      ],
+      "raw_std": [
+        0.44932896411722156,
+        0.44932896411722156
+      ],
+      "deterministic_action": [
+        0.26743297585327114,
+        0.3535983890446365
+      ],
+      "positive_gas_fraction": 0.7978515625,
+      "gas_above_0_1_fraction": 0.728515625
+    },
+    {
+      "seed": 2,
+      "raw_mean": [
+        0.09975229289607543,
+        -0.057367773251407975
+      ],
+      "raw_std": [
+        0.44932896411722156,
+        0.44932896411722156
+      ],
+      "deterministic_action": [
+        0.09942274212146364,
+        -0.05730492236702601
+      ],
+      "positive_gas_fraction": 0.4501953125,
+      "gas_above_0_1_fraction": 0.36669921875
+    },
+    {
+      "seed": 3,
+      "raw_mean": [
+        0.042103903509089824,
+        -0.27329876405803893
+      ],
+      "raw_std": [
+        0.44932896411722156,
+        0.44932896411722156
+      ],
+      "deterministic_action": [
+        0.04207904139895745,
+        -0.26669166369912867
+      ],
+      "positive_gas_fraction": 0.27587890625,
+      "gas_above_0_1_fraction": 0.2119140625
+    },
+    {
+      "seed": 4,
+      "raw_mean": [
+        0.13488898135356306,
+        -0.016838481733847444
+      ],
+      "raw_std": [
+        0.44932896411722156,
+        0.44932896411722156
+      ],
+      "deterministic_action": [
+        0.1340767886438664,
+        -0.0168368904843351
+      ],
+      "positive_gas_fraction": 0.52490234375,
+      "gas_above_0_1_fraction": 0.4267578125
+    },
+    {
+      "seed": 5,
+      "raw_mean": [
+        0.11271609485516819,
+        0.05333997143709064
+      ],
+      "raw_std": [
+        0.44932896411722156,
+        0.44932896411722156
+      ],
+      "deterministic_action": [
+        0.1122411587367263,
+        0.05328944215641428
+      ],
+      "positive_gas_fraction": 0.5654296875,
+      "gas_above_0_1_fraction": 0.47607421875
+    }
+  ],
+  "source_sha256": {
+    "game_simulation.py": "81ef91ba6df8803ba8dd6797549a778847fdd8870bad33ebaf6ae6ab1505a2bb",
+    "game_profiles.py": "bfdce581fd1d5c6c436c6372adfe48a0cbefe580ce08220503c396891397fe8e",
+    "game_protocol.py": "864423489d76c4000608b84ed7e466981eb36af166c9c1bd1f89c560bf97afa9",
+    "game_curriculum.py": "b156e280886f6e7e159fa43da333d43ff93fdd68352768e07b6fb965a7bac15d",
+    "game_learning.py": "4b9b271c3917744ba590213c990f6044383fb8dffaf21ee3727fbff67c5e4d97",
+    "game_worker.py": "026d98a8af8535693e81f671b2ba5b49781488b7e07abbbb54185cf608f420df",
+    "game_neat.py": "117541009d731aba6701d3196ba7b1baa0dfe3ba7fcf1bdafd400891c063a178"
+  }
+}

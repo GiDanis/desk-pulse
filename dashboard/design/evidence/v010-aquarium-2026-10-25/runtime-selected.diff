@@ -1,0 +1,475 @@
+--- 0.9.4-rc.3/Main.qml
++++ 0.10.0-rc.1/Main.qml
+@@ -108,6 +108,19 @@
+     onActiveFocusItemChanged: if (traceRecorder) { traceRecorder.invalidate("focus.changed"); traceRecorder.traceEvent("input.focus",{objectName:activeFocusItem ? activeFocusItem.objectName : ""}) }
+     property var keypad: null
+     property var dashboardState: null
++    readonly property var aquariumService: dashboardState ? dashboardState.aquarium : null
++    readonly property var aquariumData: aquariumService ? aquariumService.snapshot : ({})
++    readonly property bool aquariumSelected: familyId === "aquarium" && visibleModules.indexOf("aquarium") >= 0
++    readonly property bool aquariumAssetFailed: !!aquariumPage.currentItem && aquariumPage.currentItem.assetFailed === true
++    readonly property var aquariumLifecycle: [aquariumSelected, presentedPageContentId === "aquarium.main" && !!aquariumPage.currentItem && aquariumPage.currentItem.ready === true,
++        overlay !== "", !!urgentEvent.id, style.appearance ? style.appearance.motionMode : "off", !!themeCandidate.generation, aquariumAssetFailed]
++    onAquariumLifecycleChanged: Qt.callLater(syncAquariumLifecycle)
++    function syncAquariumLifecycle() {
++        if (!aquariumService) return
++        const p=aquariumLifecycle
++        if (aquariumAssetFailed) aquariumService.reportAssetError(aquariumData.sessionId,"Risorsa grafica Acquario non caricabile")
++        aquariumService.setLifecycle(p[0],p[1],p[2],p[3],p[4],p[5])
++    }
+     readonly property var gameService: dashboardState ? dashboardState.game : null
+     readonly property var gameData: gameService ? gameService.snapshot : ({})
+     readonly property var gameFrame: gameService ? gameService.scene : ({cars:[],sensors:[],meta:{}})
+@@ -158,7 +171,7 @@
+         if ((gameData.drivers || []).some(row=>row.id===id)) return openPilotDetails(id)
+         return false
+     }
+-    readonly property string activeContentId: familyId === "game" ? ["game.track","game.leaderboard","game.progress","game.driver"][viewIndex[8] || 0] : familyId === "sports" ? "sport.hub" : familyId === "oggi" ? (viewIndex[0] === 0 ? "home.now" : viewIndex[0] === 1 ? "home.clock" : "home.day") : familyId === "meteo" ? (viewIndex[1] === 0 ? "weather.now" : "weather.forecast") : familyId === "account" ? "account.usage" : familyId === "sport" ? (sportView === "LA MIA SQUADRA" ? "sport.team" : "sport.overview") : familyId === "casa" ? ((viewIndex[6] || 0) < casaDashboardNames.length-1 ? "casa.overview" : "casa.devices") : familyId === "network" ? ((viewIndex[7] || 0) < 2 ? "network.overview" : "network.devices") : "racing.overview"
++    readonly property string activeContentId: familyId === "aquarium" ? "aquarium.main" : familyId === "game" ? ["game.track","game.leaderboard","game.progress","game.driver"][viewIndex[8] || 0] : familyId === "sports" ? "sport.hub" : familyId === "oggi" ? (viewIndex[0] === 0 ? "home.now" : viewIndex[0] === 1 ? "home.clock" : "home.day") : familyId === "meteo" ? (viewIndex[1] === 0 ? "weather.now" : "weather.forecast") : familyId === "account" ? "account.usage" : familyId === "sport" ? (sportView === "LA MIA SQUADRA" ? "sport.team" : "sport.overview") : familyId === "casa" ? ((viewIndex[6] || 0) < casaDashboardNames.length-1 ? "casa.overview" : "casa.devices") : familyId === "network" ? ((viewIndex[7] || 0) < 2 ? "network.overview" : "network.devices") : "racing.overview"
+     onActiveContentIdChanged: { if (traceRecorder) traceRecorder.traceEvent("navigation.content",{surfaceId:activeContentId}); if (themeService) themeService.setActiveContent(activeContentId); Qt.callLater(function() { presentPage(contentLayer.children.find(host => host.active)) }) }
+     readonly property var themeService: dashboardState ? dashboardState.appearance : null
+     readonly property var themeCandidate: themeService ? themeService.candidateAppearance : ({})
+@@ -197,6 +210,7 @@
+     readonly property var negotiatedLayout: style.appearance && hasExternalSurface("shell.main") ? style.appearance.layout || null : null
+     readonly property bool builtinDashboardLayout: style.appearance && ["base","functional"].indexOf(style.appearance.themeId)>=0
+     function pageGeometry(surfaceId) {
++        if (surfaceId === "aquarium.main") return Qt.rect(0,0,960,640)
+         if (surfaceId.indexOf("game.")===0) return Qt.rect(24,72,912,552)
+         const area = negotiatedLayout && hasExternalSurface(surfaceId) ? negotiatedLayout.content : null
+         if (area) return Qt.rect(area.x,area.y,area.width,area.height)
+@@ -298,6 +312,8 @@
+         return [1,2,3,4,5,6,7,8,9].map(key=>({id:"key."+key,key:key,actionId:actions[key],targetId:"",label:labels[key] || "",enabled:true}))
+     }
+     function publicSurfaceCommands(surfaceId) {
++        if (surfaceId === "aquarium.main" || surfaceId === "shell.main" && familyId === "aquarium")
++            return [[4,"ARGOMENTO"],[6,"ARGOMENTO"],[5,aquariumData.requestedPlayback === "paused" ? "RIPRENDI" : "PAUSA"],[7,"HOME"],[1,"HOME"],[3,"AVVISI"],[9,"MENU"]].map(row=>({id:"command."+row[0],key:row[0],label:row[1],enabled:true}))
+         if (surfaceId.indexOf("game.")===0 || surfaceId==="shell.main" && familyId==="game") {
+             const active=gameCaptured,menu=surfaceId==="game.menu",dossier=surfaceId==="game.driver.details",settings=gameData.settings || {},panels=["telemetria","premi","rete"].indexOf(gameData.camera)>=0
+             return [[2,active ? "VISTA AUTO" : menu ? "SELEZIONA" : "VISTA"],[8,active ? "VISTA AUTO" : menu ? "SELEZIONA" : "VISTA"],
+@@ -321,6 +337,11 @@
+         return rows.map(row => ({id:"key."+row[0],key:row[0],label:row[1],enabled:true,actionId:"",targetId:""}))
+     }
+     function publicSurfacePayload(surfaceId, dataProjection, streamGameScene) {
++        if (surfaceId === "aquarium.main") {
++            const header = shellGeometry().header
++            return {aquarium:aquariumData,commands:publicSurfaceCommands(surfaceId),
++                safeArea:Qt.rect(16,header.y+header.height+16,928,Math.max(0,624-header.y-header.height-16))}
++        }
+         if (surfaceId.indexOf("game.")===0) {
+             const payload={game:gameData,
+             rows:surfaceId==="game.driver" || surfaceId==="game.driver.details" ? gameDossierRows : surfaceId==="game.menu" ? gameMenuRows : surfaceId==="game.leaderboard" ? (gameData.leaderboard || {})[gameClassCategory] || [] : gameData.drivers || [],
+@@ -501,6 +522,10 @@
+         const args=arguments || {}, surface=context.contentId
+         if (urgentEvent.id && surface !== "alerts.urgent") return false
+         if (gameCaptured && (action==="navigation.view.step" || action==="navigation.family.step")) return false
++        if (action === "aquarium.pause" || action === "aquarium.resume") {
++            if (surface !== "aquarium.main" || !aquariumSelected || overlay !== "" || !aquariumService) return false
++            return action === "aquarium.pause" ? aquariumService.pause() : aquariumService.resume()
++        }
+         if (action.indexOf("game.")===0) {
+             if (!gameService) return false
+             if (action==="game.start") { const ok=surface==="game.menu" ? gameService.settingsAction("start",1) : gameService.start();if (!ok && overlay!=="gameMenu") pushOverlay("gameMenu");return ok }
+@@ -893,7 +918,8 @@
+         {id:"sports",slot:3,name:"SPORT",views:sportDisciplines.map(d=>d.name)},
+         {id:"casa",slot:6,name:"CASA",views:casaDashboardNames},
+         {id:"network",slot:7,name:"RETE",views:["TRAFFICO","ILIADBOX","DISPOSITIVI"]},
+-        {id:"game",slot:8,name:"GIOCO",views:["PISTA","CLASSIFICA","PROGRESSI","PILOTA"]}
++        {id:"game",slot:8,name:"GIOCO",views:["PISTA","CLASSIFICA","PROGRESSI","PILOTA"]},
++        {id:"aquarium",slot:9,name:"ACQUARIO",views:["CALM"]}
+     ]
+     // Detach the Qt reference sequence once per notification. Repeated indexOf
+     // on a property-backed sequence otherwise re-enters its Python getter.
+@@ -956,7 +982,7 @@
+         Qt.callLater(function(){presentPage(contentLayer.children.find(host=>host.active))})
+         return true
+     }
+-    property var viewIndex: [0, 0, 0, 0, 0, 0, 0, 0, 0]
++    property var viewIndex: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+     property string sportView: "PROSSIME"
+     property bool sportTeamDetail: false
+     property int teamTab: 0
+@@ -1261,7 +1287,7 @@
+         ? (dashboardState.brightnessMode === "manual" ? dashboardState.manualBrightness
+            : (daytime ? dashboardState.dayBrightness : dashboardState.nightBrightness))
+         : 100
+-    readonly property var menuItems: ["Comandi", "Impostazioni", "Informazioni", "Diagnostica"].concat(["sports","sport","f1","motogp"].indexOf(familyId)>=0 ? [familyId==="sport" || familyId==="sports" && ["sport","team"].indexOf(sportHubSelectedId)>=0 ? "Altre partite" : "Calendario gare", "Classifica"] : [])
++    readonly property var menuItems: ["Comandi", "Impostazioni", "Informazioni", "Diagnostica"].concat(familyId === "aquarium" ? [aquariumData.requestedPlayback === "paused" ? "Riprendi acquario" : "Pausa acquario"] : []).concat(["sports","sport","f1","motogp"].indexOf(familyId)>=0 ? [familyId==="sport" || familyId==="sports" && ["sport","team"].indexOf(sportHubSelectedId)>=0 ? "Altre partite" : "Calendario gare", "Classifica"] : [])
+     readonly property var settingsItems: settingsPanel.entries.map(row => row.title)
+ 
+     function two(value) { return (value < 10 ? "0" : "") + value }
+@@ -1415,6 +1441,10 @@
+         else home()
+     }
+     function selectMenu() {
++        if (familyId === "aquarium" && menuIndex === 4 && aquariumService) {
++            if (aquariumData.requestedPlayback === "paused") aquariumService.resume(); else aquariumService.pause()
++            popOverlay(); return
++        }
+         if (menuIndex === 0) pushOverlay("commands")
+         else if (menuIndex === 1) { settingsIndex = 0; pushOverlay("settings") }
+         else if (menuIndex === 2) { infoPage = 0; infoIndex = 0; pushOverlay("info") }
+@@ -1783,6 +1813,10 @@
+             return
+         }
+         if (overlay !== "") return
++        if (familyId === "aquarium" && position === 5 && aquariumService) {
++            if (aquariumData.requestedPlayback === "paused") aquariumService.resume(); else aquariumService.pause()
++            return
++        }
+         if (["sports","casa","network"].indexOf(familyId)>=0) {
+             if (position===4 || position===6) navigateFamily(position===4 ? -1 : 1)
+             else if (position===2 || position===8) {
+@@ -1817,6 +1851,7 @@
+     Component.onCompleted: {
+         if (themeService) { themeService.setActiveContent(activeContentId); themeService.setPreparedContents(notificationContents.concat(shellHost.active ? ["shell.main"] : []).concat(overlayHost.active ? [overlayHost.contentId] : [])) }
+         if (dashboardState) { dashboardState.setBannerPresentationAcknowledgement(true); dashboardState.setCasaVisible(casaConsulted); dashboardState.setNetworkVisible(networkConsulted) }
++        syncAquariumLifecycle()
+         notificationInitialized = true
+         Qt.callLater(reconcileFamily)
+         if (dashboardState && dashboardState.firstRun) pushOverlay("commands")
+@@ -1871,7 +1906,7 @@
+         const hosts=[smallBanner,largeBanner,urgentHost,badgeHost,inboxHost,detailHost,shellHost,overlayHost]
+         for (const host of hosts) if (host.active && (!host.currentReady || host.readiness !== "ready" || host.loadedRevision !== themeService.revision)) return false
+         for (const host of contentLayer.children) if (host.active && (!host.currentReady || host.readiness !== "ready" || host.loadedRevision !== themeService.revision)) return false
+-        return !sceneHost.sceneEnabled || sceneHost.currentReady && sceneHost.readiness === "ready"
++        return aquariumSelected || !sceneHost.sceneEnabled || sceneHost.currentReady && sceneHost.readiness === "ready"
+     }
+     Timer {
+         interval: 1000; running: !!app.themeService; repeat: true
+@@ -1978,7 +2013,7 @@
+         objectName: "inputOwner"
+         focus: true
+         Keys.onPressed: event => {
+-            if (event.isAutoRepeat && (app.familyId==="game" || app.gameCaptured)) { event.accepted=true;return }
++            if (event.isAutoRepeat && (app.familyId==="game" || app.familyId==="aquarium" || app.gameCaptured)) { event.accepted=true;return }
+             if (event.key === Qt.Key_Left) app.activateKey(4)
+             else if (event.key === Qt.Key_Right) app.activateKey(6)
+             else if (event.key === Qt.Key_Up) app.activateKey(2)
+@@ -1993,15 +2028,17 @@
+         }
+     }
+ 
++    Rectangle { z:1;visible:app.aquariumSelected && (!shellHost.currentItem || !shellHost.active);width:960;height:app.builtinDashboardLayout ? 56 : 90;color:app.style.background }
+     ShellHost { id: shellHost; z: app.negotiatedLayout && app.negotiatedLayout.guide.height === 0 ? 2 : 0; objectName: "shellHost"; controller: app; style: app.style; anchors.fill: parent; active: app.hasExternalSurface("shell.main") || app.hasCandidateSurface("shell.main"); renderActive: app.hasExternalSurface("shell.main"); interactive: active && app.overlay === "" && !app.urgentEvent.id }
+-    Rectangle { visible: !shellHost.currentItem || !shellHost.active; x: 0; y: 0; width: 960; height: 5; color: app.accent }
+-    AppText { visible: !shellHost.currentItem || !shellHost.active; style: app.style; x: app.builtinDashboardLayout ? 24 : 44; y: app.builtinDashboardLayout ? 13 : 26; width: app.builtinDashboardLayout ? 760 : 730; elide:Text.ElideRight; text: app.currentFamily.name + " · " + app.viewName(); color: app.style.accentTextOnCanvas; font.pixelSize: app.builtinDashboardLayout ? app.style.font31 : app.style.font35; font.weight: (true ) ? app.style.headingWeight : app.style.bodyWeight}
+-    AppText { objectName: "headerClock"; visible: !shellHost.currentItem || !shellHost.active; style: app.style; role: "numbers"; x: app.builtinDashboardLayout ? 808 : 790; y: app.builtinDashboardLayout ? 5 : 26; width: app.builtinDashboardLayout ? 128 : 125; height: 46; horizontalAlignment: Text.AlignRight; verticalAlignment: Text.AlignVCenter; text: app.timeText(); color: app.style.textPrimary; font.pixelSize: app.style.font28 }
++    Rectangle { z:2;visible: !shellHost.currentItem || !shellHost.active; x: 0; y: 0; width: 960; height: 5; color: app.accent }
++    AppText { z:2;visible: !shellHost.currentItem || !shellHost.active; style: app.style; x: app.builtinDashboardLayout ? 24 : 44; y: app.builtinDashboardLayout ? 13 : 26; width: app.builtinDashboardLayout ? 760 : 730; elide:Text.ElideRight; text: app.currentFamily.name + " · " + app.viewName(); color: app.style.accentTextOnCanvas; font.pixelSize: app.builtinDashboardLayout ? app.style.font31 : app.style.font35; font.weight: (true ) ? app.style.headingWeight : app.style.bodyWeight}
++    AppText { z:2;objectName: "headerClock"; visible: !shellHost.currentItem || !shellHost.active; style: app.style; role: "numbers"; x: app.builtinDashboardLayout ? 808 : 790; y: app.builtinDashboardLayout ? 5 : 26; width: app.builtinDashboardLayout ? 128 : 125; height: 46; horizontalAlignment: Text.AlignRight; verticalAlignment: Text.AlignVCenter; text: app.timeText(); color: app.style.textPrimary; font.pixelSize: app.style.font28 }
+ 
+     Item {
+         id: contentLayer
+         objectName: "contentLayer"
+         x: 0; y: 90; width: 960; height: 455
++        PageHost { id:aquariumPage;objectName:"aquariumPage";contentId:"aquarium.main";controller:app;style:app.style;active:app.aquariumSelected;interactive:active && app.overlay === "" && !app.urgentEvent.id }
+         PageHost { objectName: "homeNow"; contentId: "home.now"; controller: app; style: app.style; active: app.familyId === "oggi" && app.viewIndex[0] === 0; interactive: active && app.overlay === "" && !app.urgentEvent.id }
+         PageHost { objectName: "homeClock"; contentId: "home.clock"; controller: app; style: app.style; active: app.familyId === "oggi" && app.viewIndex[0] === 1; interactive: active && app.overlay === "" && !app.urgentEvent.id }
+         PageHost { objectName: "homeDay"; contentId: "home.day"; controller: app; style: app.style; active: app.familyId === "oggi" && app.viewIndex[0] === 2; interactive: active && app.overlay === "" && !app.urgentEvent.id }
+@@ -2031,7 +2068,7 @@
+     onTeamTabChanged: animateTab()
+     onRacingStandingTabChanged: animateTab()
+     readonly property var notificationRegions: [smallBanner,largeBanner,detailHost,inboxHost,badgeHost,urgentHost].filter(host => host.show || host.exiting).reduce((regions,host) => regions.concat(host.context ? host.context.occupiedRegions : [Qt.rect(host.x,host.y,host.width,host.height)]),[])
+-    SceneHost { id: sceneHost; controller: app; traceRecorder: app.traceRecorder; style: app.style; familyId: app.familyId; occupiedRegions: app.notificationRegions; enforceSafeRegions: !!app.negotiatedLayout || app.builtinDashboardLayout; safeRegions: app.negotiatedLayout ? app.negotiatedLayout.sceneSafeRegions : app.builtinDashboardLayout ? [Qt.rect(880,8,56,48)] : []; notificationEvent: app.urgentEvent.id ? app.urgentEvent : app.bannerEvent; suspended: app.overlay !== "" || !!app.urgentEvent.id || app.night || app.quietActive }
++    SceneHost { id: sceneHost; controller: app; traceRecorder: app.traceRecorder; style: app.style; familyId: app.familyId; occupiedRegions: app.notificationRegions; enforceSafeRegions: !!app.negotiatedLayout || app.builtinDashboardLayout; safeRegions: app.negotiatedLayout ? app.negotiatedLayout.sceneSafeRegions : app.builtinDashboardLayout ? [Qt.rect(880,8,56,48)] : []; notificationEvent: app.urgentEvent.id ? app.urgentEvent : app.bannerEvent; suspended: app.aquariumSelected || app.overlay !== "" || !!app.urgentEvent.id || app.night || app.quietActive }
+     onUrgentEventChanged: { if (urgentEvent.id && gameCaptured) gameService.pause(); if (traceRecorder) traceRecorder.traceEvent("notification.urgent",{eventId:String(urgentEvent.id || ""),eventRevision:String(urgentEvent.revision || ""),rank:urgentEvent.notificationRank || 0}); if (urgentEvent.id) { navigationMotion.settle(); tabMotion.settle() } }
+ 
+     Rectangle { visible: !app.builtinDashboardLayout && (!shellHost.currentItem || !shellHost.active); x: 44; y: 558; width: 872; height: 2; color: app.style.divider }
+--- 0.9.4-rc.3/app.py
++++ 0.10.0-rc.1/app.py
+@@ -22,6 +22,7 @@
+ from casa import CasaService
+ from network import NetworkService
+ from game import GameService
++from aquarium import AquariumService
+ 
+ 
+ def main() -> int:
+@@ -53,6 +54,7 @@
+     account = AccountService()
+     casa = CasaService(auto_refresh=not demo, demo=demo)
+     network = NetworkService(auto_refresh=not demo, demo=demo)
++    aquarium = AquariumService()
+     game = GameService(async_metadata=True)
+     events = EventService(path=":memory:" if demo else None, auto_refresh=not demo)
+     sport = SportService(auto_refresh=not demo) if not demo else None
+@@ -61,7 +63,7 @@
+     if options.theme_trace_output:
+         from theme_trace_bridge import ThemeTraceBridge
+         trace = ThemeTraceBridge()
+-    state = DashboardState(weather, system_info, account, events, demo=demo, sport=sport, racing=racing, trace=trace, casa=casa, network=network, game=game)
++    state = DashboardState(weather, system_info, account, events, demo=demo, sport=sport, racing=racing, trace=trace, casa=casa, network=network, game=game, aquarium=aquarium)
+     if not demo:
+         def update_account_events() -> None:
+             events.ingest_account(account.moduleState, state.accountWarningPercent,
+@@ -80,6 +82,7 @@
+             trace.attach(engine.rootObjects()[0])
+         result = application.exec()
+     finally:
++        aquarium.close()
+         game.close()
+         weather.close()
+         account.close()
+--- 0.9.4-rc.3/check_theme_api_contract.py
++++ 0.10.0-rc.1/check_theme_api_contract.py
+@@ -49,10 +49,10 @@
+ 
+     def test_coverage_and_not_runtime_availability(self):
+         c = self.contract
+-        self.assertEqual(len(c.surfaces), 68)
++        self.assertEqual(len(c.surfaces), 69)
+         self.assertEqual(c.check_source_coverage()['routes'], 44)
+         self.assertEqual(c.check_source_coverage()['applicationOwnedRoutes'], ['themeChooser'])
+-        self.assertEqual(c.check_source_coverage()['registeredContents'], 36)
++        self.assertEqual(c.check_source_coverage()['registeredContents'], 37)
+         self.assertFalse(c.metadata()['runtimeModuleVerified'])
+         self.assertEqual(c.metadata()['availability'], 'contractOnly')
+ 
+--- 0.9.4-rc.3/components/PublicContextAdapter.qml
++++ 0.10.0-rc.1/components/PublicContextAdapter.qml
+@@ -11,6 +11,9 @@
+     property var publicContext: null
+     property bool valid: false
+     property bool publicEnabled: true
++    // Pending hosts must receive asynchronous asset/data readiness without
++    // becoming active or starting their animations. Retained hosts stay frozen.
++    property bool preparing: false
+     property var heldPayload: ({})
+     property var selectedModelDomains: null
+     property string dataProjection: "full"
+@@ -23,7 +26,7 @@
+         if (!c) return ({})
+         // Retained, hidden renderers must not subscribe to the whole dashboard.
+         // Resume from the current controller transaction before exposing them.
+-        if (valid && c.active === false && c.exiting !== true)
++        if (valid && c.active === false && c.exiting !== true && !preparing)
+             return Object.assign({}, heldPayload, {active:false, interactive:false, suspended:true})
+         const result = {active:c.active,interactive:c.interactive,style:c.style,
+             viewportWidth:c.viewportWidth,viewportHeight:c.viewportHeight,
+@@ -108,7 +111,7 @@
+     function refresh() {
+         if (!factory || !publicContext || disposed) return
+         const snapshot = payload
+-        if (!valid || legacy.active !== false || legacy.exiting === true) heldPayload = snapshot
++        if (!valid || preparing || legacy.active !== false || legacy.exiting === true) heldPayload = snapshot
+         valid = factory.updateLegacy(publicContext,snapshot)
+     }
+     // A completed public action must expose its resulting state synchronously.
+--- 0.9.4-rc.3/components/ViewHost.qml
++++ 0.10.0-rc.1/components/ViewHost.qml
+@@ -293,7 +293,7 @@
+             property string resourceLease: ""
+             Component.onDestruction: if (resourceLease && host.service) host.service.releaseRevision(resourceLease)
+             property alias publicAdapter: publicAdapter
+-            PublicContextAdapter { id: publicAdapter; publicEnabled: candidate.usePublicApi; selectedModelDomains: candidate.dataDomains; dataProjection:candidate.dataProjection; factory: host.service ? host.service.apiFactory : null; legacy: candidate.presentationContext; surfaceId: candidate.surfaceId }
++            PublicContextAdapter { id: publicAdapter; preparing: host.pendingLoader === candidate && !candidate.acknowledged; publicEnabled: candidate.usePublicApi; selectedModelDomains: candidate.dataDomains; dataProjection:candidate.dataProjection; factory: host.service ? host.service.apiFactory : null; legacy: candidate.presentationContext; surfaceId: candidate.surfaceId }
+             property int requestedRevision: 0
+             property var stagedAppearance: null
+             property bool useLiveStyle: false
+--- 0.9.4-rc.3/state.py
++++ 0.10.0-rc.1/state.py
+@@ -39,7 +39,7 @@
+ MIN_BRIGHTNESS = 20
+ MAX_BRIGHTNESS = 100
+ BRIGHTNESS_STEP = 5
+-TOGGLEABLE_MODULES = ("meteo", "account", "sport", "f1", "motogp", "casa", "network", "game")
++TOGGLEABLE_MODULES = ("meteo", "account", "sport", "f1", "motogp", "casa", "network", "game", "aquarium")
+ 
+ 
+ def _account_threshold(name: str, default: int) -> int:
+@@ -85,7 +85,7 @@
+     eventChanged = Signal()
+ 
+     def __init__(self, weather: QObject, system: QObject, account: QObject,
+-                 events: EventService | None = None, demo: bool = False, sport: QObject | None = None, racing=None, trace=None, casa=None, network=None, game=None) -> None:
++                 events: EventService | None = None, demo: bool = False, sport: QObject | None = None, racing=None, trace=None, casa=None, network=None, game=None, aquarium=None) -> None:
+         super().__init__()
+         self.settingsChanged.connect(self.modulesChanged)
+         self._weather = weather
+@@ -105,6 +105,7 @@
+         self._racing = racing or {}
+         self._source_refresh_states: dict[str, dict] = {}
+         self._game = game
++        self._aquarium = aquarium
+         self._network = network
+         self._network_available = False
+         if network is not None:
+@@ -581,6 +582,10 @@
+         return self._theme_recovery_error
+ 
+     @Property(QObject, constant=True)
++    def aquarium(self):
++        return self._aquarium
++
++    @Property(QObject, constant=True)
+     def game(self):
+         return self._game
+ 
+@@ -591,7 +596,7 @@
+     @Property("QVariantList", notify=modulesChanged)
+     def visibleModules(self) -> list[str]:
+         return ["oggi"] + [module_id for module_id in TOGGLEABLE_MODULES
+-                           if self._module_visible[module_id] and (module_id != "sport" or self._sport is not None) and (module_id not in ("f1","motogp") or module_id in self._racing) and (module_id != "casa" or self.casaAvailable) and (module_id != "network" or self.networkAvailable) and (module_id != "game" or self._game is not None)]
++                           if self._module_visible[module_id] and (module_id != "sport" or self._sport is not None) and (module_id not in ("f1","motogp") or module_id in self._racing) and (module_id != "casa" or self.casaAvailable) and (module_id != "network" or self.networkAvailable) and (module_id != "game" or self._game is not None) and (module_id != "aquarium" or self._aquarium is not None)]
+ 
+     @Property(bool, notify=modulesChanged)
+     def sportGroupVisible(self):
+--- 0.9.4-rc.3/theme_bundle.py
++++ 0.10.0-rc.1/theme_bundle.py
+@@ -265,7 +265,7 @@
+             {'network.router','network.wifi','network.ports'},
+             {'sport.hub','settings.services','settings.sports','settings.appearance.management'},
+             {'casa.inventory'}, {'network.inventory'},
+-            {'game.track','game.leaderboard','game.progress','game.menu','game.driver.details'}, {'game.driver'}]
++            {'game.track','game.leaderboard','game.progress','game.menu','game.driver.details'}, {'game.driver'}, {'aquarium.main'}]
+     missing=set(surfaces)-known
+     if missing and missing <= set.union(*groups) and all(not (group & missing) or group <= missing for group in groups):
+         coverage['fallbacks']=sorted(set(coverage['fallbacks']) | missing)
+--- 0.9.4-rc.3/theme_bundle_tools.py
++++ 0.10.0-rc.1/theme_bundle_tools.py
+@@ -19,7 +19,7 @@
+ 
+ ROOT = Path(__file__).resolve().parent
+ EXAMPLE = ROOT / 'examples/bundles/studio-ambient'
+-SDK_DIRS = {'components', 'presentations', 'themes', 'icons', 'motion', 'scenes',
++SDK_DIRS = {'components', 'presentations', 'themes', 'icons', 'motion', 'scenes', 'assets',
+             'theme-api', 'fixtures', 'extensions', 'qml', 'examples', 'authoring'}
+ SDK_SUFFIXES = {'.py', '.qml', '.js', '.json', '.qmltypes', '.md', '.svg', '.ttf', '.otf',
+                 '.png', '.jpg', '.html', '.base64', '.txt', '.sh'}
+--- 0.9.4-rc.3/theme_contexts.py
++++ 0.10.0-rc.1/theme_contexts.py
+@@ -10,9 +10,9 @@
+ from datetime import datetime
+ from types import MappingProxyType
+ 
+-from PySide6.QtCore import QObject, Property, Signal, Slot
++from PySide6.QtCore import QObject, Property, Signal, Slot, QCoreApplication, QTimer
+ from PySide6.QtGui import QColor
+-from PySide6.QtQml import QQmlEngine, qmlRegisterUncreatableType
++from PySide6.QtQml import QQmlEngine, qmlRegisterUncreatableType, qjsEngine
+ 
+ from theme_api_contract import ThemeApiContract
+ from theme_models import ThemeListModel
+@@ -36,6 +36,42 @@
+ CONTRACT = _RuntimeContract()
+ _DEFAULT_SNAPSHOTS = {}
+ PUBLIC_TYPES = {}
++# JavaScriptOwnership controls Qt GC, but does not keep a Python-created
++# wrapper alive while a QObject* slot result crosses into QML (PySide6 6.8.2).
++# Retain that wrapper until Qt destroys an exposed result. Pure Python returns
++# leave the handoff on the next event turn and remain owned by their caller.
++_RETURNED_RESULTS = {}
++_RESULT_HANDOFFS = set()
++_RESULT_HANDOFF_SCHEDULED = False
++
++
++def _drain_result_handoffs():
++    global _RESULT_HANDOFF_SCHEDULED
++    _RESULT_HANDOFF_SCHEDULED = False
++    keys = tuple(_RESULT_HANDOFFS)
++    _RESULT_HANDOFFS.clear()
++    for key in keys:
++        obj = _RETURNED_RESULTS.get(key)
++        if obj is not None and qjsEngine(obj) is None:
++            _RETURNED_RESULTS.pop(key, None)
++
++
++def _retain_returned_result(obj):
++    global _RESULT_HANDOFF_SCHEDULED
++    if QCoreApplication.instance() is None:
++        return  # Without a Qt application this can only be a Python caller.
++    key = id(obj)
++    _RETURNED_RESULTS[key] = obj
++    _RESULT_HANDOFFS.add(key)
++    def destroyed(*_args, registry=_RETURNED_RESULTS, handoffs=_RESULT_HANDOFFS):
++        registry.pop(key, None)
++        handoffs.discard(key)
++    obj.destroyed.connect(destroyed)
++    if not _RESULT_HANDOFF_SCHEDULED:
++        _RESULT_HANDOFF_SCHEDULED = True
++        QTimer.singleShot(0, _drain_result_handoffs)
++
++
+ PRIMITIVE_TYPES = {'string': str, 'int': int, 'real': float, 'bool': bool,
+                    'color': QColor, 'scalar': 'QVariant', 'legacyMap': 'QVariantMap',
+                    'array': 'QVariantList'}
+@@ -212,6 +248,7 @@
+     # completion/revocation. Python callers retain the wrapper normally.
+     obj = PUBLIC_TYPES['ActionResult'](result)
+     QQmlEngine.setObjectOwnership(obj, QQmlEngine.JavaScriptOwnership)
++    _retain_returned_result(obj)
+     if self._broker is not None:
+         self._broker._track_result(obj)
+     return obj
+--- 0.9.4-rc.3/theme_fixture_support.py
++++ 0.10.0-rc.1/theme_fixture_support.py
+@@ -135,7 +135,9 @@
+         self.network=NetworkService(auto_refresh=False,demo=True,clock=lambda:self.now)
+         from game import GameService
+         self.game=GameService(base/"state/game",async_metadata=os.environ.get('SMARTPC_TEST_ASYNC_METADATA')=='1',process_backend=profile.get('gameBackend','spawn')) if profile.get("game") else None
+-        self.state=DashboardState(self.weather,self.system,self.account,self.events,sport=self.sport,racing=self.racing,casa=self.casa,network=self.network,game=self.game)
++        from aquarium import AquariumService
++        self.aquarium=AquariumService()
++        self.state=DashboardState(self.weather,self.system,self.account,self.events,sport=self.sport,racing=self.racing,casa=self.casa,network=self.network,game=self.game,aquarium=self.aquarium)
+         self.state.markCommandsSeen();self.state._quiet_enabled=False;self.events.set_quiet(False,0,1)
+         self.state._night_mode=profile['variant'];self.state._brightness_mode='manual';self.state._manual_brightness=100
+         self.service=self.state.appearance
+@@ -267,10 +269,24 @@
+                 if variant=='canvas':
+                     # App-registered example renderer, not a theme-provided public API implementation.
+                     assert self.service.setSection('scene',{'enabled':True,'renderer':'fixture.canvas'})
++            elif family=='aquarium':
++                from aquarium_catalog import load_catalog
++                # Deterministic visual variants; asynchronous delivery is
++                # exercised separately by check_aquarium_ui.py.
++                self.root.setProperty('familyId','oggi');self.pump(30)
++                self.aquarium._catalog=None if variant in ('loading','error') else load_catalog()
++                self.aquarium._loading=variant=='loading'
++                self.aquarium._error='Risorsa fixture assente' if variant=='error' else ''
++                self.aquarium._publish()
++                assert self.service.setSection('motionMode',variant if variant in ('reduced','off') else 'normal')
++                if variant=='night':assert self.service.setSection('paletteMode','night')
++                if variant=='urgent':self.events.set_demo_scenario('urgente')
+         # Publish a new owned revision, just like a completed provider worker.
+         self.sport._snapshot=dict(self.sport._snapshot)
+         self.sport.changed.emit()
+         for name,value in case['initialProperties'].items():assert self.root.setProperty(name,value),(name,value)
++        if case['surfaceId']=='aquarium.main' and case['variant']=='paused':
++            self.pump(100);assert self.aquarium.pause()
+         if self.value('overlay'):self.root.setProperty('overlayStack',['','menu'])
+         if case['id']=='overlay.commands:firstRun':self.state._first_run=True;self.state.settingsChanged.emit()
+         if case['surfaceId']=='racing.driver.detail' and case['variant']=='liveTiming':
+@@ -353,6 +369,19 @@
+             if case['variant'] in ('normal','reduced','off'):assert mode==case['variant']
+             if case['variant']=='canvas':assert host.property('canvasScene') and renderer=='fixture.canvas','canvas variant not actually instantiated'
+             if case['variant']=='paused':assert host.property('suspended') and actor.property('paused')
++        elif sid=='aquarium.main':
++            host=self.root.findChild(QObject,'aquariumPage')
++            deadline=time.monotonic()+5
++            while host and not host.property('currentReady') and time.monotonic()<deadline:self.pump(5)
++            assert host and host.property('readiness')=='ready' and host.property('currentReady'),sid
++            assert host.property('width')==960 and host.property('height')==640,sid
++            snapshot=self.aquarium.snapshot;variant=case['variant']
++            assert snapshot['status']==('loading' if variant=='loading' else 'error' if variant=='error' else 'ready'),(variant,snapshot['status'])
++            if variant in ('paused','urgent'):assert snapshot['requestedPlayback']=='paused'
++            if variant in ('reduced','off'):assert snapshot['effectivePlayback']=='static'
++            if variant=='overlay':assert 'overlay' in snapshot['suspendReasons']
++            if variant=='night':assert self.service.resolvedAppearance['variant']=='night'
++            return
+         elif sid.startswith('game.'):
+             assert self.game is not None and not self.game._process
+             if sid in ('game.menu','game.driver.details'):
+@@ -378,6 +407,7 @@
+             components=[obj for obj in self.root.findChildren(QObject) if obj.metaObject().className().startswith(source+'_') and obj.metaObject().indexOfProperty('dashboard')>=0]
+             assert len(components)==1 and components[0].property('visible') and components[0].property('width')>0 and components[0].property('height')>0,(sid,'legacy component not exposed',source)
+     def close(self):
++        self.aquarium.close()
+         if self.game:self.game.close()
+         from PySide6.QtCore import QThreadPool,qInstallMessageHandler,QCoreApplication,QEvent
+         self.events.close();self.sport.close();self.network.close();self.casa.close()
+--- 0.9.4-rc.3/version.py
++++ 0.10.0-rc.1/version.py
+@@ -1,2 +1,2 @@
+ """Software version shared by runtime, installer and recursive release manifest."""
+-VERSION = '0.9.4-rc.3'
++VERSION = '0.10.0-rc.1'

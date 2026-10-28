@@ -1,0 +1,126 @@
+{
+  "status": "passed",
+  "cases": [
+    {
+      "method": "residual_ppo",
+      "ticks": 1500,
+      "exactControlsAndPhysics": true,
+      "finalRecipe": {
+        "version": "race-residual-2",
+        "base": "race-base-1",
+        "features": "race-residual-90-v1",
+        "action": "line-pace-residual-v2",
+        "lineMap": "base-to-full-corridor-v1",
+        "algorithm": "residual_ppo",
+        "learner": "ppo",
+        "decisionHz": 10,
+        "physicsHz": 60,
+        "scales": [
+          1.0,
+          0.25
+        ],
+        "hidden": 32,
+        "learningRate": 0.0001,
+        "seed": 11,
+        "gamma": 0.9975031223974601,
+        "gaeLambda": 0.9394130628134758,
+        "rollout": 128,
+        "replayCapacity": 32768,
+        "batchSize": 64,
+        "gradientEvery": 4,
+        "tau": 0.005,
+        "entropy": 0.0001,
+        "policyDelay": 2,
+        "targetNoise": 0.05,
+        "exploration": [
+          0.01,
+          0.15
+        ],
+        "reward": "residual-racing-1",
+        "passRule": "held-0.5s-band-v1",
+        "curriculum": "solo-or-selected-traffic-v1"
+      }
+    },
+    {
+      "method": "residual_sac",
+      "ticks": 1500,
+      "exactControlsAndPhysics": true,
+      "finalRecipe": {
+        "version": "race-residual-2",
+        "base": "race-base-1",
+        "features": "race-residual-90-v1",
+        "action": "line-pace-residual-v2",
+        "lineMap": "base-to-full-corridor-v1",
+        "algorithm": "residual_sac",
+        "learner": "sac",
+        "decisionHz": 10,
+        "physicsHz": 60,
+        "scales": [
+          1.0,
+          0.25
+        ],
+        "hidden": 32,
+        "learningRate": 0.0001,
+        "seed": 11,
+        "gamma": 0.9975031223974601,
+        "gaeLambda": 0.9394130628134758,
+        "rollout": 128,
+        "replayCapacity": 32768,
+        "batchSize": 64,
+        "gradientEvery": 4,
+        "tau": 0.005,
+        "entropy": 0.0001,
+        "policyDelay": 2,
+        "targetNoise": 0.05,
+        "exploration": [
+          0.01,
+          0.05
+        ],
+        "reward": "residual-racing-1",
+        "passRule": "held-0.5s-band-v1",
+        "curriculum": "solo-or-selected-traffic-v1"
+      }
+    },
+    {
+      "method": "residual_td3",
+      "ticks": 1500,
+      "exactControlsAndPhysics": true,
+      "finalRecipe": {
+        "version": "race-residual-2",
+        "base": "race-base-1",
+        "features": "race-residual-90-v1",
+        "action": "line-pace-residual-v2",
+        "lineMap": "base-to-full-corridor-v1",
+        "algorithm": "residual_td3",
+        "learner": "td3",
+        "decisionHz": 10,
+        "physicsHz": 60,
+        "scales": [
+          1.0,
+          0.25
+        ],
+        "hidden": 32,
+        "learningRate": 0.0001,
+        "seed": 11,
+        "gamma": 0.9975031223974601,
+        "gaeLambda": 0.9394130628134758,
+        "rollout": 128,
+        "replayCapacity": 32768,
+        "batchSize": 64,
+        "gradientEvery": 4,
+        "tau": 0.005,
+        "entropy": 0.0001,
+        "policyDelay": 2,
+        "targetNoise": 0.05,
+        "exploration": [
+          0.01,
+          0.05
+        ],
+        "reward": "residual-racing-1",
+        "passRule": "held-0.5s-band-v1",
+        "curriculum": "solo-or-selected-traffic-v1"
+      }
+    }
+  ],
+  "scope": "Metadata, race-only lap target, and traffic pass detector changed after the solo study freeze; solo learner equations/reward/control unchanged. No tactical study equivalence asserted."
+}

@@ -1,0 +1,16 @@
+Warning: dashboard/components/ThemeChooser.qml:55:82: Unqualified access [unqualified]
+            AppText { style:root.style; x:68; y:16; width:parent.width-240; text:modelData.name; font.pixelSize:root.style.font32; color:root.style.textPrimary; font.weight:root.style.headingWeight; elide:Text.ElideRight }
+                                                                                 ^^^^^^^^^
+Info: modelData is a member of a parent element.
+      You can qualify the access with its id to avoid this warning.
+
+            AppText { style:root.style; x:68; y:16; width:parent.width-240; text:<id>.modelData.name; font.pixelSize:root.style.font32; color:root.style.textPrimary; font.weight:root.style.headingWeight; elide:Text.ElideRight }
+                                                                                 ^^^^^
+Warning: dashboard/components/ThemeChooser.qml:56:82: Unqualified access [unqualified]
+            AppText { style:root.style; x:68; y:65; width:parent.width-88; text:!modelData.selectable ? (modelData.state==="blocked" ? "Bloccato dopo un errore · " : "Pacchetto non disponibile · ")+(modelData.reason || "Verifica richiesta") : root.controller.themeService && modelData.id===root.controller.themeService.activeThemeId ? "Tema attualmente visibile" : modelData.coverageSummary || "Tema disponibile sul dispositivo"; font.pixelSize:root.style.font22; color:root.style.textSecondary; elide:Text.ElideRight }
+                                                                                 ^^^^^^^^^
+Info: modelData is a member of a parent element.
+      You can qualify the access with its id to avoid this warning.
+
+            AppText { style:root.style; x:68; y:65; width:parent.width-88; text:!<id>.modelData.selectable ? (modelData.state==="blocked" ? "Bloccato dopo un errore · " : "Pacchetto non disponibile · ")+(modelData.reason || "Verifica richiesta") : root.controller.themeService && modelData.id===root.controller.themeService.activeThemeId ? "Tema attualmente visibile" : modelData.coverageSummary || "Tema disponibile sul dispositivo"; font.pixelSize:root.style.font22; color:root.style.textSecondary; elide:Text.ElideRight }
+                                                                                 ^^^^^

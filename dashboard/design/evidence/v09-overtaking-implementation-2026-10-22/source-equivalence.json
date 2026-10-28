@@ -1,0 +1,112 @@
+{
+  "status": "passed",
+  "changes": {
+    "version.py": [
+      "0506fda088906084c14f1f224f30fcb6ea5300b2198e000b9c45809bb2e65494",
+      "4ffa97209dece5eedd0fd384c5bdee23c32ad6ca4968b9ca58b9a626597be726"
+    ],
+    "game_academy.py": [
+      "964e2b15c2d39f3b65ded2fd93448117d122965d2f2a68d4705e688e9b211377",
+      "31ae5e869faaeea60760488fa124216e5e96319281842b20713e3336e868c265"
+    ],
+    "game_direct_trainer.py": [
+      "fd519473fc97dce90463e2fd625853a6ee94478231f1be680657f11443130cc0",
+      "757f189c89357ea6e180d37e6076370772c9a8ce15abd553cdd0ed6492ff96c9"
+    ],
+    "game_overtaking.py": [
+      "131a1fe5e49d26cb750294f2aacb343f741c8a84af6dc1f3add1841c3498ffb3",
+      "5eae496a51cb40caed75356ae99cbf78d03fb4c36f42fc4a41ba6b115814830a"
+    ],
+    "check_game_overtaking.py": [
+      "b841e3a749067d375c1cbe6db7740c23fbf1d8b9797d153b27dc91314cb10875",
+      "515aa63191b14c4e3a63794541b57b4c8d62577d03944316c9496b55aca95389"
+    ]
+  },
+  "rows": [
+    {
+      "name": "residual_td3-743-candidate",
+      "attackAccepted": 0
+    },
+    {
+      "name": "residual_ppo-741-candidate",
+      "attackAccepted": 0
+    },
+    {
+      "name": "residual_tactic-745-candidate",
+      "attackAccepted": 1
+    },
+    {
+      "name": "residual_tactic-744-candidate",
+      "attackAccepted": 0
+    },
+    {
+      "name": "residual_sac-745-candidate",
+      "attackAccepted": 0
+    },
+    {
+      "name": "residual_tactic-743-candidate",
+      "attackAccepted": 0
+    },
+    {
+      "name": "residual_ppo-744-candidate",
+      "attackAccepted": 1
+    },
+    {
+      "name": "residual_ppo-742-candidate",
+      "attackAccepted": 1
+    },
+    {
+      "name": "residual_sac-744-candidate",
+      "attackAccepted": 0
+    },
+    {
+      "name": "residual_sac-743-candidate",
+      "attackAccepted": 1
+    },
+    {
+      "name": "residual_td3-742-candidate",
+      "attackAccepted": 0
+    },
+    {
+      "name": "residual_td3-741-candidate",
+      "attackAccepted": 1
+    },
+    {
+      "name": "residual_ppo-745-candidate",
+      "attackAccepted": 1
+    },
+    {
+      "name": "residual_sac-742-candidate",
+      "attackAccepted": 0
+    },
+    {
+      "name": "residual_td3-744-candidate",
+      "attackAccepted": 0
+    },
+    {
+      "name": "residual_tactic-741-candidate",
+      "attackAccepted": 1
+    },
+    {
+      "name": "residual_tactic-742-candidate",
+      "attackAccepted": 0
+    },
+    {
+      "name": "residual_sac-741-candidate",
+      "attackAccepted": 1
+    },
+    {
+      "name": "residual_ppo-743-candidate",
+      "attackAccepted": 1
+    },
+    {
+      "name": "residual_td3-745-candidate",
+      "attackAccepted": 1
+    }
+  ],
+  "reason": "Academy/overtaking changes add diagnostics only. Best-tactical guard does not change learner path because every run has at most one accepted tactical proposal. Frozen versions saved in source-at-training.",
+  "physicalParity": "metadata-parity.json",
+  "scope": "Equivalence for these 20 candidate training paths, not all possible runs",
+  "nonNumericalChanges": "version.py metadata and restoration of pre-existing check_game_overtaking.py tests; final cohort numerical code does not import either.",
+  "counterInitialization": "Legacy saves without diagnostics start timing at current age, not from age zero. New scenario numerical/reward paths unchanged."
+}

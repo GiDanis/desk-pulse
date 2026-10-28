@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "target": "A733",
+  "status": "onnx-cpu-parity-passed",
+  "npuQualified": false,
+  "precision": "float32",
+  "configuration": {
+    "track": {
+      "id": "oval-1",
+      "name": "Ovale",
+      "revision": 1,
+      "half_straight": 36.0,
+      "radius": 31.0,
+      "road_width": 10.0
+    },
+    "vehicle": {
+      "id": "standard-1",
+      "length": 4.4,
+      "width": 1.8,
+      "wheelbase": 2.65,
+      "mass": 1200.0,
+      "power": 85000.0,
+      "drive_force": 6500.0,
+      "brake_force": 10000.0,
+      "yaw_inertia": 1700.0,
+      "corner_stiffness": 38000.0,
+      "max_steer": 0.52,
+      "steer_rate": 1.8,
+      "cg_front": 1.1,
+      "cg_height": 0.53,
+      "drive_front": 1.0,
+      "brake_front": 0.68,
+      "air_density": 1.225,
+      "drag_area": 0.65,
+      "restitution": 0.1
+    },
+    "surface": {
+      "id": "asphalt",
+      "grip": 0.95,
+      "rolling": 0.015
+    },
+    "condition": {
+      "id": "dry",
+      "grip_factor": 1.0
+    },
+    "tire": {
+      "id": "standard",
+      "grip_factor": 1.0
+    },
+    "physics": "f2-1",
+    "observation": "race-68-v3",
+    "action": "steer-throttle-brake-v1",
+    "decisionHz": 60,
+    "substeps": 2,
+    "roadRules": {
+      "runoffMeters": 6.0,
+      "offroadGrip": 0.45,
+      "offroadRolling": 0.045,
+      "contacts": "impulse-1",
+      "severeImpactSpeed": 12.0,
+      "retiredCars": "ghost",
+      "grid": "staggered-6m-v2"
+    }
+  },
+  "inputs": 68,
+  "batch": 32,
+  "policyHash": "58d76cf9b3c1f0a40cb177a4580ccc8edc622f65db58e1d8bc05a77fb85e24fc",
+  "onnxSha256": "27fcb167fc78e5b2584dafa771b33e7f17745492b79c3b11e657f9197e7f33b7",
+  "vectors": 512,
+  "maxActionError": 1.2661853809881052e-07,
+  "onnxCpuMedianSeconds": 9.372510248795152e-06,
+  "requiredNext": "ACUITY A733 NBG compilation, board parity and end-to-end utility gate"
+}

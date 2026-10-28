@@ -1,0 +1,2147 @@
+{
+  "capturedAtUtc": "2026-10-21T18:50:29.143635+00:00",
+  "scope": "Whole-system source structure; sites are candidates, not measured time percentages",
+  "files": [
+    {
+      "path": "dashboard/app.py",
+      "sha256": "484dfc744f75349b69bb186c93d2be399a86bdc8554447c73b01d35aaa675a8f",
+      "lines": 101,
+      "methods": [],
+      "timerAndIoSites": [
+        {
+          "line": 42,
+          "text": "sig_timer.setInterval(250)"
+        },
+        {
+          "line": 43,
+          "text": "sig_timer.timeout.connect(lambda: None)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/state.py",
+      "sha256": "070311b13138160cdaa99778968c4bb81f8dcff73483c9f67586bdb571b738bf",
+      "lines": 780,
+      "methods": [
+        {
+          "name": "_saved_int",
+          "line": 52
+        },
+        {
+          "name": "_saved_bool",
+          "line": 60
+        },
+        {
+          "name": "__init__",
+          "line": 86
+        },
+        {
+          "name": "dashboardSummary",
+          "line": 213
+        }
+      ],
+      "timerAndIoSites": []
+    },
+    {
+      "path": "dashboard/dashboard_summary.py",
+      "sha256": "2e87eb274fe51be7ed44792d806577ac61c6c115d88eccc8824d13fc43932f43",
+      "lines": 281,
+      "methods": [],
+      "timerAndIoSites": []
+    },
+    {
+      "path": "dashboard/module_state.py",
+      "sha256": "366cad2c7c4624a8cccaa2be1f935f85e91c369b1947ddcea7c9845ca6e0f2e7",
+      "lines": 24,
+      "methods": [],
+      "timerAndIoSites": []
+    },
+    {
+      "path": "dashboard/weather.py",
+      "sha256": "8508649e9d4e192aee7eed56ba737bb1a7cc56b53f78c07b26a01826afba0735",
+      "lines": 420,
+      "methods": [
+        {
+          "name": "save_weather_cache",
+          "line": 266
+        },
+        {
+          "name": "valid_cached_snapshot",
+          "line": 286
+        },
+        {
+          "name": "__init__",
+          "line": 237
+        },
+        {
+          "name": "__init__",
+          "line": 309
+        },
+        {
+          "name": "_get_cache_path",
+          "line": 335
+        },
+        {
+          "name": "_load_cache",
+          "line": 340
+        },
+        {
+          "name": "moduleState",
+          "line": 360
+        },
+        {
+          "name": "refresh",
+          "line": 379
+        },
+        {
+          "name": "_on_finished",
+          "line": 392
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 23,
+          "text": "from PySide6.QtCore import QObject, Property, QRunnable, QStandardPaths, QThreadPool, QTimer, Signal, Slot"
+        },
+        {
+          "line": 221,
+          "text": "payload = json.loads(response.read().decode(\"utf-8\"))"
+        },
+        {
+          "line": 274,
+          "text": "os.fsync(stream.fileno())"
+        },
+        {
+          "line": 278,
+          "text": "os.fsync(directory)"
+        },
+        {
+          "line": 323,
+          "text": "self._timer.setInterval(REFRESH_INTERVAL_MS)"
+        },
+        {
+          "line": 324,
+          "text": "self._timer.timeout.connect(lambda: self.refresh())"
+        },
+        {
+          "line": 326,
+          "text": "self._age_timer.setInterval(60_000)"
+        },
+        {
+          "line": 327,
+          "text": "self._age_timer.timeout.connect(self._age_changed)"
+        },
+        {
+          "line": 342,
+          "text": "cached = json.loads(self._cache_path.read_text(encoding=\"utf-8\"))"
+        },
+        {
+          "line": 387,
+          "text": "QThreadPool.globalInstance().start(worker)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/weather_alerts.py",
+      "sha256": "3521b27bf8a47b3af3a131e16f69b01fe52317cab9b93e9bd00ad352f41f259e",
+      "lines": 271,
+      "methods": [
+        {
+          "name": "default_bulletin_cache_path",
+          "line": 133
+        },
+        {
+          "name": "__init__",
+          "line": 46
+        },
+        {
+          "name": "__init__",
+          "line": 155
+        },
+        {
+          "name": "_save",
+          "line": 193
+        },
+        {
+          "name": "refresh",
+          "line": 235
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 51,
+          "text": "commits = json.loads(_read(self.base + \"/commits?path=files&per_page=1\", 50000))"
+        },
+        {
+          "line": 57,
+          "text": "commit = json.loads(_read(self.base + \"/commits/\" + sha, 200000))"
+        },
+        {
+          "line": 186,
+          "text": "payload = json.loads(content)"
+        },
+        {
+          "line": 203,
+          "text": "os.fsync(stream.fileno())"
+        },
+        {
+          "line": 207,
+          "text": "os.fsync(directory)"
+        },
+        {
+          "line": 255,
+          "text": "wrapper = json.loads(_read(f\"{RAW_FILES}{key}.json\", 100_000))"
+        },
+        {
+          "line": 263,
+          "text": "maps[day_name] = self._angri_map(json.loads(_read(link, 6_000_000)))"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/account.py",
+      "sha256": "56830354ab92ee50626076af779c70be15b6362d083e7239bdf552076c6ff5ca",
+      "lines": 148,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 72
+        },
+        {
+          "name": "moduleState",
+          "line": 109
+        },
+        {
+          "name": "refresh",
+          "line": 112
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 31,
+          "text": "raw = json.loads(content)"
+        },
+        {
+          "line": 87,
+          "text": "self._timer.timeout.connect(lambda: self.refresh(force=False))"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/system_info.py",
+      "sha256": "348eece5e4a3fa2e9db22bdbaa71d73111e02f5dadff05e1a88faf3780072bfb",
+      "lines": 232,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 50
+        },
+        {
+          "name": "refresh",
+          "line": 148
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 20,
+          "text": "def read_text(path: str) -> str:"
+        },
+        {
+          "line": 22,
+          "text": "return Path(path).read_text().strip().strip(\"\\0\")"
+        },
+        {
+          "line": 61,
+          "text": "self._wifi_process = QProcess(self)"
+        },
+        {
+          "line": 69,
+          "text": "self._wifi_timeout.setInterval(2500)"
+        },
+        {
+          "line": 70,
+          "text": "self._wifi_timeout.timeout.connect(self._wifi_process.kill)"
+        },
+        {
+          "line": 72,
+          "text": "self._timer.setInterval(5000)"
+        },
+        {
+          "line": 73,
+          "text": "self._timer.timeout.connect(self.refresh)"
+        },
+        {
+          "line": 74,
+          "text": "os_release = dict(line.split(\"=\", 1) for line in read_text(\"/etc/os-release\").splitlines() if \"=\" in line)"
+        },
+        {
+          "line": 77,
+          "text": "board_release.update(line.split(\"=\", 1) for line in read_text(path).splitlines() if \"=\" in line)"
+        },
+        {
+          "line": 80,
+          "text": "\"model\": board_release.get(\"BOARD_NAME\", \"\").strip('\"') or read_text(\"/sys/firmware/devicetree/base/model\") or platform.machine(),"
+        },
+        {
+          "line": 84,
+          "text": "\"timezone\": read_text(\"/etc/timezone\") or time.tzname[0],"
+        },
+        {
+          "line": 153,
+          "text": "temperatures[read_text(str(zone / \"type\"))] = int(read_text(str(zone / \"temp\"))) / 1000"
+        },
+        {
+          "line": 161,
+          "text": "memory = {line.split(\":\")[0]: int(line.split()[1]) for line in read_text(\"/proc/meminfo\").splitlines()}"
+        },
+        {
+          "line": 169,
+          "text": "status = dict(line.split(\":\", 1) for line in read_text(\"/proc/self/status\").splitlines() if \":\" in line)"
+        },
+        {
+          "line": 176,
+          "text": "ticks = read_text(\"/proc/self/stat\").rsplit(\")\", 1)[1].split()"
+        },
+        {
+          "line": 187,
+          "text": "data[\"uptime\"] = duration(float(read_text(\"/proc/uptime\").split()[0]))"
+        },
+        {
+          "line": 191,
+          "text": "data[\"load\"] = \" / \".join(read_text(\"/proc/loadavg\").split()[:3]) or \"N/D\""
+        },
+        {
+          "line": 199,
+          "text": "for line in read_text(\"/proc/net/route\").splitlines()[1:]:"
+        },
+        {
+          "line": 213,
+          "text": "for wireless in read_text(\"/proc/net/wireless\").splitlines()[2:]:"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/keypad.py",
+      "sha256": "75058fd64b9cb93903b69b56ac314f52eb5356c1c28bc65806303ab2203a4e4f",
+      "lines": 135,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 40
+        },
+        {
+          "name": "__init__",
+          "line": 70
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 27,
+          "text": "vendor = (device / \"id/vendor\").read_text().strip().lower()"
+        },
+        {
+          "line": 28,
+          "text": "product = (device / \"id/product\").read_text().strip().lower()"
+        },
+        {
+          "line": 29,
+          "text": "phys = (device / \"phys\").read_text().strip()"
+        },
+        {
+          "line": 78,
+          "text": "self._timer.setInterval(2000)"
+        },
+        {
+          "line": 79,
+          "text": "self._timer.timeout.connect(self._connect_if_present)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/sport.py",
+      "sha256": "21c6ce62364c27f81ee89b36c5e066cf208a4f66dfc2543e8154d9509816b454",
+      "lines": 594,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 51
+        },
+        {
+          "name": "__init__",
+          "line": 125
+        },
+        {
+          "name": "moduleState",
+          "line": 364
+        },
+        {
+          "name": "refresh",
+          "line": 400
+        },
+        {
+          "name": "_finished",
+          "line": 460
+        },
+        {
+          "name": "_season_cache_path",
+          "line": 571
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 17,
+          "text": "QThreadPool,"
+        },
+        {
+          "line": 161,
+          "text": "self._snapshot = deepcopy(initial) if initial else read_cache(self._cache_path)"
+        },
+        {
+          "line": 202,
+          "text": "self._timer.timeout.connect(lambda: self.refresh())"
+        },
+        {
+          "line": 205,
+          "text": "self._age_timer.setInterval(15000)"
+        },
+        {
+          "line": 206,
+          "text": "self._age_timer.timeout.connect(self._age_changed)"
+        },
+        {
+          "line": 216,
+          "text": "self._snapshot = deepcopy(self._football.snapshot)"
+        },
+        {
+          "line": 324,
+          "text": "match = deepcopy(match)"
+        },
+        {
+          "line": 441,
+          "text": "QThreadPool.globalInstance().start(worker)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/sport_core.py",
+      "sha256": "cfe1f07b8a73f825ed2e1a0d9f5774f56154562c323867d44fb74392c93e60f1",
+      "lines": 703,
+      "methods": [
+        {
+          "name": "read_cache",
+          "line": 439
+        },
+        {
+          "name": "save_cache",
+          "line": 453
+        },
+        {
+          "name": "__init__",
+          "line": 340
+        },
+        {
+          "name": "__init__",
+          "line": 347
+        },
+        {
+          "name": "__init__",
+          "line": 643
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 251,
+          "text": "result = deepcopy(original)"
+        },
+        {
+          "line": 360,
+          "text": "return deepcopy(data), acquired"
+        },
+        {
+          "line": 372,
+          "text": "data = json.loads(body)"
+        },
+        {
+          "line": 382,
+          "text": "return deepcopy(data), acquired"
+        },
+        {
+          "line": 443,
+          "text": "raw = json.loads(path.read_text())"
+        },
+        {
+          "line": 462,
+          "text": "os.fsync(stream.fileno())"
+        },
+        {
+          "line": 476,
+          "text": "old[key] = deepcopy(match.get(key))"
+        },
+        {
+          "line": 485,
+          "text": "match[key] = deepcopy(old.get(key, [] if key != 'detailFetchedAt' else 0))"
+        },
+        {
+          "line": 502,
+          "text": "snapshot = deepcopy(previous)"
+        },
+        {
+          "line": 520,
+          "text": "snapshot = deepcopy(previous) if previous and previous.get('provider') == 'espn' and previous.get('season') == season else None"
+        },
+        {
+          "line": 551,
+          "text": "snapshot = deepcopy(previous)"
+        },
+        {
+          "line": 600,
+          "text": "data = deepcopy(snapshot)"
+        },
+        {
+          "line": 652,
+          "text": "raw = json.loads(path.read_text())"
+        },
+        {
+          "line": 698,
+          "text": "os.fsync(stream.fileno())"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/football.py",
+      "sha256": "4100f6bea9904d47aee5cbdc6104ae935101a337d3cbc752104ad7ee4e850c7d",
+      "lines": 160,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 44
+        },
+        {
+          "name": "__init__",
+          "line": 70
+        },
+        {
+          "name": "refresh",
+          "line": 112
+        },
+        {
+          "name": "_finished",
+          "line": 131
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 7,
+          "text": "from PySide6.QtCore import QObject, QRunnable, QThreadPool, QTimer, Signal, Slot"
+        },
+        {
+          "line": 84,
+          "text": "self.pool = QThreadPool(self)"
+        },
+        {
+          "line": 88,
+          "text": "self.timer.timeout.connect(lambda: self.refresh())"
+        },
+        {
+          "line": 97,
+          "text": "cached = json.loads(self.feed.path.read_text())"
+        },
+        {
+          "line": 127,
+          "text": "self.eventsChanged.emit(deepcopy(self.result.get('notices', [])))"
+        },
+        {
+          "line": 139,
+          "text": "match.update(deepcopy(self.feed.details.get(int(match['providerMatchId']), {})))"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/football_free.py",
+      "sha256": "fd61f877c6cb915001dd70a241345b2c142e34bc80b58bf18b7e79eb0a41bb63",
+      "lines": 410,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 62
+        },
+        {
+          "name": "__init__",
+          "line": 162
+        },
+        {
+          "name": "refresh",
+          "line": 288
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 37,
+          "text": "os.fsync(stream.fileno())"
+        },
+        {
+          "line": 49,
+          "text": "value = json.loads(p.read_text())"
+        },
+        {
+          "line": 72,
+          "text": "self._quota = json.loads(self.path.read_text())"
+        },
+        {
+          "line": 91,
+          "text": "return json.loads(raw), dict(response.headers)"
+        },
+        {
+          "line": 182,
+          "text": "saved = json.loads(self.path.read_text())"
+        },
+        {
+          "line": 293,
+          "text": "matches = deepcopy(self.matches)"
+        },
+        {
+          "line": 319,
+          "text": "self.standings = deepcopy(table['standings'])"
+        },
+        {
+          "line": 374,
+          "text": "before = deepcopy(self.notices), self.sequence"
+        },
+        {
+          "line": 391,
+          "text": "comparable = deepcopy(payload)"
+        },
+        {
+          "line": 404,
+          "text": "'status': 'attiva \u00b7 conferma gol non qualificata', 'standings': deepcopy(self.standings)}"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/sport_team.py",
+      "sha256": "28093acd7167978a770016172c4e25036fcb31cdb7b1b794a817db7b122f3105",
+      "lines": 225,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 25
+        },
+        {
+          "name": "__init__",
+          "line": 72
+        },
+        {
+          "name": "moduleState",
+          "line": 115
+        },
+        {
+          "name": "refresh",
+          "line": 149
+        },
+        {
+          "name": "_finished",
+          "line": 173
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 10,
+          "text": "QThreadPool,"
+        },
+        {
+          "line": 91,
+          "text": "self.timer.timeout.connect(self.refresh)"
+        },
+        {
+          "line": 164,
+          "text": "QThreadPool.globalInstance().start(w)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/sport_team_core.py",
+      "sha256": "54d7148f23d1b2ac8cc23cdbf6453ba840c6af5a302ac64cf2d66d1ab761e937",
+      "lines": 443,
+      "methods": [
+        {
+          "name": "read_cache",
+          "line": 228
+        },
+        {
+          "name": "save_cache",
+          "line": 246
+        },
+        {
+          "name": "refresh",
+          "line": 270
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 232,
+          "text": "envelope = json.loads(Path(path).read_text())"
+        },
+        {
+          "line": 263,
+          "text": "os.fsync(stream.fileno())"
+        },
+        {
+          "line": 274,
+          "text": "data = deepcopy(previous)"
+        },
+        {
+          "line": 299,
+          "text": "match[key] = deepcopy(old.get(key))"
+        },
+        {
+          "line": 324,
+          "text": "result = deepcopy(data)"
+        },
+        {
+          "line": 397,
+          "text": "deepcopy(m)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/fantacalcio.py",
+      "sha256": "947315ec34375f093d682bc0afa00fc1cea1d69beda5a380334eaf6b8c6d4610",
+      "lines": 288,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 35
+        },
+        {
+          "name": "__init__",
+          "line": 70
+        },
+        {
+          "name": "moduleState",
+          "line": 147
+        },
+        {
+          "name": "refresh",
+          "line": 198
+        },
+        {
+          "name": "_finished",
+          "line": 237
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 11,
+          "text": "QThreadPool,"
+        },
+        {
+          "line": 43,
+          "text": "self.match = deepcopy(match or {})"
+        },
+        {
+          "line": 57,
+          "text": "historical = deepcopy(page)"
+        },
+        {
+          "line": 95,
+          "text": "self.timer.timeout.connect(self.refresh)"
+        },
+        {
+          "line": 107,
+          "text": "self.match = deepcopy(match or {})"
+        },
+        {
+          "line": 222,
+          "text": "QThreadPool.globalInstance().start(w)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/fantacalcio_live.py",
+      "sha256": "559234617f4e98ba8eaf21d3c613ab23e19abeb34da727bfb104930ac491b160",
+      "lines": 469,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 268
+        },
+        {
+          "name": "__init__",
+          "line": 439
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 78,
+          "text": "descriptor = json.loads(\"\".join(chars))[\"nested\"][\"LiveMessage\"]"
+        },
+        {
+          "line": 281,
+          "text": "data = json.loads(path.read_text())"
+        },
+        {
+          "line": 358,
+          "text": "os.fsync(stream.fileno())"
+        },
+        {
+          "line": 369,
+          "text": "return deepcopy(self.pages[key])"
+        },
+        {
+          "line": 380,
+          "text": "response = json.loads(self._request(SIGN, {\"resourcesUri\": [resource]})[0])"
+        },
+        {
+          "line": 416,
+          "text": "return deepcopy(page)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/motorsport.py",
+      "sha256": "e37fb26b3c662f202539ba075ad116084c256a242673c170ab2933ba3bb21bc4",
+      "lines": 521,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 39
+        },
+        {
+          "name": "__init__",
+          "line": 128
+        },
+        {
+          "name": "_cache_path",
+          "line": 189
+        },
+        {
+          "name": "_read_cache",
+          "line": 192
+        },
+        {
+          "name": "_tick",
+          "line": 231
+        },
+        {
+          "name": "moduleState",
+          "line": 287
+        },
+        {
+          "name": "refresh",
+          "line": 345
+        },
+        {
+          "name": "_finished",
+          "line": 402
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 13,
+          "text": "QThreadPool,"
+        },
+        {
+          "line": 71,
+          "text": "else deepcopy(self.previous)"
+        },
+        {
+          "line": 147,
+          "text": "deepcopy(initial)"
+        },
+        {
+          "line": 174,
+          "text": "self._timer.timeout.connect(lambda: self.refresh())"
+        },
+        {
+          "line": 177,
+          "text": "self._age.timeout.connect(self._tick)"
+        },
+        {
+          "line": 368,
+          "text": "QThreadPool.globalInstance().start(worker)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/motorsport_core.py",
+      "sha256": "230fc65c6910bb5133a713f3894abaf56cde38555c71d403c59be609c7cab73b",
+      "lines": 916,
+      "methods": [
+        {
+          "name": "read_cache",
+          "line": 488
+        },
+        {
+          "name": "save_cache",
+          "line": 501
+        },
+        {
+          "name": "refresh",
+          "line": 712
+        },
+        {
+          "name": "__init__",
+          "line": 529
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 343,
+          "text": "sessions[-1][field] = deepcopy(old[field])"
+        },
+        {
+          "line": 379,
+          "text": "result[-1][\"conditions\"] = deepcopy(mapping(row.get(\"condition\")))"
+        },
+        {
+          "line": 492,
+          "text": "raw = json.loads(Path(path).read_text())"
+        },
+        {
+          "line": 521,
+          "text": "os.fsync(stream.fileno())"
+        },
+        {
+          "line": 572,
+          "text": "snapshot = deepcopy(snapshot)"
+        },
+        {
+          "line": 578,
+          "text": "old_sessions = deepcopy(event[\"sessions\"])"
+        },
+        {
+          "line": 664,
+          "text": "s[field] = deepcopy(old[field])"
+        },
+        {
+          "line": 697,
+          "text": "target[\"records\"] = deepcopy(items(raw.get(\"records\")))"
+        },
+        {
+          "line": 812,
+          "text": "results=deepcopy(prior[\"results\"]),"
+        },
+        {
+          "line": 818,
+          "text": "s[field] = deepcopy(prior[field])"
+        },
+        {
+          "line": 820,
+          "text": "event[\"sessions\"] = deepcopy(old[\"sessions\"])"
+        },
+        {
+          "line": 823,
+          "text": "event[field] = deepcopy(old[field])"
+        },
+        {
+          "line": 869,
+          "text": "data = deepcopy(snapshot)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/racing_details.py",
+      "sha256": "802679add43aa4491ab4830aacec58fce82a56a6e0a3fd15dfa7b5d4894582b8",
+      "lines": 494,
+      "methods": [],
+      "timerAndIoSites": [
+        {
+          "line": 39,
+          "text": "row[field] = deepcopy(old[field])"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/racing_timing.py",
+      "sha256": "f6fa9558a7514051f105845af542a4be9d7bd1e6894b612e3fb5472fc392f1f1",
+      "lines": 510,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 64
+        },
+        {
+          "name": "__init__",
+          "line": 244
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 35,
+          "text": "{str(i): deepcopy(v) for i, v in enumerate(old)}"
+        },
+        {
+          "line": 43,
+          "text": "return deepcopy(new)"
+        },
+        {
+          "line": 48,
+          "text": "return _merge_owned(deepcopy(old), new)"
+        },
+        {
+          "line": 253,
+          "text": "self._publish.setInterval(150)"
+        },
+        {
+          "line": 254,
+          "text": "self._publish.timeout.connect(self.changed)"
+        },
+        {
+          "line": 262,
+          "text": "self._retry.timeout.connect(self._connect)"
+        },
+        {
+          "line": 265,
+          "text": "self._deadline.timeout.connect(self._failed)"
+        },
+        {
+          "line": 267,
+          "text": "self._ping.setInterval(15000)"
+        },
+        {
+          "line": 268,
+          "text": "self._ping.timeout.connect(self._keepalive)"
+        },
+        {
+          "line": 311,
+          "text": "message = json.loads(record)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/racing_events.py",
+      "sha256": "f354da1bb951699d75a3263b087773106a5b18604049d2b5944e98d11ce70867",
+      "lines": 47,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 7
+        }
+      ],
+      "timerAndIoSites": []
+    },
+    {
+      "path": "dashboard/casa.py",
+      "sha256": "aa3087f021be7ab96541d1b5e7030e2242c9033e30fd8e4c28667bb95b7f17f1",
+      "lines": 455,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 41
+        },
+        {
+          "name": "__init__",
+          "line": 75
+        },
+        {
+          "name": "_tick",
+          "line": 181
+        },
+        {
+          "name": "refresh",
+          "line": 224
+        },
+        {
+          "name": "_finished",
+          "line": 255
+        },
+        {
+          "name": "_save_selection",
+          "line": 328
+        },
+        {
+          "name": "moduleState",
+          "line": 359
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 16,
+          "text": "QThreadPool,"
+        },
+        {
+          "line": 117,
+          "text": "self._timer.setInterval(5000)"
+        },
+        {
+          "line": 118,
+          "text": "self._timer.timeout.connect(self._tick)"
+        },
+        {
+          "line": 247,
+          "text": "worker = _Worker(self.client, deepcopy(self._snapshot), self._stop, self._cache)"
+        },
+        {
+          "line": 251,
+          "text": "QThreadPool.globalInstance().start(worker)"
+        },
+        {
+          "line": 299,
+          "text": "result = deepcopy(self._snapshot)"
+        },
+        {
+          "line": 319,
+          "text": "result = deepcopy(self._snapshot)"
+        },
+        {
+          "line": 349,
+          "text": "result = deepcopy(self._snapshot)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/casa_core.py",
+      "sha256": "1eb7e0f637fba2c9a2339c1e0746da47ead7824d254d87fc0fe74a422cc76594",
+      "lines": 681,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 129
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 52,
+          "text": "return json.loads("
+        },
+        {
+          "line": 53,
+          "text": "path.read_text(),"
+        },
+        {
+          "line": 323,
+          "text": "values = json.loads(values) if isinstance(values, str) else values"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/tuya_core.py",
+      "sha256": "2afd1c12251895d80992707f80d50df2507e5ada24fee280257ad76b075d3d57",
+      "lines": 393,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 40
+        },
+        {
+          "name": "__init__",
+          "line": 112
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 97,
+          "text": "value = json.loads(body)"
+        },
+        {
+          "line": 309,
+          "text": "values = json.loads(spec.get('values', '{}')) if isinstance(spec.get('values', '{}'), str) else spec['values']"
+        },
+        {
+          "line": 350,
+          "text": "stream.write('\\n'); stream.flush(); os.fsync(stream.fileno())"
+        },
+        {
+          "line": 353,
+          "text": "try: os.fsync(directory)"
+        },
+        {
+          "line": 364,
+          "text": "value = json.loads(path.read_text())"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/network.py",
+      "sha256": "db9f8e7ccf00baa1d734df58b05199081b9d4b9f1ac6cfedf620443366cb297d",
+      "lines": 395,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 23
+        },
+        {
+          "name": "__init__",
+          "line": 45
+        },
+        {
+          "name": "refresh",
+          "line": 124
+        },
+        {
+          "name": "_finished",
+          "line": 147
+        },
+        {
+          "name": "_tick",
+          "line": 220
+        },
+        {
+          "name": "metricsView",
+          "line": 294
+        },
+        {
+          "name": "moduleState",
+          "line": 378
+        },
+        {
+          "name": "save",
+          "line": 325
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 10,
+          "text": "from PySide6.QtCore import QObject, Property, QRunnable, QThreadPool, QTimer, Signal, Slot"
+        },
+        {
+          "line": 52,
+          "text": "self._pool = QThreadPool(self)"
+        },
+        {
+          "line": 79,
+          "text": "self._timer.timeout.connect(self._tick)"
+        },
+        {
+          "line": 133,
+          "text": "client, previous, store = self.client, deepcopy(self._snapshot), self.store"
+        },
+        {
+          "line": 279,
+          "text": "caps,inventory=deepcopy(self._caps),deepcopy(self._snapshot)"
+        },
+        {
+          "line": 318,
+          "text": "result = deepcopy(self._snapshot)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/network_core.py",
+      "sha256": "47a61dc6b919a6ec71d5a7cbba1d99195dc57c61179b12231e136150472a90e4",
+      "lines": 336,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 40
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 50,
+          "text": "conn = sqlite3.connect(self.path, timeout=1)"
+        },
+        {
+          "line": 68,
+          "text": "result = json.loads(row[0]) if row else empty(self.scope)"
+        },
+        {
+          "line": 72,
+          "text": "result['preferences'] = json.loads(prefs[0]) if prefs else empty()['preferences']"
+        },
+        {
+          "line": 120,
+          "text": "routes = json.loads(route.stdout)"
+        },
+        {
+          "line": 126,
+          "text": "if carrier.exists() and carrier.read_text().strip() == '0':"
+        },
+        {
+          "line": 128,
+          "text": "addresses=json.loads(subprocess.run(['ip','-j','address','show','dev',dev],capture_output=True,timeout=1,check=True).stdout)"
+        },
+        {
+          "line": 277,
+          "text": "row = deepcopy(old)"
+        },
+        {
+          "line": 285,
+          "text": "result.update(checkedAt=now, devices=fresh, preferences=deepcopy(previous['preferences']), interfaces=reports, coverage=' \u00b7 '.join(problems) or 'Inventario router', wan=wan_text, local=local or {})"
+        },
+        {
+          "line": 298,
+          "text": "d = deepcopy(saved)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/network_metrics.py",
+      "sha256": "4f6e896f316cce307e8cdc5e7a689fd9f5a40ca3452fbf11ba208720d3e8c628",
+      "lines": 321,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 70
+        },
+        {
+          "name": "save",
+          "line": 80
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 76,
+          "text": "c=sqlite3.connect(self.path,timeout=1);self.path.chmod(0o600)"
+        },
+        {
+          "line": 110,
+          "text": "v=json.loads(value)"
+        },
+        {
+          "line": 120,
+          "text": "result=deepcopy(caps);updates={}"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/network_history.py",
+      "sha256": "81f7ddca2b14010dbb48f7c1371208a01f7bcefa1603d7231f567ccee7d484f3",
+      "lines": 70,
+      "methods": [],
+      "timerAndIoSites": []
+    },
+    {
+      "path": "dashboard/network_events.py",
+      "sha256": "42c6aca7c7a84af0fdb535a32a8f35e4bca2b89839a6fbeb76ffd78078438570",
+      "lines": 231,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 23
+        },
+        {
+          "name": "__init__",
+          "line": 75
+        },
+        {
+          "name": "__init__",
+          "line": 100
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 7,
+          "text": "from PySide6.QtCore import QObject, QRunnable, QThreadPool, QTimer, QUrl, Signal, Slot"
+        },
+        {
+          "line": 110,
+          "text": "self.pool = QThreadPool(self)"
+        },
+        {
+          "line": 120,
+          "text": "self.retry.timeout.connect(self._login)"
+        },
+        {
+          "line": 123,
+          "text": "self.deadline.timeout.connect(self._failed)"
+        },
+        {
+          "line": 126,
+          "text": "self.coalesce.timeout.connect(self.invalidated)"
+        },
+        {
+          "line": 128,
+          "text": "self.ping.setInterval(60000)"
+        },
+        {
+          "line": 129,
+          "text": "self.ping.timeout.connect(lambda: self.socket.ping(b'SmartPC'))"
+        },
+        {
+          "line": 182,
+          "text": "value = json.loads(line)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/iliadbox.py",
+      "sha256": "4f9a7c0180014be2e7c7cb56cddf0803e01a79988194429dd882df0b471d9ab0",
+      "lines": 177,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 21
+        },
+        {
+          "name": "__init__",
+          "line": 47
+        },
+        {
+          "name": "__init__",
+          "line": 61
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 32,
+          "text": "data = json.loads(p.read_text())"
+        },
+        {
+          "line": 105,
+          "text": "return json.loads(raw)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/events.py",
+      "sha256": "d54a1c769712db1f20bd4874d01acd6818369e396e2d135c56178da58a4186fd",
+      "lines": 392,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 34
+        },
+        {
+          "name": "__init__",
+          "line": 55
+        },
+        {
+          "name": "_tick",
+          "line": 146
+        },
+        {
+          "name": "publish_snapshot",
+          "line": 206
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 14,
+          "text": "from PySide6.QtCore import QObject, Property, QRunnable, QThreadPool, QTimer, Signal, Slot"
+        },
+        {
+          "line": 102,
+          "text": "self._banner_timer.timeout.connect(self._finish_banner)"
+        },
+        {
+          "line": 106,
+          "text": "self._tick_timer.timeout.connect(self._tick)"
+        },
+        {
+          "line": 109,
+          "text": "self._poll_timer.setInterval(30 * 60_000)"
+        },
+        {
+          "line": 110,
+          "text": "self._poll_timer.timeout.connect(lambda: self.refresh_weather_alerts())"
+        },
+        {
+          "line": 353,
+          "text": "QThreadPool.globalInstance().start(worker)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/event_core.py",
+      "sha256": "03891909bc0b2e5af6b87b77ee6a23ae75070a1ef79c84e9afa611ebd82f1403",
+      "lines": 246,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 71
+        },
+        {
+          "name": "snapshot",
+          "line": 179
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 75,
+          "text": "self.db = sqlite3.connect(str(path))"
+        },
+        {
+          "line": 107,
+          "text": "return max((str(json.loads(row[\"payload\"]).get(\"revision\", \"\")) for row in"
+        },
+        {
+          "line": 145,
+          "text": "previous_revision = json.loads(old[\"payload\"]).get(\"noticeRevision\", \"\")"
+        },
+        {
+          "line": 166,
+          "text": "event = json.loads(row[\"payload\"])"
+        },
+        {
+          "line": 185,
+          "text": "and json.loads(row[\"payload\"])[\"category\"] not in silenced_categories"
+        },
+        {
+          "line": 189,
+          "text": "and json.loads(row[\"payload\"]).get(\"bannerUntil\", row[\"expires_at\"]) > current"
+        },
+        {
+          "line": 190,
+          "text": "and json.loads(row[\"payload\"])[\"category\"] not in silenced_categories"
+        },
+        {
+          "line": 192,
+          "text": "pending.sort(key=lambda row: (-row[\"rank\"], json.loads(row[\"payload\"])[\"issuedAt\"], row[\"id\"]))"
+        },
+        {
+          "line": 201,
+          "text": "and json.loads(row[\"payload\"]).get(\"showOnHome\")),"
+        },
+        {
+          "line": 222,
+          "text": "json.loads(row[\"payload\"]).get(\"bannerUntil\", row[\"expires_at\"])) if value > now)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/theme_api.py",
+      "sha256": "a7d7a4124db6793ab88a774bca2c7ce7758fa748de782089fa82b2c28f2c7dd9",
+      "lines": 957,
+      "methods": [
+        {
+          "name": "_cached",
+          "line": 289
+        },
+        {
+          "name": "__init__",
+          "line": 551
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 174,
+          "text": "values[name] = [str(v) for v in value] if spec.get('items') == 'string' else [normalize_dto(spec['items'], _plain(v)) if spec.get('items') in CONTRACT.types else deepcopy(_plain(v)) for v in value]"
+        },
+        {
+          "line": 191,
+          "text": "values[name] = deepcopy(value)"
+        },
+        {
+          "line": 196,
+          "text": "values['source'] = deepcopy(source)"
+        },
+        {
+          "line": 296,
+          "text": "cache[key] = (deepcopy(raw), result)"
+        },
+        {
+          "line": 803,
+          "text": "available = self._availability(context.contentId, action_id, target_id, deepcopy(arguments))"
+        },
+        {
+          "line": 818,
+          "text": "return deepcopy(previous[1]) if previous[0] == signature else self._result(error='api.action.duplicate')"
+        },
+        {
+          "line": 823,
+          "text": "clean = {key: deepcopy(value) for key, value in arguments.items() if key != 'requestId'}"
+        },
+        {
+          "line": 854,
+          "text": "self._history[request_id] = (signature, deepcopy(result))"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/theme_contexts.py",
+      "sha256": "8705cd67b8c22959358396cb51a1ce0bc65852528907143e446fb8c7463ab630",
+      "lines": 299,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 22
+        },
+        {
+          "name": "__init__",
+          "line": 155
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 74,
+          "text": "return deepcopy(spec['const'])"
+        },
+        {
+          "line": 89,
+          "text": "return deepcopy(choices[0])"
+        },
+        {
+          "line": 108,
+          "text": "return deepcopy(_DEFAULT_SNAPSHOTS[type_name])"
+        },
+        {
+          "line": 133,
+          "text": "value = deepcopy(value)"
+        },
+        {
+          "line": 146,
+          "text": "result = deepcopy(value)"
+        },
+        {
+          "line": 167,
+          "text": "return deepcopy(self._snapshots)"
+        },
+        {
+          "line": 179,
+          "text": "self._snapshots[name] = deepcopy(value)"
+        },
+        {
+          "line": 194,
+          "text": "replacement = QColor(value) if kind == 'color' else deepcopy(value)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/theme_models.py",
+      "sha256": "31c5535a3b87bfb13e217aedb141b5e5c1a5b28548aee6eebbab1e5c2d052283",
+      "lines": 97,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 19
+        }
+      ],
+      "timerAndIoSites": []
+    },
+    {
+      "path": "dashboard/theme_service.py",
+      "sha256": "23d9d8532df2e4eaf6c49bb825ea13fb9145ce0466ef2585c3307035bb4b5ac9",
+      "lines": 1125,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 25
+        },
+        {
+          "name": "__init__",
+          "line": 62
+        },
+        {
+          "name": "__init__",
+          "line": 99
+        },
+        {
+          "name": "__init__",
+          "line": 170
+        },
+        {
+          "name": "heartbeat",
+          "line": 279
+        },
+        {
+          "name": "savedThemeId",
+          "line": 770
+        },
+        {
+          "name": "_saved",
+          "line": 1066
+        },
+        {
+          "name": "_saved_state",
+          "line": 1088
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 10,
+          "text": "from PySide6.QtCore import QObject, Property, QRunnable, QSettings, QStandardPaths, QThreadPool, QTimer, Signal, Slot, qVersion"
+        },
+        {
+          "line": 28,
+          "text": "self.configuration = deepcopy(configuration)"
+        },
+        {
+          "line": 29,
+          "text": "self.profiles=deepcopy(profiles) if profiles is not None else None"
+        },
+        {
+          "line": 65,
+          "text": "self.configuration=deepcopy(configuration); self.result=result"
+        },
+        {
+          "line": 79,
+          "text": "identifier=json.loads((folder/'theme.json').read_text())['id']"
+        },
+        {
+          "line": 101,
+          "text": "self.store=store; self.root=root; self.identity=deepcopy(identity); self.result=result"
+        },
+        {
+          "line": 184,
+          "text": "self._theme_deadline.setInterval(18000)"
+        },
+        {
+          "line": 185,
+          "text": "self._theme_deadline.timeout.connect(self._theme_operation_timeout)"
+        },
+        {
+          "line": 199,
+          "text": "try: self._profiles=json.loads(settings.value('appearance/themeOverrides','{}'))"
+        },
+        {
+          "line": 225,
+          "text": "config = json.loads(saved)"
+        },
+        {
+          "line": 318,
+          "text": "base={**deepcopy(self._committed),'themeId':'base','overrides':{}}"
+        },
+        {
+          "line": 354,
+          "text": "previous=json.loads(path.read_text()) if path.is_file() else {}"
+        },
+        {
+          "line": 370,
+          "text": "candidate=deepcopy(self._draft)"
+        },
+        {
+          "line": 373,
+          "text": "candidate['overrides']=deepcopy((self._draft_profiles or {}).get(self._profile_key(candidate),self.lifecycle.read()['adaptations']['perRevision'].get(selection_key(candidate['bundleRevision']),{})))"
+        },
+        {
+          "line": 439,
+          "text": "with recorder.span('service.cache.copy',variant=variant): return deepcopy(result)"
+        },
+        {
+          "line": 440,
+          "text": "return deepcopy(result)"
+        },
+        {
+          "line": 450,
+          "text": "self._resolved_cache[key]=(deepcopy(result),stamps)"
+        },
+        {
+          "line": 452,
+          "text": "self._resolved_cache[key]=(deepcopy(result),stamps)"
+        },
+        {
+          "line": 463,
+          "text": "metadata=deepcopy(self.bundles.verify_revision(pin)['manifest'])"
+        },
+        {
+          "line": 560,
+          "text": "configuration=self._normalize_adjustments(deepcopy(configuration))"
+        },
+        {
+          "line": 568,
+          "text": "result['bundleRevision']=deepcopy(configuration.get('bundleRevision',{}))"
+        },
+        {
+          "line": 570,
+          "text": "result['coverage']=deepcopy(self._bundle_metadata(configuration).get('coverage',{}))"
+        },
+        {
+          "line": 572,
+          "text": "self._visible = deepcopy(configuration)"
+        },
+        {
+          "line": 582,
+          "text": "def candidateAppearance(self): return deepcopy(self._candidate or {})"
+        },
+        {
+          "line": 589,
+          "text": "candidate = deepcopy(self._candidate_config)"
+        },
+        {
+          "line": 600,
+          "text": "candidate = deepcopy(self._candidate_config)"
+        },
+        {
+          "line": 636,
+          "text": "prepared = (deepcopy(self._candidate),set(self._staged_fonts))"
+        },
+        {
+          "line": 658,
+          "text": "def themeOperation(self): return deepcopy(self._theme_operation)"
+        },
+        {
+          "line": 678,
+          "text": "'palette':deepcopy(self._snapshot.get('tokens',{})),"
+        },
+        {
+          "line": 764,
+          "text": "def resolvedAppearance(self): return deepcopy(self._snapshot)"
+        },
+        {
+          "line": 780,
+          "text": "def draft(self): return deepcopy(self._draft or self._committed)"
+        },
+        {
+          "line": 796,
+          "text": "row.setdefault('revisions',[]).append(deepcopy(revision))"
+        },
+        {
+          "line": 816,
+          "text": "palette=deepcopy(self._snapshot.get('tokens',{})),"
+        },
+        {
+          "line": 819,
+          "text": "QThreadPool.globalInstance().start(VerifyThemeJob(self.store,self._root,identity,self._verify_result,self._verification_cancel))"
+        },
+        {
+          "line": 839,
+          "text": "return deepcopy([row for row in getattr(self.catalog,'installed_bundle_revisions',[]) if row['id']==identifier])"
+        },
+        {
+          "line": 851,
+          "text": "candidate = deepcopy(self._candidate_config)"
+        },
+        {
+          "line": 863,
+          "text": "self._draft = deepcopy(self._committed); self._draft_profiles=deepcopy(self._profiles); self._draft_valid = True; self._status = 'ready'; self._error = ''; self.editorChanged.emit()"
+        },
+        {
+          "line": 871,
+          "text": "self._draft_profiles[self._profile_key(self._draft)]=deepcopy(self._draft['overrides'])"
+        },
+        {
+          "line": 877,
+          "text": "candidate = deepcopy(self._draft); candidate['themeId'] = identifier"
+        },
+        {
+          "line": 879,
+          "text": "if pin: candidate['bundleRevision']=deepcopy(pin)"
+        },
+        {
+          "line": 883,
+          "text": "candidate['overrides']=deepcopy((self._draft_profiles or {}).get(self._profile_key(candidate),{}))"
+        },
+        {
+          "line": 894,
+          "text": "candidate = deepcopy(self._draft); candidate['overrides'].setdefault('tokens',{})[path] = value"
+        },
+        {
+          "line": 903,
+          "text": "candidate = deepcopy(self._draft)"
+        },
+        {
+          "line": 911,
+          "text": "configuration = deepcopy(self._draft if self._draft is not None else self._committed)"
+        },
+        {
+          "line": 914,
+          "text": "QThreadPool.globalInstance().start(PackJob(operation,self.store,catalog,configuration,self._pack_result))"
+        },
+        {
+          "line": 941,
+          "text": "candidate = deepcopy(self._draft)"
+        },
+        {
+          "line": 951,
+          "text": "candidate = deepcopy(self._draft)"
+        },
+        {
+          "line": 960,
+          "text": "candidate=self._normalize_adjustments(deepcopy(candidate))"
+        },
+        {
+          "line": 981,
+          "text": "self._candidate = resolved; self._candidate_config = deepcopy(candidate)"
+        },
+        {
+          "line": 1002,
+          "text": "return self._change(deepcopy(self._draft))"
+        },
+        {
+          "line": 1050,
+          "text": "if not self._change(deepcopy(self._draft)) or self._candidate is not None: return False"
+        },
+        {
+          "line": 1056,
+          "text": "self._pending_profiles=deepcopy(self._draft_profiles)"
+        },
+        {
+          "line": 1058,
+          "text": "self._pending = deepcopy(self._draft); self._status = 'saving'; self._error = ''; self.editorChanged.emit()"
+        },
+        {
+          "line": 1062,
+          "text": "QThreadPool.globalInstance().start(SaveJob(self._pending,self._save_result,profiles=self._pending_profiles,trace=recorder,request_id=self._save_trace_request))"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/theme_lifecycle.py",
+      "sha256": "ad1fcd5b53e1110b89bb7bb74eab57d081c6e6e450573617fd9822667b527a55",
+      "lines": 430,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 47
+        },
+        {
+          "name": "heartbeat",
+          "line": 419
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 29,
+          "text": "return deepcopy(BASE)"
+        },
+        {
+          "line": 41,
+          "text": "return Path('/proc/' + str(pid) + '/stat').read_text().rsplit(')', 1)[1].split()[19]"
+        },
+        {
+          "line": 68,
+          "text": "return {'journalVersion': 1, 'active': deepcopy(BASE), 'previous': deepcopy(BASE), 'pending': None,"
+        },
+        {
+          "line": 136,
+          "text": "state['pending'] = {'ticket': ticket, 'candidate': candidate, 'previous': deepcopy(state['active']),"
+        },
+        {
+          "line": 137,
+          "text": "'overrides': deepcopy(overrides or {}), 'phase': 'preparing', 'startedAt': time.time()}"
+        },
+        {
+          "line": 141,
+          "text": "'previous': deepcopy(state['active'])}"
+        },
+        {
+          "line": 170,
+          "text": "return deepcopy(state)"
+        },
+        {
+          "line": 176,
+          "text": "return deepcopy(state)"
+        },
+        {
+          "line": 178,
+          "text": "candidate=deepcopy(state['pending']['candidate'])"
+        },
+        {
+          "line": 183,
+          "text": "return deepcopy(state)"
+        },
+        {
+          "line": 198,
+          "text": "state['lastRecovery'] = {'failed': {'kind': 'corruptJournal'}, 'selected': deepcopy(BASE), 'reason': str(error)[:500]}"
+        },
+        {
+          "line": 201,
+          "text": "return {'recovered': True, 'selection': deepcopy(BASE), 'failed': {'kind': 'corruptJournal'}, 'reason': str(error)[:500]}"
+        },
+        {
+          "line": 204,
+          "text": "return {'recovered': False, 'selection': deepcopy(state['active'])}"
+        },
+        {
+          "line": 220,
+          "text": "state['active'] = deepcopy(fallback)"
+        },
+        {
+          "line": 221,
+          "text": "state['previous'] = deepcopy(BASE)"
+        },
+        {
+          "line": 227,
+          "text": "return {'recovered': True, 'selection': deepcopy(fallback), 'failed': failed, 'reason': str(reason)[:500]}"
+        },
+        {
+          "line": 289,
+          "text": "state['adaptations']['global'].update(deepcopy(values))"
+        },
+        {
+          "line": 291,
+          "text": "return deepcopy(state['adaptations'])"
+        },
+        {
+          "line": 314,
+          "text": "accepted[name] = deepcopy(value)"
+        },
+        {
+          "line": 400,
+          "text": "state['previous'] = deepcopy(BASE)"
+        },
+        {
+          "line": 417,
+          "text": "return {'active':identity, 'removed':removed, 'retained':retained, 'recovery':deepcopy(BASE)}"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/theme_supervisor.py",
+      "sha256": "e6b38549d0ca4f811e494b8601ee47c5ced9e30bfaa1cf0e55c7adcdc2a431d2",
+      "lines": 152,
+      "methods": [],
+      "timerAndIoSites": []
+    },
+    {
+      "path": "dashboard/theme_runtime.py",
+      "sha256": "4f2e74baba699be7ed46e0915ee0c4b221dc3a3fa0acd6d7981a2f09c56e749b",
+      "lines": 77,
+      "methods": [],
+      "timerAndIoSites": [
+        {
+          "line": 71,
+          "text": "report=json.loads(result.stdout)"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/theme_bundle.py",
+      "sha256": "5cca179c70586e69f204b40c6087c78ab8645ca0fd46978c04ee47a540d29690",
+      "lines": 928,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 767
+        }
+      ],
+      "timerAndIoSites": [
+        {
+          "line": 86,
+          "text": "return deepcopy(layout)"
+        },
+        {
+          "line": 118,
+          "text": "os.fsync(descriptor)"
+        },
+        {
+          "line": 131,
+          "text": "os.fsync(stream.fileno())"
+        },
+        {
+          "line": 212,
+          "text": "manifest = json.loads(contents.decode('utf-8'), object_pairs_hook=unique)"
+        },
+        {
+          "line": 260,
+          "text": "result=deepcopy(value)"
+        },
+        {
+          "line": 446,
+          "text": "source = path.read_text(encoding='utf-8')"
+        },
+        {
+          "line": 597,
+          "text": "result = deepcopy(definition)"
+        },
+        {
+          "line": 612,
+          "text": "catalog.icon_sets.update(deepcopy(registry.get('iconSets', {})))"
+        },
+        {
+          "line": 614,
+          "text": "catalog.contract[name] = {k: deepcopy(v) for k, v in specification.items() if k != 'alias'}"
+        },
+        {
+          "line": 618,
+          "text": "revisions[manifest['id']] = {k: deepcopy(revision[k]) for k in ('id', 'version', 'digest')}"
+        },
+        {
+          "line": 621,
+          "text": "metadata[manifest['id']] = deepcopy(manifest)"
+        },
+        {
+          "line": 624,
+          "text": "revision_metadata[key] = deepcopy(manifest)"
+        },
+        {
+          "line": 708,
+          "text": "os.fsync(stream.fileno())"
+        },
+        {
+          "line": 762,
+          "text": "os.fsync(output.fileno())"
+        },
+        {
+          "line": 858,
+          "text": "return deepcopy(previous[1])"
+        },
+        {
+          "line": 863,
+          "text": "self._lease_verifications[str(path)] = (stamp, deepcopy(revision))"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/theme_resources.py",
+      "sha256": "6095166010012b30039754f1e353511e893f6fab3c1e5f44b3717afc31ae13dd",
+      "lines": 97,
+      "methods": [
+        {
+          "name": "__init__",
+          "line": 61
+        }
+      ],
+      "timerAndIoSites": []
+    },
+    {
+      "path": "dashboard/theme_pack.py",
+      "sha256": "3f0dc18e50b55cc8a192ec3ec7432d455b2dc50709f55252d203454b29fdf8ff",
+      "lines": 168,
+      "methods": [],
+      "timerAndIoSites": [
+        {
+          "line": 54,
+          "text": "candidate=deepcopy(catalog.packs); catalog.packs[new_id]=pack; old_dir=catalog.directories.get(new_id);catalog.directories[new_id]=temporary"
+        }
+      ]
+    },
+    {
+      "path": "dashboard/Main.qml",
+      "sha256": "913842a8520afe21d49a4e590b5e017b0f36642837251d23dff9b3b51e040690",
+      "lines": 2121
+    },
+    {
+      "path": "dashboard/components/ViewHost.qml",
+      "sha256": "2d2f7a5174e15420168d5877f8a69ddad9ca5d883c0c8e8eff3603073421f714",
+      "lines": 376
+    },
+    {
+      "path": "dashboard/components/PublicContextAdapter.qml",
+      "sha256": "df7effba33f96b3ce546450482d13abae08fbd200fc9940fd69abe8f51245399",
+      "lines": 151
+    },
+    {
+      "path": "dashboard/components/SceneHost.qml",
+      "sha256": "8eed81930eeb25c4cf1b23c79dc8890db5f9264d9971cb5addcd72a678ba17bf",
+      "lines": 167
+    },
+    {
+      "path": "os/system/smartpc-dashboard.service",
+      "sha256": "83d363ac6f6390efe6c884cd89e577130961e4c180814223d4b500a40b58c49f",
+      "lines": 35
+    },
+    {
+      "path": "os/system/smartpc-display-level.service",
+      "sha256": "c86e52c4d08e35e553679f7fee06783e95b2582ab0fb612c1574acf1a16d4407",
+      "lines": 10
+    },
+    {
+      "path": "os/system/smartpc-display-level.timer",
+      "sha256": "85a7efa982ed8585568fb24e2608b4b6ae64b8195cf31a2e6305e12774138d01",
+      "lines": 11
+    },
+    {
+      "path": "os/system/zz-smartpc-journal.conf",
+      "sha256": "31477dcd04c88da2f18367e7f164a22010b511eafde42651a3b233e321d9ccd5",
+      "lines": 7
+    },
+    {
+      "path": "dashboard/run.sh",
+      "sha256": "88de24bc67f2b9cb96000aeb05d47877d143449728a8f18c98c23f73501b6a57",
+      "lines": 73
+    }
+  ],
+  "appleQmlFiles": 71,
+  "appleAssets": [
+    {
+      "path": "theme-projects/apple-calm/bundle/qml/icon-atlas.png",
+      "bytes": 996761,
+      "width": 1200,
+      "height": 2112
+    },
+    {
+      "path": "theme-projects/apple-calm/bundle/fonts/LiberationSans-Regular.ttf",
+      "bytes": 410820
+    },
+    {
+      "path": "theme-projects/apple-calm/bundle/fonts/Cantarell-VF.otf",
+      "bytes": 166072
+    },
+    {
+      "path": "theme-projects/apple-calm/bundle/fonts/LiberationSans-Bold.ttf",
+      "bytes": 414568
+    }
+  ]
+}

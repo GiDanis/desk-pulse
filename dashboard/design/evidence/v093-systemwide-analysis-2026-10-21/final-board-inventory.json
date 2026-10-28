@@ -1,0 +1,666 @@
+{
+  "startedAtUtc": "2026-10-21T18:59:04.686208+00:00",
+  "scope": "Passive inventory and 6 s of process CPU sampling; no FPS or throughput benchmark",
+  "serviceBefore": {
+    "argv": [
+      "systemctl",
+      "show",
+      "smartpc-dashboard.service",
+      "-p",
+      "MainPID",
+      "-p",
+      "NRestarts",
+      "-p",
+      "ActiveState",
+      "-p",
+      "SubState",
+      "-p",
+      "Nice",
+      "-p",
+      "CPUWeight",
+      "-p",
+      "CPUAffinity",
+      "-p",
+      "AllowedCPUs",
+      "-p",
+      "MemoryMax",
+      "-p",
+      "MemoryHigh",
+      "-p",
+      "ControlGroup"
+    ],
+    "returncode": 0,
+    "stdout": "MainPID=207975\nNRestarts=0\nControlGroup=/system.slice/smartpc-dashboard.service\nCPUWeight=[not set]\nAllowedCPUs=\nMemoryHigh=infinity\nMemoryMax=infinity\nNice=0\nCPUAffinity=\nActiveState=active\nSubState=running",
+    "stderr": ""
+  },
+  "identity": {
+    "/proc/device-tree/model": "sun60iw2|",
+    "/proc/device-tree/compatible": "xunlong,orangepi-4-pro|arm,sun60iw2p1|",
+    "/etc/os-release": "PRETTY_NAME=\"Debian GNU/Linux 13 (trixie)\"\nNAME=\"Debian GNU/Linux\"\nVERSION_ID=\"13\"\nVERSION=\"13 (trixie)\"\nVERSION_CODENAME=trixie\nDEBIAN_VERSION_FULL=13.7\nID=debian\nHOME_URL=\"https://www.debian.org/\"\nSUPPORT_URL=\"https://www.debian.org/support\"\nBUG_REPORT_URL=\"https://bugs.debian.org/\"",
+    "/proc/version": "Linux version 6.6.98-sun60iw2 (giuseppe@giuseppe-AuBox) (aarch64-linux-gnu-gcc (Ubuntu 14.2.0-4ubuntu2~24.04.1) 14.2.0, GNU ld (GNU Binutils for Ubuntu) 2.42) #1 SMP PREEMPT Tue Sep 29 21:51:54 CEST 2026",
+    "/proc/cpuinfo": "processor\t: 0\nBogoMIPS\t: 48.00\nFeatures\t: fp asimd aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nCPU implementer\t: 0x41\nCPU architecture: 8\nCPU variant\t: 0x2\nCPU part\t: 0xd05\nCPU revision\t: 0\n\nprocessor\t: 1\nBogoMIPS\t: 48.00\nFeatures\t: fp asimd aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nCPU implementer\t: 0x41\nCPU architecture: 8\nCPU variant\t: 0x2\nCPU part\t: 0xd05\nCPU revision\t: 0\n\nprocessor\t: 2\nBogoMIPS\t: 48.00\nFeatures\t: fp asimd aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nCPU implementer\t: 0x41\nCPU architecture: 8\nCPU variant\t: 0x2\nCPU part\t: 0xd05\nCPU revision\t: 0\n\nprocessor\t: 3\nBogoMIPS\t: 48.00\nFeatures\t: fp asimd aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nCPU implementer\t: 0x41\nCPU architecture: 8\nCPU variant\t: 0x2\nCPU part\t: 0xd05\nCPU revision\t: 0\n\nprocessor\t: 4\nBogoMIPS\t: 48.00\nFeatures\t: fp asimd aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nCPU implementer\t: 0x41\nCPU architecture: 8\nCPU variant\t: 0x2\nCPU part\t: 0xd05\nCPU revision\t: 0\n\nprocessor\t: 5\nBogoMIPS\t: 48.00\nFeatures\t: fp asimd aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nCPU implementer\t: 0x41\nCPU architecture: 8\nCPU variant\t: 0x2\nCPU part\t: 0xd05\nCPU revision\t: 0\n\nprocessor\t: 6\nBogoMIPS\t: 48.00\nFeatures\t: fp asimd aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nCPU implementer\t: 0x41\nCPU architecture: 8\nCPU variant\t: 0x4\nCPU part\t: 0xd0b\nCPU revision\t: 1\n\nprocessor\t: 7\nBogoMIPS\t: 48.00\nFeatures\t: fp asimd aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nCPU implementer\t: 0x41\nCPU architecture: 8\nCPU variant\t: 0x4\nCPU part\t: 0xd0b\nCPU revision\t: 1",
+    "/proc/meminfo": "MemTotal:        5995824 kB\nMemFree:         1685072 kB\nMemAvailable:    5182012 kB\nBuffers:           95444 kB\nCached:          3469016 kB\nSwapCached:            0 kB\nActive:          1504584 kB\nInactive:        2488256 kB\nActive(anon):     137596 kB\nInactive(anon):   450392 kB\nActive(file):    1366988 kB\nInactive(file):  2037864 kB\nUnevictable:        4040 kB\nMlocked:               0 kB\nSwapTotal:       2997908 kB\nSwapFree:        2997908 kB\nDirty:               840 kB\nWriteback:             0 kB\nAnonPages:        432580 kB\nMapped:           118836 kB\nShmem:            155556 kB\nKReclaimable:     157324 kB\nSlab:             219352 kB\nSReclaimable:     157324 kB\nSUnreclaim:        62028 kB\nKernelStack:        3284 kB\nPageTables:         3008 kB\nSecPageTables:         0 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:     5995820 kB\nCommitted_AS:    1133280 kB\nVmallocTotal:   257687552 kB\nVmallocUsed:       22180 kB\nVmallocChunk:          0 kB\nPercpu:             4800 kB\nCmaTotal:          16384 kB\nCmaFree:           12544 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB",
+    "/proc/swaps": "Filename\t\t\t\tType\t\tSize\t\tUsed\t\tPriority\n/dev/zram0                              partition\t2997908\t\t0\t\t5",
+    "/proc/cmdline": "root=UUID=d8bcf295-3d76-4436-be46-7c06b17369f9 rootwait rootfstype=ext4 splash plymouth.ignore-serial-consoles earlyprintk=sunxi-uart,0x02500000 initcall_debug=0 console=ttyS0,115200 console=tty1 consoleblank=0 loglevel=1 clk_ignore_unused swiotlb=65536 usb-storage.quirks= video=DP-1:960x640@60D  cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory swapaccount=1",
+    "/proc/uptime": "167163.65 1269273.38",
+    "/sys/devices/system/cpu/online": "0-7",
+    "/sys/fs/cgroup/cgroup.controllers": "cpuset cpu io memory hugetlb pids"
+  },
+  "cpuPolicies": {
+    "policy0": {
+      "affected_cpus": "0 1 2 3 4 5",
+      "scaling_driver": "cpufreq-dt",
+      "scaling_governor": "schedutil",
+      "scaling_available_governors": "conservative ondemand userspace powersave performance schedutil",
+      "scaling_min_freq": "416000",
+      "scaling_max_freq": "1794000",
+      "cpuinfo_max_freq": "1794000",
+      "scaling_cur_freq": "1716000",
+      "scaling_available_frequencies": "416000 780000 1014000 1196000 1404000 1508000 1612000 1716000 1794000"
+    },
+    "policy6": {
+      "affected_cpus": "6 7",
+      "scaling_driver": "cpufreq-dt",
+      "scaling_governor": "schedutil",
+      "scaling_available_governors": "conservative ondemand userspace powersave performance schedutil",
+      "scaling_min_freq": "416000",
+      "scaling_max_freq": "2002000",
+      "cpuinfo_max_freq": "2002000",
+      "scaling_cur_freq": "1404000",
+      "scaling_available_frequencies": "416000 780000 1014000 1196000 1404000 1508000 1612000 1716000 1794000 1898000 1950000 2002000"
+    },
+    "schedutil": {
+      "affected_cpus": {
+        "unavailable": "[Errno 2] No such file or directory: '/sys/devices/system/cpu/cpufreq/schedutil/affected_cpus'"
+      },
+      "scaling_driver": {
+        "unavailable": "[Errno 2] No such file or directory: '/sys/devices/system/cpu/cpufreq/schedutil/scaling_driver'"
+      },
+      "scaling_governor": {
+        "unavailable": "[Errno 2] No such file or directory: '/sys/devices/system/cpu/cpufreq/schedutil/scaling_governor'"
+      },
+      "scaling_available_governors": {
+        "unavailable": "[Errno 2] No such file or directory: '/sys/devices/system/cpu/cpufreq/schedutil/scaling_available_governors'"
+      },
+      "scaling_min_freq": {
+        "unavailable": "[Errno 2] No such file or directory: '/sys/devices/system/cpu/cpufreq/schedutil/scaling_min_freq'"
+      },
+      "scaling_max_freq": {
+        "unavailable": "[Errno 2] No such file or directory: '/sys/devices/system/cpu/cpufreq/schedutil/scaling_max_freq'"
+      },
+      "cpuinfo_max_freq": {
+        "unavailable": "[Errno 2] No such file or directory: '/sys/devices/system/cpu/cpufreq/schedutil/cpuinfo_max_freq'"
+      },
+      "scaling_cur_freq": {
+        "unavailable": "[Errno 2] No such file or directory: '/sys/devices/system/cpu/cpufreq/schedutil/scaling_cur_freq'"
+      },
+      "scaling_available_frequencies": {
+        "unavailable": "[Errno 2] No such file or directory: '/sys/devices/system/cpu/cpufreq/schedutil/scaling_available_frequencies'"
+      }
+    }
+  },
+  "cpuTopology": {
+    "cpu0": {
+      "cpu_capacity": "385",
+      "regs/identification/midr_el1": "0x00000000412fd050",
+      "topology/cluster_id": "0",
+      "topology/core_id": "0"
+    },
+    "cpu1": {
+      "cpu_capacity": "385",
+      "regs/identification/midr_el1": "0x00000000412fd050",
+      "topology/cluster_id": "0",
+      "topology/core_id": "1"
+    },
+    "cpu2": {
+      "cpu_capacity": "385",
+      "regs/identification/midr_el1": "0x00000000412fd050",
+      "topology/cluster_id": "0",
+      "topology/core_id": "2"
+    },
+    "cpu3": {
+      "cpu_capacity": "385",
+      "regs/identification/midr_el1": "0x00000000412fd050",
+      "topology/cluster_id": "0",
+      "topology/core_id": "3"
+    },
+    "cpu4": {
+      "cpu_capacity": "385",
+      "regs/identification/midr_el1": "0x00000000412fd050",
+      "topology/cluster_id": "0",
+      "topology/core_id": "4"
+    },
+    "cpu5": {
+      "cpu_capacity": "385",
+      "regs/identification/midr_el1": "0x00000000412fd050",
+      "topology/cluster_id": "0",
+      "topology/core_id": "5"
+    },
+    "cpu6": {
+      "cpu_capacity": "1024",
+      "regs/identification/midr_el1": "0x00000000414fd0b1",
+      "topology/cluster_id": "1",
+      "topology/core_id": "0"
+    },
+    "cpu7": {
+      "cpu_capacity": "1024",
+      "regs/identification/midr_el1": "0x00000000414fd0b1",
+      "topology/cluster_id": "1",
+      "topology/core_id": "1"
+    }
+  },
+  "devfreq": {
+    "1800000.gpu": {
+      "name": "1800000.gpu",
+      "cur_freq": "400000000",
+      "governor": "simple_ondemand",
+      "available_governors": "userspace performance simple_ondemand",
+      "available_frequencies": "400000000 600000000 800000000 1008000000",
+      "device/power/runtime_status": "suspended",
+      "trans_stat": "From  :   To\n           : 400000000 600000000 8000000001008000000   time(ms)\n* 400000000:         0         0         0         0 167152288\n  600000000:         0         0         0         0         0\n  800000000:         0         0         0         0         0\n 1008000000:         0         0         0         0         0\nTotal transition : 0"
+    },
+    "3600000.npu": {
+      "name": "3600000.npu",
+      "cur_freq": "852000000",
+      "governor": "performance",
+      "available_governors": "userspace performance simple_ondemand",
+      "available_frequencies": "492000000 852000000",
+      "device/power/runtime_status": "unsupported",
+      "trans_stat": "From  :   To\n           : 492000000 852000000   time(ms)\n  492000000:         0         0         0\n* 852000000:         0         0 167153288\nTotal transition : 0"
+    }
+  },
+  "thermal": {
+    "thermal_zone0": {
+      "type": "cpub_thermal_zone",
+      "temp": "44764",
+      "policy": "step_wise"
+    },
+    "thermal_zone1": {
+      "type": "ddr_thermal_zone",
+      "temp": "44144",
+      "policy": "step_wise"
+    },
+    "thermal_zone2": {
+      "type": "npu_thermal_zone",
+      "temp": "43586",
+      "policy": "step_wise"
+    },
+    "thermal_zone3": {
+      "type": "cpul_thermal_zone",
+      "temp": "45136",
+      "policy": "step_wise"
+    },
+    "thermal_zone4": {
+      "type": "gpu_thermal_zone",
+      "temp": "43338",
+      "policy": "step_wise"
+    }
+  },
+  "cooling": {
+    "cooling_device0": {
+      "type": "idle-cpu2",
+      "cur_state": "0",
+      "max_state": "100"
+    },
+    "cooling_device1": {
+      "type": "idle-cpu3",
+      "cur_state": "0",
+      "max_state": "100"
+    },
+    "cooling_device10": {
+      "type": "devfreq-1800000.gpu",
+      "cur_state": "0",
+      "max_state": "3"
+    },
+    "cooling_device2": {
+      "type": "idle-cpu4",
+      "cur_state": "0",
+      "max_state": "100"
+    },
+    "cooling_device3": {
+      "type": "idle-cpu5",
+      "cur_state": "0",
+      "max_state": "100"
+    },
+    "cooling_device4": {
+      "type": "idle-cpu6",
+      "cur_state": "0",
+      "max_state": "100"
+    },
+    "cooling_device5": {
+      "type": "idle-cpu7",
+      "cur_state": "0",
+      "max_state": "100"
+    },
+    "cooling_device6": {
+      "type": "cpufreq-cpu0",
+      "cur_state": "0",
+      "max_state": "8"
+    },
+    "cooling_device7": {
+      "type": "cpufreq-cpu6",
+      "cur_state": "0",
+      "max_state": "11"
+    },
+    "cooling_device8": {
+      "type": "devfreq-3600000.npu",
+      "cur_state": "0",
+      "max_state": "1"
+    },
+    "cooling_device9": {
+      "type": "pwm-fan",
+      "cur_state": "0",
+      "max_state": "4"
+    }
+  },
+  "pressureBefore": {
+    "cpu": {
+      "unavailable": "[Errno 2] No such file or directory: '/proc/pressure/cpu'"
+    },
+    "memory": {
+      "unavailable": "[Errno 2] No such file or directory: '/proc/pressure/memory'"
+    },
+    "io": {
+      "unavailable": "[Errno 2] No such file or directory: '/proc/pressure/io'"
+    }
+  },
+  "graphics": {
+    "/sys/kernel/debug/pvr/status": "Driver Status:   OK\n\nDevice ID: 0:128\nFirmware Status: OK\nServer Errors:   0\nHWR Event Count: 0\nCRR Event Count: 0\nSLR Event Count: 0\nWGP Error Count: 0\nTRP Error Count: 0\nFWF Event Count: 0\nAPM Event Count: 609899\nGPU Utilisation: 0%\nDM Utilisation:  VM0\n           2D:   0% \n         GEOM:   0% \n           3D:   0% \n          CDM:   0% \n          RAY:   0% \n        GEOM2:   0%",
+    "/sys/class/drm/card0-DP-1/status": "connected",
+    "/sys/class/drm/card0-DP-1/enabled": "enabled",
+    "/sys/class/drm/card0-DP-1/modes": "960x640\n2560x1600\n1920x1080\n1920x1080\n1920x1080\n1280x1024\n1280x960\n1280x720\n1280x720\n1280x720\n1024x768\n960x540\n800x600\n720x480\n720x480\n640x480\n640x480\n640x480\n480x320",
+    "/etc/smartpc/eglfs-kms.json": "{\n  \"device\": \"/dev/dri/card0\",\n  \"hwcursor\": false\n}",
+    "/etc/OpenCL/vendors/pvr.icd": "/lib/libPVROCL.so",
+    "/usr/share/vulkan/icd.d/img_icd.json": "{\n    \"file_format_version\": \"1.0.0\",\n    \"ICD\": {\n        \"library_path\": \"/lib/libVK_IMG.so\",\n        \"api_version\": \"1.3.277\"\n    }\n}"
+  },
+  "modules": {
+    "argv": [
+      "lsmod"
+    ],
+    "returncode": 0,
+    "stdout": "Module                  Size  Used by\nhci_uart               24576  1\naic8800_btlpm          16384  0\npvrsrvkm             1310720  21\npwm_fan                12288  0\ngoodix_ts              24576  0\njoydev                 20480  0\nvipcore               245760  0\nsunxi_ve               49152  0\ndeinterlace            98304  0\nsun55iw3_devfreq       20480  0\naic8800_fdrv          319488  0\naic8800_bsp            86016  1 aic8800_fdrv\nnfnetlink              20480  1",
+    "stderr": ""
+  },
+  "tools": {
+    "systemd": {
+      "argv": [
+        "systemctl",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "systemd 257 (257.13-1~deb13u1)\n+PAM +AUDIT +SELINUX +APPARMOR +IMA +IPE +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBCRYPTSETUP_PLUGINS +LIBFDISK +PCRE2 +PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD +BPF_FRAMEWORK +BTF -XKBCOMMON -UTMP +SYSVINIT +LIBARCHIVE",
+      "stderr": ""
+    },
+    "python": {
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "Python 3.13.5",
+      "stderr": ""
+    },
+    "gcc": {
+      "argv": [
+        "gcc",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "gcc (Debian 14.2.0-19) 14.2.0\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+      "stderr": ""
+    },
+    "storage": {
+      "argv": [
+        "lsblk",
+        "-o",
+        "NAME,TYPE,SIZE,FSTYPE,MOUNTPOINTS"
+      ],
+      "returncode": 0,
+      "stdout": "NAME        TYPE  SIZE FSTYPE MOUNTPOINTS\nsda         disk    0B        \nsdb         disk    0B        \nmmcblk1     disk 29.3G        \n\u2514\u2500mmcblk1p1 part   29G ext4   /\nzram0       disk  2.9G swap   [SWAP]",
+      "stderr": ""
+    },
+    "perf": {
+      "argv": [
+        "perf",
+        "--version"
+      ],
+      "unavailable": "[Errno 2] No such file or directory: 'perf'"
+    },
+    "clinfo": {
+      "argv": [
+        "clinfo",
+        "-l"
+      ],
+      "returncode": 0,
+      "stdout": "Platform #0: PowerVR\n `-- Device #0: PowerVR B-Series BXM-4-64",
+      "stderr": ""
+    }
+  },
+  "packages": {
+    "argv": [
+      "dpkg-query",
+      "-W",
+      "-f=${Package}\t${Version}\n",
+      "python3-pyside6*",
+      "libqt6core6*",
+      "*pvr*",
+      "*img*",
+      "*vulkan*",
+      "*opencl*",
+      "*vip*",
+      "python3-numpy",
+      "libopenblas*"
+    ],
+    "returncode": 1,
+    "stdout": "amd-libopencl1\t\ngir1.2-vulkan-1.0\t\nlibopencl-1.1-1\t\nlibopencl-1.2-1\t\nlibopencl-2.0-1\t\nlibopencl-2.1-1\t\nlibopencl-2.2-1\t\nlibopencl-3.0-1\t\nlibopencl1\t\nlibopencv-imgcodecs-dev\t4.10.0+dfsg-5\nlibopencv-imgcodecs410\t4.10.0+dfsg-5\nlibopencv-imgproc-dev\t4.10.0+dfsg-5\nlibopencv-imgproc410\t4.10.0+dfsg-5\nlibqt6core6\t\nlibqt6core6t64\t6.8.2+dfsg-9+deb13u2\nlibtk-img\t\nlibvulkan-dev\t\nlibvulkan1\t1.4.309.0-1\nlibzimg2\t3.0.5+ds1-1+b2\nmesa-vulkan-drivers\t\nnvidia-libopencl1-dev\t\nocl-icd-libopencl1\t2.3.3-1\nocl-icd-opencl-dev\t2.3.3-1\nopencl-c-headers\t3.0~2024.10.24-2\nopencl-clhpp-headers\t3.0~2024.10.24-2\nopencl-clhpp-headers-doc\t\nopencl-dev\t\nopencl-headers\t3.0~2024.10.24-2\nopencl-icd\t\npython3-pyside6.qtcore\t6.8.2.1-4\npython3-pyside6.qtgui\t6.8.2.1-4\npython3-pyside6.qtnetwork\t6.8.2.1-4\npython3-pyside6.qtopengl\t6.8.2.1-4\npython3-pyside6.qtqml\t6.8.2.1-4\npython3-pyside6.qtquick\t6.8.2.1-4\npython3-pyside6.qtwebsockets\t6.8.2.1-4\npython3-pyside6.qtwidgets\t6.8.2.1-4\ntimgm6mb-soundfont\t1.3-5\nvulkan-icd\t\nvulkan-loader\t\nvulkan-sdk-runtime\t\nvulkan-tools\t1.4.304.0+dfsg1-1\nxserver-xorg-img-bxm-1.21.1-2.deb\t1.0.1",
+    "stderr": "dpkg-query: no packages found matching *pvr*\ndpkg-query: no packages found matching *vip*\ndpkg-query: no packages found matching python3-numpy\ndpkg-query: no packages found matching libopenblas*"
+  },
+  "manifest": {
+    "version": "0.9.0-rc.28",
+    "files": 642,
+    "mismatches": [],
+    "manifestSha256": "ab50d59de7e37b73a9f885b9e3863ae6571f04089ddf68ea4209296af77e7e2f"
+  },
+  "theme-activation.json": {
+    "active": {
+      "digest": "faf3e0032162416a471c8122d320709f47b71df0667b042816fffa4e3b452d62",
+      "id": "studio.applecalm",
+      "version": "1.6.3"
+    },
+    "pending": null,
+    "generation": 228
+  },
+  "theme-runtime-status.json": {
+    "unavailable": "[Errno 2] No such file or directory: '/var/lib/smartpc-dashboard/.local/share/SmartPC/SmartPC/theme-runtime-status.json'"
+  },
+  "cgroup": {
+    "cpu.weight": {
+      "unavailable": "[Errno 2] No such file or directory: '/sys/fs/cgroup/system.slice/smartpc-dashboard.service/cpu.weight'"
+    },
+    "cpu.max": {
+      "unavailable": "[Errno 2] No such file or directory: '/sys/fs/cgroup/system.slice/smartpc-dashboard.service/cpu.max'"
+    },
+    "cpuset.cpus.effective": {
+      "unavailable": "[Errno 2] No such file or directory: '/sys/fs/cgroup/system.slice/smartpc-dashboard.service/cpuset.cpus.effective'"
+    },
+    "memory.max": "max",
+    "memory.high": "max",
+    "memory.current": "576471040",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+  },
+  "processes": [
+    {
+      "pid": 207975,
+      "command": "/var/lib/smartpc-dashboard/game-runtime/bin/python|/opt/smartpc/dashboard/theme_supervisor.py|--data-root|/var/lib/smartpc-dashboard/.local/share/SmartPC/SmartPC|--|/var/lib/smartpc-dashboard/game-runtime/bin/python|/opt/smartpc/dashboard/app.py|",
+      "status": "Name:\tpython\nUmask:\t0027\nState:\tS (sleeping)\nTgid:\t207975\nNgid:\t0\nPid:\t207975\nPPid:\t1\nTracerPid:\t0\nUid:\t1001\t1001\t1001\t1001\nGid:\t1001\t1001\t1001\t1001\nFDSize:\t256\nGroups:\t27 44 991 995 1001 \nNStgid:\t207975\nNSpid:\t207975\nNSpgid:\t207975\nNSsid:\t207975\nKthread:\t0\nVmPeak:\t   34980 kB\nVmSize:\t   34976 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   24496 kB\nVmRSS:\t   24400 kB\nRssAnon:\t   14160 kB\nRssFile:\t   10240 kB\nRssShmem:\t       0 kB\nVmData:\t   14876 kB\nVmStk:\t     132 kB\nVmExe:\t    5948 kB\nVmLib:\t    9352 kB\nVmPTE:\t     100 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffff\nThreads:\t1\nSigQ:\t0/23273\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000004002\nCapInh:\t0000000000200100\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001fffffeffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t1\nSeccomp:\t2\nSeccomp_filters:\t7\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tunknown\nCpus_allowed:\tff\nCpus_allowed_list:\t0-7\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t38584\nnonvoluntary_ctxt_switches:\t1204",
+      "io": {
+        "unavailable": "[Errno 2] No such file or directory: '/proc/207975/io'"
+      },
+      "environment": {
+        "QT_QPA_EGLFS_INTEGRATION": "eglfs_kms",
+        "QT_QPA_EGLFS_KMS_CONFIG": "/etc/smartpc/eglfs-kms.json",
+        "QT_QPA_PLATFORM": "eglfs",
+        "XDG_CACHE_HOME": "/var/cache/smartpc-dashboard",
+        "QSG_RHI_BACKEND": "opengl",
+        "QT_QPA_EGLFS_HIDECURSOR": "1"
+      },
+      "graphicsLibraries": [],
+      "devices": [
+        "/dev/null"
+      ],
+      "threads": {
+        "argv": [
+          "ps",
+          "-T",
+          "-p",
+          "207975",
+          "-o",
+          "pid,tid,psr,cls,rtprio,pri,ni,pcpu,comm"
+        ],
+        "returncode": 0,
+        "stdout": "PID     TID PSR CLS RTPRIO PRI  NI %CPU COMMAND\n 207975  207975   7  TS      -  19   0  0.7 python",
+        "stderr": ""
+      }
+    },
+    {
+      "pid": 207984,
+      "command": "/var/lib/smartpc-dashboard/game-runtime/bin/python|/opt/smartpc/dashboard/app.py|",
+      "status": "Name:\tpython\nUmask:\t0027\nState:\tS (sleeping)\nTgid:\t207984\nNgid:\t0\nPid:\t207984\nPPid:\t207975\nTracerPid:\t0\nUid:\t1001\t1001\t1001\t1001\nGid:\t1001\t1001\t1001\t1001\nFDSize:\t64\nGroups:\t27 44 991 995 1001 \nNStgid:\t207984\nNSpid:\t207984\nNSpgid:\t207984\nNSsid:\t207984\nKthread:\t0\nVmPeak:\t 1838492 kB\nVmSize:\t 1837092 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  461096 kB\nVmRSS:\t  459120 kB\nRssAnon:\t  374612 kB\nRssFile:\t   84508 kB\nRssShmem:\t       0 kB\nVmData:\t  804616 kB\nVmStk:\t     176 kB\nVmExe:\t    5948 kB\nVmLib:\t  170936 kB\nVmPTE:\t    1252 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffff\nThreads:\t15\nSigQ:\t0/23273\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t00000001000a4002\nCapInh:\t0000000000200100\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001fffffeffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t1\nSeccomp:\t2\nSeccomp_filters:\t7\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tunknown\nCpus_allowed:\tff\nCpus_allowed_list:\t0-7\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t677097\nnonvoluntary_ctxt_switches:\t30662",
+      "io": {
+        "unavailable": "[Errno 2] No such file or directory: '/proc/207984/io'"
+      },
+      "environment": {
+        "QT_QPA_EGLFS_INTEGRATION": "eglfs_kms",
+        "QT_QPA_EGLFS_KMS_CONFIG": "/etc/smartpc/eglfs-kms.json",
+        "QT_QPA_PLATFORM": "eglfs",
+        "XDG_CACHE_HOME": "/var/cache/smartpc-dashboard",
+        "QSG_RHI_BACKEND": "opengl",
+        "QT_QPA_EGLFS_HIDECURSOR": "1"
+      },
+      "graphicsLibraries": [
+        "/usr/lib/aarch64-linux-gnu/libQt6Quick.so.6.8.2",
+        "/usr/lib/aarch64-linux-gnu/libQt6QuickShapes.so.6.8.2",
+        "/usr/lib/libGLESv2_PVR_MESA.so.24.2.6603887",
+        "/usr/lib/libpvr_dri_support.so.24.2.6603887",
+        "/usr/local/lib/libEGL.so.1.0.0",
+        "/var/lib/smartpc-dashboard/game-runtime/lib/python3.13/site-packages/numpy.libs/libscipy_openblas64_-128b20d9.so"
+      ],
+      "devices": [
+        "/dev/dri/card0",
+        "/dev/dri/renderD128",
+        "/dev/input/event0",
+        "/dev/input/event1",
+        "/dev/input/event2",
+        "/dev/input/event3",
+        "/dev/input/event5",
+        "/dev/null"
+      ],
+      "threads": {
+        "argv": [
+          "ps",
+          "-T",
+          "-p",
+          "207984",
+          "-o",
+          "pid,tid,psr,cls,rtprio,pri,ni,pcpu,comm"
+        ],
+        "returncode": 0,
+        "stdout": "PID     TID PSR CLS RTPRIO PRI  NI %CPU COMMAND\n 207984  207984   0  TS      -  19   0 19.1 python\n 207984  207985   1  TS      -  19   0  0.0 QDBusConnection\n 207984  207986   0  TS      -  19   0  0.2 QThread\n 207984  207987   0  TS      -  19   0  0.0 QQmlThread\n 207984  207988   1  TS      -  19   0  0.0 python\n 207984  207989   6  TS      -  19   0  0.0 python\n 207984  207990   2  TS      -  19   0  0.0 python\n 207984  207991   6  TS      -  19   0  0.0 python\n 207984  207992   0  TS      -  19   0  0.0 python\n 207984  207993   6  TS      -  19   0  0.0 python\n 207984  207994   6  TS      -  19   0  0.0 python\n 207984  208005   3  TS      -  19   0  5.3 QSGRenderThread\n 207984  208032   1  TS      -  19   0  0.0 pool-spawner\n 207984  208033   2  TS      -  19   0  0.0 gmain\n 207984  208034   3  TS      -  19   0  0.0 gdbus",
+        "stderr": ""
+      }
+    },
+    {
+      "pid": 213731,
+      "command": "/var/lib/smartpc-dashboard/game-runtime/bin/python|-c|from multiprocessing.resource_tracker import main;main(43)|",
+      "status": "Name:\tpython\nUmask:\t0027\nState:\tS (sleeping)\nTgid:\t213731\nNgid:\t0\nPid:\t213731\nPPid:\t207984\nTracerPid:\t0\nUid:\t1001\t1001\t1001\t1001\nGid:\t1001\t1001\t1001\t1001\nFDSize:\t64\nGroups:\t27 44 991 995 1001 \nNStgid:\t213731\nNSpid:\t213731\nNSpgid:\t207984\nNSsid:\t207984\nKthread:\t0\nVmPeak:\t   19768 kB\nVmSize:\t   19704 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   11392 kB\nVmRSS:\t   11392 kB\nRssAnon:\t    5504 kB\nRssFile:\t    5888 kB\nRssShmem:\t       0 kB\nVmData:\t    7348 kB\nVmStk:\t     132 kB\nVmExe:\t    5948 kB\nVmLib:\t    2676 kB\nVmPTE:\t      64 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t0\nuntag_mask:\t0xffffffffffffff\nThreads:\t1\nSigQ:\t0/23273\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001005002\nSigCgt:\t0000000000000000\nCapInh:\t0000000000200100\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001fffffeffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t1\nSeccomp:\t2\nSeccomp_filters:\t7\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tunknown\nCpus_allowed:\tff\nCpus_allowed_list:\t0-7\nMems_allowed:\t1\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t11\nnonvoluntary_ctxt_switches:\t1",
+      "io": {
+        "unavailable": "[Errno 2] No such file or directory: '/proc/213731/io'"
+      },
+      "environment": {
+        "QT_QPA_EGLFS_INTEGRATION": "eglfs_kms",
+        "QT_QPA_EGLFS_KMS_CONFIG": "/etc/smartpc/eglfs-kms.json",
+        "QT_QPA_PLATFORM": "eglfs",
+        "XDG_CACHE_HOME": "/var/cache/smartpc-dashboard",
+        "QSG_RHI_BACKEND": "opengl",
+        "QT_QPA_EGLFS_HIDECURSOR": "1"
+      },
+      "graphicsLibraries": [],
+      "devices": [
+        "/dev/null"
+      ],
+      "threads": {
+        "argv": [
+          "ps",
+          "-T",
+          "-p",
+          "213731",
+          "-o",
+          "pid,tid,psr,cls,rtprio,pri,ni,pcpu,comm"
+        ],
+        "returncode": 0,
+        "stdout": "PID     TID PSR CLS RTPRIO PRI  NI %CPU COMMAND\n 213731  213731   7  TS      -  19   0  0.0 python",
+        "stderr": ""
+      }
+    }
+  ],
+  "samples": [
+    {
+      "monotonic": 167163.975280679,
+      "processes": {
+        "207975": {
+          "ticks": 6836,
+          "startTicks": 15744706,
+          "rssPages": 6100
+        },
+        "207984": {
+          "ticks": 241898,
+          "startTicks": 15744801,
+          "rssPages": 114780
+        },
+        "213731": {
+          "ticks": 8,
+          "startTicks": 15926662,
+          "rssPages": 2848
+        }
+      },
+      "gpu": "Driver Status:   OK\n\nDevice ID: 0:128\nFirmware Status: OK\nServer Errors:   0\nHWR Event Count: 0\nCRR Event Count: 0\nSLR Event Count: 0\nWGP Error Count: 0\nTRP Error Count: 0\nFWF Event Count: 0\nAPM Event Count: 609900\nGPU Utilisation: 0%\nDM Utilisation:  VM0\n           2D:   0% \n         GEOM:   0% \n           3D:   0% \n          CDM:   0% \n          RAY:   0% \n        GEOM2:   0%",
+      "thermal": {
+        "thermal_zone2": "43276",
+        "thermal_zone0": "44516",
+        "thermal_zone3": "45880",
+        "thermal_zone1": "43586",
+        "thermal_zone4": "44454"
+      }
+    },
+    {
+      "monotonic": 167165.97647655,
+      "processes": {
+        "207975": {
+          "ticks": 6836,
+          "startTicks": 15744706,
+          "rssPages": 6100
+        },
+        "207984": {
+          "ticks": 241899,
+          "startTicks": 15744801,
+          "rssPages": 114780
+        },
+        "213731": {
+          "ticks": 8,
+          "startTicks": 15926662,
+          "rssPages": 2848
+        }
+      },
+      "gpu": "Driver Status:   OK\n\nDevice ID: 0:128\nFirmware Status: OK\nServer Errors:   0\nHWR Event Count: 0\nCRR Event Count: 0\nSLR Event Count: 0\nWGP Error Count: 0\nTRP Error Count: 0\nFWF Event Count: 0\nAPM Event Count: 609900\nGPU Utilisation: 0%\nDM Utilisation:  VM0\n           2D:   0% \n         GEOM:   0% \n           3D:   0% \n          CDM:   0% \n          RAY:   0% \n        GEOM2:   0%",
+      "thermal": {
+        "thermal_zone2": "42904",
+        "thermal_zone0": "44144",
+        "thermal_zone3": "44206",
+        "thermal_zone1": "43896",
+        "thermal_zone4": "43276"
+      }
+    },
+    {
+      "monotonic": 167167.977761923,
+      "processes": {
+        "207975": {
+          "ticks": 6837,
+          "startTicks": 15744706,
+          "rssPages": 6100
+        },
+        "207984": {
+          "ticks": 241901,
+          "startTicks": 15744801,
+          "rssPages": 114780
+        },
+        "213731": {
+          "ticks": 8,
+          "startTicks": 15926662,
+          "rssPages": 2848
+        }
+      },
+      "gpu": "Driver Status:   OK\n\nDevice ID: 0:128\nFirmware Status: OK\nServer Errors:   0\nHWR Event Count: 0\nCRR Event Count: 0\nSLR Event Count: 0\nWGP Error Count: 0\nTRP Error Count: 0\nFWF Event Count: 0\nAPM Event Count: 609900\nGPU Utilisation: 0%\nDM Utilisation:  VM0\n           2D:   0% \n         GEOM:   0% \n           3D:   0% \n          CDM:   0% \n          RAY:   0% \n        GEOM2:   0%",
+      "thermal": {
+        "thermal_zone2": "42966",
+        "thermal_zone0": "42842",
+        "thermal_zone3": "43524",
+        "thermal_zone1": "43214",
+        "thermal_zone4": "42222"
+      }
+    },
+    {
+      "monotonic": 167169.979018753,
+      "processes": {
+        "207975": {
+          "ticks": 6838,
+          "startTicks": 15744706,
+          "rssPages": 6100
+        },
+        "207984": {
+          "ticks": 241902,
+          "startTicks": 15744801,
+          "rssPages": 114780
+        },
+        "213731": {
+          "ticks": 8,
+          "startTicks": 15926662,
+          "rssPages": 2848
+        }
+      },
+      "gpu": "Driver Status:   OK\n\nDevice ID: 0:128\nFirmware Status: OK\nServer Errors:   0\nHWR Event Count: 0\nCRR Event Count: 0\nSLR Event Count: 0\nWGP Error Count: 0\nTRP Error Count: 0\nFWF Event Count: 0\nAPM Event Count: 609900\nGPU Utilisation: 0%\nDM Utilisation:  VM0\n           2D:   0% \n         GEOM:   0% \n           3D:   0% \n          CDM:   0% \n          RAY:   0% \n        GEOM2:   0%",
+      "thermal": {
+        "thermal_zone2": "43214",
+        "thermal_zone0": "42718",
+        "thermal_zone3": "43648",
+        "thermal_zone1": "43772",
+        "thermal_zone4": "42966"
+      }
+    }
+  ],
+  "clockTicks": 100,
+  "pageSize": 4096,
+  "pressureAfter": {
+    "cpu": {
+      "unavailable": "[Errno 2] No such file or directory: '/proc/pressure/cpu'"
+    },
+    "memory": {
+      "unavailable": "[Errno 2] No such file or directory: '/proc/pressure/memory'"
+    },
+    "io": {
+      "unavailable": "[Errno 2] No such file or directory: '/proc/pressure/io'"
+    }
+  },
+  "serviceAfter": {
+    "argv": [
+      "systemctl",
+      "show",
+      "smartpc-dashboard.service",
+      "-p",
+      "MainPID",
+      "-p",
+      "NRestarts",
+      "-p",
+      "ActiveState",
+      "-p",
+      "SubState",
+      "-p",
+      "Nice",
+      "-p",
+      "CPUWeight",
+      "-p",
+      "CPUAffinity",
+      "-p",
+      "AllowedCPUs",
+      "-p",
+      "MemoryMax",
+      "-p",
+      "MemoryHigh",
+      "-p",
+      "ControlGroup"
+    ],
+    "returncode": 0,
+    "stdout": "MainPID=207975\nNRestarts=0\nControlGroup=/system.slice/smartpc-dashboard.service\nCPUWeight=[not set]\nAllowedCPUs=\nMemoryHigh=infinity\nMemoryMax=infinity\nNice=0\nCPUAffinity=\nActiveState=active\nSubState=running",
+    "stderr": ""
+  },
+  "finishedAtUtc": "2026-10-21T18:59:11.100802+00:00"
+}

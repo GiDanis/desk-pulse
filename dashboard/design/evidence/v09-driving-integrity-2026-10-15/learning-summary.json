@@ -1,0 +1,274 @@
+{
+  "runs": 48,
+  "trainingTransitions": 12000000,
+  "budgetPerRun": 250000,
+  "baselineGroups": [
+    {
+      "method": "evolution",
+      "variant": "baseline",
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "stages": [
+        5,
+        5,
+        4,
+        4,
+        5
+      ],
+      "transitions": 1250000,
+      "held": {
+        "3": {
+          "success": 10,
+          "total": 10
+        },
+        "5": {
+          "success": 5,
+          "total": 10
+        },
+        "7": {
+          "success": 3,
+          "total": 10
+        },
+        "10": {
+          "success": 0,
+          "total": 10
+        }
+      }
+    },
+    {
+      "method": "neat",
+      "variant": "old",
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "stages": [
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "transitions": 1250000,
+      "held": {
+        "3": {
+          "success": 10,
+          "total": 10
+        },
+        "5": {
+          "success": 10,
+          "total": 10
+        },
+        "7": {
+          "success": 5,
+          "total": 10
+        },
+        "10": {
+          "success": 0,
+          "total": 10
+        }
+      }
+    },
+    {
+      "method": "ppo",
+      "variant": "baseline",
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "stages": [
+        4,
+        4,
+        4,
+        4,
+        3
+      ],
+      "transitions": 1250000,
+      "held": {
+        "3": {
+          "success": 10,
+          "total": 10
+        },
+        "5": {
+          "success": 8,
+          "total": 10
+        },
+        "7": {
+          "success": 3,
+          "total": 10
+        },
+        "10": {
+          "success": 0,
+          "total": 10
+        }
+      }
+    },
+    {
+      "method": "ppo_smooth",
+      "variant": "fresh",
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "stages": [
+        4,
+        5,
+        5,
+        6,
+        6
+      ],
+      "transitions": 1250000,
+      "held": {
+        "3": {
+          "success": 10,
+          "total": 10
+        },
+        "5": {
+          "success": 9,
+          "total": 10
+        },
+        "7": {
+          "success": 7,
+          "total": 10
+        },
+        "10": {
+          "success": 0,
+          "total": 10
+        }
+      }
+    },
+    {
+      "method": "ppo_smooth",
+      "variant": "warm",
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "stages": [
+        4,
+        3,
+        3,
+        3,
+        5
+      ],
+      "transitions": 1250000,
+      "held": {
+        "3": {
+          "success": 8,
+          "total": 10
+        },
+        "5": {
+          "success": 8,
+          "total": 10
+        },
+        "7": {
+          "success": 5,
+          "total": 10
+        },
+        "10": {
+          "success": 0,
+          "total": 10
+        }
+      }
+    },
+    {
+      "method": "imitation",
+      "variant": "baseline",
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "stages": [
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "transitions": 1250000,
+      "held": {
+        "3": {
+          "success": 10,
+          "total": 10
+        },
+        "5": {
+          "success": 10,
+          "total": 10
+        },
+        "7": {
+          "success": 10,
+          "total": 10
+        },
+        "10": {
+          "success": 10,
+          "total": 10
+        }
+      }
+    }
+  ],
+  "choices": {
+    "neat": "Retain sigma .3/.3/.15; smaller candidates do not improve held outcomes",
+    "ppo": "Retain baseline; small early-stage gains in ablations do not establish full-lap gain",
+    "smooth": "Keep original actor; cold copies are stronger early but no universal convergence; reset remains explicit",
+    "imitation": "Stratified teacher replay; 10/10 held oval laps in five cold seeds"
+  },
+  "limits": [
+    "Two held seeds per task, one track; fixed teacher for Clone; no qualified production models",
+    "Warm Smooth uses one historical actor with five new training seeds, not five independent pretraining histories",
+    "PC concurrent timings are not board throughput or optical FPS"
+  ],
+  "deliverySourceSha256": {
+    "game_settings.py": "68fabe723aded5ceb24c6bfbc81a56eb362b16c0c2fb08a1a408adebbc06100c",
+    "game_catalog.py": "e3b74ccf3c788e9edb58c8d9d3dc420d5d350b65c234b17c28d2374401782a5f",
+    "game_modes.py": "b052c675cfabf934bdad8a07271588d433b40d65968dcc3a82cfd34ebae0b8e8",
+    "game_presentation.py": "24ef25760b98b2eebc0e1be9053435fb7889370ef66a4eb02dd92d33620e1636",
+    "game_worker.py": "8aceccccf637d5d41eace2733f4e17092bb140c9aa58c78e8309459fdccb22d4",
+    "game_observation_contract.py": "55509beb3b4f59777f8250f4a31279cf2cfe7240b5db64cf5ecd0eeb11f38162",
+    "game_geometry.py": "0555e1a67777092483fc7beae1964a531d3228d7698460fe0d8b042c52f9df8b",
+    "game_batch.py": "23e429838b4d1520778adb6adcdbf4c2a51b5b2fe973e9288ce1518d37ea4c35",
+    "game_protocol.py": "47f0f4560096ccca5059a48843fa796e03aee4bff009c68560761ebd9f65e2b6",
+    "game_dossier.py": "7d3b7762be47fc3b58460b20eabb3df8a93eed408190707b502310b7cea7ebb9",
+    "game_control.py": "7c7164b5ff4a6bc5afc1db7ba557c0a8148a14fb387bfadf0efa72dc7dcfc3e7",
+    "game_contacts.py": "96bfd6d8bf17e440938b51ec889b31d999b7e10c8515ca8c1ca52f7d5bb85d4f",
+    "game_numeric.py": "2ec7f639664b15d56f2b51470af37f6fc75bcd0d3ddda33ac5c95c7b6762c24a",
+    "game_curriculum.py": "21c6a32639ee3ecfb7bf082d2b809e19f8124626cbe9d0ffc32ef2f50d7caf01",
+    "game_profiles.py": "ea2bc3d1fdf857253c44e5756b4328f48484aa1948a2b78a5e94b722b58f3316",
+    "game_learning.py": "7fe37a46cd65318156465df3ce923d562fc6e182561ccc5425dd7eb766ef7411",
+    "game_records.py": "318ed6b48e3fca8ecec27add4ec2b9e6b3bd1fd1411834fe41c8bfd0bc4ffd37",
+    "game_simulation.py": "879bdc05dfb2c29cabafa02e71bb6156c4a1d0cf6721b206d97f7f14aae82d64",
+    "game_store.py": "bae333c1d2c8dc8aad03cfc0c6723b3f5263db8378f61a6c748fded468701d06",
+    "game_evo_plan.py": "099b8327b4f64afbc2493a42eda61d99011625af6e8815e3c8235cc382b8fbf4",
+    "game_neat.py": "d5f95f38717892f185f2617f2efaa9137864022482a3eef973d9996782e22207",
+    "game_academy_trainer.py": "6422512a8e64bcd09f310150588a6e52e368f9509d734a94322863a7bd7b3211",
+    "game_transfer.py": "81ca0c2aa243aa0dec78ac547918c094dd048ec1ce5e3bcee921883b029b6f02",
+    "game_native.py": "ddb65479dac7b3894cbfc985d6dae2a157f66a8d0797d4fc859842b85f4ad961",
+    "game_parallel.py": "0962bb07127eea47316f5eaefb74bc63debe36d08afe9c5cf2abfc586c194e7e",
+    "game_rewards.py": "4eccafded08a5c33690f3bbc6efba3f9244d2e0da8e63081fed58ef0eb87a877",
+    "game_academy.py": "86b3d67b794d2c1235642be0c4012ca51e251575774cfca6d7f67b101e3c258f",
+    "game_results.py": "990518228f93575ecbbec7e16915892a379a780940a42e7eea4be9ab9529ebd9",
+    "game_driving_memory.py": "f381c140392fe7bac16dc876dbab1a9287af8de66c3495470378199aadea750d",
+    "game_preview.py": "0b3bfd83d706acc8b54fb229b54c7fbaa2f046a2b461321d79397ef3100142d7",
+    "game_collectors.py": "07cf38559d4ae2a1bd5c8ecae199fcd6401dc326ceb64ba54d5f54549e6d4a02"
+  },
+  "sourceNote": "Delivery source hashes; screening is private on oval default origins without UI. Final changes to diagnostics, archived metadata and polygon gate tolerance do not certify additional screening contexts."
+}

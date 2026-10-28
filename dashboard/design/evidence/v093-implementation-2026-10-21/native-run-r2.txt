@@ -1,0 +1,26 @@
+{"name": "baseline-rc28", "code": 0, "seconds": 24.33338919901871, "nice": 0, "governor": "schedutil", "temperatureC": {"thermal_zone2": 44.578, "thermal_zone0": 45.756, "thermal_zone3": 47.43, "thermal_zone1": 45.756, "thermal_zone4": 45.694}, "reportStatus": "passed"}
+{"name": "candidate-default", "code": 0, "seconds": 22.181949610996526, "nice": 0, "governor": "schedutil", "temperatureC": {"thermal_zone2": 45.384, "thermal_zone0": 45.384, "thermal_zone3": 47.058, "thermal_zone1": 45.694, "thermal_zone4": 45.136}, "reportStatus": "passed"}
+{"name": "nice-0-0-A", "code": 0, "seconds": 21.840285954996943, "nice": 0, "governor": "schedutil", "temperatureC": {"thermal_zone2": 45.818, "thermal_zone0": 46.686, "thermal_zone3": 47.74, "thermal_zone1": 46.562, "thermal_zone4": 45.756}, "reportStatus": "passed"}
+{"name": "nice-0-1-B", "code": 0, "seconds": 22.08864373099641, "nice": -5, "governor": "schedutil", "temperatureC": {"thermal_zone2": 45.942, "thermal_zone0": 46.066, "thermal_zone3": 47.554, "thermal_zone1": 46.376, "thermal_zone4": 47.182}, "reportStatus": "passed"}
+{"name": "nice-0-2-B", "code": 0, "seconds": 21.683628672995837, "nice": -5, "governor": "schedutil", "temperatureC": {"thermal_zone2": 46.314, "thermal_zone0": 46.252, "thermal_zone3": 47.43, "thermal_zone1": 46.438, "thermal_zone4": 46.19}, "reportStatus": "passed"}
+{"name": "nice-0-3-A", "code": 0, "seconds": 22.5320252070087, "nice": 0, "governor": "schedutil", "temperatureC": {"thermal_zone2": 46.314, "thermal_zone0": 45.942, "thermal_zone3": 47.864, "thermal_zone1": 46.934, "thermal_zone4": 45.756}, "reportStatus": "passed"}
+{"name": "nice-1-0-A", "code": 0, "seconds": 22.376782976993127, "nice": 0, "governor": "schedutil", "temperatureC": {"thermal_zone2": 47.306, "thermal_zone0": 46.872, "thermal_zone3": 48.05, "thermal_zone1": 46.872, "thermal_zone4": 46.066}, "reportStatus": "passed"}
+{"name": "nice-1-1-B", "code": 0, "seconds": 22.3363819590013, "nice": -5, "governor": "schedutil", "temperatureC": {"thermal_zone2": 46.5, "thermal_zone0": 46.5, "thermal_zone3": 48.36, "thermal_zone1": 46.872, "thermal_zone4": 47.12}, "reportStatus": "passed"}
+{"name": "nice-1-2-B", "code": 0, "seconds": 22.385733003000496, "nice": -5, "governor": "schedutil", "temperatureC": {"thermal_zone2": 46.996, "thermal_zone0": 46.748, "thermal_zone3": 48.794, "thermal_zone1": 47.306, "thermal_zone4": 47.12}, "reportStatus": "passed"}
+{"name": "nice-1-3-A", "code": 0, "seconds": 22.224503061996074, "nice": 0, "governor": "schedutil", "temperatureC": {"thermal_zone2": 47.058, "thermal_zone0": 46.314, "thermal_zone3": 48.36, "thermal_zone1": 47.43, "thermal_zone4": 46.624}, "reportStatus": "passed"}
+{"name": "nice-2-0-A", "code": 0, "seconds": 22.484265632985625, "nice": 0, "governor": "schedutil", "temperatureC": {"thermal_zone2": 47.244, "thermal_zone0": 47.492, "thermal_zone3": 48.608, "thermal_zone1": 47.554, "thermal_zone4": 47.12}, "reportStatus": "passed"}
+{"name": "nice-2-1-B", "code": 0, "seconds": 22.238840546022402, "nice": -5, "governor": "schedutil", "temperatureC": {"thermal_zone2": 47.368, "thermal_zone0": 47.616, "thermal_zone3": 48.608, "thermal_zone1": 47.864, "thermal_zone4": 47.244}, "reportStatus": "passed"}
+{"name": "nice-2-2-B", "code": 0, "seconds": 22.18267803301569, "nice": -5, "governor": "schedutil", "temperatureC": {"thermal_zone2": 47.864, "thermal_zone0": 48.05, "thermal_zone3": 48.794, "thermal_zone1": 47.616, "thermal_zone4": 47.864}, "reportStatus": "passed"}
+{"name": "nice-2-3-A", "code": 0, "seconds": 22.324681327998405, "nice": 0, "governor": "schedutil", "temperatureC": {"thermal_zone2": 47.554, "thermal_zone0": 47.926, "thermal_zone3": 48.794, "thermal_zone1": 48.112, "thermal_zone4": 47.74}, "reportStatus": "passed"}
+{"name": "governor-0-0-A", "code": 0, "seconds": 21.974281396978768, "nice": 0, "governor": "schedutil", "temperatureC": {"thermal_zone2": 47.678, "thermal_zone0": 47.43, "thermal_zone3": 48.608, "thermal_zone1": 48.236, "thermal_zone4": 47.182}, "reportStatus": "passed"}
+{"name": "governor-0-1-B", "code": 1, "seconds": 15.05576578999171, "nice": 0, "governor": "performance", "temperatureC": {"thermal_zone2": 47.244, "thermal_zone0": 48.298, "thermal_zone3": 50.406, "thermal_zone1": 48.422, "thermal_zone4": 48.422}, "reportStatus": null}
+Traceback (most recent call last):
+  File "/var/lib/smartpc-dashboard/v093-proof/native_qualification.py", line 76, in <module>
+    case(f'{family}-{block}-{index}-{variant}',performance,
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+         nice=-5 if family=='nice' and variant=='B' else 0)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/lib/smartpc-dashboard/v093-proof/native_qualification.py", line 61, in case
+    assert code==0 and row['reportStatus']=='passed',row
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'name': 'governor-0-1-B', 'code': 1, 'seconds': 15.05576578999171, 'nice': 0, 'governor': 'performance', 'temperatureC': {'thermal_zone2': 47.244, 'thermal_zone0': 48.298, 'thermal_zone3': 50.406, 'thermal_zone1': 48.422, 'thermal_zone4': 48.422}, 'reportStatus': None}

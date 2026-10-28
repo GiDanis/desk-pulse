@@ -1,5 +1,7 @@
 # SmartPC 0.9.0-rc.3 — impostazioni e apprendimento del passo
 
+**Consegna successiva:** [0.9.0-rc.4, prestazioni del motore e delle scene](v09-game-performance-report.md) installata. Questo report conserva i risultati della rc.3.
+
 11 ottobre 2026 · Implementazione autorizzata dello [studio](game-settings-speed-study.md).
 
 **Candidata implementata e installata**, API 2.8 / 67 superfici / Apple Calm 1.6.2. Le nuove funzioni sono consegnate; competenza generale nel traffico, PPO/NEAT e accettazione fisica conservano gate separati. Evidenze in [questa cartella](evidence/v09-game-settings-pace-2026-10-11/).

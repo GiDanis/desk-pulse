@@ -1,0 +1,50 @@
+{
+  "scope": "header time and uniform dimming only",
+  "pc": {
+    "status": "passed",
+    "contractTests": 31,
+    "contractSkipped": 1,
+    "runtimeTests": 40,
+    "adapterSurfaces": 68,
+    "appleMatrix": 1098,
+    "headerThemes": 3,
+    "headerViewsPerTheme": 30,
+    "midnight": true,
+    "brightnessManualAndAutomatic": true
+  },
+  "native": {
+    "status": "passed",
+    "cases": [
+      {
+        "theme": "base",
+        "views": 30
+      },
+      {
+        "theme": "functional",
+        "views": 30
+      },
+      {
+        "theme": "apple",
+        "views": 30
+      }
+    ],
+    "productionStatePreserved": true
+  },
+  "arm": {
+    "runtimeTests": 40,
+    "passed": 39,
+    "skipped": 1,
+    "limitation": "qmllint absent on board; full lint gate passed on PC; retained first ARM failure log"
+  },
+  "apiMinor": 12,
+  "appleVersion": "1.6.4",
+  "changes": {
+    "clock": "single central minute clock through optional ShellContext.clock",
+    "dimming": "root overlay z=30 above shell, urgent alerts and theme UI"
+  },
+  "limits": [
+    "software captures are not a physical readability measurement",
+    "no OS reboot required or claimed",
+    "no extended stability qualification from these focused checks"
+  ]
+}

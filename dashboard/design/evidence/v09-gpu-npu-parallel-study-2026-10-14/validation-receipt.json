@@ -1,0 +1,18 @@
+{
+  "scope": "Study validation, not release or display qualification",
+  "reports": [
+    "rays-opencl.json",
+    "rays-opencl-repeat.json",
+    "rays-opencl-cpu7.json"
+  ],
+  "cases": 18,
+  "measuredSamples": 1152,
+  "serviceBefore": "MainPID=327290\nNRestarts=0\nActiveState=active\n",
+  "serviceAfter": "MainPID=327290\nNRestarts=0\nActiveState=active\n",
+  "sourceSha256": "638a3c3d9fa77e93c90824abd45d0e660f0cccc7906f7c8aa33a6e634e888ba2",
+  "build": "gcc -O2 -ffp-contract=off rays_opencl_probe.c -lOpenCL -lm -o rays_probe",
+  "finalAffinity": "taskset -c 7 only for diagnostic process",
+  "cpuDefault": "No production affinity or governor changes",
+  "npu": "Historical benchmark read, not rerun",
+  "numericalReference": "Native FP32 synthetic rays, not production FP64 physics"
+}

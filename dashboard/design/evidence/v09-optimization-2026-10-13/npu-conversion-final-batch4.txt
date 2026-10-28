@@ -1,0 +1,125 @@
+2026-10-13 17:13:48.928088: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-10-13 17:13:48.928104: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+[32mI 17:13:50 Namespace(batch_size=4, build_platform='make', customer_lids=None, customer_ops=None, dtype='float', export='ovxlib', force_remove_permute=False, model='policy-acuity.json', model_data='policy-acuity.data', model_quantize=None, optimize='VIP9000NANODI_PID0X1000003B', output_path='nbg-v3', pack_nbg_unify=True, postprocess_file=None, save_fused_graph=False, save_trace_db=False, target_ide_project='linux64', viv_sdk='/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools', which='export', with_input_meta='policy-inputmeta.yml')[0m
+[32mI 17:13:50 Set vsinn project dir to /work[0m
+[32mI 17:13:50 Load model in /work/policy-acuity.json[0m
+[32mI 17:13:50 Load data in /work/policy-acuity.data[0m
+[32mI 17:13:50 Load input meta /work/policy-inputmeta.yml[0m
+[32mI 17:13:50 Start exporting ovxlib case...[0m
+[36mD 17:13:50 Process observation_5 ...[0m
+[36mD 17:13:50 Acuity output shape(input): (4 68)[0m
+[36mD 17:13:50 Tensor @observation_5:out0 type: float32[0m
+[36mD 17:13:50 Process h0_4 ...[0m
+[36mD 17:13:50 Acuity output shape(fullconnect): (4 16)[0m
+[36mD 17:13:50 Tensor @h0_4:out0 type: float32[0m
+[36mD 17:13:50 Process h_3 ...[0m
+[36mD 17:13:50 Acuity output shape(tanh): (4 16)[0m
+[36mD 17:13:50 Tensor @h_3:out0 type: float32[0m
+[36mD 17:13:50 Process a0_2 ...[0m
+[36mD 17:13:50 Acuity output shape(fullconnect): (4 2)[0m
+[36mD 17:13:50 Tensor @a0_2:out0 type: float32[0m
+[36mD 17:13:50 Process action_1 ...[0m
+[36mD 17:13:50 Acuity output shape(tanh): (4 2)[0m
+[36mD 17:13:50 Tensor @action_1:out0 type: float32[0m
+[36mD 17:13:50 Process attach_action/out0_0 ...[0m
+[36mD 17:13:50 Acuity output shape(output): (4 2)[0m
+[36mD 17:13:50 Tensor @attach_action/out0_0:out0 type: float32[0m
+[32mI 17:13:50 Build SmartPC frozen pilot complete.[0m
+[32mI 17:13:50 Initialzing network optimizer by VIP9000NANODI_PID0X1000003B ...[0m
+[32mI 17:13:50 Optimize config VIP9000NANODI_PID0X1000003B with 'Default' optimization rules.[0m
+[36mD 17:13:50 Optimizing network with split_squared_difference, merge_ximum, qnt_adjust_coef, adjust_qnt_reshape, multiply_transform, add_extra_io, format_input_ops, auto_fill_zero_bias, conv_kernel_transform, auto_fill_reshape_zero, strip_op, extend_unstack_split, convert_matmul_trans_ab, merge_layer, transform_layer, broadcast_op, strip_op, adjust_output_attrs, insert_dtype_converter, layernorm_to_moments_bnsingle, pow_to_square, average_to_add_divide, optimize_einsum[0m
+[32mI 17:13:50 Start T2C Switcher...[0m
+[36mD 17:13:50 Optimizing network with broadcast_op, t2c_fc[0m
+[32mI 17:13:50 End T2C Switcher...[0m
+[36mD 17:13:50 Optimizing network with strip_op_layout_sensitive[0m
+[36mD 17:13:50 Process observation_5 ...[0m
+[36mD 17:13:50 Acuity output shape(input): (4 68)[0m
+[36mD 17:13:50 Tensor @observation_5:out0 type: float32[0m
+[36mD 17:13:50 Process h0_4 ...[0m
+[36mD 17:13:50 Acuity output shape(fullconnect): (4 16)[0m
+[36mD 17:13:50 Tensor @h0_4:out0 type: float32[0m
+[36mD 17:13:50 Process h_3 ...[0m
+[36mD 17:13:50 Acuity output shape(tanh): (4 16)[0m
+[36mD 17:13:50 Tensor @h_3:out0 type: float32[0m
+[36mD 17:13:50 Process a0_2 ...[0m
+[36mD 17:13:50 Acuity output shape(fullconnect): (4 2)[0m
+[36mD 17:13:50 Tensor @a0_2:out0 type: float32[0m
+[36mD 17:13:50 Process action_1 ...[0m
+[36mD 17:13:50 Acuity output shape(tanh): (4 2)[0m
+[36mD 17:13:50 Tensor @action_1:out0 type: float32[0m
+[36mD 17:13:50 Process attach_action/out0_0 ...[0m
+[36mD 17:13:50 Acuity output shape(output): (4 2)[0m
+[36mD 17:13:50 Tensor @attach_action/out0_0:out0 type: float32[0m
+[32mI 17:13:50 Build SmartPC frozen pilot complete.[0m
+[36mD 17:13:50 Optimizing network with merge_mark_permute[0m
+[36mD 17:13:50 Optimizing network with insert_reshape_for_layernorm, c2drv_adjust_extra_io, c2drv_nhwc_resize, conv_1xn_transform, proposal_opt, c2drv_convert_axis, c2drv_convert_shape, c2drv_convert_array, c2drv_cast_dtype, c2drv_trans_data, c2drv_custom_opt[0m
+[32mI 17:13:50 Building data ...[0m
+[32mI 17:13:50 Packing data ...[0m
+[36mD 17:13:50 Packing a0_2 ...[0m
+[36mD 17:13:50 Packing h0_4 ...[0m
+[32mI 17:13:50 Saving data to /work/nbg-v3.export.data[0m
+[32mI 17:13:50 Export ovxlib case with version 1.1.83[0m
+[32mI 17:13:50 Save vx network source file to /work/vnn_nbgv3.c[0m
+[32mI 17:13:50 Save vx network source file to /work/vnn_nbgv3.h[0m
+[32mI 17:13:50 Save vx network source file to /work/vnn_post_process.c[0m
+[32mI 17:13:50 Save vx network source file to /work/vnn_post_process.h[0m
+[32mI 17:13:50 Save vx network source file to /work/vnn_pre_process.c[0m
+[32mI 17:13:50 Save vx network source file to /work/vnn_pre_process.h[0m
+[32mI 17:13:50 Save vx network source file to /work/vnn_global.h[0m
+[32mI 17:13:50 Save vx network source file to /work/main.c[0m
+[32mI 17:13:50 Save vx network source file to /work/BUILD[0m
+[32mI 17:13:50 Save vx network source file to /work/nbgv3.vcxproj[0m
+[32mI 17:13:50 Save vx network source file to /work/nbgv3.2012.vcxproj[0m
+[32mI 17:13:50 Save vx network source file to /work/makefile.linux[0m
+[32mI 17:13:50 Save vx network source file to /work/.cproject[0m
+[32mI 17:13:50 Save vx network source file to /work/.project[0m
+[36mD 17:13:50 Generate fake input /work/observation_5_0.tensor[0m
+gcc -Wall -std=c++0x -I. -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/CL -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/VX -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ovxlib -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/jpeg -D__linux__ -DLINUX -O3 -c vnn_nbgv3.c
+cc1: warning: command line option ‘-std=c++11’ is valid for C++/ObjC++ but not for C
+gcc -Wall -std=c++0x -I. -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/CL -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/VX -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ovxlib -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/jpeg -D__linux__ -DLINUX -O3 -c vnn_pre_process.c
+cc1: warning: command line option ‘-std=c++11’ is valid for C++/ObjC++ but not for C
+vnn_pre_process.c: In function ‘_handle_multiple_inputs’:
+vnn_pre_process.c:639:11: warning: variable ‘p1’ set but not used [-Wunused-but-set-variable]
+  639 |     char *p1 = NULL;
+      |           ^~
+At top level:
+vnn_pre_process.c:599:13: warning: ‘_get_image_handle_buffer’ defined but not used [-Wunused-function]
+  599 | static void _get_image_handle_buffer
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~
+gcc -Wall -std=c++0x -I. -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/CL -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/VX -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ovxlib -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/jpeg -D__linux__ -DLINUX -O3 -c main.c
+cc1: warning: command line option ‘-std=c++11’ is valid for C++/ObjC++ but not for C
+gcc -Wall -std=c++0x -I. -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/CL -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/VX -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ovxlib -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/jpeg -D__linux__ -DLINUX -O3 -c vnn_post_process.c
+cc1: warning: command line option ‘-std=c++11’ is valid for C++/ObjC++ but not for C
+gcc -Wall -std=c++0x -I. -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/CL -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/VX -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/ovxlib -I/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/include/jpeg -D__linux__ -DLINUX -O3 -O3  vnn_nbgv3.o vnn_pre_process.o main.o vnn_post_process.o -L/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/lib -lOpenVX -lOpenVXU -lCLC -lVSC -lGAL -lovxlib -lEmulator -lvdtproxy -L/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/lib/vsim -lOpenVX -lOpenVXU -lCLC -lVSC -lGAL -lovxlib -lEmulator -lvdtproxy -L/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/lib/x64_linux -lOpenVX -lOpenVXU -lCLC -lVSC -lGAL -lovxlib -lEmulator -lvdtproxy -L/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/lib/x64_linux/vsim -lOpenVX -lOpenVXU -lCLC -lVSC -lGAL -lovxlib -lEmulator -lvdtproxy -L/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/lib/x64_linux/vsim -lOpenVX -lOpenVXU -lCLC -lVSC -lGAL -lovxlib -lEmulator -lvdtproxy -L/root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/../common/lib/ -lvdtproxy /root/Vivante_IDE/VivanteIDE5.11.0/cmdtools/vsimulator/../common/lib/libjpeg.a -o gen_nbg
+Create Neural Network: 3ms or 3815us
+Verify...
+Verify Graph: 701ms or 701882us
+Start run graph [1] times...
+Run the 1 time: 3.01ms or 3012.99us
+vxProcessGraph execution time:
+Total   3.02ms or 3016.93us
+Average 3.02ms or 3016.93us
+ --- Top5 ---
+  0: 0.000000
+  1: 0.000000
+  2: 0.000000
+  3: 0.000000
+  4: 0.000000
+[32mI 17:13:53 Export ovxlib case with version 1.1.83[0m
+[32mI 17:13:53 Dump nbg input meta to /work_nbg_unify/nbg_meta.json[0m
+[32mI 17:13:53 Save vx network source file to /work_nbg_unify/vnn_nbgv3.c[0m
+[32mI 17:13:53 Save vx network source file to /work_nbg_unify/vnn_nbgv3.h[0m
+[32mI 17:13:53 Save vx network source file to /work_nbg_unify/vnn_post_process.c[0m
+[32mI 17:13:53 Save vx network source file to /work_nbg_unify/vnn_post_process.h[0m
+[32mI 17:13:53 Save vx network source file to /work_nbg_unify/vnn_pre_process.c[0m
+[32mI 17:13:53 Save vx network source file to /work_nbg_unify/vnn_pre_process.h[0m
+[32mI 17:13:53 Save vx network source file to /work_nbg_unify/vnn_global.h[0m
+[32mI 17:13:53 Save vx network source file to /work_nbg_unify/main.c[0m
+[32mI 17:13:53 Save vx network source file to /work_nbg_unify/BUILD[0m
+[32mI 17:13:53 Save vx network source file to /work_nbg_unify/nbgv3.vcxproj[0m
+[32mI 17:13:53 Save vx network source file to /work_nbg_unify/nbgv3.2012.vcxproj[0m
+[32mI 17:13:53 Save vx network source file to /work_nbg_unify/makefile.linux[0m
+[32mI 17:13:53 Save vx network source file to /work_nbg_unify/.cproject[0m
+[32mI 17:13:53 Save vx network source file to /work_nbg_unify/.project[0m
+[32mI 17:13:53 End exporting ovxlib case...[0m
+[32mI 17:13:53 ----------------Error(0),Warning(0)----------------[0m

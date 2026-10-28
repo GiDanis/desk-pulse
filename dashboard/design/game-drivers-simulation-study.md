@@ -1,8 +1,16 @@
 # v0.9 · Gioco — piloti persistenti, classifica e simulazione estendibile
 
+**Aggiornamento 13 ottobre, requisito aggiunto:** ogni pilota conserva una memoria personale di guida, riutilizzata automaticamente su nuovi circuiti e future vetture; esperienza locale e qualifiche restano specifiche del contesto. Il nuovo [studio, sezioni 5.1–5.8](game-offroad-parameters-transfer-study.md#51-requisito-memoria-personale-e-riuso-automatico) definisce base/versioni, inizializzazione dopo Start, paradigmi, ripasso e conservazione delle abilità. Requisito pianificato nel MasterPlan 2.66; non ancora implementato nella rc.11.
+
+**Approfondimento 11 ottobre, analisi:** [impostazioni e circuiti](game-settings-circuits-ux-study.md). Geometria condivisa tra sensori/fisica/render, campioni/checkpoint per circuito, migrazione e classifiche per ambito; concept tecnico offline, non nuova competenza o contenuto installato.
+
+**Aggiornamento rc.6:** [vista Pilota e dossier](v09-pilot-dossier-report.md), durata/sessioni/profili/risultati e reset confermato con storico conservato; API 2.9, 68 superfici.
+
+**Aggiornamento rc.5:** [Gara e guida PPO](v09-race-ppo-report.md): una vettura per pilota, reti salvate congelate, 3/5/10 giri e dimostrazione PPO distinta dai tentativi di apprendimento.
+
 ## Stato implementazione · 11 ottobre 2026
 
-La candidata corrente è **0.9.0-rc.3**: menu spiegato, Controllo/Passo, campione verificato e Progressi dei tempi implementati/installati. [Nuovo report e limiti](v09-game-settings-pace-report.md); la [consegna rc.2](v09-game-implementation-report.md) conserva il confronto CPU/NPU e le prove precedenti. Il testo seguente conserva lo studio precedente; i candidati numeric9/30 sono sostituiti in questa build da race-32-v1, rete 32→16→2 e fisica f1-2. NPU verificata nella rc.2 con una politica appresa, CPU scelta dopo misure; PPO/NEAT e guida nel traffico restano da qualificare.
+La candidata corrente è **0.9.0-rc.6**, con [ottimizzazioni del motore e delle scene](v09-game-performance-report.md): menu spiegato, Controllo/Passo, campione verificato e Progressi dei tempi implementati/installati. [Nuovo report e limiti](v09-game-settings-pace-report.md); la [consegna rc.2](v09-game-implementation-report.md) conserva il confronto CPU/NPU e le prove precedenti. Il testo seguente conserva lo studio precedente; i candidati numeric9/30 sono sostituiti in questa build da race-32-v1, rete 32→16→2 e fisica f1-2. NPU verificata nella rc.2 con una politica appresa, CPU scelta dopo misure; PPO/NEAT e guida nel traffico restano da qualificare.
 
 
 10 ottobre 2026 · revisione 2 · approfondimento S0 · SmartPC / DeskPulse.

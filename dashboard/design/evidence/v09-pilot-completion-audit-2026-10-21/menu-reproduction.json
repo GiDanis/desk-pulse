@@ -1,0 +1,157 @@
+{
+  "status": "reproduced",
+  "scope": "Real GameSettings -> GameService.applySetup, temporary store, no worker, no production writes",
+  "sourceHashes": {
+    "game_store.py": "7e80af823226b68b9b8364fdb572d76ff874b1c23f296adced697e18b342cebe",
+    "game.py": "825a056620b7f54ff5a6780a09af42c159cfc16d0275624cb5f5f2580fbbeb16",
+    "game_settings.py": "ce513c85db1535de6fbb70095cae9793cadaf52dd1522439e38fee1ed55af600",
+    "game_direct_trainer.py": "3caf1f4636172476d6175f7628d7e18e7919619c829f153b612ade7becd66a04",
+    "game_racing_presets.py": "5c704d628bb243322b3ef8d34c4f5e7e805cc7d3f3b1a9ecd3d99a2a11354305",
+    "check_game_residual_ui.py": "dc11a289a0cf39dce6f1c90c4627c9685f793a73da2f1da5ba6d5922c87b0f77"
+  },
+  "profiles": [
+    {
+      "name": "Maestro",
+      "method": "race_master",
+      "error": null,
+      "newRecipeKeys": [],
+      "legacySchemaControlPassed": true
+    },
+    {
+      "name": "Crono",
+      "method": "residual_ppo",
+      "error": "Profilo incompleto o sconosciuto",
+      "newRecipeKeys": [
+        "episodeExploration",
+        "expertLearning",
+        "raceValidationEvery",
+        "racingAnchor",
+        "racingCurriculum",
+        "racingObjective"
+      ],
+      "legacySchemaControlPassed": true
+    },
+    {
+      "name": "Memoria",
+      "method": "residual_sac",
+      "error": "Profilo incompleto o sconosciuto",
+      "newRecipeKeys": [
+        "expertLearning",
+        "raceValidationEvery",
+        "racingAnchor",
+        "racingCurriculum",
+        "racingObjective"
+      ],
+      "legacySchemaControlPassed": true
+    },
+    {
+      "name": "Linea",
+      "method": "residual_td3",
+      "error": "Profilo incompleto o sconosciuto",
+      "newRecipeKeys": [
+        "expertLearning",
+        "raceValidationEvery",
+        "racingAnchor",
+        "racingCurriculum",
+        "racingObjective"
+      ],
+      "legacySchemaControlPassed": true
+    },
+    {
+      "name": "Tattico",
+      "method": "residual_tactic",
+      "error": "Profilo incompleto o sconosciuto",
+      "newRecipeKeys": [
+        "expertLearning",
+        "raceValidationEvery",
+        "racingAnchor",
+        "racingCurriculum",
+        "racingObjective"
+      ],
+      "legacySchemaControlPassed": true
+    }
+  ],
+  "paths": [
+    {
+      "name": "Crono",
+      "changeMode": false,
+      "dirty": false,
+      "applied": true,
+      "message": "Scegli un pilota \u00b7 5 Start",
+      "settingsMessage": "Scegli un pilota \u00b7 5 Start",
+      "profilesUnchanged": true,
+      "workerCreated": false
+    },
+    {
+      "name": "Crono",
+      "changeMode": true,
+      "dirty": true,
+      "applied": false,
+      "message": "Profilo incompleto o sconosciuto",
+      "settingsMessage": "Profilo incompleto o sconosciuto",
+      "profilesUnchanged": true,
+      "workerCreated": false
+    },
+    {
+      "name": "Memoria",
+      "changeMode": false,
+      "dirty": true,
+      "applied": false,
+      "message": "Profilo incompleto o sconosciuto",
+      "settingsMessage": "Profilo incompleto o sconosciuto",
+      "profilesUnchanged": true,
+      "workerCreated": false
+    },
+    {
+      "name": "Memoria",
+      "changeMode": true,
+      "dirty": true,
+      "applied": false,
+      "message": "Profilo incompleto o sconosciuto",
+      "settingsMessage": "Profilo incompleto o sconosciuto",
+      "profilesUnchanged": true,
+      "workerCreated": false
+    },
+    {
+      "name": "Linea",
+      "changeMode": false,
+      "dirty": true,
+      "applied": false,
+      "message": "Profilo incompleto o sconosciuto",
+      "settingsMessage": "Profilo incompleto o sconosciuto",
+      "profilesUnchanged": true,
+      "workerCreated": false
+    },
+    {
+      "name": "Linea",
+      "changeMode": true,
+      "dirty": true,
+      "applied": false,
+      "message": "Profilo incompleto o sconosciuto",
+      "settingsMessage": "Profilo incompleto o sconosciuto",
+      "profilesUnchanged": true,
+      "workerCreated": false
+    },
+    {
+      "name": "Tattico",
+      "changeMode": false,
+      "dirty": true,
+      "applied": false,
+      "message": "Profilo incompleto o sconosciuto",
+      "settingsMessage": "Profilo incompleto o sconosciuto",
+      "profilesUnchanged": true,
+      "workerCreated": false
+    },
+    {
+      "name": "Tattico",
+      "changeMode": true,
+      "dirty": true,
+      "applied": false,
+      "message": "Profilo incompleto o sconosciuto",
+      "settingsMessage": "Profilo incompleto o sconosciuto",
+      "profilesUnchanged": true,
+      "workerCreated": false
+    }
+  ],
+  "explanation": "Unchanged selected Crono bypasses applySetup when dirty is false; selection or mode changes validate and reject new recipe fields."
+}

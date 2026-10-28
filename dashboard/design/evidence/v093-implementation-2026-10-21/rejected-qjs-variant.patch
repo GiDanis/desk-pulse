@@ -1,0 +1,183 @@
+--- before-js/state.py
++++ rejected-qjs/state.py
+@@ -4,6 +4,7 @@
+ 
+ from datetime import datetime, timedelta
+ import os
++import json
+ import logging
+ import time
+ from typing import Any
+@@ -93,6 +94,8 @@
+         self._events = events
+         self._dashboard_revision = 0
+         self._sport_revision = 0
++        self._view_engine = None
++        self._view_arrays = {}
+         self._dashboard_cache = {}
+         for signal, domain in ((self.weatherChanged, 'weather'), (self.sportChanged, 'sport'),
+                                (self.racingChanged, 'racing'), (self.casaChanged, 'casa'),
+@@ -437,11 +440,52 @@
+     def sportRevision(self):
+         return self._sport_revision
+ 
++    def set_view_engine(self, engine):
++        """Own at most four JS arrays for this GUI engine, never a global cache."""
++        if self._view_engine is not None:
++            try:
++                self._view_engine.destroyed.disconnect(self._clear_view_engine)
++            except RuntimeError:
++                pass
++        self._clear_view_engine()
++        self._view_engine = engine
++        if engine is not None:
++            engine.destroyed.connect(self._clear_view_engine)
++
++    def _clear_view_engine(self, *_):
++        self._view_arrays.clear()
++        self._view_engine = None
++
+     @Slot(str, result='QVariantMap')
+     def sportViewState(self, selected):
+-        if self._sport is not None and hasattr(self._sport, 'view_state'):
+-            return self._sport.view_state(selected)
+-        return self.sportState
++        if self._sport is None or not hasattr(self._sport, 'view_state'):
++            return self.sportState
++        state = self._sport.view_state(selected)
++        if self._view_engine is None:
++            return state
++        data = dict(state['data'])
++        for key in ('fixtures', 'activeMatches', 'upcoming', 'lastFinished'):
++            rows = data.get(key, [])
++            cached = self._view_arrays.get(key)
++            if cached is None or cached[0] is not rows:
++                # Qt would otherwise recursively marshal the same season on
++                # every busy/selection notification. Parse once per owned list.
++                # Non-JSON facts retain the original QVariant conversion.
++                value = None
++                try:
++                    encoded = json.dumps(json.dumps(rows, ensure_ascii=True, allow_nan=False,
++                                                    separators=(',', ':')))
++                except (TypeError, ValueError):
++                    pass
++                else:
++                    candidate = self._view_engine.evaluate('Object.freeze(JSON.parse(' + encoded + '))')
++                    if not candidate.isError():
++                        value = candidate
++                self._view_arrays[key] = (rows, value)
++            value = self._view_arrays[key][1]
++            data[key] = rows if value is None else value
++        # A new envelope publishes status/timestamps even when arrays are reused.
++        return dict(state, data=data)
+ 
+     @Property('QVariantList', constant=True)
+     def racingAvailable(self):
+--- before-js/app.py
++++ rejected-qjs/app.py
+@@ -69,6 +69,7 @@
+         account.changed.connect(update_account_events)
+         state.accountThresholdsChanged.connect(update_account_events)
+         update_account_events()
++    state.set_view_engine(engine)
+     engine.setInitialProperties({"keypad": keypad, "dashboardState": state, "traceRecorder": trace})
+     # Close Python services after the event loop returns. On Qt 6.8, invoking
+     # these callbacks from aboutToQuit can re-enter QML during Qt teardown.
+@@ -80,6 +81,7 @@
+             trace.attach(engine.rootObjects()[0])
+         result = application.exec()
+     finally:
++        state.set_view_engine(None)
+         game.close()
+         weather.close()
+         account.close()
+--- before-js/theme_fixture_support.py
++++ rejected-qjs/theme_fixture_support.py
+@@ -143,7 +143,7 @@
+         self.service._resolved_cache.clear()
+         self.service.beginEdit();assert self.service.selectDraft(profile['theme'])
+         assert self.service.setSection('paletteMode',profile['variant']);assert self.service.setSection('motionMode',profile['motion'])
+-        self.engine=QQmlApplicationEngine();self.engine.setInitialProperties({'dashboardState':self.state});self.engine.load(QUrl.fromLocalFile(str(ROOT/'Main.qml')))
++        self.engine=QQmlApplicationEngine();self.state.set_view_engine(self.engine);self.engine.setInitialProperties({'dashboardState':self.state});self.engine.load(QUrl.fromLocalFile(str(ROOT/'Main.qml')))
+         assert self.engine.rootObjects(),self.messages
+         self.root=self.engine.rootObjects()[0];self.window=shiboken6.wrapInstance(shiboken6.getCppPointer(self.root)[0],QQuickWindow)
+         if os.environ['QT_QPA_PLATFORM']=='offscreen':self.window.setVisibility(QWindow.Visibility.Windowed);self.window.resize(960,640)
+@@ -382,6 +382,7 @@
+         from PySide6.QtCore import QThreadPool,qInstallMessageHandler,QCoreApplication,QEvent
+         self.events.close();self.sport.close();self.network.close();self.casa.close()
+         for service in self.racing.values():service.close()
++        self.state.set_view_engine(None)
+         self.window.close();self.engine.deleteLater();self.pump(20)
+         assert QThreadPool.globalInstance().waitForDone(3000),'fixture worker teardown timeout'
+         # processEvents alone does not drain DeferredDelete outside app.exec().
+--- before-js/check_state_availability.py
++++ rejected-qjs/check_state_availability.py
+@@ -1,11 +1,13 @@
+ """Navigation availability must not rebuild unrelated provider trees."""
+ import unittest
++import math
+ from unittest.mock import patch
+ 
+ from theme_fixture_support import isolate_process
+ private,base=isolate_process()
+-from PySide6.QtCore import QObject,Signal
++from PySide6.QtCore import QObject,Signal,QCoreApplication,QEvent
+ from PySide6.QtGui import QGuiApplication
++from PySide6.QtQml import QJSEngine
+ from account import AccountService
+ from casa import CasaService
+ from casa_core import display_devices
+@@ -63,5 +65,53 @@
+             if state and state.appearance:state.appearance.cancel()
+             network.close();casa.close();weather.close();account.close()
+ 
++    def test_js_arrays_preserve_values_reuse_and_engine_lifetime(self):
++        class Sport(QObject):
++            changed=Signal()
++            def __init__(self):
++                super().__init__()
++                self.rows=[dict(canonicalMatchId='quote"\\unicode-é',homeScore=0,lineups=[{'name':'A'}]),
++                           dict(canonicalMatchId='match-2',homeScore=None)]
++                self.status='stale'
++                self.stamp=100
++            def view_state(self,selected):
++                return dict(status=self.status,updatedAt=self.stamp,data=dict(fixtures=self.rows,
++                    activeMatches=[],upcoming=self.rows,lastFinished=[],selectedMatchId=selected))
++        weather=WeatherService(auto_refresh=False)
++        account=AccountService(path=base/'missing-account.json')
++        sport=Sport()
++        state=DashboardState(weather,System(),account,sport=sport)
++        engine=QJSEngine()
++        try:
++            state.set_view_engine(engine)
++            first=state.sportViewState('match-2')
++            self.assertEqual(first['data']['fixtures'].toVariant(),sport.rows)
++            self.assertEqual(first['data']['selectedMatchId'],'match-2')
++            sport.status='updating';sport.stamp+=1;sport.changed.emit()
++            second=state.sportViewState('match-2')
++            self.assertTrue(first['data']['fixtures'].strictlyEquals(second['data']['fixtures']))
++            self.assertEqual((second['status'],second['updatedAt']),('updating',101))
++            engine.globalObject().setProperty('qaRows',second['data']['fixtures'])
++            self.assertTrue(engine.evaluate('Object.isFrozen(qaRows)').toBool())
++            sport.rows=list(reversed(sport.rows))
++            changed=state.sportViewState('match-2')
++            self.assertFalse(first['data']['fixtures'].strictlyEquals(changed['data']['fixtures']))
++            self.assertEqual(changed['data']['fixtures'].toVariant(),sport.rows)
++            # Preserve QVariant semantics for non-JSON values rather than lose facts.
++            sport.rows=[dict(value=math.nan)]
++            nonfinite=state.sportViewState('')
++            self.assertIs(nonfinite['data']['fixtures'],sport.rows)
++            self.assertTrue(math.isnan(nonfinite['data']['fixtures'][0]['value']))
++            self.assertLessEqual(len(state._view_arrays),4)
++            engine.deleteLater()
++            QCoreApplication.sendPostedEvents(None,QEvent.Type.DeferredDelete)
++            self.assertIsNone(state._view_engine)
++            self.assertFalse(state._view_arrays)
++            self.assertIs(state.sportViewState('')['data']['fixtures'],sport.rows)
++        finally:
++            state.set_view_engine(None)
++            if state.appearance:state.appearance.cancel()
++            weather.close();account.close()
++
+ 
+ if __name__=='__main__':unittest.main()

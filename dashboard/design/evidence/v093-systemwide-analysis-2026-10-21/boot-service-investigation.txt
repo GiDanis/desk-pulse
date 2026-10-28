@@ -1,0 +1,47 @@
+JOB UNIT                                TYPE  STATE
+157 bootsplash-hide-when-booted.service start waiting
+2   multi-user.target                   start waiting
+145 getty@tty1.service                  start waiting
+149 serial-getty@ttyS0.service          start waiting
+152 plymouth-quit-wait.service          start running
+1   graphical.target                    start waiting
+143 getty.target                        start waiting
+
+7 jobs listed.
+MainPID=0
+Result=success
+CPUUsageNSec=65832000
+Id=plymouth-start.service
+ActiveState=active
+SubState=exited
+UnitFileState=static
+
+MainPID=0
+Result=success
+CPUUsageNSec=[not set]
+Id=plymouth-quit.service
+ActiveState=inactive
+SubState=dead
+UnitFileState=static
+
+MainPID=1185
+Result=success
+CPUUsageNSec=25301000
+Id=plymouth-quit-wait.service
+ActiveState=activating
+SubState=start
+UnitFileState=static
+
+MainPID=0
+Result=success
+CPUUsageNSec=1492245000
+Id=copytrade-paper-alpaca.service
+ActiveState=inactive
+SubState=dead
+UnitFileState=static
+ExecStartPre={ path=/usr/bin/plymouth ; argv[]=/usr/bin/plymouth quit ; ignore_errors=yes ; start_time=[Wed 2026-10-21 18:17:08 CEST] ; stop_time=[Wed 2026-10-21 18:17:08 CEST] ; pid=207972 ; code=exited ; status=1 }
+ExecStart={ path=/opt/smartpc/dashboard/run.sh ; argv[]=/opt/smartpc/dashboard/run.sh --device ; ignore_errors=no ; start_time=[Wed 2026-10-21 18:17:08 CEST] ; stop_time=[n/a] ; pid=207975 ; code=(null) ; status=0/0 }
+FragmentPath=/etc/systemd/system/smartpc-dashboard.service
+DropInPaths=/etc/systemd/system/smartpc-dashboard.service.d/90-game-python.conf
+    PID    PPID ELAPSED %CPU STAT COMMAND
+    217       1  166240  4.0 Sl   plymouthd

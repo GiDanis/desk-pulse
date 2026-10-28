@@ -1,0 +1,338 @@
+{
+  "status": "passed",
+  "rows": [
+    {
+      "method": "residual_ppo",
+      "previousSteps": 411181,
+      "newSteps": 415265,
+      "hidden": 128,
+      "sourceProtocol": "direct-driving-2",
+      "newProtocol": "direct-driving-3",
+      "exactResume": true,
+      "recipeArchives": [
+        {
+          "recipe": {
+            "action": "direct-steer-pedal-v1",
+            "actorRateScale": 0.1,
+            "algorithm": "residual_ppo",
+            "anchorSteps": 4096,
+            "anchorWeight": 2.0,
+            "base": null,
+            "batchSize": 64,
+            "candidateRestart": "failed-or-three-no-gain-1",
+            "criticContext": "task-context-1",
+            "criticInputs": 94,
+            "criticWarmup": 512,
+            "curriculum": "solo-or-selected-traffic-v1",
+            "decisionHz": 10,
+            "domainRandomization": "vehicle-grip-1",
+            "entropy": 0.0001,
+            "exploration": [
+              0.015,
+              0.1
+            ],
+            "features": "direct-physical-90-v1",
+            "gaeLambda": 0.9394130628134758,
+            "gamma": 0.9975031223974601,
+            "gradientEvery": 4,
+            "hidden": 64,
+            "learner": "ppo",
+            "learningRate": 0.0001,
+            "lineMap": null,
+            "maxStd": [
+              0.1,
+              0.4
+            ],
+            "minStd": [
+              0.005,
+              0.03
+            ],
+            "passRule": "held-0.5s-band-v1",
+            "physicsHz": 60,
+            "policyDelay": 2,
+            "potentialPrior": true,
+            "ppoEntropy": 0.0001,
+            "replayCapacity": 32768,
+            "reward": "direct-driving-2",
+            "rollout": 128,
+            "scales": [
+              1.0,
+              1.0
+            ],
+            "seed": 2,
+            "shaping": "bounded-time-speed-potential-1",
+            "targetClip": 0.03,
+            "targetNoise": 0.015,
+            "tau": 0.005,
+            "teacherAtInference": false,
+            "version": "direct-driving-2"
+          },
+          "sourceCheckpoint": null,
+          "steps": 411181,
+          "decisions": 68637,
+          "updates": 536,
+          "stats": {
+            "cleanLaps": 252,
+            "contacts": 0,
+            "episodes": 252,
+            "passes": 0,
+            "success": 252,
+            "trackLimits": 0,
+            "windows": 0
+          },
+          "championHash": "bebfd3a3fc2f0e22bff7ca30b0a43972ec770a34642ce80c3174f6ceaa511259"
+        }
+      ]
+    },
+    {
+      "method": "residual_sac",
+      "previousSteps": 85524,
+      "newSteps": 89624,
+      "hidden": 128,
+      "sourceProtocol": "direct-driving-2",
+      "newProtocol": "direct-driving-3",
+      "exactResume": true,
+      "recipeArchives": [
+        {
+          "recipe": {
+            "action": "direct-steer-pedal-v1",
+            "actorRateScale": 0.1,
+            "algorithm": "residual_sac",
+            "anchorSteps": 4096,
+            "anchorWeight": 2.0,
+            "base": null,
+            "batchSize": 64,
+            "candidateRestart": "failed-or-three-no-gain-1",
+            "criticContext": "task-context-1",
+            "criticInputs": 94,
+            "criticWarmup": 512,
+            "curriculum": "solo-or-selected-traffic-v1",
+            "decisionHz": 10,
+            "domainRandomization": "vehicle-grip-1",
+            "entropy": 0.0001,
+            "exploration": [
+              0.015,
+              0.1
+            ],
+            "features": "direct-physical-90-v1",
+            "gaeLambda": 0.9753099120283326,
+            "gamma": 0.9975031223974601,
+            "gradientEvery": 4,
+            "hidden": 64,
+            "learner": "sac",
+            "learningRate": 0.0001,
+            "lineMap": null,
+            "maxStd": [
+              0.1,
+              0.4
+            ],
+            "minStd": [
+              0.005,
+              0.03
+            ],
+            "passRule": "held-0.5s-band-v1",
+            "physicsHz": 60,
+            "policyDelay": 2,
+            "potentialPrior": true,
+            "ppoEntropy": 0.0002,
+            "replayCapacity": 32768,
+            "reward": "direct-driving-2",
+            "rollout": 128,
+            "scales": [
+              1.0,
+              1.0
+            ],
+            "seed": 3,
+            "shaping": "bounded-time-speed-potential-1",
+            "targetClip": 0.03,
+            "targetNoise": 0.015,
+            "tau": 0.005,
+            "teacherAtInference": false,
+            "version": "direct-driving-2"
+          },
+          "sourceCheckpoint": "b67a0611b0d3a1180f6982365976ad46b551764cde15dc8d82c30542acda41f1",
+          "steps": 85524,
+          "decisions": 14273,
+          "updates": 3537,
+          "stats": {
+            "cleanLaps": 37,
+            "contacts": 0,
+            "episodes": 40,
+            "passes": 0,
+            "success": 37,
+            "trackLimits": 6,
+            "windows": 0
+          },
+          "championHash": "f9005c0ca46de8d49ae36f6020136c4e5b2d25c5870922339137232b1d9c4daa"
+        }
+      ]
+    },
+    {
+      "method": "residual_td3",
+      "previousSteps": 97923,
+      "newSteps": 102023,
+      "hidden": 128,
+      "sourceProtocol": "direct-driving-2",
+      "newProtocol": "direct-driving-3",
+      "exactResume": true,
+      "recipeArchives": [
+        {
+          "recipe": {
+            "action": "direct-steer-pedal-v1",
+            "actorRateScale": 0.1,
+            "algorithm": "residual_td3",
+            "anchorSteps": 4096,
+            "anchorWeight": 2.0,
+            "base": null,
+            "batchSize": 64,
+            "candidateRestart": "failed-or-three-no-gain-1",
+            "criticContext": "task-context-1",
+            "criticInputs": 94,
+            "criticWarmup": 512,
+            "curriculum": "solo-or-selected-traffic-v1",
+            "decisionHz": 10,
+            "domainRandomization": "vehicle-grip-1",
+            "entropy": 0.0001,
+            "exploration": [
+              0.015,
+              0.1
+            ],
+            "features": "direct-physical-90-v1",
+            "gaeLambda": 0.9753099120283326,
+            "gamma": 0.9975031223974601,
+            "gradientEvery": 4,
+            "hidden": 64,
+            "learner": "td3",
+            "learningRate": 0.0001,
+            "lineMap": null,
+            "maxStd": [
+              0.1,
+              0.4
+            ],
+            "minStd": [
+              0.005,
+              0.03
+            ],
+            "passRule": "held-0.5s-band-v1",
+            "physicsHz": 60,
+            "policyDelay": 2,
+            "potentialPrior": true,
+            "ppoEntropy": 0.0002,
+            "replayCapacity": 32768,
+            "reward": "direct-driving-2",
+            "rollout": 128,
+            "scales": [
+              1.0,
+              1.0
+            ],
+            "seed": 4,
+            "shaping": "bounded-time-speed-potential-1",
+            "targetClip": 0.03,
+            "targetNoise": 0.015,
+            "tau": 0.005,
+            "teacherAtInference": false,
+            "version": "direct-driving-2"
+          },
+          "sourceCheckpoint": null,
+          "steps": 97923,
+          "decisions": 16369,
+          "updates": 4061,
+          "stats": {
+            "cleanLaps": 37,
+            "contacts": 0,
+            "episodes": 121,
+            "passes": 0,
+            "success": 37,
+            "trackLimits": 85,
+            "windows": 0
+          },
+          "championHash": "9053bbbe887e93cebdaae22bfd9974badb79683d3e0f45794e359f1ab23dcc15"
+        }
+      ]
+    },
+    {
+      "method": "residual_tactic",
+      "previousSteps": 79225,
+      "newSteps": 83325,
+      "hidden": 128,
+      "sourceProtocol": "direct-driving-2",
+      "newProtocol": "direct-driving-3",
+      "exactResume": true,
+      "recipeArchives": [
+        {
+          "recipe": {
+            "action": "direct-steer-pedal-v1",
+            "actorRateScale": 0.1,
+            "algorithm": "residual_tactic",
+            "anchorSteps": 4096,
+            "anchorWeight": 2.0,
+            "base": null,
+            "batchSize": 64,
+            "candidateRestart": "failed-or-three-no-gain-1",
+            "criticContext": "task-context-1",
+            "criticInputs": 94,
+            "criticWarmup": 512,
+            "curriculum": "solo-8192-then-mixed-v1",
+            "decisionHz": 10,
+            "domainRandomization": "vehicle-grip-1",
+            "entropy": 0.0001,
+            "exploration": [
+              0.015,
+              0.1
+            ],
+            "features": "direct-physical-90-v1",
+            "gaeLambda": 0.9753099120283326,
+            "gamma": 0.9975031223974601,
+            "gradientEvery": 4,
+            "hidden": 64,
+            "learner": "td3",
+            "learningRate": 0.0001,
+            "lineMap": null,
+            "maxStd": [
+              0.1,
+              0.4
+            ],
+            "minStd": [
+              0.005,
+              0.03
+            ],
+            "passRule": "held-0.5s-band-v1",
+            "physicsHz": 60,
+            "policyDelay": 2,
+            "potentialPrior": true,
+            "ppoEntropy": 0.0002,
+            "replayCapacity": 32768,
+            "reward": "direct-driving-2",
+            "rollout": 128,
+            "scales": [
+              1.0,
+              1.0
+            ],
+            "seed": 5,
+            "shaping": "bounded-time-speed-potential-1",
+            "targetClip": 0.03,
+            "targetNoise": 0.015,
+            "tau": 0.005,
+            "teacherAtInference": false,
+            "version": "direct-driving-2"
+          },
+          "sourceCheckpoint": "abdc3b85cc0959617bdb798fe1421ace64caec491e8ce9720fc3871fd681aa6b",
+          "steps": 79225,
+          "decisions": 13225,
+          "updates": 3275,
+          "stats": {
+            "cleanLaps": 38,
+            "contacts": 3,
+            "episodes": 48,
+            "passes": 5,
+            "success": 39,
+            "trackLimits": 13,
+            "windows": 0
+          },
+          "championHash": "fcc7899571784b2c4124541970b73bf725149efa299e8ffd24c0e61ff46cd378"
+        }
+      ]
+    }
+  ],
+  "scope": "Private paused-checkpoint copies; full histories and artifacts preserved by staged installation"
+}
