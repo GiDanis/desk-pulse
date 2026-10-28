@@ -12,7 +12,7 @@
 #define CHECK(call) do { vip_status_e s=(call); if(s!=VIP_SUCCESS) { \
     fprintf(stderr,"%s failed: %d\n",#call,s); exit(2); } } while(0)
 static double now(void) { struct timespec t; clock_gettime(CLOCK_MONOTONIC,&t); return t.tv_sec+t.tv_nsec*1e-9; }
-static vip_buffer buffer(vip_network network, int input, unsigned count) {
+static vip_buffer buffer(vip_network network, int input, unsigned count, vip_enum *format) {
     vip_buffer_create_params_t p={0}; vip_buffer b;
     #define QUERY(prop,value) CHECK(input ? vip_query_input(network,0,prop,value) : vip_query_output(network,0,prop,value))
     QUERY(VIP_BUFFER_PROP_NUM_OF_DIMENSION,&p.num_of_dims);
@@ -22,34 +22,42 @@ static vip_buffer buffer(vip_network network, int input, unsigned count) {
     unsigned elements=1;
     if(p.num_of_dims>6) exit(3);
     for(unsigned i=0;i<p.num_of_dims;i++) elements*=p.sizes[i];
-    if(elements!=count || p.data_format!=VIP_BUFFER_FORMAT_FP32 || p.quant_format!=VIP_BUFFER_QUANTIZE_NONE) {
+    if(elements!=count || (p.data_format!=VIP_BUFFER_FORMAT_FP32 && p.data_format!=VIP_BUFFER_FORMAT_FP16) || p.quant_format!=VIP_BUFFER_QUANTIZE_NONE) {
         fprintf(stderr,"Unexpected tensor: %u elements, format %d, quant %d\n",elements,p.data_format,p.quant_format); exit(3);
     }
-    CHECK(vip_create_buffer(&p,sizeof(p),&b)); return b;
+    *format=p.data_format; CHECK(vip_create_buffer(&p,sizeof(p),&b)); return b;
 }
 int main(int argc,char **argv) {
-    if(argc!=4) { fprintf(stderr,"Usage: %s model.nb observations.f32 actions.f32\n",argv[0]); return 1; }
+    if(argc<4 || argc>6) { fprintf(stderr,"Usage: %s model.nb observations.f32 actions.f32 [inputs [batch]]\n",argv[0]); return 1; }
+    unsigned features=argc>4 ? atoi(argv[4]) : 32, batch=argc>5 ? atoi(argv[5]) : 1;
+    if(!features || features>4096 || !batch || batch>256) return 1;
+    unsigned input_count=features*batch, output_count=2*batch;
     FILE *in=fopen(argv[2],"rb"),*out=fopen(argv[3],"wb");
     if(!in || !out) return 1;
     double cold=now(); CHECK(vip_init()); vip_network network;
     CHECK(vip_create_network(argv[1],0,VIP_CREATE_NETWORK_FROM_FILE,&network));
     CHECK(vip_prepare_network(network));
-    vip_buffer input=buffer(network,1,32),output=buffer(network,0,2);
+    vip_enum input_format,output_format;
+    vip_buffer input=buffer(network,1,input_count,&input_format),output=buffer(network,0,output_count,&output_format);
     CHECK(vip_set_input(network,0,input)); CHECK(vip_set_output(network,0,output));
-    float *ip=vip_map_buffer(input),*op=vip_map_buffer(output);
+    void *ip=vip_map_buffer(input),*op=vip_map_buffer(output);
     if(!ip || !op) return 2;
     cold=now()-cold;
-    float observation[32],action[2]; unsigned count=0;
-    while(fread(observation,sizeof(float),32,in)==32) {
-        double start=now(); memcpy(ip,observation,sizeof(observation));
+    float *observation=malloc(input_count*sizeof(float)),*action=malloc(output_count*sizeof(float)); unsigned count=0;
+    if(!observation || !action) return 1;
+    while(fread(observation,sizeof(float),input_count,in)==input_count) {
+        double start=now();
+        if(input_format==VIP_BUFFER_FORMAT_FP32) memcpy(ip,observation,input_count*sizeof(float));
+        else for(unsigned j=0;j<input_count;j++) ((__fp16*)ip)[j]=observation[j];
         CHECK(vip_flush_buffer(input,VIP_BUFFER_OPER_TYPE_FLUSH)); CHECK(vip_run_network(network));
-        CHECK(vip_flush_buffer(output,VIP_BUFFER_OPER_TYPE_INVALIDATE)); memcpy(action,op,sizeof(action));
+        CHECK(vip_flush_buffer(output,VIP_BUFFER_OPER_TYPE_INVALIDATE)); if(output_format==VIP_BUFFER_FORMAT_FP32) memcpy(action,op,output_count*sizeof(float));
+        else for(unsigned j=0;j<output_count;j++) action[j]=((__fp16*)op)[j];
         double elapsed=now()-start;
-        if(fwrite(action,sizeof(float),2,out)!=2) return 1;
+        if(fwrite(action,sizeof(float),output_count,out)!=output_count) return 1;
         printf("sample %u %.9f\n",count++,elapsed);
     }
     fprintf(stderr,"coldSeconds %.9f samples %u\n",cold,count);
     CHECK(vip_unmap_buffer(input)); CHECK(vip_unmap_buffer(output));
     CHECK(vip_finish_network(network)); CHECK(vip_destroy_buffer(input)); CHECK(vip_destroy_buffer(output));
-    CHECK(vip_destroy_network(network)); CHECK(vip_destroy()); fclose(in); fclose(out); return 0;
+    CHECK(vip_destroy_network(network)); CHECK(vip_destroy()); fclose(in); fclose(out); free(observation); free(action); return 0;
 }

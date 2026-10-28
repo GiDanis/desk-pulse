@@ -67,7 +67,7 @@ class CurriculumChecks(unittest.TestCase):
             store.save_training(driver['id'],{'curriculum':state},candidate,30,3,curriculum=state)
             row=GameStore(root).driver(driver['id']);self.assertEqual(store.load(row['policy']),candidate)
             self.assertTrue(row['curriculum']['champion']);self.assertEqual(len([e for e in store.history(driver['id']) if e['kind']=='evaluation']),1)
-            store.set_profile(driver['id'],{**driver['profile'],'seed':42})
+            store.set_profile(driver['id'],{**driver['profile'],'seed':42},allow_reconfigure=True)
             row=store.driver(driver['id']);self.assertIsNone(row['checkpoint']);self.assertIsNone(row['curriculum'])
             self.assertEqual(store.load(row['policy']),candidate)
 

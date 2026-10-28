@@ -7,8 +7,9 @@ import random
 
 import neat
 import numpy as np
+from game_observation_contract import bind,contract
 
-from game_catalog import OBSERVATION_VERSION, ACTION_VERSION
+from game_catalog import ACTION_VERSION, observation_size, observation_version
 
 
 def tuples(value):
@@ -46,21 +47,33 @@ def genome_from(data):
     return genome
 
 
-def snapshot(genome, config):
+def snapshot(genome, config, include_genome=True):
     network=neat.nn.FeedForwardNetwork.create(genome,config)
-    return {'schema':1,'kind':'neat','algorithm':'neat','observation':OBSERVATION_VERSION,
+    result={'schema':1,'kind':'neat','algorithm':'neat','observation':observation_version(config.genome_config.num_inputs),
             'action':ACTION_VERSION,'nodes':[{'id':key,'bias':bias,'response':response,'links':links}
             for key,activation,aggregation,bias,response,links in network.node_evals]}
+    if include_genome:result['genome']=genome_data(genome)
+    return result
 
 
 class NEAT:
     def __init__(self, profile, checkpoint=None):
         self.profile=profile
+        self.input_contract=(checkpoint or {}).get('inputContract')
         config=neat.Config(neat.DefaultGenome,neat.DefaultReproduction,neat.DefaultSpeciesSet,
                            neat.DefaultStagnation,str(Path(__file__).with_name('game-neat-config.txt')))
         config.pop_size=profile['population']
-        config.genome_config.weight_mutate_power=profile['mutation']
-        config.genome_config.bias_mutate_power=profile['mutation']
+        config.genome_config.num_inputs=observation_size(profile['observation'])
+        config.genome_config.input_keys=[-i-1 for i in range(config.genome_config.num_inputs)]
+        tuning=(checkpoint or {}).get('tuning') or profile.get('neatTuning',{})
+        from game_profiles import variant
+        self.tuning=dict(version='neat-matched-stages-1',weightInit=.3,biasInit=.3,mutationPower=.15,responseInit=variant(profile).get('responseInit',1.))
+        self.tuning.update(tuning)
+        config.genome_config.weight_init_stdev=self.tuning['weightInit']
+        config.genome_config.bias_init_stdev=self.tuning['biasInit']
+        config.genome_config.weight_mutate_power=self.tuning['mutationPower']
+        config.genome_config.bias_mutate_power=self.tuning['mutationPower']
+        config.genome_config.response_init_mean=self.tuning['responseInit']
         self.config=config
         self.population=neat.Population(config,seed=profile['seed'])
         self.best_score=None
@@ -88,6 +101,7 @@ class NEAT:
             pop.best_genome=(pop.population.get(best['key']) or genome_from(best)) if best else None
             self.best_score=pop.best_genome.fitness if pop.best_genome else None
             random.setstate(tuples(checkpoint['random']))
+            if checkpoint.get('candidate'):self.candidate=checkpoint['candidate']
         self.prepare()
 
     @property
@@ -97,17 +111,34 @@ class NEAT:
     def prepare(self):
         self.keys=list(self.population.population)
         self.networks=[neat.nn.FeedForwardNetwork.create(self.population.population[k],self.config) for k in self.keys]
+        self._native_population=None
 
     def act(self, observations):
+        if getattr(self,'driving_balance',False):
+            from game_native import SparsePopulation
+            if self._native_population is None:self._native_population=SparsePopulation(self.networks,len(self.config.genome_config.input_keys))
+            result=self._native_population.act(observations)
+            if result is not None:return result
         return np.array([network.activate(row) for network,row in zip(self.networks,observations)])
 
-    def update(self, scores):
+    def update(self, scores, ranks=None):
+        if ranks is not None:
+            ranks=np.asarray(ranks)
+            # Comparable success counts plus continuous reward, never an ordinal rank.
+            scores=ranks[:,0]*100+ranks[:,1]*10+ranks[:,2]+.1*np.tanh(ranks[:,3]/10)
         scores=dict(zip(self.keys,map(float,scores)))
         def evaluate(genomes, _config):
             for key,genome in genomes:genome.fitness=scores[key]
-            self.candidate=snapshot(max((genome for _,genome in genomes),key=lambda g:g.fitness),self.config)
+            self.candidate=bind(snapshot(max((genome for _,genome in genomes),key=lambda g:g.fitness),self.config),self.input_contract)
         best=self.population.run(evaluate,1)
         self.best_score=best.fitness
+        if getattr(self,'driving_balance',False) and len(self.population.population)>=8:
+            # Only newborn descendants: elitism may put an evaluated champion
+            # anywhere in the reproduction order when species sizes change.
+            keys=[k for k in self.population.population if k not in scores]
+            for key,shift in zip(keys[-2:],(-.05,.05)):
+                genome=self.population.population[key]
+                if 1 in genome.nodes:genome.nodes[1].bias-=shift
         self.prepare()
         return {'generation':self.generation,'fitness':max(scores.values()),'bestFitness':self.best_score,
                 'species':len(self.population.species.species),'nodes':len(best.nodes),
@@ -115,13 +146,13 @@ class NEAT:
 
     def policy(self):
         best=self.population.best_genome or self.population.population[self.keys[0]]
-        return snapshot(best,self.config)
+        return bind(snapshot(best,self.config),self.input_contract)
 
     def candidate_policy(self):
         best=max(self.population.population.values(),key=lambda g:float('-inf') if g.fitness is None else g.fitness)
         # Reproduction replaces the evaluated population, so use the snapshot
         # captured before it runs (see update).
-        return getattr(self,'candidate',snapshot(best,self.config))
+        return bind(getattr(self,'candidate',snapshot(best,self.config)),self.input_contract)
 
     def change_reward(self):
         self.population.best_genome=None
@@ -132,9 +163,10 @@ class NEAT:
 
     def checkpoint(self):
         pop=self.population
-        return {'algorithm':'neat','library':'1.1.0','generation':pop.generation,
+        return {'inputContract':self.input_contract,'tuning':dict(self.tuning),'algorithm':'neat','library':'1.1.0','generation':pop.generation,
                 'population':[genome_data(g) for g in pop.population.values()],
                 'best':genome_data(pop.best_genome) if pop.best_genome else None,
+                'candidate':getattr(self,'candidate',None),
                 'species':[{'key':sp.key,'created':sp.created,'last_improved':sp.last_improved,
                             'fitness':sp.fitness,'adjusted_fitness':sp.adjusted_fitness,
                             'fitness_history':sp.fitness_history,'members':list(sp.members),

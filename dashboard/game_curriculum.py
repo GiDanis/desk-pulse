@@ -9,9 +9,13 @@ import hashlib
 import json
 import statistics
 
-REWARD_VERSION = 'control-pace-1'
-EVALUATION_VERSION = 'paired-10-v1'
+REWARD_VERSION = 'control-pace-3'
+EVALUATION_VERSION = 'paired-10-laps-v2'
 PHASE_LABELS = {'control':'Controllo', 'pace':'Passo', 'traffic':'Traffico', 'legacy':'Precedente'}
+PHASE_LABELS.update(recovery='Rientro',launch='Partenza',follow='Inseguimento',overtake='Sorpasso',corner='Affiancamento',
+                    defend='Difesa',duel='Gara 2',grid='Partenza in gruppo',race4='Gara 4')
+PHASE_LABELS['bend']='Ingresso curva'
+PHASE_LABELS['straight']='Rettilineo'
 MIN_VALID = 9
 TIME_TOLERANCE = 0.05
 REFERENCE_SECONDS = 60.0
@@ -68,12 +72,15 @@ def consider(state, candidate, candidate_result, champion_result, scenarios, sco
 
 
 class Evaluation:
-    def __init__(self, candidate, champion=None, round_number=0, traffic=False, saved=None):
+    def __init__(self, candidate, champion=None, round_number=0, traffic=False, saved=None,track_id='oval-1',laps=1):
         from game_simulation import World
         from game_learning import Policy
         self.candidate=deepcopy(candidate)
         self.champion=deepcopy(champion)
+        from game_protocol import lap_budget
         self.traffic=traffic
+        self.laps=saved.get("laps",laps) if saved else laps
+        self.limit=lap_budget(track_id)*self.laps
         # Each window is distinct; separate seeds >=1,000,000 are reserved for
         # qualification. Both contestants use exactly the same start perturbation.
         self.scenarios=[1001+round_number*10+i for i in range(10)]
@@ -82,19 +89,17 @@ class Evaluation:
         for _ in self.policies:
             if not traffic:
                 import numpy as np
-                world=World(10,1)
+                world=World(10,1,laps=self.laps,track_id=track_id)
                 for i,seed in enumerate(self.scenarios):
                     rng=np.random.default_rng(seed)
-                    world.state[i,1]+=rng.uniform(-0.7,0.7)
-                    world.state[i,2]=rng.uniform(-0.08,0.08)
+                    world.perturb(i,rng.uniform(-0.7,0.7),rng.uniform(-0.08,0.08))
                 self.worlds.append(world)
                 continue
             for seed in self.scenarios:
-                world=World(2 if traffic else 1,seed,shared=traffic)
+                world=World(2 if traffic else 1,seed,shared=traffic,laps=self.laps,track_id=track_id)
                 world.reset(varied=not traffic)
                 if traffic:
-                    world.state[0,1]+=world.rng.uniform(-0.6,0.6)
-                    world.state[0,2]=world.rng.uniform(-0.06,0.06)
+                    world.perturb(0,world.rng.uniform(-0.6,0.6),world.rng.uniform(-0.06,0.06))
                 self.worlds.append(world)
         if saved:
             if saved['version']!=EVALUATION_VERSION or saved['scenarios']!=self.scenarios:
@@ -103,25 +108,25 @@ class Evaluation:
 
     def snapshot(self):
         return {'version':EVALUATION_VERSION, 'candidate':self.candidate, 'champion':self.champion,
-                'traffic':self.traffic,'scenarios':self.scenarios,
+                'traffic':self.traffic,'laps':self.laps,'scenarios':self.scenarios,
                 'worlds':[world.snapshot() for world in self.worlds]}
 
     def step(self):
         import numpy as np
-        from game_simulation import reference_actions
+        from game_control import pursuit_actions
         for i,world in enumerate(self.worlds):
-            if not (world.active[0] if self.traffic else world.active.any()) or world.time>=REFERENCE_SECONDS:continue
+            if not (world.active[0] if self.traffic else world.active.any()) or world.time>=self.limit:continue
             if not self.traffic:
-                world.step(self.policies[i].act(world.observations()))
+                world.step(self.policies[i].act(world.observations(),world=world),return_observations=False)
                 continue
             policy=self.policies[i//10]
-            action=policy.act(world.observations()[0])
+            observations=world.observations()
+            action=policy.act(observations[0],world=world,index=0)
             if self.traffic:
-                bot=reference_actions(world)[1]
-                bot[1]=np.clip((7-world.state[1,3])*0.3,-1,1)
-                world.step(np.array([action,bot]))
-            else:world.step(np.array([action]))
-        return all(not (w.active[0] if self.traffic else w.active.any()) or w.time>=REFERENCE_SECONDS for w in self.worlds)
+                bot=pursuit_actions(world,[1],speed_factor=.7)[0]
+                world.step(np.array([action,bot]),return_observations=False)
+            else:world.step(np.array([action]),return_observations=False)
+        return all(not (w.active[0] if self.traffic else w.active.any()) or w.time>=self.limit for w in self.worlds)
 
     def results(self):
         groups=[]
@@ -139,4 +144,5 @@ class Evaluation:
                 rows.append({'seed':seed,'time':row['finishTime'],'progress':row['progress'],
                              'status':'tempo scaduto' if world.active[0] else row['status']})
             groups.append(summary(rows))
+        for group in groups:group['laps']=self.laps;group['limitSeconds']=self.limit
         return groups[0],groups[1] if len(groups)>1 else None

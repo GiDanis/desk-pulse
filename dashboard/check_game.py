@@ -17,6 +17,100 @@ from game_worker import worker_main
 
 
 class GameChecks(unittest.TestCase):
+    def test_driver_dossier_and_reset_preserve_provenance(self):
+        from game_dossier import dossier
+        with tempfile.TemporaryDirectory() as root:
+            store=GameStore(root);driver,other=store.drivers()[:2]
+            policy=Evolution(driver['profile']).policy()
+            session,payload=store.begin_session('impara',{'driver':driver['id'],'profile':driver['profile']})
+            store.save_training(driver['id'],{},policy,200,125,session=session,
+                                session_stats={'steps':200,'seconds':125})
+            store.finish_session(session,'interrupted',store.sessions(complete=False)[0]['payload'])
+            saved=store.driver(driver['id'])
+            race,race_payload=store.begin_session('gara',{'participants':[{'id':driver['id'],'name':driver['name'],'policy':saved['policy'],'profile':driver['profile']}],
+                'results':[{'id':driver['id'],'position':1,'status':'arrivato','lap':3,'finishTime':75.25}]})
+            store.finish_session(race,'complete',race_payload)
+            old_session=store.sessions(complete=False)
+            store.set_profile(driver['id'],{**driver['profile'],'algorithm':'ppo'},allow_reconfigure=True)
+            view=dossier(store,driver['id'])
+            self.assertTrue(any(r['value']=='Evoluzione' for r in view['parameters']))
+            self.assertTrue(any(r['value']=='PPO' for r in view['parameters']))
+            entry=next(r for r in view['history'] if r['id']==('session:'+session))
+            self.assertIn('2 min 05 s',entry['value']);self.assertEqual(entry['profile'],driver['profile'])
+            artifacts={p.name:p.read_bytes() for p in store.policies.glob('*.json')}
+            store.reset_driver(driver['id'])
+            fresh=store.driver(driver['id'])
+            for key in ('policy','policy_profile','checkpoint','candidate','curriculum'):self.assertIsNone(fresh[key])
+            self.assertEqual((fresh['steps'],fresh['seconds']),(0,0))
+            self.assertEqual(fresh['id'],driver['id']);self.assertEqual(fresh['name'],driver['name'])
+            self.assertEqual(fresh['profile']['algorithm'],'ppo');self.assertEqual(store.driver(other['id']),other)
+            self.assertEqual(store.sessions(complete=False),old_session)
+            self.assertEqual(artifacts,{p.name:p.read_bytes() for p in store.policies.glob('*.json')})
+            view=dossier(store,driver['id']);self.assertIn('2 min 05 s',next(r['value'] for r in view['summary'] if r['title']=='Storico complessivo'))
+            self.assertTrue(any(r['title']=='Reset' for r in view['history']))
+            result=next(r for r in view['raceResults'] if r['title']=='Gara')
+            self.assertIn('modello precedente',result['description']);self.assertIn('75.25 s',result['description'])
+            self.assertTrue(any(r['value']=='1 · 1 vittorie' for r in view['summary']))
+            self.assertEqual(store.driver_events(driver['id'])[0]['payload']['previous']['policy'],saved['policy'])
+            reopened=GameStore(root);self.assertIsNone(reopened.driver(driver['id'])['policy'])
+
+    def test_session_stats_reject_another_driver_and_unknown_duration_is_explicit(self):
+        from game_dossier import dossier
+        with tempfile.TemporaryDirectory() as root:
+            store=GameStore(root);driver,other=store.drivers()[:2]
+            session,_=store.begin_session('impara',{'driver':other['id'],'profile':other['profile']})
+            with self.assertRaises(ValueError):store.save_training(driver['id'],{},Evolution(driver['profile']).policy(),1,1,
+                session=session,session_stats={'steps':1,'seconds':1})
+            self.assertIsNone(store.driver(driver['id'])['policy'])
+            self.assertIn('non registrata',dossier(store,other['id'])['history'][0]['value'])
+
+    def test_ppo_preview_is_real_time_and_separate_from_rollouts(self):
+        from game_preview import PracticePreview
+        class Straight:
+            def act(self,obs,**kwargs):return np.tile([0.,.8],(len(obs),1))
+        preview=PracticePreview();policy=Straight()
+        for _ in range(25):preview.advance(.04,policy)
+        self.assertAlmostEqual(preview.world.time,1,places=10)
+        self.assertGreater(preview.world.state[0,0],0)
+        preview.world.retired[:]=True;preview.world.active[:]=False
+        preview.hold=1.;preview.status='Ripartenza'
+        state=preview.world.state.copy()
+        for _ in range(10):preview.advance(.04,policy)
+        np.testing.assert_array_equal(state,preview.world.state)
+        for _ in range(16):preview.advance(.04,policy)
+        self.assertTrue(preview.world.active[0]);self.assertEqual(preview.status,'running')
+        before=preview.world.time;preview.advance(60,policy)
+        self.assertLessEqual(preview.world.time-before,.101)
+
+    def test_road_broad_phase_matches_detailed_contacts(self):
+        from game_simulation import vertices,road_distance
+        from game_catalog import TRACK,VEHICLE
+        rng=np.random.default_rng(517)
+        fractions=np.linspace(0,1,int(np.ceil(VEHICLE.length/.2))+1)
+        for _ in range(16):
+            world=World(256)
+            world.state[:,:2]=rng.uniform([-80,-45],[80,45],(256,2))
+            world.state[:,2]=rng.uniform(-np.pi,np.pi,256)
+            world.active[::7]=False
+            corners=vertices(world.state)
+            points=corners[:,:,None,:]+(np.roll(corners,-1,axis=1)-corners)[:,:,None,:]*fractions[None,None,:,None]
+            road=road_distance(points).reshape(256,-1)
+            expected=((road<TRACK.radius-TRACK.road_width/2)|(road>TRACK.radius+TRACK.road_width/2)).any(axis=1)&world.active
+            world.step(np.zeros((256,2)),return_observations=False)
+            np.testing.assert_array_equal(world.retired,expected)
+
+    def test_optional_sensors_keep_physics_and_reward_identical(self):
+        a=World(8);b=World(8)
+        actions=np.tile([.1,.7],(8,1))
+        for _ in range(120):
+            obs,reward,done=a.step(actions,pace=.5)
+            omitted,other_reward,other_done=b.step(actions,pace=.5,return_observations=False)
+            self.assertIsNone(omitted)
+            np.testing.assert_array_equal(obs,b.observations())
+            np.testing.assert_array_equal(reward,other_reward)
+            np.testing.assert_array_equal(done,other_done)
+            self.assertEqual(a.snapshot(),b.snapshot())
+
     def test_reference_lap_and_substep_convergence(self):
         times=[]
         for substeps in (1,2,4):
@@ -109,7 +203,7 @@ class GameChecks(unittest.TestCase):
             self.assertEqual(store.load(digest),a.policy())
             self.assertIsNone(store.driver(drivers[1]['id'])['policy'])
             profile={**drivers[0]['profile'],'algorithm':'ppo','traffic':True}
-            store.set_profile(drivers[0]['id'],profile)
+            store.set_profile(drivers[0]['id'],profile,allow_reconfigure=True)
             changed=store.driver(drivers[0]['id'])
             self.assertIsNone(changed['checkpoint'])
             self.assertEqual(changed['policy'],digest)
@@ -139,6 +233,14 @@ class GameChecks(unittest.TestCase):
                     {'mode':mode,'participants':[d['id'] for d in drivers],'epoch':'frozen'}))
                 process.start();child.close()
                 try:
+                    if mode=='gara':
+                        self.assertTrue(parent.poll(15))
+                        message=parent.recv();self.assertEqual(message['type'],'error')
+                        self.assertIn('giro valido di Qualifica',message['message'])
+                        self.assertFalse(store.sessions(mode))
+                        for driver,digest in zip(drivers,hashes):self.assertEqual(store.driver(driver['id'])['policy'],digest)
+                        process.join(3)
+                        continue
                     deadline=time.monotonic()+30;finished=False
                     while time.monotonic()<deadline and not finished:
                         if parent.poll(.05):
@@ -150,7 +252,7 @@ class GameChecks(unittest.TestCase):
                     self.assertEqual(len(sessions),1)
                     payload=sessions[0]['payload']
                     self.assertEqual([p['policy'] for p in payload['participants']],hashes)
-                    self.assertEqual(len(payload['results']),count*(5 if mode=='prova' else 1))
+                    self.assertEqual(len(payload['results']),count)
                     for driver,digest in zip(drivers,hashes):
                         saved=store.driver(driver['id'])
                         self.assertEqual(saved['policy'],digest)
@@ -164,12 +266,48 @@ class GameChecks(unittest.TestCase):
                     if process.is_alive():process.terminate();process.join(2)
                     parent.close();frames.close();process.close()
 
+    def test_worker_publishes_during_neat_evaluation(self):
+        import queue
+        context=mp.get_context('spawn')
+        with tempfile.TemporaryDirectory() as root:
+            store=GameStore(root);driver=store.drivers()[0]
+            store.set_profile(driver['id'],{**default_profile(),'algorithm':'neat','population':8},allow_reconfigure=True)
+            parent,child=context.Pipe();frames=context.Queue(2)
+            process=context.Process(target=worker_main,args=(child,frames,root,{'mode':'impara','driver':driver['id'],'epoch':'frame-test'}))
+            process.start();child.close()
+            def receive(kind):
+                deadline=time.monotonic()+15
+                while time.monotonic()<deadline:
+                    if parent.poll(.05):
+                        message=parent.recv();self.assertNotEqual(message['type'],'error',message)
+                        if message['type']==kind:return
+                self.fail('Missing '+kind)
+            try:
+                receive('ready');deadline=time.monotonic()+30;seen=None;last=None;count=0
+                while time.monotonic()<deadline:
+                    try:frame=frames.get(timeout=.25)
+                    except queue.Empty:
+                        if seen is not None:self.fail('Scene delivery stalled during evaluation')
+                        continue
+                    now=time.monotonic()
+                    if frame['meta']['phase']=='valutazione' and seen is None:seen=now
+                    if seen is not None:
+                        if last is not None:self.assertLess(now-last,.25)
+                        last=now;count+=1
+                        if now-seen>=1:break
+                self.assertIsNotNone(seen,'Evaluation not reached');self.assertGreaterEqual(count,10)
+                parent.send({'type':'pause'});receive('paused');receive('saved')
+                parent.send({'type':'stop'});process.join(5);self.assertFalse(process.is_alive())
+            finally:
+                if process.is_alive():process.terminate();process.join(2)
+                parent.close();frames.close();process.close()
+
     def test_real_workers_pause_and_resume(self):
         context=mp.get_context('spawn')
         for method in ('evolution','ppo','neat'):
             with self.subTest(method=method),tempfile.TemporaryDirectory() as root:
                 store=GameStore(root);driver=store.drivers()[0]
-                store.set_profile(driver['id'],{**driver['profile'],'algorithm':method,'population':8,'rollout':64})
+                store.set_profile(driver['id'],{**driver['profile'],'algorithm':method,'population':8,'rollout':64},allow_reconfigure=True)
                 parent,child=context.Pipe();frames=context.Queue(2)
                 process=context.Process(target=worker_main,args=(child,frames,root,{'mode':'impara','driver':driver['id'],'epoch':'test'}))
                 process.start();child.close()
