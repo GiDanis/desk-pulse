@@ -1,5 +1,7 @@
 # DeskPulse OS ⚡ (Italiano)
 
+**Candidata installata: 0.10.4-rc.3 (23 novembre 2026).** Introduce **Apple Calm 1.9.2** con banner degli avvisi adattivi e transizione a dissolvenza per il prossimo evento, **Theme API 2.15** su 71 superfici di presentazione, **Acquario 3D** con modelli dedicati, catalogo specie persistente e rotazione da calendario, calcolo solare locale per alba/tramonto (`solar_time.py`) con attenuazione notturna integrata, e gestione hardware esclusiva della ventola (`smartpc-fan-ownership.service`). Preservate tutte le 44 preferenze, 218 artefatti Gioco e store persistenti. [MasterPlan 3.43](dashboard/design/release-masterplan.md) · [Guida Apple Calm](theme-projects/apple-calm/README.md) · [Report Acquario 3D](dashboard/design/v010-aquarium-3d-installation-report.md).
+
 <p align="center">
   <b>Il Sistema Operativo Ambientale Open-Source per Display da Scrivania e Single Board Computer.</b>
   <br>
@@ -35,7 +37,9 @@ Il rilascio **v0.8.0** introduce il modulo **Rete Locale (LAN Hub)** per router 
 
 ---
 
-**Candidata installata: 0.10.0-rc.2 · 27 ottobre 2026.** Scena **Acquario Calm** a tutto schermo con 2 specie locali e 6 pesci, icona dedicata Apple Calm 1.6.5, 69 superfici (Theme API 2.13), timing di animazione misurato a ~60 callback/s in locale senza dipendenze cloud. Include chiusura funzionale completa di Auto / Gioco (v0.9.4-rc.3), orario comune `HH:mm` persistente in alto a destra, filtro di luminosità/notte e ottimizzazione globale delle prestazioni. [Report chiusura Acquario](dashboard/design/v010-aquarium-completion-report.md) · [MasterPlan 3.27](dashboard/design/release-masterplan.md).
+**Candidata installata: 0.10.4-rc.3 · 23 novembre 2026.** Introduce **Apple Calm 1.9.2** con banner degli avvisi adattivi e transizione a dissolvenza per il prossimo evento, **Theme API 2.15** su 71 superfici di presentazione, **Acquario 3D** con modelli dedicati, catalogo specie persistente e rotazione da calendario, calcolo solare locale per alba/tramonto (`solar_time.py`) con attenuazione notturna integrata, e gestione hardware esclusiva della ventola (`smartpc-fan-ownership.service`). Preservate tutte le 44 preferenze, 218 artefatti Gioco e store persistenti. [MasterPlan 3.43](dashboard/design/release-masterplan.md) · [Guida Apple Calm](theme-projects/apple-calm/README.md) · [Report Acquario 3D](dashboard/design/v010-aquarium-3d-installation-report.md).
+
+**Traguardo precedente: v0.10.0-rc.2 (27 ottobre 2026).** Scena **Acquario Calm** 2D a tutto schermo con 2 specie locali e 6 pesci, icona dedicata Apple Calm 1.6.5, 69 superfici (Theme API 2.13), timing di animazione misurato a ~60 callback/s in locale senza dipendenze cloud. [Report chiusura Acquario](dashboard/design/v010-aquarium-completion-report.md).
 
 **Traguardo precedente: v0.9.4-rc.3 — Chiusura funzionale Auto / Gioco (25 ottobre 2026).** Fine gara proporzionata alle qualifiche, gare a 4 auto simultanee su tre giri, piloti persistenti (Maestro, Crono, Memoria, Linea, Tattico) e checkpoint atomici isolati. Fase Gioco conclusa ed entrata in manutenzione. [Report e ricevuta](dashboard/design/v094-game-functional-closure-report.md).
 

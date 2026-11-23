@@ -1,2 +1,2 @@
 """Software version shared by runtime, installer and recursive release manifest."""
-VERSION = '0.10.0-rc.2'
+VERSION = '0.10.4-rc.3'

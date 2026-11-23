@@ -1,5 +1,13 @@
 # DeskPulse / SmartPC Dashboard
 
+**0.10.4-rc.2 installata con Apple Calm 1.9.1.** Oggi e Orologio hanno un quadrante stabile, gli avvisi adattano lo spazio al testo e Previsioni allinea massima, minima e pioggia. La palette automatica segue alba e tramonto locali, con fascia di attenuazione configurabile in Schermo. [Stato, verifiche e rollback](design/release-masterplan.md#deskpulse--smartpc--masterplan-dei-rilasci)
+
+**0.10.2-rc.2 installata — Acquario3D:** catalogo, gestione e rotazione persistenti;548 file, API2.14 e dati/preferenze conservati. [Consegna e rollback](design/v010-aquarium-3d-installation-report.md).
+
+**Acquario 3D dinamico — 29 ottobre:** quattro tipi, sei modelli animati, catalogo estendibile e gestione persistente con rotazione a giorni di calendario. Installato nella candidata0.10.2-rc.2 dopo le prove PC/ARM/EGLFS e il controllo del servizio reale. [Uso, prove, misure e limiti](design/v010-aquarium-3d-dynamic-implementation-report.md).
+
+**v0.10.1-rc.1 — manutenzione installata:** runtime 533 file e diagnostica separata, import inutilizzati rimossi, dati/preferenze conservati e tre temi PC/EGLFS verificati. Archiviazione storica verificata e pulizia completata. [Stato, prove e limiti](design/v0101-cleanup-report.md).
+
 **v0.10.0-rc.2 — Acquario Calm installata:** scena a due specie/sei pesci, icona Apple1.6.5, rientri verificati con il tema salvato e SDK API2.13 aggiornato. Dati/preferenze conservati. [Chiusura, prove e ricevuta](design/v010-aquarium-completion-report.md).
 
 **Consegna precedente v0.9.4-rc.3 — chiusura funzionale Auto, installata:** ultima correzione della fine gara, piloti e progressi conservati. Il Gioco entra in manutenzione; nuove reti e ricerca competitiva restano rinviate e non qualificate. [Perimetro, prove e ricevuta](design/v094-game-functional-closure-report.md).
@@ -31,7 +39,7 @@ Dashboard Qt Quick per Orange Pi Zero 3W e display Hagibis 960×640 a 60 Hz. La 
 - **Home:** ora e meteo occupano la schermata. Una tessera «prossimo evento» compare solo quando esiste un evento futuro valido, per esempio un'allerta prevista per domani. Nessun evento viene inventato per riempire lo spazio.
 - **Nuovi avvisi:** sulle due viste Home un badge discreto nell'intestazione indica quanti avvisi della casella non sono stati letti e ricorda il tasto **3**. Compare anche per gli avvisi ambientali e dopo la fine del banner. Aprire la casella non segna tutto come letto: il badge si aggiorna quando si apre il dettaglio di ciascun evento, oppure quando l'evento scade o viene annullato. Durante banner, overlay e menu il badge resta nascosto.
 - **Orizzontale:** Oggi ↔ Meteo ↔ Account ChatGPT ↔ Sport ↔ Casa ↔ Rete locale ↔ Gioco. I moduli nascosti sono saltati senza lasciare schermate vuote.
-- **Gioco:** Pista / Classifica / Progressi / Pilota. Rosa fissa Maestro, Crono, Memoria, Linea, Tattico; i quattro allievi usano reti preparate offline e controllano direttamente sterzo, gas e freno; il Maestro non corregge i comandi durante la guida. Primo contesto abilitato Ovale 1 da 12 m, auto standard/asfalto asciutto; altri circuiti elencati come da verificare per la nuova base. Impara, Qualifica, Gara 2–5 su 3/5/10 giri, Impara infinito e Impara sorpasso. Una vettura per pilota; tutte visibili in gara, qualifiche della versione congelata, record puliti separati dai giri percorsi. 5 Start/Pausa; 4/6 seleziona auto e 2/8 camera durante la simulazione, navigazione sbloccata dopo salvataggio. Dossier con metodo, durata, esperienza e risultati; reset dei miglioramenti mantiene la base e lo storico. Nessun allenamento al boot. [Rc.21, timing, misure e limiti](design/v09-timing-improvements-report.md). I precedenti Evo/NEAT/Clone e relativi studi rimangono soltanto nella documentazione storica e nel backup esterno.
+- **Gioco:** Pista / Classifica / Progressi / Pilota. Rosa fissa Maestro, Crono, Memoria, Linea, Tattico; i quattro allievi usano reti preparate offline e controllano direttamente sterzo, gas e freno; il Maestro non corregge i comandi durante la guida. Primo contesto abilitato Ovale 1 da 12 m, auto standard/asfalto asciutto; altri circuiti elencati come da verificare per la nuova base. Impara, Qualifica, Gara 2–5 su 3/5/10 giri, Impara infinito e Impara sorpasso. Una vettura per pilota; tutte visibili in gara, qualifiche della versione congelata, record puliti separati dai giri percorsi. 5 Start/Pausa; 4/6 seleziona auto e 2/8 camera durante la simulazione, navigazione sbloccata dopo salvataggio. Dossier con metodo, durata, esperienza e risultati; reset dei miglioramenti mantiene la base e lo storico. Nessun allenamento al boot. [Rc.21, timing, misure e limiti](design/v09-timing-improvements-report.md). Evo/NEAT/Clone restano fuori dalla rosa attiva; il codice di compatibilità per archivi e diagnostica è conservato. Studi e backup storici sono gestiti secondo la [politica di manutenzione](../os/maintenance-policy.md).
 - **Sport:** 2/8 alterna Serie A, La mia squadra, F1 e MotoGP. Da Serie A, 5 apre tutte le partite della giornata; dalla vista personale apre il club, dalle altre il GP. 7 torna alla dashboard; calendario e classifica restano nel Menu. [Correzione e prove](design/v086-serie-a-fix-report.md).
 - **Viste disponibili:** Oggi Ora/Orologio/Giornata; Meteo Adesso/Previsioni; Account Utilizzo; Sport Serie A/La mia squadra/F1/MotoGP; Casa Preferiti/Ambiente soltanto con misure supportate/Dispositivi; Rete Traffico/iliadbox/Dispositivi. 2/8 cambia dashboard, 4/6 argomento, 5 approfondisce, 7 torna all’origine.
 - **Menu:** Comandi, Impostazioni, Informazioni e Diagnostica. Impostazioni contiene Schermo, Aspetto, Moduli e Home, Avvisi, Servizi collegati e Dati e aggiornamenti. Gestione temi raccoglie i trasferimenti e le revisioni; Sport e Home contiene discipline e riepiloghi. Gli aggiornamenti manuali delle fonti hanno un unico punto centrale. Informazioni resta autonoma e in sola lettura. Le preferenze di visibilità sono persistenti e Oggi resta sempre disponibile. [Percorsi e guida](design/v083-ux-operations.md).
@@ -177,7 +185,9 @@ All'avvio gli eventi vengono ricostruiti dalla cache senza attendere la rete, ma
 
 Le preferenze della fascia di silenzio sono salvate con le altre impostazioni in `QSettings`. Il tasto 3 e il menu sono sempre disponibili; un banner non sposta il focus. Nell'overlay prioritario, 5 apre il dettaglio, 7 lo chiude tornando al punto precedente e 1 lo chiude tornando alla Home. La casella mostra gli avvisi in corso o futuri, fino a tre righe per pagina; 2/8 selezionano e 5 apre il dettaglio.
 
-In **Menu → Impostazioni → Schermo** i tasti `2/8` selezionano una riga, `4/6` modificano il valore e `5` passa al valore successivo. La palette in **Aspetto** offre auto/giorno/notte. Luminosità offre auto/manuale; il livello manuale e i livelli automatici giorno/notte vanno dal 20% al 100% a passi del 5%. In Auto, il valore predefinito è 100% dalle 07:00 alle 20:59 e 65% dalle 21:00 alle 06:59; entrambi i livelli e gli orari sono modificabili. Il tema Auto usa gli stessi orari. Il valore effettivo compare nella schermata.
+In **Menu → Impostazioni → Schermo** i tasti `2/8` selezionano una riga, `4/6` modificano il valore e `5` passa al valore successivo. Dalla candidata 0.10.4, la palette automatica in **Aspetto** usa alba e tramonto locali, calcolati anche offline con le coordinate e il fuso del meteo. Giorno e Notte forzano la palette scelta.
+
+La luminosità automatica usa il livello normale, salvo quando sono attivi insieme notte solare, palette scura e fascia di attenuazione. La fascia conserva gli orari salvati, con 21:00–07:00 come impostazione iniziale. Il livello normale predefinito è 100%, quello attenuato 65%. Il livello attenuato effettivo è al massimo pari a quello normale. In Manuale vale il livello scelto a qualsiasi ora. Tutti i livelli sono regolabili dal 20% al 100% a passi del 5%.
 
 Il pannello Hagibis non espone un controllo retroilluminazione in `/sys/class/backlight` né DDC. Questa regolazione attenua **l'immagine Qt**, non la retroilluminazione fisica e quindi non garantisce un risparmio energetico del pannello. La soglia minima del 20% mantiene visibili i comandi per recuperare il livello desiderato.
 
@@ -213,24 +223,25 @@ Verifica v0.5 del 30/09/2026:
 - Catture EGLFS aggiuntive delle due viste Home con badge e della Home dopo la lettura, senza badge. Il badge non cambia la composizione di ora/meteo e non riserva una tessera eventi.
 - Verifica reale della cache sulla board: bollettino `20260930_1423`, zero allerte per Angri, file di 1268 byte. Primo recupero con quattro richieste; seconda verifica della stessa chiave con una sola richiesta alla pagina ufficiale, senza scaricare nuovamente metadati o mappe.
 
-`check_dashboard.py` esegue un controllo rapido di caricamento QML, navigazione, visibilità delle cinque viste, Account ChatGPT, impostazioni, eventi demo, ritorno del focus, silenzio per orario/categoria, durata reale del banner, badge non letti e ricostruzione da cache al riavvio offline senza usare la rete. `check_events.py` verifica deduplicazione, escalation anche da arancione a rossa, scadenza, persistenza, non letti, isolamento delle fonti, dati invalidi e selezione di Angri. `check_weather_alerts.py` verifica chiave invariata, cache dopo riavvio, scadenze, aggiornamenti invalidi, file corrotto e sostituzione atomica fallita. Si possono avviare con `python3 dashboard/check_dashboard.py`, `python3 dashboard/check_events.py` e `python3 dashboard/check_weather_alerts.py` dove PySide6 è installato; gli ultimi due non richiedono Qt.
+`check_dashboard.py` conserva il controllo storico di caricamento QML, navigazione, visibilità delle viste, Account ChatGPT, impostazioni, eventi demo, ritorno del focus, silenzio per orario/categoria, durata reale del banner, badge non letti e ricostruzione da cache al riavvio offline senza usare la rete. `check_events.py` verifica deduplicazione, escalation anche da arancione a rossa, scadenza, persistenza, non letti, isolamento delle fonti, dati invalidi e selezione di Angri. `check_weather_alerts.py` verifica chiave invariata, cache dopo riavvio, scadenze, aggiornamenti invalidi, file corrotto e sostituzione atomica fallita. Si possono avviare con `python3 dashboard/check_dashboard.py`, `python3 dashboard/check_events.py` e `python3 dashboard/check_weather_alerts.py` dove PySide6 è installato; gli ultimi due non richiedono Qt.
 
 ### Ambiente di sviluppo e manutenzione
 
 Le dipendenze di sviluppo sono fissate in [`requirements-dev.txt`](../requirements-dev.txt): Python 3.12 e PySide6 6.8.2.1 riproducono Qt 6.8.2 della Orange Pi. Dalla radice del repository:
 
 ```bash
-python3.12 -m venv .venv
+python3.12 -m venv --copies .venv
 .venv/bin/python -m pip install -r requirements-dev.txt
+.venv/bin/python scripts/check-dashboard-environment.py
 .venv/bin/ruff check dashboard scripts
-.venv/bin/python scripts/check-dashboard.py --suite all --output-dir /tmp/smartpc-checks
+.venv/bin/python scripts/check-dashboard.py --output-dir /tmp/smartpc-checks
 ```
 
-Il runner avvia ciascuna verifica in un processo separato, con preferenze e dati temporanei, rendering offscreen, timeout ed esiti JSON. `--suite core` esegue i controlli di base; `--suite ui` seleziona l'interfaccia; `--case check_casa_ui` restringe una suite a un controllo e può essere ripetuto. I log e `checks.json` vengono conservati nella directory richiesta. Il probe cloud `check_casa_live.py` è escluso dalle suite e rimane una verifica esplicita separata. Le catture EGLFS richiedono il display libero e sono distinte dai test offscreen.
+Il runner usa per impostazione predefinita `--suite quick`: cinque suite su impostazioni, Aquarium, menu Game, avvio sessione e core temi. Stampa un solo riepilogo; `--verbose` mostra gli esiti intermedi. `--list` elenca i casi senza avviarli. Ogni verifica usa un processo separato, preferenze e dati temporanei, rendering offscreen e timeout. `--suite core` esegue i controlli di base; `--suite ui` seleziona l'interfaccia; `--suite all` mantiene tutte le verifiche locali; `--case check_casa_ui` seleziona direttamente un controllo, anche fuori dalla suite rapida, e può essere ripetuto. I log e `checks.json` vengono conservati nella directory richiesta. Scegliere i controlli per i moduli modificati: il rapido non sostituisce i gate ARM/EGLFS di una consegna. I due controlli storici `check_game.py` e `check_dashboard.py` hanno assunzioni obsolete documentate nel rapporto v0.10.1 e restano nelle suite estese, senza nasconderne i fallimenti. Il probe cloud `check_casa_live.py` è escluso dalle suite e rimane una verifica esplicita separata. Le catture EGLFS richiedono il display libero e sono distinte dai test offscreen.
 
 La v0.2 aveva già superato i test di meteo online, cache offline e riavvio senza Wi-Fi. Sul dispositivo, il servizio riparte automaticamente dopo un crash; la configurazione è in [smartpc-dashboard.service](../os/system/smartpc-dashboard.service). La scena diagnostica visualizza FPS e intervallo p95 tra frame, ma un valore basso su una schermata ferma è normale: non misura da solo la fluidità delle transizioni. `benchmark.py` misura intervalli di frame mentre simula cambi di vista sul renderer EGLFS/GPU; va eseguito con il servizio fermo. `soak.py` osserva memoria, temperatura e stabilità del servizio senza inviare input.
 
-Prima di installare una nuova versione sulla board, salvare `/opt/smartpc/dashboard` in `/var/backups/`. Il backup della v0.3 precedente al modulo Account è `/var/backups/smartpc-dashboard-v03-before-account`. Per ripristinare, copiare i file salvati nella cartella dell'app e riavviare il servizio; disabilitare anche `smartpc-account-sync.timer` sul PC se la funzione non serve più. Git e il repository pubblico esistono; per ogni release allineare commit, tag, versione Info e manifest dei file installati, conservando anche il backup della distribuzione precedente.
+Prima di installare una nuova versione sulla board, arrestare il servizio e salvare runtime, configurazioni e dati con proprietari e permessi, secondo la [policy di manutenzione](../os/maintenance-policy.md). Il rollback completo della consegna v0.10.1 è `/var/backups/smartpc-maintenance/rollback-0.10.0-rc.2-20261028-200231`; i backup storici vengono esportati sul PC e verificati prima della rimozione. Per ogni release distinguere versione del checkout, manifest installato, evidenze e stato Git.
 
 Controlli utili:
 
@@ -240,7 +251,7 @@ sudo journalctl -u smartpc-dashboard --since "10 minutes ago"
 sudo systemctl restart smartpc-dashboard
 ```
 
-Il backup della v0.4 prima del motore eventi è `/var/backups/smartpc-dashboard-v04-before-events`; quello della v0.5 prima del secondo formato di banner è `/var/backups/smartpc-dashboard-v05-before-banner-sizes`; prima di cache e badge è stato salvato `/var/backups/smartpc-dashboard-v05-before-cache-badge`. Il target è 960×640 a 60 Hz. Le scene future andranno misurate sulla board. Il vecchio timer Xorg per la luminosità è disabilitato nel kiosk EGLFS; il conflitto dell'aggiornamento Xorg resta annotato nel [resoconto OS](../os/board-audit-2026-09-29.md).
+I percorsi dei vecchi backup v0.3–v0.5 sono registrati nell’inventario storico della manutenzione v0.10.1. Il target è 960×640 a 60 Hz. Le scene future andranno misurate sulla board. Il vecchio timer Xorg per la luminosità è disabilitato nel kiosk EGLFS; il conflitto dell'aggiornamento Xorg resta annotato nel [resoconto OS](../os/board-audit-2026-09-29.md).
 
 ### Revisione Sport: dettaglio e navigazione
 
@@ -265,7 +276,7 @@ La revisione precedente riportava **1 Indietro / 7 Home** nelle guide. La riconc
 
 **Menu → Impostazioni** divide le preferenze in **Schermo**, **Aspetto**, **Moduli e Home**, **Avvisi**, **Servizi collegati** e **Dati e aggiornamenti**. Sport e Home contiene visibilità, riepiloghi e configurazioni Calcio/F1/MotoGP disponibili; Gestione temi raccoglie i trasferimenti e le revisioni. Le liste hanno capacità adattiva con poche righe grandi; il focus si ferma ai bordi e conserva la selezione al ritorno dal sottomenu. [Guida 0.8.3](design/v083-ux-operations.md).
 
-Aspetto separa tema e animazioni dalle regolazioni della luce. I livelli inattivi sono indicati in grigio: il valore manuale si modifica in modalità manuale, quelli giorno/notte in automatico. Gli orari restano condivisi con il tema automatico. La regolazione attenua l'immagine e conserva il limite minimo del 20%; non modifica la retroilluminazione fisica.
+Aspetto contiene palette e animazioni. Schermo contiene i livelli di luminosità e la fascia di attenuazione. I livelli inattivi sono indicati in grigio. La regolazione attenua l'immagine e conserva il limite minimo del 20%.
 
 Account permette di modificare le soglie di avviso e utilizzo critico, salvate separatamente e applicate senza riavvio. La soglia critica rimane superiore a quella di avviso. **Notifiche** apre due sottomenu: **Fascia silenzio** (attivazione, dalle, alle) e **Avvisi sullo schermo** (Meteo, Account e notifiche gol quando Sport è disponibile). Il silenzio orario sospende solo i banner; gli urgenti delle categorie abilitate restano visibili. Disabilitare Meteo o Account nasconde invece banner e urgenti a qualsiasi ora, conservando gli avvisi nell'elenco. I gol conservano il requisito del collaudo live e rispettano la fascia silenzio. Sport rimanda al menu Notifiche per questa preferenza.
 
@@ -293,3 +304,19 @@ Gli asset originali AI sono in `assets/aquarium/calm-v1`, validati da catalogo/h
 rig e sprite derivati dallo stesso rig sono confrontabili nel harness isolato.
 La correttezza offscreen non certifica 60 fps fisici: leggere il report della
 candidata e i limiti della qualifica prima di attribuirle tale risultato.
+
+
+### Evoluzione 3D dinamica nei sorgenti
+
+Con Qt Quick 3D disponibile, il nuovo percorso apre veri modelli 3D e aggiunge
+**9 Menu → Gestisci pesci**. 4/6 cambiano sezione; 2/8 selezionano; 5 apre la
+scheda; 7 torna alla vasca. Nome, variante, giorni e prossimo tipo si salvano
+esplicitamente. Zero giorni significa fisso; gli altri sono giorni di calendario,
+anche a board spenta. Lo storico consente di riportare un individuo in vasca.
+
+Catalogo/mesh sono in `assets/aquarium/calm-3d-v1`; rig e formato sono descritti
+nel report. Nuovi asset/dati compatibili richiedono il riavvio dell'applicazione.
+I modelli con nome contenente il digest non vanno sovrascritti o rimossi finché
+referenziati da permanenze. Per il recupero tecnico del vecchio percorso usare
+`SMARTPC_AQUARIUM_RENDERER=2d`. Le dipendenze ARM Qt Quick 3D restano da includere
+nella futura consegna: questa modifica non le ha installate nel sistema.
