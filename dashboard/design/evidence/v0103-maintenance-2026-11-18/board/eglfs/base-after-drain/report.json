@@ -1,0 +1,72 @@
+{
+  "status": "failed",
+  "theme": "base",
+  "glContext": {
+    "scope": "native first swap, current render context; no GL state mutation",
+    "pid": 120342,
+    "vendor": "Imagination Technologies",
+    "renderer": "PowerVR B-Series BXM-4-64",
+    "version": "OpenGL ES 3.2 build 24.2@6603887",
+    "glsl": "OpenGL ES GLSL ES 3.20 build 24.2@6603887",
+    "eglConfig": {
+      "id": 16,
+      "red": 8,
+      "green": 8,
+      "blue": 8,
+      "alpha": 0,
+      "depth": 24,
+      "stencil": 8,
+      "samples": 0,
+      "surfaceType": 5,
+      "renderableType": 69,
+      "nativeVisualId": 875713112
+    },
+    "qtRhiVersion": [
+      3,
+      2
+    ]
+  },
+  "requestedSurfaceVersion": [
+    3,
+    0
+  ],
+  "rhiBackend": "GraphicsApi.OpenGL",
+  "mappedGraphicsLibraries": [
+    "libEGL.so.1.0.0",
+    "libGLESv2_PVR_MESA.so.24.2.6603887",
+    "libpvr_dri_support.so.24.2.6603887"
+  ],
+  "checks": [
+    "savedThemeForNavigation",
+    "expectedTheme",
+    "native3dAvailable",
+    "sixRealActors",
+    "pauseAccepted",
+    "pauseStopsPoses",
+    "resumeAccepted",
+    "managementIsPresented",
+    "managementRows",
+    "durationSaved",
+    "sameFishAfterManagement",
+    "replacementQueued",
+    "otherFishIdentitiesPreserved",
+    "historyPreserved"
+  ],
+  "error": "Traceback (most recent call last):\n  File \"/var/lib/smartpc-dashboard/maintenance-work/test-project/scripts/check-aquarium-3d.py\", line 105, in advance\n    state['ticks']=page('tickCount');state['started']=time.monotonic();sample(0);state['nextSample']=10;state['step']=7\n                                                                       ~~~~~~^^^\n  File \"/var/lib/smartpc-dashboard/maintenance-work/test-project/scripts/check-aquarium-3d.py\", line 56, in sample\n    state['resources'].append({'aquariumSnapshot':h.aquarium.snapshot,'moving':page('moving'),'presented':page('presented'),'assetsReady':page('assetsReady'),'sceneError':page('scene.errorText'),'lifecycle':page('ctx.lifecycle.state'),'suspended':page('ctx.motionPolicy.suspended'),'elapsed':elapsed,'monotonic':now,'cpuSeconds':cpu,'cpuPercentOneCore':(cpu-previous['cpuSeconds'])/(now-previous['monotonic'])*100 if previous else None,'rssKiB':int(status['VmRSS'].split()[0]),'temperaturesC':{t.parent.name:int(t.read_text())/1000 for t in Path('/sys/class/thermal').glob('thermal_zone*/temp')},'cpuFrequencyKHz':{t.parent.name:t.read_text().strip() for t in Path('/sys/devices/system/cpu/cpufreq').glob('policy*/scaling_cur_freq')}})\n                                                                                                                                                                           ~~~~^^^^^^^^^^^^^^^^^^^\n  File \"/var/lib/smartpc-dashboard/maintenance-work/test-project/scripts/check-aquarium-3d.py\", line 43, in page\n    def page(s):return expr('aquariumPage.currentItem ? aquariumPage.currentItem.'+s+':null')\n                       ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/var/lib/smartpc-dashboard/maintenance-work/test-project/scripts/check-aquarium-3d.py\", line 42, in expr\n    def expr(s):return h.expression(s)\n                       ~~~~~~~~~~~~^^^\n  File \"/var/lib/smartpc-dashboard/maintenance-work/test-project/dashboard/theme_fixture_support.py\", line 188, in expression\n    assert not expr.hasError(),str(expr.error().toString())\n           ^^^^^^^^^^^^^^^^^^^\nAssertionError: <Unknown File>:0: TypeError: Cannot read property 'errorText' of undefined\n",
+  "qmlWarnings": [],
+  "capabilityWarnings": [],
+  "networkAttempts": [],
+  "seconds": null,
+  "warmup": 2.0,
+  "callbacks": 0,
+  "callbacksPerSecond": null,
+  "poseTicks": null,
+  "p95Ms": null,
+  "p99Ms": null,
+  "maxMs": null,
+  "stallsOver50Ms": 0,
+  "rawIntervalsMs": [],
+  "resourceSamples": [],
+  "drawCalls": null,
+  "scope": "Private real Main, normal Qt event loop, saved theme and header clock. Software callbacks/poses, not optical FPS. Original procedural skinned meshes; no MSAA/shadows. Existing immutable theme validation reused only for copied bundle, new surfaces tested here; not a new full theme matrix."
+}

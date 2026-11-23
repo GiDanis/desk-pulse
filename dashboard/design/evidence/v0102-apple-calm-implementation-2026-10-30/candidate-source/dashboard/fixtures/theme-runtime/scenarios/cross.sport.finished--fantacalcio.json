@@ -1,0 +1,53 @@
+{
+  "id": "cross.sport.finished:fantacalcio",
+  "covers": [],
+  "family": "sport-match",
+  "surfaceId": "sport.match.detail",
+  "variant": "finished×fantacalcio",
+  "clockEpoch": 1790848800,
+  "initialProperties": {
+    "familyId": "sport",
+    "overlay": "sportDetail",
+    "sportDetailPage": 3
+  },
+  "domainSetup": [
+    "match:finished"
+  ],
+  "expectedExpressions": [
+    "sportOverlay.detail",
+    "sportDetailPage === 3",
+    "sportMatch.canonicalMatchId.length > 0",
+    "sportMatch.status === \"finished\"",
+    "sportMatch.homeScore === 0",
+    "sportMatch.awayScore === 0",
+    "sportMatch.scoreText === \"0 – 0\"",
+    "sportFixtures.filter(match => match.canonicalMatchId === sportMatchId).length === 1"
+  ],
+  "invariants": [
+    "navigationAndTab",
+    "overlayStack",
+    "inputFocus",
+    "providerEffects",
+    "actorIdentity",
+    "eventFlagsAndDeadline"
+  ],
+  "actions": [
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 4
+    },
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 6
+    }
+  ],
+  "publicApiBinding": "deferredA1",
+  "expectedDomain": {
+    "status": "finished",
+    "homeScore": 0,
+    "awayScore": 0,
+    "scoreText": "0 – 0"
+  }
+}

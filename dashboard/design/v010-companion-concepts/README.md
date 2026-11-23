@@ -1,6 +1,8 @@
-# Compagno v0.10 — quattro direzioni grafiche
+# Compagno v0.11 — quattro direzioni grafiche storiche
 
 11 ottobre 2026 · concept generati con imagegen integrato.
+
+Riesame del 20 novembre: A resta la direzione approvata per il cane. Le composizioni UI sono riferimenti di ottobre: la produzione deve rispettare Apple Calm 1.9.1, spazio utile/banner adattivi e scala del testo correnti. [Riesame e piano del campione](../v011-companion-review-2026-11-20.md). Nessun nuovo asset prodotto in questa revisione.
 
 **Direzione scelta dall'utente: A — Calm / illustrazione 2D.** Accudimento attivo, bisogni/progressione e reazioni agli avvisi sono approfonditi nella [specifica funzionale e tecnica](/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/design/v010-companion-functional-spec.md). La scelta riguarda lo stile; il personaggio master e il layout finale sono da qualificare.
 
@@ -32,4 +34,4 @@ Personaggio morbido e volumetrico, simile a una mascotte. La resa non obbliga a 
 
 Le alternative B/C/D sono conservate come confronti storici. Lo sviluppo proposto segue A. Servono esempi Home/presenza compatta, scena notte, avviso e stati del cane; leggibilità e animazione richiedono prove pertinenti sulla board.
 
-[Prompt completi](/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/design/v010-companion-concepts/PROMPTS.md) · [Analisi v0.10](/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/design/v010-companion-analysis.md)
+[Prompt completi](/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/design/v010-companion-concepts/PROMPTS.md) · [Analisi v0.11](/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/design/v010-companion-analysis.md)

@@ -1,0 +1,45 @@
+{
+  "apiVersion": 1,
+  "presentations": [
+    {
+      "id": "example.home.summary",
+      "apiVersion": 1,
+      "contentIds": [
+        "home.now"
+      ],
+      "file": "extensions/example/SummaryHome.qml",
+      "name": "Riepilogo personale"
+    },
+    {
+      "id": "example.alerts.small",
+      "file": "extensions/example/CompactNotice.qml",
+      "contentIds": [
+        "alerts.banner.small"
+      ],
+      "apiVersion": 1,
+      "contextApi": "notification1",
+      "name": "Titolo centrato compatto",
+      "layoutContract": "small-line"
+    },
+    {
+      "id": "example.alerts.large",
+      "file": "extensions/example/PosterNotice.qml",
+      "contentIds": [
+        "alerts.banner.large"
+      ],
+      "apiVersion": 1,
+      "contextApi": "notification1",
+      "name": "Avviso a manifesto",
+      "layoutContract": "poster"
+    }
+  ],
+  "tokens": {
+    "ext.summary.clockInset": {
+      "type": "int",
+      "alias": "summaryClockInset",
+      "default": 24,
+      "minimum": 0,
+      "maximum": 80
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "cases": [
+    {
+      "arguments": [
+        "--list"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "arguments": [
+        "--case",
+        "check_casa_ui",
+        "--list"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "arguments": [
+        "--case",
+        "unknown",
+        "--list"
+      ],
+      "exitCode": 2,
+      "expectedExitCode": 2
+    },
+    {
+      "arguments": [],
+      "exitCode": 2,
+      "expectedExitCode": 2
+    },
+    {
+      "arguments": [
+        "--case",
+        "check_aquarium",
+        "--timeout",
+        "0.001",
+        "--output-dir",
+        "/tmp/smartpc-runner-timeout-probe"
+      ],
+      "exitCode": 1,
+      "expectedExitCode": 1
+    }
+  ]
+}

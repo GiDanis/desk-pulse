@@ -1,0 +1,37 @@
+F401 [*] `time` imported but unused
+ --> dashboard/aquarium_population.py:5:8
+  |
+3 | from datetime import datetime
+4 | from pathlib import Path
+5 | import time
+  |        ^^^^
+6 | import uuid
+7 | from PySide6.QtCore import QObject,Property,QStandardPaths,QTimer,Signal,Slot
+  |
+help: Remove unused import: `time`
+  |
+4 | from pathlib import Path
+  - import time
+5 | import uuid
+  |
+
+F401 [*] `PySide6.QtCore.Property` imported but unused
+ --> dashboard/aquarium_population.py:7:36
+  |
+5 | import time
+6 | import uuid
+7 | from PySide6.QtCore import QObject,Property,QStandardPaths,QTimer,Signal,Slot
+  |                                    ^^^^^^^^
+8 | from aquarium_catalog import load_3d_catalog
+9 | from aquarium_store import AquariumStore
+  |
+help: Remove unused import: `PySide6.QtCore.Property`
+  |
+6 | import uuid
+  - from PySide6.QtCore import QObject,Property,QStandardPaths,QTimer,Signal,Slot
+7 + from PySide6.QtCore import QObject,QStandardPaths,QTimer,Signal,Slot
+8 | from aquarium_catalog import load_3d_catalog
+  |
+
+Found 2 errors.
+[*] 2 fixable with the `--fix` option.

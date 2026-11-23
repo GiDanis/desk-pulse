@@ -1,9 +1,10 @@
 # SmartPC v0.11 — Ricerca online per il Compagno A
 
-> **Riallineamento roadmap · 13 ottobre 2026:** Compagno ora v0.11, memoria/scene AI v0.12; la nuova v0.10 è Acquario. Nomi dei file e asset conservati per mantenere i collegamenti. Baseline, fonti e proposte dell’11 ottobre restano storiche; per stato corrente e numerazione vale il [MasterPlan](release-masterplan.md), revisione 2.68. Nessuna nuova verifica sulla board.
-**Revisione 1 · 11 ottobre 2026 · Europe/Rome**
+**Revisione 2 · 20 novembre 2026 · Europe/Rome**
 
-**Stato: studio, senza implementazione o benchmark.** Integra [analisi](v010-companion-analysis.md) e [specifica](v010-companion-functional-spec.md). Conserva stile A, accudimento attivo, progressione, presenza ambientale, schermata dedicata e reazioni agli avvisi. Baseline locale: MasterPlan 2.56, core 0.9.0-rc.6, Theme API 2.9; nessuna nuova verifica della board.
+Compagno v0.11, Memoria/AI v0.12, Acquario v0.10; nomi storici dei file conservati. Le schede S1–S14 sono la ricerca dell'11 ottobre; il §10 distingue il ricontrollo tecnico corrente e le nuove evidenze locali.
+
+**Stato: studio, senza implementazione o benchmark del cane.** Integra [analisi](v010-companion-analysis.md) e [specifica](v010-companion-functional-spec.md). Conserva stile A, accudimento attivo, progressione, presenza ambientale, schermata dedicata e reazioni agli avvisi. Baseline documentata corrente: MasterPlan 3.42, core 0.10.4-rc.2, Theme API 2.15/71 superfici e Apple Calm 1.9.1; nessuna nuova verifica della board. Il [riesame del 20 novembre](v011-companion-review-2026-11-20.md) sostituisce le ipotesi superate, senza attribuire nuove conferme agli studi di ottobre.
 
 ## 1. Metodo e forza delle evidenze
 
@@ -140,3 +141,14 @@ La ricerca **rafforza il 2D ibrido** come prima ipotesi coerente con gli asset A
 ## 9. Cosa questa ricerca non chiude
 
 Nessuna frequenza “scientificamente corretta” per alimentare il cane, nessun 60 FPS garantito, nessuna garanzia di coerenza degli asset AI. Non introduce dialogo, voce, riconoscimento dell'utente, inferenza NPU o apprendimento del carattere nella v0.11. La continuità locale di identità/legame resta distinta dalla memoria narrativa e dal planner della v0.12.
+
+## 10. Ricontrollo tecnico e nuove evidenze · 20 novembre
+
+Ricontrollati online quattro riferimenti primari: [Qt Performance](https://doc.qt.io/qt-6.8/qtquick-performance.html), [Qt Animator](https://doc.qt.io/qt-6.8/qml-qtquick-animator.html), [SQLite Transactions](https://www.sqlite.org/lang_transaction.html), [SQLite synchronous](https://www.sqlite.org/pragma.html#pragma_synchronous). Sono documenti tecnici, non nuovi studi empirici sul Compagno. Il resto della bibliografia mantiene la data di consultazione dell'11 ottobre.
+
+- **S12/S13:** il budget di frame riguarda tutta la GUI; Animator non aggiorna le proprietà QML a ogni posizione intermedia. Il confronto ABBA [locale del 30 ottobre](v0102-apple-calm-implementation-report.md#movimento-e-gpu) non ha motivato una conversione globale: usare animazioni di proprietà come base e verificare gli adattamenti del cane.
+- **S14:** il commit può fallire con `SQLITE_BUSY` e richiede gestione dell'esito. WAL con sincronizzazione `NORMAL` non equivale a garanzia di durata dopo perdita di alimentazione. Proposte per il solo nuovo store: `DELETE/EXTRA`, oppure `WAL/FULL` se motivato; verificarle sul target e conservare gli altri DB.
+- **Nuove evidenze di prodotto:** manutenzione Acquario con pending/commit/retry, layout banner Apple Calm 1.9.1, misure della GUI reale e limiti delle prove grafiche. Il [riesame](v011-companion-review-2026-11-20.md#3-lezioni-locali-da-usare-davvero) ne esplicita il trasferimento al cane.
+- **Nuovo screening numerico:** [12 combinazioni su sette giorni](v011-companion-review-2026-11-20.md#4-studio-numerico-della-cura) rilevano il deficit dei vecchi coefficienti e confrontano un candidato alternativo. È aritmetica di progetto riproducibile, non una validazione di coinvolgimento, comportamento reale o prestazioni.
+
+Le fonti esterne informano la scelta; le consegne locali ne restringono il campo; prove specifiche del cane dovranno verificare ciò che resta aperto. La qualità del modello che aiuta a scrivere il progetto non sostituisce queste tre categorie di evidenza.

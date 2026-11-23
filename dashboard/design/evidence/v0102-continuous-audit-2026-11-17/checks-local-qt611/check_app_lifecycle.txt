@@ -1,0 +1,96 @@
+test_automatic_timers_and_provider_shutdown (__main__.LauncherTests.test_automatic_timers_and_provider_shutdown) ... FAIL
+test_failed_qml_load_closes_services (__main__.LauncherTests.test_failed_qml_load_closes_services) ... FAIL
+test_normal_exit_closes_services (__main__.LauncherTests.test_normal_exit_closes_services) ... FAIL
+
+======================================================================
+FAIL: test_automatic_timers_and_provider_shutdown (__main__.LauncherTests.test_automatic_timers_and_provider_shutdown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 118, in test_automatic_timers_and_provider_shutdown
+    self.check_exit("automatic")
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 108, in check_exit
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : Rete locale [config]: Configura la credenziale privata iliadbox e rileggi Rete.
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 123, in <module>
+    child(sys.argv[1])
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 92, in child
+    result = main()
+             ^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/app.py", line 58, in main
+    game = GameService(async_metadata=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game.py", line 43, in __init__
+    self._store=GameStore(self._root)
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game_store.py", line 124, in __init__
+    self._seed_default_drivers(db)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game_store.py", line 139, in _seed_default_drivers
+    from game_residual import ROSTER,profile,seed_policy
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game_residual.py", line 6, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+FAIL: test_failed_qml_load_closes_services (__main__.LauncherTests.test_failed_qml_load_closes_services)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 115, in test_failed_qml_load_closes_services
+    self.check_exit("qml-failure")
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 108, in check_exit
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 123, in <module>
+    child(sys.argv[1])
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 92, in child
+    result = main()
+             ^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/app.py", line 58, in main
+    game = GameService(async_metadata=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game.py", line 43, in __init__
+    self._store=GameStore(self._root)
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game_store.py", line 124, in __init__
+    self._seed_default_drivers(db)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game_store.py", line 139, in _seed_default_drivers
+    from game_residual import ROSTER,profile,seed_policy
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game_residual.py", line 6, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+======================================================================
+FAIL: test_normal_exit_closes_services (__main__.LauncherTests.test_normal_exit_closes_services)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 112, in test_normal_exit_closes_services
+    self.check_exit("normal")
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 108, in check_exit
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 123, in <module>
+    child(sys.argv[1])
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 92, in child
+    result = main()
+             ^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/app.py", line 58, in main
+    game = GameService(async_metadata=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game.py", line 43, in __init__
+    self._store=GameStore(self._root)
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game_store.py", line 124, in __init__
+    self._seed_default_drivers(db)
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game_store.py", line 139, in _seed_default_drivers
+    from game_residual import ROSTER,profile,seed_policy
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/game_residual.py", line 6, in <module>
+    import numpy as np
+ModuleNotFoundError: No module named 'numpy'
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.059s
+
+FAILED (failures=3)

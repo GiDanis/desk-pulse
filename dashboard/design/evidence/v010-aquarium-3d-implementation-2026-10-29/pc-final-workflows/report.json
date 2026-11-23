@@ -1,0 +1,31 @@
+{
+  "status": "failed",
+  "theme": "base",
+  "glContext": {
+    "vendor": "Mesa",
+    "renderer": "llvmpipe (LLVM 21.1.8, 256 bits)",
+    "version": "4.5 (Compatibility Profile) Mesa 26.0.8-1ubuntu0.3"
+  },
+  "checks": [
+    "savedThemeForNavigation",
+    "expectedTheme",
+    "native3dAvailable"
+  ],
+  "error": "Traceback (most recent call last):\n  File \"/home/giuseppe/Documenti/Workspace/SmartPC/scripts/check-aquarium-3d.py\", line 55, in advance\n    elif step==1 and page('assetsReady') and page('tickCount')>30:\n                     ^^^^^^^^^^^^^^^^^^^\n  File \"/home/giuseppe/Documenti/Workspace/SmartPC/scripts/check-aquarium-3d.py\", line 26, in page\n    def page(s):return expr('aquariumPage.currentItem.'+s)\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/giuseppe/Documenti/Workspace/SmartPC/scripts/check-aquarium-3d.py\", line 25, in expr\n    def expr(s):return h.expression(s)\n                       ^^^^^^^^^^^^^^^\n  File \"/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_fixture_support.py\", line 188, in expression\n    assert not expr.hasError(),str(expr.error().toString())\n           ^^^^^^^^^^^^^^^^^^^\nAssertionError: <Unknown File>:0: TypeError: Cannot read property 'assetsReady' of null\n",
+  "qmlWarnings": [],
+  "capabilityWarnings": [],
+  "networkAttempts": [],
+  "seconds": null,
+  "warmup": 1,
+  "callbacks": 0,
+  "callbacksPerSecond": null,
+  "poseTicks": null,
+  "p95Ms": null,
+  "p99Ms": null,
+  "maxMs": null,
+  "stallsOver50Ms": 0,
+  "rawIntervalsMs": [],
+  "resourceSamples": [],
+  "drawCalls": null,
+  "scope": "Private real Main, normal Qt event loop, saved theme and header clock. Software callbacks/poses, not optical FPS. Original procedural skinned meshes; no MSAA/shadows. Existing immutable theme validation reused only for copied bundle, new surfaces tested here; not a new full theme matrix."
+}

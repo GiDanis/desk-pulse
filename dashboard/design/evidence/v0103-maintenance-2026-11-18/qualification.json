@@ -1,0 +1,189 @@
+{
+  "status": "passed",
+  "pcCases": {
+    "check_app_lifecycle": {
+      "status": "passed",
+      "receipt": "pc-checks/checks.json"
+    },
+    "check_aquarium": {
+      "status": "passed",
+      "receipt": "pc-checks/checks.json"
+    },
+    "check_aquarium_population": {
+      "status": "passed",
+      "receipt": "pc-checks/checks.json"
+    },
+    "check_continuous_maintenance": {
+      "status": "passed",
+      "receipt": "pc-final-soak-check/checks.json"
+    },
+    "check_theme_actions_ui": {
+      "status": "passed",
+      "receipt": "pc-ui-checks/checks.json"
+    },
+    "check_theme_api_adapters": {
+      "status": "passed",
+      "receipt": "pc-ui-checks/checks.json"
+    },
+    "check_aquarium_commit_ui": {
+      "status": "passed",
+      "receipt": "pc-commit-2d-check/checks.json"
+    }
+  },
+  "armCases": [
+    {
+      "case": "check_app_lifecycle",
+      "exitCode": 0,
+      "status": "passed",
+      "elapsedSeconds": 7.148
+    },
+    {
+      "case": "check_aquarium",
+      "exitCode": 0,
+      "status": "passed",
+      "elapsedSeconds": 0.652
+    },
+    {
+      "case": "check_aquarium_commit_ui",
+      "exitCode": 0,
+      "status": "passed",
+      "elapsedSeconds": 3.328
+    },
+    {
+      "case": "check_aquarium_population",
+      "exitCode": 0,
+      "status": "passed",
+      "elapsedSeconds": 0.754
+    },
+    {
+      "case": "check_continuous_maintenance",
+      "exitCode": 0,
+      "status": "passed",
+      "elapsedSeconds": 2.184
+    },
+    {
+      "case": "check_theme_actions_ui",
+      "exitCode": 0,
+      "status": "passed",
+      "elapsedSeconds": 8.775
+    },
+    {
+      "case": "check_theme_api_adapters",
+      "exitCode": 0,
+      "status": "passed",
+      "elapsedSeconds": 21.542
+    }
+  ],
+  "native": {
+    "base-final": {
+      "status": "passed",
+      "theme": "base",
+      "checks": [
+        "savedThemeForNavigation",
+        "expectedTheme",
+        "native3dAvailable",
+        "sixRealActors",
+        "pauseAccepted",
+        "pauseStopsPoses",
+        "resumeAccepted",
+        "managementIsPresented",
+        "managementRows",
+        "durationSaved",
+        "sameFishAfterManagement",
+        "replacementQueued",
+        "otherFishIdentitiesPreserved",
+        "historyPreserved",
+        "sixMeshDrawCalls",
+        "urgentOwnsInputAndStopsPoses",
+        "urgentNeedsExplicitResume",
+        "reducedRequested",
+        "reducedIsStatic3d",
+        "offRequested",
+        "offIsStatic3d"
+      ],
+      "callbacks": 482,
+      "poseTicks": 482,
+      "p95Ms": 18.78105,
+      "maxMs": 28.382597,
+      "stallsOver50Ms": 0,
+      "seconds": 8.032748969038948,
+      "scope": "Private real Main, normal Qt event loop, saved theme and header clock. Software callbacks/poses, not optical FPS. Original procedural skinned meshes; no MSAA/shadows. Existing immutable theme validation reused only for copied bundle, new surfaces tested here; not a new full theme matrix."
+    },
+    "functional": {
+      "status": "passed",
+      "theme": "functional",
+      "checks": [
+        "savedThemeForNavigation",
+        "expectedTheme",
+        "native3dAvailable",
+        "sixRealActors",
+        "pauseAccepted",
+        "pauseStopsPoses",
+        "resumeAccepted",
+        "managementIsPresented",
+        "managementRows",
+        "durationSaved",
+        "sameFishAfterManagement",
+        "replacementQueued",
+        "otherFishIdentitiesPreserved",
+        "historyPreserved",
+        "sixMeshDrawCalls",
+        "urgentOwnsInputAndStopsPoses",
+        "urgentNeedsExplicitResume",
+        "reducedRequested",
+        "reducedIsStatic3d",
+        "offRequested",
+        "offIsStatic3d"
+      ],
+      "callbacks": 479,
+      "poseTicks": 480,
+      "p95Ms": 17.812712,
+      "maxMs": 40.678284,
+      "stallsOver50Ms": 0,
+      "seconds": 8.032703427015804,
+      "scope": "Private real Main, normal Qt event loop, saved theme and header clock. Software callbacks/poses, not optical FPS. Original procedural skinned meshes; no MSAA/shadows. Existing immutable theme validation reused only for copied bundle, new surfaces tested here; not a new full theme matrix."
+    },
+    "apple": {
+      "status": "passed",
+      "theme": "studio.applecalm",
+      "checks": [
+        "savedThemeForNavigation",
+        "expectedTheme",
+        "native3dAvailable",
+        "sixRealActors",
+        "pauseAccepted",
+        "pauseStopsPoses",
+        "resumeAccepted",
+        "managementIsPresented",
+        "managementRows",
+        "durationSaved",
+        "sameFishAfterManagement",
+        "replacementQueued",
+        "otherFishIdentitiesPreserved",
+        "historyPreserved",
+        "sixMeshDrawCalls",
+        "urgentOwnsInputAndStopsPoses",
+        "urgentNeedsExplicitResume",
+        "reducedRequested",
+        "reducedIsStatic3d",
+        "offRequested",
+        "offIsStatic3d"
+      ],
+      "callbacks": 480,
+      "poseTicks": 480,
+      "p95Ms": 17.960838,
+      "maxMs": 21.149729,
+      "stallsOver50Ms": 0,
+      "seconds": 8.028870158013888,
+      "scope": "Private real Main, normal Qt event loop, saved theme and header clock. Software callbacks/poses, not optical FPS. Original procedural skinned meshes; no MSAA/shadows. Existing immutable theme validation reused only for copied bundle, new surfaces tested here; not a new full theme matrix."
+    }
+  },
+  "caveats": [
+    "Selected regressions only; not full suite.",
+    "Initial missing harness renderers corrected in diagnostic staging only.",
+    "Software broker probe uses 2D on PC; 3D qualified separately on ARM EGLFS.",
+    "Initial Base window had only 2 callbacks and was excluded; final sample checked moving state.",
+    "Intermediate diagnostic used a wrong wrapper property; corrected before final Base sample.",
+    "Two existing F401 imports in aquarium_population.py remain in the lint report."
+  ]
+}

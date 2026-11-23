@@ -1,0 +1,49 @@
+{
+  "scope": "Synthetic Qt Quick window; queued frame-swapped callback intervals during animation, not optical frames/GPU execution time/USB latency/full dashboard qualification",
+  "qt": "6.8.2",
+  "machine": "aarch64",
+  "platform": "eglfs",
+  "requestedBackend": "opengl",
+  "graphicsApi": "GraphicsApi.OpenGL",
+  "sequence": "ABBA",
+  "secondsPerBlock": 10.0,
+  "blocks": [
+    {
+      "recipe": "property",
+      "intervals": 315,
+      "meanMs": 14.689423806362717,
+      "p95Ms": 17.86067200009711,
+      "p99Ms": 17.981006998525118,
+      "maxMs": 18.66497400078515,
+      "cpuSeconds": 0.741157463
+    },
+    {
+      "recipe": "animator",
+      "intervals": 452,
+      "meanMs": 16.67591630754048,
+      "p95Ms": 17.57700300004217,
+      "p99Ms": 17.985841001063818,
+      "maxMs": 18.156634001570637,
+      "cpuSeconds": 0.8821050660000003
+    },
+    {
+      "recipe": "animator",
+      "intervals": 449,
+      "meanMs": 16.67083797105674,
+      "p95Ms": 17.51312600026722,
+      "p99Ms": 17.958590000489494,
+      "maxMs": 18.153717999666696,
+      "cpuSeconds": 0.9146373530000003
+    },
+    {
+      "recipe": "property",
+      "intervals": 299,
+      "meanMs": 14.667024739124054,
+      "p95Ms": 17.779629999495228,
+      "p99Ms": 18.058300000120653,
+      "maxMs": 18.264594000356738,
+      "cpuSeconds": 0.7073555090000001
+    }
+  ],
+  "decision": "Retain existing NumberAnimation pending benefit and semantic equivalence in the actual dashboard; this microbenchmark alone does not authorize a global change."
+}

@@ -1,11 +1,12 @@
 # SmartPC v0.11 — Compagno A · specifica funzionale e tecnica
 
-> **Riallineamento roadmap · 13 ottobre 2026:** Compagno ora v0.11, memoria/scene AI v0.12; la nuova v0.10 è Acquario. Nomi dei file e asset conservati per mantenere i collegamenti. Baseline, fonti e proposte dell’11 ottobre restano storiche; per stato corrente e numerazione vale il [MasterPlan](release-masterplan.md), revisione 2.68. Nessuna nuova verifica sulla board.
-**Revisione 2 · 11 ottobre 2026 · Europe/Rome**
+**Revisione 3 · 20 novembre 2026 · Europe/Rome**
+
+Compagno **v0.11**, Memoria/AI **v0.12**, Acquario **v0.10**. Nomi storici dei file e asset conservati per mantenere i collegamenti. Questa revisione sostituisce la baseline e i coefficienti candidati dell'11 ottobre, conservandone il confronto nello studio riproducibile.
 
 **Stato: analisi.** Requisiti dell'utente acquisiti; comportamento e parametri seguenti sono proposte reviewabili. Nessun codice del Compagno implementato, nessuna installazione o misura di prestazioni del cane.
 
-Riferimenti: [MasterPlan corrente](release-masterplan.md), revisione **2.56**, baseline documentata **0.9.0-rc.6 / Theme API 2.9 / 68 superfici / Apple Calm 1.6.2**; [analisi iniziale](v010-companion-analysis.md); [concept A](v010-companion-concepts/A-calm.png). Baseline letta nei file locali, senza nuovo controllo sulla board. Gli studi UX storici sono fonti di principi; la navigazione corrente del MasterPlan prevale sulle vecchie famiglie/versioni.
+Riferimenti: [MasterPlan corrente](release-masterplan.md), revisione **3.42**, baseline documentata **0.10.4-rc.2 / Theme API 2.15 / 71 superfici / Apple Calm 1.9.1**; [analisi](v010-companion-analysis.md); [concept A](v010-companion-concepts/A-calm.png); [riesame del 20 novembre](v011-companion-review-2026-11-20.md). Versioni lette nei file locali, senza nuovo controllo sulla board. La distribuzione qualificata e il checkout di ricerca sono distinti: selezionare i byte della base prima di implementare. Gli studi UX storici sono fonti di principi; la navigazione corrente prevale sulle vecchie famiglie/versioni.
 
 **Integrazione online:** [ricerca e registro delle 14 fonti principali](v010-companion-online-research.md). Le sigle S1–S14 collegano studi originali, pratiche di produzione e documentazione alle proposte qui sviluppate. Frequenze/durate/regole di SmartPC non diventano parametri validati per il solo fatto di avere un riferimento esterno.
 
@@ -25,9 +26,9 @@ Nome del cane, ritmi definitivi, orari, nomi/soglie dei traguardi e oggetti da s
 
 ## 2. Schermate e presenza
 
-**Famiglia Compagno**, proposta dopo Gioco nel carosello, con una vista principale iniziale. È una funzione completa di accudimento; non si aggiunge una quarta vista a Oggi né si rende il tasto Home un ingresso nel cane. L'ordine definitivo è da concordare.
+**Famiglia Compagno**, proposta dopo Acquario nel carosello, con una vista principale iniziale. È una funzione completa di accudimento; non si aggiunge una quarta vista a Oggi né si rende il tasto Home un ingresso nel cane. L'ordine definitivo è da concordare.
 
-Composizione candidata, in coordinate logiche 960×640:
+Composizione storica di riferimento, in coordinate logiche 960×640 e **senza banner**:
 
 | Regione | Geometria iniziale | Contenuto |
 | --- | --- | --- |
@@ -36,7 +37,9 @@ Composizione candidata, in coordinate logiche 960×640:
 | Cura | x=616, y=72, w=320, h=448 | Sazietà, Energia, Compagnia e progresso; tre bisogni con valori alti positivi. |
 | Azioni | x=24, y=536, w=912, h=88 | Ingresso all'interazione e azioni; stato distinto fra consultazione e selezione. |
 
-Le geometrie sono un punto di partenza, non coordinate già approvate sul pannello. In modalità Azioni proporre quattro scelte orizzontali come nel concept — Gioca, Carezza, Cibo, Riposo — con Richiama nel menu contestuale. L'utente sceglie solo dopo l'ingresso esplicito nell'interazione; durante la consultazione 4/6 continuano a cambiare famiglia. Nessuna legenda permanente nuova nelle viste ordinarie.
+**Regola corrente:** calcolare la composizione nello spazio utile negoziato dalla shell, considerando banner piccolo/grande adattivo, uscita del banner e scala testo 100/110%. Le coordinate della tabella non sono vincoli di produzione. Riservare lo spazio prima della comparsa dell'avviso; ridisporre scena/cura/azioni o usare una composizione compatta, senza comprimere testi/focus fino a renderli illeggibili. Se la geometria interrompe il percorso della palla, cancellare il round prima dell'effetto o raccordare dopo l'effetto già accettato; mai spostare un oggetto fuori dall'area disponibile. Geometria e selezione fanno parte della stessa revisione di layout.
+
+In modalità Azioni proporre quattro scelte — Gioca, Carezza, Cibo, Riposo — con Richiama nel menu contestuale. L'utente sceglie solo dopo l'ingresso esplicito nell'interazione; durante la consultazione 4/6 continuano a cambiare famiglia. Nessuna legenda permanente nuova nelle viste ordinarie.
 
 **Presenza ambientale:** una versione compatta dello stesso cane, inizialmente in Home e nelle viste che dichiarano spazio utile. Valutare footprint 96×96 o 128×128: entrambi richiedono nuove regioni rispetto all'attuale 56×48. Non comprimere automaticamente il cane finché diventa illeggibile. Se manca spazio, sospenderlo; la Home conserva ora/meteo/evento condizionale. Nelle viste del Gioco attivo proporre assenza del cane ambientale per rispettare attenzione e carico.
 
@@ -76,15 +79,15 @@ L'umore è derivato dai bisogni, dall'azione e dal contesto, senza una quarta ba
 
 | Parametro | Candidato iniziale |
 | --- | --- |
-| Sazietà da sveglio / a riposo | −10 / −5 punti per ora. |
-| Energia da sveglio / a riposo | −4 / +24 punti per ora. |
-| Compagnia da sveglio / a riposo | −8 / 0 punti per ora. |
-| Cibo completato | +35 Sazietà, limitata a 100. |
+| Sazietà da sveglio / a riposo | −6 / −3 punti per ora. |
+| Energia da sveglio / a riposo | −3 / +24 punti per ora. |
+| Compagnia da sveglio / a riposo | −6 / 0 punti per ora. |
+| Cibo completato | +45 Sazietà, limitata a 100. |
 | Carezza completata | +20 Compagnia, limitata a 100. |
-| Round palla completato | −8 Energia, −1 Sazietà, +15 Compagnia. |
+| Round standard palla completato | −6 Energia, −1 Sazietà, +15 Compagnia. |
 | Fasce bisogno | 60–100 soddisfatto; 30–59 ordinario; 0–29 richiede cura. Rientro dalla richiesta oltre 40 per evitare oscillazioni. |
 
-Con questi candidati la sazietà può passare da 70 a 30 in circa quattro ore da sveglio: l'accudimento ha occasioni concrete durante la giornata. Decidere se il ritmo è adeguato dopo una simulazione; non imporre un timer per somministrare cibo a intervalli esatti.
+Con questi candidati la sazietà passa da 70 a 30 in circa sei ore e quaranta da sveglio, senza altre azioni. Il [confronto su sette giorni](v011-companion-review-2026-11-20.md#4-studio-numerico-della-cura) mostra che i coefficienti di ottobre richiedevano più di tre pasti quotidiani anche nel solo bilancio teorico: consumo 200 contro recupero massimo 105. Il nuovo candidato è sostenibile per Sazietà/Compagnia nel calendario 08/14/20 con pasto+carezza+round; una visita saltata peggiora temporaneamente lo stato. Due visite risultano insufficienti e l'energia richiede ancora studio di riposo/round brevi. Il calendario di tre visite è una proposta da scegliere, non un requisito approvato o una prova di esperienza piacevole.
 
 Le azioni di cura restano raggiungibili anche con bisogni a zero. Con Energia bassa la prima proposta è un round breve e poi riposo, evitando un blocco senza uscita. Cibo già a 100 non dà ulteriore nutrimento o progressione; si può mostrare «È sazio». Carezze ulteriori possono avere una risposta breve senza premi ripetuti.
 
@@ -93,12 +96,12 @@ Le azioni di cura restano raggiungibili anche con bisogni a zero. Con Energia ba
 | Ora | Situazione | Sazietà | Energia | Compagnia |
 | --- | --- | --- | --- | --- |
 | 08:00 | Stato iniziale | 70 | 80 | 70 |
-| 11:00 | Prima della cura | 40 | 68 | 46 |
-| 11:00 | Dopo cibo, carezza e un round | 74 | 60 | 81 |
-| 15:00 | Prima della cura | 34 | 44 | 49 |
-| 15:00 | Dopo cibo, carezza e un round | 68 | 36 | 84 |
-| 18:00 | Energia bassa: suggerisce riposo | 38 | 24 | 60 |
-| 19:00 | Dopo un'ora di riposo | 33 | 48 | 60 |
+| 11:00 | Prima della cura | 52 | 71 | 52 |
+| 11:00 | Dopo cibo, carezza e un round | 96 | 65 | 87 |
+| 15:00 | Prima della cura | 72 | 53 | 63 |
+| 15:00 | Dopo cibo, carezza e un round | 99 | 47 | 98 |
+| 18:00 | Energia in calo: può scegliere riposo | 81 | 38 | 80 |
+| 19:00 | Dopo un'ora di riposo | 78 | 62 | 80 |
 
 Il campione rende esplicito il compromesso: la cura ha un effetto, ma il gioco consuma energia e le necessità tornano. La giornata effettiva può includere più round, meno cure e riposo diverso; confrontare anche questi scenari prima di approvare i coefficienti.
 
@@ -112,17 +115,21 @@ Riposo manuale e orari del cane sono distinti da palette notte, quiete Avvisi e 
 
 Al reboot, interrompere qualsiasi cura/gioco rimasto aperto, caricare lo stato e riprendere da una posa sicura. Applicare **al massimo otto ore di recupero offline**, con bisogni di Sazietà/Compagnia non abbassati sotto 15 dal solo recupero offline; nessuna perdita del legame. Sono limiti candidati. Integrare separatamente eventuali periodi di riposo nella finestra scelta; non moltiplicare un tasso unico per settimane di assenza. Cambio data/fuso, ora legale e orologio arretrato/futuro hanno casi di prova specifici.
 
+Precisazione: finestra candidata delle ultime otto ore non contabilizzate, terminata al recupero; limite di decadimento `min(valore_precedente, max(15, valore_precedente − perdita))`, che non aumenta un valore già sotto 15. Persistire il riferimento riconciliato per non riapplicare la stessa assenza. Clock non plausibile: stato da verificare e nessuna penalità/progressione inventata finché non si riconcilia. L'orario 23–07 del cane non è alba/tramonto della palette. Per azioni interrotte distinguere avvio senza effetti da effetto già accettato/scritto: al reboot leggere il ledger prima di decidere l'esito (§10).
+
 ## 6. Azioni e gioco
 
 | Azione | Sequenza | Effetto e completamento |
 | --- | --- | --- |
 | **Richiama** | Attenzione → orientamento → breve avvicinamento sicuro. | Risposta immediata; primo rilascio senza premio al legame. |
-| **Carezza** | Posa rilassata → gesto/risposta → ritorno. | Compagnia e premio eleggibile soltanto al completamento. |
-| **Cibo** | Ciotola → mangia → posa sazia. | Sazietà al completamento; nessuna porzione per comandi rifiutati/interrotti. |
+| **Carezza** | Posa rilassata → gesto/risposta → ritorno. | Compagnia e premio eleggibile al completamento logico validato, confermati dopo commit. |
+| **Cibo** | Ciotola → mangia → posa sazia. | Sazietà al punto d'effetto validato e scritto; nessuna porzione per comandi rifiutati/annullati prima dell'effetto. |
 | **Riposo / Sveglia** | Si sistema / si alza con raccordo. | Cambio di modalità, recupero temporale; nessun riempimento istantaneo. |
 | **Gioca** | Entra nella palla; sceglie lancio → cane recupera → ritorna. | Cura/progresso per round valido completato, con limite ai premi. |
 
 **Palla, prima proposta:** attività breve controllabile, distinta da una clip che si ripete senza input. La persona sceglie direzione e distanza, poi lancia. Il cane segue un percorso previsto nello spazio della sua scena e restituisce la palla; il gioco è pronto per il lancio successivo. Con poco vigore proporre distanza ridotta. Non richiede training, una rete neurale o fisica generale.
+
+Le scelte devono avere un effetto dichiarato: direzione → percorso, distanza → durata/consumo di Energia. La dose della tabella è il round standard; costi del round breve e tempi esatti restano da tarare. La prova numerica assume tutti i round completati anche a poca energia e non qualifica questa regola di disponibilità. Definire giorni/sessioni per traguardo e interesse dopo l'ultimo sblocco prima di fissare XP o moltiplicare oggetti.
 
 Movimento e ciclo di passo devono essere sincronizzati: zampe a terra senza scorrimento apparente e velocità coerente con la clip. La palla può seguire una curva semplice; gli oggetti restano dentro l'area del gioco. Un round interrotto non diventa una vittoria né viene riprodotto al ritorno.
 
@@ -175,7 +182,7 @@ Separare tre dimensioni:
 
 La GPU compone texture/trasformazioni; Qt gestisce animazione e rendering. Il servizio aggiorna lo stato a bassa frequenza. Valutare C++ per rig/deformazioni/calcoli intensivi dopo misure; mantenere Python per servizi esistenti e come baseline del controller. Un thread di scrittura serializzato separa I/O dalla GUI; non un thread per bisogno né una nuova simulazione a 60 Hz. Qt offre scene graph e integrazione nativa; modalità/thread effettivi dipendono dal runtime e devono essere verificati. [Qt Scene Graph](https://doc.qt.io/qt-6.8/qtquick-visualcanvas-scenegraph.html).
 
-**Proprietà del visuale:** riusare SceneHost come host persistente. La vista comunica geometria/regioni, non possiede la vita del cane. Progettare una modalità ambientale/dedicata con adattamento del footprint e un solo proprietario della sequenza attiva. Se il cambio composizione richiede un renderer candidato, autorizzare solo quello corrente a inviare completamenti; niente doppie animazioni/callback durante il cambio tema.
+**Proprietà del visuale:** riusare SceneHost per la presenza ambientale e il ViewHost corrente per la pagina dedicata; condividere il componente del cane e il servizio, senza forzare input e pannelli dentro `scene.main`. La vista comunica geometria/regioni, non possiede la vita del cane. Un solo renderer è proprietario del movimento e delle ricevute; durante il cambio tema una copia statica può essere mantenuta senza autorità. Owner/generazione/azione/epoca del cane identificano i completamenti validi. Nessuna nuova scena engine o doppia simulazione.
 
 L'attuale footprint è statico nel descriptor e `scene.main` non ha azioni: è necessaria un'estensione additiva. Proposta `companion.main` con `CompanionContext`, azioni `companion.pet/feed/rest/wake/play/call` e richieste di lancio/cancellazione; `scene.main` riceve soltanto lo snapshot visuale pertinente. Nomi/numero delle superfici e minor API definitivi si decideranno nel contratto, senza assegnare ora una nuova versione.
 
@@ -212,6 +219,8 @@ Intenzione, spazio e raccordo sono distinti: un gesto verso la cuccia è consent
 
 **Prima ipotesi:** QML/Qt Quick per composizione/trasformazioni/clip, Python per regole e persistenza a bassa frequenza; eventuale componente C++ per deformazione o lavoro misurato che supera il budget. L'ottimizzazione riguarda il percorso eseguito, non il nome del linguaggio. Nessun aggiornamento Python→QML a 60 Hz per tre bisogni.
 
+**Base dopo le prove Acquario/Apple Calm:** partire dalle animazioni di proprietà Qt (`NumberAnimation` e analoghe). Il [confronto ABBA del 30 ottobre](v0102-apple-calm-implementation-report.md#movimento-e-gpu) non giustifica conversioni globali ad Animator. Conservare il percorso EGL/driver qualificato. C++ resta candidato per il rig misurato; il 3D dei pesci non modifica lo stile A approvato.
+
 Per trasformazioni decorative indipendenti valutare `RotationAnimator`, `ScaleAnimator`, `XAnimator`/`YAnimator`. Questi tipi aggiornano il scene graph e possono usare il thread di rendering, ma **la proprietà QML non segue ogni posizione intermedia**: non ricavarne collisioni/focus/percorso. Mantenere una traiettoria semantica separata e raccordare cancellazione/cambio regione alla posizione visuale effettiva; se il visuale non offre questo raccordo affidabile, scegliere la normale animazione di proprietà o un controller nativo. Non convertire automaticamente MotionController. [Qt Animator](https://doc.qt.io/qt-6.8/qml-qtquick-animator.html) (S13).
 
 Verificare backend, loop effettivo e vsync sulla board (S12). Una coda GUI bloccata può lasciare un gesto decorativo in movimento e ritardare comunque input/urgente: quel risultato non supera il gate della dashboard. Evitare shader/blur dinamici e deformazioni complesse nella prima prova; preparare gli asset e misurare il collo di bottiglia prima di estendere il rig.
@@ -222,17 +231,21 @@ Ogni richiesta include `requestId`, tipo, parametri limitati e generazione della
 
 Sequenza proposta:
 
-1. Validare stato, parametri e risorse pronte; riservare una sola azione con ID e registrarne l'inizio prima dell'esecuzione con effetti.
-2. Animare localmente; callback soltanto per fase/completamento/interruzione, mai per ciascun frame.
-3. Accettare il completamento solo per azione/generazione ancora valide; calcolare i delta da applicare.
-4. Scrivere insieme stato aggiornato, premio/sblocco e risultato dell'azione. Pubblicare lo stato confermato dopo l'esito della scrittura. Callback duplicata non applica di nuovo gli effetti.
-5. Se l'urgente arriva durante una clip non completata, annullare gli effetti del round/cura. Se il completamento è già stato accettato e la transazione è in corso, lasciare terminare la scrittura; l'urgente resta immediato sul piano visuale.
+1. Validare stato, parametri, revisione attesa, epoca e risorse; riservare una sola azione con ID persistente. Feedback di preparazione distinto da esito di ammissione.
+2. Animare localmente; callback soltanto per fasi/interruzione, mai per frame. Il servizio valida ordine delle fasi e durata minima semantica anche in Reduced/Off.
+3. Accettare il punto d'effetto solo per azione/owner/generazione ancora validi; serializzare questa decisione rispetto alla cancellazione. Da qui indicare salvataggio, indipendente dall'assestamento cosmetico.
+4. Scrivere insieme stato, premio/sblocco e risultato dell'azione. Confermare dopo l'esito reale. Una callback duplicata o un retry dello stesso ID non riapplica gli effetti; controllare anche revisione/epoca dopo la potatura del ledger.
+5. Urgente/uscita nascondono subito il visuale: prima dell'effetto accettato annullano la cura; dopo lasciano risolvere la transazione senza replay. Risposta persa o commit incerto richiedono lettura del risultato, non un nuovo round o una seconda dose.
 
-**Esito mancante:** il servizio conserva una scadenza semantica dell'azione con margine, indipendente dal frame rate. Una clip bloccata, renderer rimosso o callback assente non lascia la modalità “in corso” per sempre: timeout → annullamento/errore senza premio, ritorno consultabile e comando di uscita sempre disponibile. Timeout non equivale a completamento riuscito. In particolare, fermare `AnimatedSprite` non produce automaticamente `finished`: l'interruzione va notificata esplicitamente (S13).
+**Esito mancante:** scadenza semantica con margine, indipendente dal frame rate. Prima del punto d'effetto una clip bloccata/renderer rimosso/callback assente conduce ad annullamento o errore senza premio. Se la scrittura è già pendente il timeout non dimostra che l'effetto non sia avvenuto: verificarlo nel writer, mantenendo uscita e consultazione disponibili e impedendo azioni incompatibili finché l'esito è indeterminato. Fermare `AnimatedSprite` non produce automaticamente `finished`: notificare l'interruzione esplicitamente (S13).
+
+In Off il servizio usa durata e fasi semantiche della cura, con pose/testo, senza attendere un frame animato; in Normal un renderer che fallisce prima dell'effetto non viene premiato automaticamente dalla scadenza. Cambio tema prima dell'effetto annulla l'azione e conserva la selezione; dopo l'effetto il servizio risolve il salvataggio e il nuovo renderer mostra lo stato confermato, senza ripetere il gesto.
 
 Store SQLite dedicato con schema/regole versionati e un solo writer. Tabelle candidate: identità/impostazioni, stato dei bisogni e tempo, traguardi/sblocchi, registro limitato delle azioni, deduplica limitata delle reazioni. Il registro serve a recupero/idempotenza, non costituisce la storia AI v0.12.
 
 Il costo del commit resta fuori GUI; coda limitata e retry con esito esplicito in caso di occupazione/errore. Non scegliere `synchronous=OFF` per migliorare la fluidità. Schema e configurazione devono dichiarare le garanzie richieste: [Atomic Commit in SQLite](https://www.sqlite.org/atomiccommit.html) (S14) distingue atomicità e assunzioni sullo storage. Eventuali prove di perdita di alimentazione saranno una qualifica separata e autorizzata.
+
+Riusare la semantica pending→completed/failed e il retry limitato qualificati nella [manutenzione Acquario](v0103-maintenance-delivery-2026-11-18.md). Proposta per il solo nuovo store: `DELETE` + `EXTRA`; WAL + `FULL` solo se motivato da concorrenza e con checkpoint/backup coerenti. Verificare i PRAGMA effettivi, non soltanto quelli richiesti. Non cambia configurazione o garanzie dei DB esistenti. [SQLite synchronous](https://www.sqlite.org/pragma.html#pragma_synchronous), ricontrollato il 20 novembre.
 
 Transazione unica per gli effetti della cura e i relativi progressi; SQLite fornisce commit/rollback transazionali. Gestire anche fallimento/busy e il risultato effettivo del commit, senza confermare in anticipo. [SQLite Transactions](https://www.sqlite.org/lang_transaction.html).
 
@@ -282,6 +295,8 @@ La [matrice degli studi sul nostro prodotto](v010-companion-online-research.md#8
 Durante l'animazione obiettivo 60 FPS e circa 16,67 ms per frame; verificare distribuzione degli intervalli e scatti, input e passaggi a caldo/freddo. I/O e preparazione non bloccano la GUI: principio supportato dalla [guida prestazioni Qt](https://doc.qt.io/qt-6.8/qtquick-performance.html). Misure software e risposta ottica restano distinte; CPU/RAM/GPU sono diagnostiche, non soglie arbitrarie. Verificare tutte le combinazioni realmente consentite con Gioco/avvisi, includendo eventuale sospensione del cane.
 
 Report futuro con intervalli p50/p95/p99, quota di intervalli oltre 33,3 ms e blocco più lungo, separando avvio/caricamento e regime; tempi input→riscontro e urgente→sospensione. A 60 Hz 33,3 ms corrisponde a circa due intervalli di refresh: indicatore diagnostico, non soglia di rilascio già approvata. Il momento software di presentazione non dimostra quando il pixel è diventato visibile. Confrontare cane disattivo/attivo a parità di scena e carico; niente FPS obbligatori quando la scena è deliberatamente statica.
+
+Il [riesame corrente](v011-companion-review-2026-11-20.md#8-lotti-e-gate-per-rendere-il-piano-eseguibile) ordina C0–C5 e aggiunge durata/risorse: identificare GUI e worker reali dal heartbeat e token di avvio, limitare cache/ledger/code, verificare FD/thread e scritture su rientri/cambi tema e inattività. C0/C1 sono analisi; C2 produce il campione di asset, C3–C5 implementano/qualificano dopo accordo. Lo screening numerico di questa revisione non sostituisce nessuno dei gate Qt/ARM/EGLFS/fisici del cane.
 
 **Decisioni da concordare prima dell'implementazione:** ritmo effettivo dei bisogni; effetto delle assenze; orari e wake; mini-gioco della palla; traguardi/sblocchi; eventuali richieste di cura in Avvisi; collocazione della famiglia e footprint ambientale. Nome/master e aspetto stabile/crescita completano il perimetro grafico.
 

@@ -1,0 +1,55 @@
+{
+  "id": "sport.match.detail:lineups",
+  "covers": [
+    "sport.match.detail:lineups"
+  ],
+  "family": "sport-match",
+  "surfaceId": "sport.match.detail",
+  "variant": "lineups",
+  "clockEpoch": 1790848800,
+  "initialProperties": {
+    "familyId": "sport",
+    "overlay": "sportDetail",
+    "sportDetailPage": 2
+  },
+  "domainSetup": [
+    "match:lineups"
+  ],
+  "expectedExpressions": [
+    "sportOverlay.detail",
+    "sportDetailPage === 2",
+    "sportMatch.canonicalMatchId.length > 0",
+    "sportMatch.status === \"finished\"",
+    "sportMatch.homeScore === 0",
+    "sportMatch.awayScore === 0",
+    "sportMatch.scoreText === \"0 – 0\"",
+    "sportFixtures.filter(match => match.canonicalMatchId === sportMatchId).length === 1"
+  ],
+  "invariants": [
+    "navigationAndTab",
+    "overlayStack",
+    "inputFocus",
+    "providerEffects",
+    "actorIdentity",
+    "eventFlagsAndDeadline"
+  ],
+  "actions": [
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 4
+    },
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 6
+    }
+  ],
+  "publicApiBinding": "deferredA1",
+  "expectedDomain": {
+    "status": "finished",
+    "homeScore": 0,
+    "awayScore": 0,
+    "scoreText": "0 – 0"
+  }
+}

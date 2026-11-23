@@ -1,0 +1,187 @@
+{
+  "utc": "2026-11-17T20:10:50.521437+00:00",
+  "uptime_s": "353839.72 2809592.51",
+  "thermal": [
+    {
+      "name": "thermal_zone2",
+      "type": "npu_thermal_zone",
+      "temp": "57102",
+      "trips": {
+        "trip_point_0_temp": "110000"
+      }
+    },
+    {
+      "name": "thermal_zone0",
+      "type": "cpub_thermal_zone",
+      "temp": "59210",
+      "trips": {
+        "trip_point_2_temp": "110000",
+        "trip_point_1_temp": "90000",
+        "trip_point_0_temp": "55000"
+      }
+    },
+    {
+      "name": "thermal_zone3",
+      "type": "cpul_thermal_zone",
+      "temp": "61070",
+      "trips": {
+        "trip_point_2_temp": "110000",
+        "trip_point_1_temp": "90000",
+        "trip_point_0_temp": "55000"
+      }
+    },
+    {
+      "name": "thermal_zone1",
+      "type": "ddr_thermal_zone",
+      "temp": "57970",
+      "trips": {
+        "trip_point_0_temp": "110000"
+      }
+    },
+    {
+      "name": "thermal_zone4",
+      "type": "gpu_thermal_zone",
+      "temp": "58094",
+      "trips": {
+        "trip_point_2_temp": "110000",
+        "trip_point_1_temp": "90000",
+        "trip_point_0_temp": "60000"
+      }
+    }
+  ],
+  "cooling": [
+    {
+      "name": "cooling_device1",
+      "type": "idle-cpu3",
+      "cur": "0",
+      "max": "100"
+    },
+    {
+      "name": "cooling_device8",
+      "type": "devfreq-3600000.npu",
+      "cur": "0",
+      "max": "1"
+    },
+    {
+      "name": "cooling_device6",
+      "type": "cpufreq-cpu0",
+      "cur": "0",
+      "max": "8"
+    },
+    {
+      "name": "cooling_device4",
+      "type": "idle-cpu6",
+      "cur": "0",
+      "max": "100"
+    },
+    {
+      "name": "cooling_device2",
+      "type": "idle-cpu4",
+      "cur": "0",
+      "max": "100"
+    },
+    {
+      "name": "cooling_device0",
+      "type": "idle-cpu2",
+      "cur": "0",
+      "max": "100"
+    },
+    {
+      "name": "cooling_device10",
+      "type": "devfreq-1800000.gpu",
+      "cur": "0",
+      "max": "3"
+    },
+    {
+      "name": "cooling_device9",
+      "type": "pwm-fan",
+      "cur": "0",
+      "max": "4"
+    },
+    {
+      "name": "cooling_device7",
+      "type": "cpufreq-cpu6",
+      "cur": "0",
+      "max": "11"
+    },
+    {
+      "name": "cooling_device5",
+      "type": "idle-cpu7",
+      "cur": "0",
+      "max": "100"
+    },
+    {
+      "name": "cooling_device3",
+      "type": "idle-cpu5",
+      "cur": "0",
+      "max": "100"
+    }
+  ],
+  "gpio101": [
+    " gpio-101 (                    |sysfs               ) out hi "
+  ],
+  "pin101": [
+    "pin 101 (PD5): GPIO 2000000.pinctrl:101"
+  ],
+  "kernel_tail": {
+    "count": 1500,
+    "first": "1794945753405433",
+    "last": "1794946248686196",
+    "top_messages": [
+      [
+        "platform 2527015.pwm0: Error applying setting, reverse things back",
+        188
+      ],
+      [
+        "sunxi:pwm-2527015.pwm0:[ERR]: pinctrl_select_state(active) failed",
+        188
+      ],
+      [
+        "sunxi:pwm-2527000.pwm:[ERR]: enable pwm chan 5 failed",
+        188
+      ],
+      [
+        "thermal cooling_device9: Cannot set pwm!",
+        188
+      ],
+      [
+        "platform 2527015.pwm0: supply pwm not found, using dummy regulator",
+        187
+      ],
+      [
+        "sun60iw2-pinctrl 2000000.pinctrl: pin PD5 already requested by 2000000.pinctrl:101; cannot claim for 2527015.pwm0",
+        187
+      ],
+      [
+        "sun60iw2-pinctrl 2000000.pinctrl: pin-101 (2527015.pwm0) status -22",
+        187
+      ],
+      [
+        "sun60iw2-pinctrl 2000000.pinctrl: could not request pin 101 (PD5) from group PD5  on device 2000000.pinctrl",
+        187
+      ]
+    ]
+  },
+  "journal_disk_usage": {
+    "exitCode": 0,
+    "stdout": "Archived and active journals take up 43.8M in the file system.",
+    "stderr": ""
+  },
+  "service": {
+    "exitCode": 0,
+    "stdout": "MainPID=1204\nNRestarts=0\nExecMainStartTimestamp=Thu 2026-11-12 07:00:18 CET\nExecMainStartTimestampMonotonic=19071408\nMemoryCurrent=681586688\nMemoryPeak=683589632\nCPUUsageNSec=7603387660000\nTasksCurrent=23\nActiveState=active\nSubState=running",
+    "stderr": ""
+  },
+  "helper_smaps": "00400000-7fcac2f000 ---p 00000000 00:00 0                                [rollup]\nRss:              138680 kB\nPss:              111033 kB\nPss_Dirty:         93780 kB\nPss_Anon:          93768 kB\nPss_File:          17253 kB\nPss_Shmem:            12 kB\nShared_Clean:      44848 kB\nShared_Dirty:          8 kB\nPrivate_Clean:        48 kB\nPrivate_Dirty:     93776 kB\nReferenced:       127468 kB\nAnonymous:         93768 kB\nKSM:                   0 kB\nLazyFree:              0 kB\nAnonHugePages:         0 kB\nShmemPmdMapped:        0 kB\nFilePmdMapped:         0 kB\nShared_Hugetlb:        0 kB\nPrivate_Hugetlb:       0 kB\nSwap:                  0 kB\nSwapPss:               0 kB\nLocked:                0 kB",
+  "df": {
+    "exitCode": 0,
+    "stdout": "Filesystem       1B-blocks        Used   Available Use% Mounted on\n/dev/mmcblk1p1 30516699136 12405354496 17711079424  42% /",
+    "stderr": ""
+  },
+  "memory": "MemTotal:        5995824 kB\nMemFree:         4103280 kB\nMemAvailable:    5217136 kB\nBuffers:           99716 kB\nCached:          1029504 kB\nSwapCached:            0 kB\nActive:           445492 kB\nInactive:        1230756 kB\nActive(anon):        820 kB\nInactive(anon):   566028 kB\nActive(file):     444672 kB\nInactive(file):   664728 kB\nUnevictable:           0 kB\nMlocked:               0 kB\nSwapTotal:       2997908 kB\nSwapFree:        2997908 kB\nDirty:               976 kB\nWriteback:             4 kB\nAnonPages:        547288 kB\nMapped:           130840 kB\nShmem:             19820 kB\nKReclaimable:      69692 kB\nSlab:             120996 kB\nSReclaimable:      69692 kB\nSUnreclaim:        51304 kB\nKernelStack:        3516 kB\nPageTables:         4108 kB\nSecPageTables:         0 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:     5995820 kB\nCommitted_AS:    1204548 kB\nVmallocTotal:   257687552 kB\nVmallocUsed:       21992 kB\nVmallocChunk:          0 kB\nPercpu:             2976 kB\nCmaTotal:          16384 kB\nCmaFree:           12416 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB",
+  "diskstats_mmcblk1": [
+    " 179       0 mmcblk1 17365 6509 1623282 136975 632982 114072 11871624 25668320 0 1714392 26209822 579 403 29472728 404526 0 0"
+  ],
+  "process_io_supported": false,
+  "cgroup_io_supported": false
+}

@@ -1,0 +1,143 @@
+# Apple Calm — consegne
+
+## Revisione 1.6.5 · 26 ottobre 2026
+
+Installata con core0.10.0-rc.2. Glifo Acquario per barra e impostazioni; 1.080 celle dei60 glifi precedenti identiche. Preflight1.098 combinazioni PC/ARM, Main/EGLFS e rientri con il tema salvato passati. Nuovo supplemento120s: 59.965 callback/s, p95 17.90 ms. 682 hash core, dati/opzioni e profili degli altri temi conservati, GUI pronta/NRestarts=0 e nessun reboot OS. [Chiusura e ricevuta](../../dashboard/design/v010-aquarium-completion-report.md). La durata30min precedente resta attribuita alla1.6.4; candidata non promossa stabile.
+
+## Revisione 1.6.4 · 22 ottobre 2026
+
+Installata e **attiva** con core **0.9.4-rc.1 / Theme API 2.12**, digest `d67dccb9bf336273afa9f9cd1b2c23bc9fbe2947f04274f9dfa97a2ac56e0e28`. Orologio HH:mm persistente nella barra, Quiete/Ripristino conservati sotto l’ora; il filtro del core oscura uniformemente la GUI. Matrice PC di 1.098 casi e prova Main EGLFS nei tre temi; preferenze, database e artefatti personali conservati. Nessun reboot OS. [Report e ricevuta](../../dashboard/design/v094-header-clock-report.md).
+
+## Revisione 1.6.3 · 16 ottobre 2026
+
+Installata e **selezionabile**, con Base conservato attivo, su **SmartPC 0.9.0-rc.19 / Theme API 2.11**. Digest `faf3e0032162416a471c8122d320709f47b71df0667b042816fffa4e3b452d62`. MiniHistory e NetworkHistoryChart sospendono il lavoro nascosto e riprendono dai dati correnti, con pixel visibili invariati e clear del dato assente verificato. Il core mostra quarantena/errori e offre verifica isolata/annullabile senza attivazione implicita; uscire dalle impostazioni invariate evita una nuova pubblicazione dell’aspetto. Matrici PC/ARM da 1.098 casi, prove native EGLFS e confronti dei componenti superati. Soak di 30 minuti sul core finale con digest grafico preliminare e supplemento sul payload finale distinti nel report. 608 hash conformi, tutte le 44 preferenze, sei piloti e 3.191 artefatti conservati; GUI pronta, NRestarts=0, nessun reboot OS o training di produzione. Vecchia 1.6.2 in quarantena conservata; causa del SIGSEGV storico e qualifica prolungata/ottica ancora aperte. [Report, ricevuta e limiti](../../dashboard/design/apple-calm-recovery-performance-report.md).
+
+## Revisione 1.6.2 · 10 ottobre 2026
+
+Installata e attiva con **SmartPC 0.8.7-rc.2 / Theme API 2.7**. Palette, font, icone e layout conservati; dominio team mirato e motion breve da 100 ms per navigazione/ingresso. Core con cache alla chiusura, rilascio dei renderer al cambio tema e contesti inizializzati una volta. Digest `29f17b2dcf54ae37024426b1f3a9d6177f62d7c930ab26308d2381b8cc8cd8d4`. 1.098 combinazioni native, Main nei tre temi, impostazioni/cache e confronti EGLFS qualificati; 515 file, 40 preferenze e personalizzazioni conservati dopo reboot reale, GUI pronta, pending nullo, servizio active/running con NRestarts=0, nessun warning QML rilevato. Backup `/var/backups/smartpc-before-v087-opening-20261010T123037Z`; prove `/var/lib/smartpc-dashboard/v087-opening-proof/`. Residui del freddo, selettore, Impostazioni e collaudo fisico documentati. [Risultati completi](../../dashboard/design/v087-opening-implementation-report.md).
+
+## Revisione 1.6.1 · 9 ottobre 2026
+
+Prima ottimizzazione consegnata con SmartPC 0.8.7-rc.1: cache stile, pubblicazioni selettive e invalidazioni per dominio; digest `083ad5f82a577b45d656f2c92c243b593237233305fe6be5d7e850c0ee38679e`. [Consegna storica, confronto e reboot](../../dashboard/design/v087-performance-implementation-report.md).
+
+## Correzione core 0.8.6-rc.2 · 9 ottobre 2026
+
+Apple Calm 1.6.0 resta attivo con lo stesso digest e contratto. Serie A apre con 5 tutte le partite della giornata; La mia squadra ha una dashboard distinta per calendario e dettagli personali. Nove controlli locali mirati e quattro profili EGLFS, manifest di 513 file e preferenze conservati. [Percorsi, installazione e reboot](../../dashboard/design/v086-serie-a-fix-report.md).
+
+## Revisione 1.6.0 · 9 ottobre 2026
+
+Implementata, qualificata e **attivata** con **SmartPC 0.8.6-rc.1 / Theme API 2.7**. Dashboard orizzontali per tutti gli argomenti, dettagli diretti, inventari informativi Casa/Rete e grafico WAN; palette/font e personalizzazioni conservati, 57 glifi invariati e tre aggiunti. Digest `2cb5518974a4813762bcfc3b3e96fe28c34054c356bd4978807f4ca62ba6d1d8`. 77 esiti locali finali, 1.098 combinazioni native e Main EGLFS nei tre temi; 513 file, avvio a freddo e reboot reale verificati, servizio active/running con NRestarts=0, GUI fresca, pending nullo e nessun warning QML rilevato. Backup iniziale `/var/backups/smartpc-before-v086-dashboard-20261009T184917Z`; backup aspetto `/var/backups/smartpc-before-v086-apple-activation-20261009T193554Z`. Prove persistenti sotto `/var/lib/smartpc-dashboard/v086-dashboard-proof/` e `v086-source-proof/`. Qualifica software distinta dall'uso del pannello IPS a 50–60 cm e dai feed live. [Resoconto, scope e prove](../../dashboard/design/v086-dashboard-implementation-report.md).
+
+## Revisione 1.5.0 · 9 ottobre 2026
+
+Qualificata e importata con **SmartPC 0.8.5-rc.1 / Theme API 2.6**, senza cambiare Base o le preferenze dell'utente. Impostazioni a sei schede e Informazioni a due colonne, con palette/font/asset conservati. Il core aggiunge lista diretta, caricamento per fasi, fix delle transizioni e watchdog limitato. Digest `eafc17dfd36a7b6757504201c18275b856ec90389f9f1038c1666fc16928fbfa`. 75 esiti locali finali, 1.062 combinazioni native, otto profili EGLFS, 503 file; installazione e reboot reale verificati, servizio active/running con NRestarts=0, GUI pronta, pending nullo e tutte le preferenze conservate. Backup `/var/backups/smartpc-before-v085-dashboard-20261009T114340Z`; prove `/var/lib/smartpc-dashboard/v085-dashboard-proof/`. Colleghiamo la qualifica software al perimetro fisico ancora aperto a 50–60 cm. [Resoconto e catture](../../dashboard/design/v085-settings-implementation-report.md).
+
+## Revisione 1.4.0 · 9 ottobre 2026
+
+Qualificata e importata con **SmartPC 0.8.4-rc.1 / Theme API 2.6**, conservando **Base** selezionato dall'utente. Schede adattive, quattro preferiti completi, panorama Rete con WAN/sensori/cataloghi qualificati e crediti Account opzionali; risorse grafiche conservate. Digest `3353fc9e0951efb0ef8e5d52cb92f7b64e50d15a5994fa2ff2dd372e3dc856ef`. 73 regressioni locali finali, 1.062 combinazioni native, sei profili EGLFS e 20 superfici Apple/92 passi su Main. Core installato con 500 file, backup e reboot reale verificati; tutte le preferenze conservate, servizio `active/running`, `NRestarts=0`, GUI pronta, nessuna attivazione pendente o warning QML rilevato. Backup `/var/backups/smartpc-before-v084-dashboard-20261009T100942Z`; prove persistenti `/var/lib/smartpc-dashboard/v084-dashboard-proof/`. Qualificazione con fixture distinta dal giudizio fisico di leggibilità a 50–60 cm. [Resoconto, catture e residui](../../dashboard/design/v084-dashboard-optimization-report.md).
+
+## Revisione 1.3.1 · 8 ottobre 2026
+
+Installata con **SmartPC 0.8.3-rc.2 / Theme API 2.5**. Adatta gli spazi conservando palette, font, icone e stile delle card: barra 56 px, contenuto 912×552 a x24/y72, liste scorrevoli, Sport senza legenda permanente, traffico WAN e sensori iliadbox in panoramica. Corretto il cambio delle schede Informazioni a pari numero di righe. Digest `484b983f1622fbaccbfc09047d4c39641e5e1646bba04a2fd5cbc88f5aeb9a84`; 499 file verificati, 72 controlli locali, 1.062 combinazioni native, prove mirate EGLFS giorno/notte e 19 superfici/92 passi su Main. Reboot reale verificato, servizio `active/running`, `NRestarts=0`, GUI pronta e preferenze conservate. Backup `/var/backups/smartpc-before-v083-space-20261008T130632Z`; prove `/var/lib/smartpc-dashboard/v083-space-proof/`. I due tentativi precedenti e i rollback sono documentati. Resta il giudizio di leggibilità fisica a 50–60 cm. [Resoconto e catture](../../dashboard/design/v083-space-optimization-report.md), [uso e recupero](../../dashboard/design/v083-ux-operations.md).
+
+## Revisione 1.3.0 · 8 ottobre 2026
+
+Installata con **SmartPC 0.8.3-rc.1 / Theme API 2.5**, con manifest di 498 file e reboot verificati, GUI pronta, servizio attivo e `NRestarts=0`. Sport unico, sei gruppi Impostazioni, Rete nativa, righe grandi e sette nuovi glifi. **59 superfici proprie più scena Base**, 57 glifi; digest `10bd33af67b331a2e2993ef83b7c5724800edeb078bd029a8ce08059e8ae0c86`. Preflight PC/nativo di 1.062 combinazioni, Main locale giorno/notte e 15 superfici EGLFS notte, con 90 passi di navigazione per prova e zero warning QML. Le 38 preferenze originali sono conservate, con due sole chiavi di migrazione; ledger Casa invariato. La prima qualifica EGLFS ha rilevato un alias font Canvas non valido: rollback verificato e correzione QML degli assi prima della consegna. Il collaudo ottico/tastierino a 50–60 cm resta aperto. [Resoconto completo](../../dashboard/design/v083-implementation-report.md), [uso](../../dashboard/design/v083-ux-operations.md). Le consegne storiche rimangono sotto.
+
+## Revisione 1.2.1 · 8 ottobre 2026
+
+Installata con SmartPC **0.8.2-rc.1**, Theme API 2.4 e reboot verificato. Nuovi mapping Rete, titoli coerenti e feedback senza duplicazione; digest `575fd88f93592423d53eba0ba7deedcd3fab25398baddb768a8d224768fa0b21`. Preflight nativo, tre superfici EGLFS notte, palette giorno locale e 138 passi di navigazione con Normale/Ridotto/Disattivo, senza warning. Le 38 preferenze sono conservate. [Resoconto e limiti](../../dashboard/design/v082-implementation-report.md). La consegna storica e le sue misure rimangono sotto.
+
+## Apple Calm 1.2.0 — consegna del 6 ottobre 2026
+
+**Installato e verificato sull’Orange Pi dopo un riavvio del sistema.** SmartPC esegue il core 0.7.0-rc.3 e Apple Calm 1.2.0. Il servizio è `active/running`, `NRestarts=0`; heartbeat GUI fresco, identità esatta, nessuna attivazione pendente, quarantena o recovery. Le 38 preferenze estranee all’aspetto coincidono con il backup originale. Palette `auto` e movimento `normal` sono conservati.
+
+## Risultato e fluidità
+
+Il problema principale era il trasferimento e la normalizzazione ripetuta di dati inutilizzati: la classifica ricostruiva l’intera stagione, il riepilogo Motorsport riceveva risultati, giri e soste delle sessioni, e i contesti delle pagine nascoste continuavano ad aggiornarsi. Ora i DTO seguono la pagina e la vista effettive. Gli overlay riusano fino a sei renderer; un cambio di stile o revisione invalida la cache e libera le lease. I loader mantengono la pagina precedente finché la destinazione e la sua navigazione sono coerenti.
+
+Le pagine pronte vengono presentate subito; l’animazione accompagna i pallini. Sono eliminati i passaggi di dissolvenza su selezione, dati e schede e la costruzione di ricette di movimento inutili. Non sono stati ridotti i controlli di salute né introdotte animazioni continue.
+
+Il confronto usa Main reale, Qt 6.8.2, EGLFS/KMS 960×640, le stesse 380 partite e 20 squadre della cache del dispositivo, 16 percorsi per tre cicli. Il primo ciclo distingue il primo ingresso; i due successivi forniscono 32 osservazioni a caldo. I provider sono isolati e la rete negata.
+
+| Misura software | Apple Calm 1.1.0 | Apple Calm 1.2.0 |
+|---|---:|---:|
+| Azione → frame coerente, p95 a caldo | 1138.5 ms | 105.6 ms |
+| Normalizzazione classifica, p95 a caldo | 231.01 ms | 3.32 ms |
+| Peggiore cambio a caldo osservato | 1790.4 ms | 141.9 ms |
+| Peggiore primo ingresso osservato | 1837.8 ms | 325.2 ms |
+
+Riduzione del p95 dei cambi: **90.7%**. L’intervallo `frameSwapped` nelle quattro brevi prove dedicate ai pallini ha p95 **18.1 ms**, includendo tutti gli intervalli interni alle prove. Il target di 100 ms per i cambi a caldo è mancato di circa 6 ms; il massimo a caldo rimane 142 ms e il primo ingresso può arrivare a 325 ms. Questi limiti restano espliciti.
+
+| Percorso | Massimo a caldo prima, ms | Massimo a caldo ora, ms | Primo ingresso ora, ms |
+|---|---:|---:|---:|
+| home | 256.9 | 95.1 | 70.6 |
+| weather | 167.4 | 60.0 | 314.4 |
+| forecast | 181.7 | 64.6 | 179.6 |
+| account | 246.2 | 68.1 | 194.7 |
+| sport | 197.4 | 88.2 | 200.3 |
+| standing-overview | 219.5 | 117.8 | 88.3 |
+| standing-detail | 1138.5 | 72.6 | 220.8 |
+| menu | 308.8 | 58.8 | 209.1 |
+| standing-return | 1790.4 | 65.3 | 55.5 |
+| back-to-sport | 160.3 | 86.9 | 68.6 |
+| f1 | 680.8 | 141.9 | 260.2 |
+| f1-second-view | 209.0 | 97.3 | 44.0 |
+| motogp | 448.7 | 82.7 | 129.2 |
+| casa | 180.9 | 83.6 | 325.2 |
+| casa-devices | 187.7 | 77.8 | 147.0 |
+| home-return | 206.1 | 79.7 | 85.2 |
+
+Le misure sono **azione software → callback `frameSwapped` con stato GUI coerente**. Il tempo del contenuto esclude il completamento decorativo dei pallini, verificato separatamente. Non sono latenza ottica, GPU time o garanzia di 60 FPS. I vecchi intervalli filtrati sotto 100 ms rimangono dati diagnostici nei rapporti e non vengono usati per attestare fluidità. Tastierino fisico, interruzione di alimentazione e soak di 24 ore non sono stati ripetuti.
+
+## Interfaccia e correzioni
+
+- Classifica Serie A: `team` diventa il nome pubblico, `teamId` conserva l’identità della squadra. Tutti i 20 nomi reali sono verificati; i campi canonici hanno precedenza e i valori mancanti restano mancanti. Selezione e apertura della classifica seguono la riga corretta. Anche i riepiloghi F1/MotoGP aprono il relativo dettaglio della classifica o del timing.
+- Pallini: argomenti al centro dell’intestazione; viste o schede sul margine destro, con un ambito esplicito per menu, impostazioni, dettagli e Casa. Restano visibili negli overlay ordinari; gli avvisi urgenti hanno priorità. La pubblicazione segue il contenuto effettivamente pronto anche fra F1 e MotoGP che condividono l’host.
+- Movimento: 140 ms Normale, 80 ms Ridotto, istantaneo Disattivo. Cambio di gruppo senza attraversare posizioni inesistenti; settlement immediato verificato. Le leggende permanenti del tastierino restano rimosse; la guida è nel menu Comandi.
+- Oggi ha tre viste: Ora, **Orologio**, Giornata. Orologio usa cifre da 238 px, data e meteo compatto; il prossimo evento appare solo quando esiste. Area utile delle pagine 896×528, pannelli sotto l’intestazione alta 64 px.
+- Icone: 50 glifi semantici, con simboli distinti per Casa, F1, MotoGP e metriche. Un solo sorgente modificabile `design/icon-source.json` e un atlante PNG generato condiviso, compatibile con il Qt nativo che non dispone del decoder SVG. QtSvg serve solo al generatore sul PC. Eliminata la vecchia raccolta SVG duplicata.
+- Casa ha quattro superfici dedicate, oltre alle altre superfici del tema. In totale 48 renderer propri; soltanto `scene.main` conserva il fallback esplicito a Base.
+
+## Versione unica e recupero
+
+Il manifest dichiara `retention: latest`. Dopo tre heartbeat coerenti e l’attivazione confermata, il lifecycle conserva la revisione attiva, protegge le lease vive, elimina le revisioni precedenti di Apple Calm e i relativi override. La selezione Revisione è nascosta per questo tema e gli indici delle azioni delle impostazioni restano corretti. **Base** è il recupero permanente.
+
+Sono stati rimossi i pacchetti/sorgenti 1.0.0 e 1.1.0, la preparazione v1, i vecchi payload Apple nel negozio di recupero fallito e i backup obsoleti della consegna Apple. L’SDK originale, gli altri temi e i dati dei provider sono conservati. Rimane un backup di recupero con la sola versione corrente: `/var/backups/smartpc-apple-calm-current/current.tar.gz`. Il manifest e gli hash sono in `evidence/optimization-cleanup.json`. La baseline di confronto sopravvive come rapporto, senza distribuire il vecchio tema.
+
+## Verifiche
+
+| Verifica | Esito / evidenza |
+|---|---|
+| Manifest, integrità, qmllint | Validi, nessun errore; `optimization-lint.json` |
+| Renderer isolati su PC e Qt nativo | 864 rendering ciascuno, digest esatto; `optimization-preflight-qt6112.json`, `optimization-preflight-qt682.json` |
+| Main completo sul PC | 135 scenari notte; `optimization-main-pc-release/` |
+| Main sul display | 135 scenari notte e 48 giorno; `optimization-board-eglfs-night/`, `optimization-board-eglfs-day/` |
+| Navigazione e movimento | 124 passi per esecuzione, due assi, wrap, famiglie dinamiche, tre modalità, settlement e visibilità negli overlay |
+| Classifica / cache / Orologio | 20 nomi e identità, 380 partite, renderer riusato, ordine tastierino, clock e meteo; `optimized-eglfs/` |
+| Readiness | Il renderer vecchio non può confermare quello nuovo; recupero con frame reale; `optimization-heartbeat-eglfs.json` |
+| Regressioni core | Contratti API, adapter, persistenza, layout, loading, impostazioni, Sport/Casa, bundle, provider, icone, lifecycle; `optimization-core-*/` e log `optimization-*` |
+| Supervisore | Crash, blocco iniziale, thread GUI fermo, readiness persa, uscita inattesa; `optimization-supervisor.txt` |
+| Installazione e reboot | Hash di 457 file runtime, integrità bundle, preferenze originali, servizio e heartbeat freschi; `optimization-installation/post-reboot-state.json` |
+
+Le prove Main terminano senza warning QML né effetti sui provider. Le immagini sono acquisizioni Qt reali con fixture sintetiche o cache isolate, non conferme nuove dei provider live. L’avvio del processo di produzione e il reboot sono verificati separatamente dalle fixture.
+
+## Identità e consegna
+
+| Campo | Valore |
+|---|---|
+| Tema | `studio.applecalm` / `1.2.0` |
+| Core / contratto | `0.7.0-rc.3` / `SmartPC.ThemeApi 2.2`; 2.0 e 2.1 restano registrate |
+| Digest bundle | `0f30f79c9ed959368df85cc498acb5698a687cdde60448a909136759d1116553` |
+| SHA-256 pacchetto | `a85d58bec8e0b2928ddb26d0967dd308e17da9d865072aa842c9265373584c13` |
+| Fingerprint API | `14f139f20d19c3b093f579741eb0bb7653cbff956a8cc34987df5365b7675448` |
+| Qt minimo / verificato sul dispositivo | `6.8.2` / `6.8.2` |
+| Reboot | Boot ID cambiato, `fc587cb2-d238-4d7d-a396-6ec5f3392b86` |
+
+In `SmartPC-artifacts` rimangono `apple-calm-1.2.0.smartpc-theme`, `apple-calm-1.2.0-sorgenti-e-verifiche.zip` e `apple-calm-1.2.0-SHA256SUMS.txt`. Il tema richiede il core aggiornato incluso nei sorgenti. La patch runtime è relativa alla baseline Casa preservata, con 42 file modificati o aggiunti; non va applicata ciecamente all’SDK 0.6.6. `runtime-changes.json` e il manifest della distribuzione consentono il controllo esatto.
+
+L’installazione è stata protetta da un backup fresco della transazione e da un guard su tutti i 455 file precedentemente installati. Import, attivazione tramite Main, riapertura a freddo, processo EGLFS reale e reboot sono distinti. Solo dopo la prova del reboot il backup della transazione è stato sostituito dal backup corrente e sono state rimosse le revisioni obsolete. Le prove permanenti sono in `/var/lib/smartpc-dashboard/apple-calm-proof`. Dopo il reboot, che svuota `/tmp`, il collaudo completo è stato ripetuto da uno stage persistente; questi sono i rapporti distribuiti. I confronti di prestazioni e i preflight erano già stati acquisiti sul PC prima del reboot.
+
+![Orologio, rendering EGLFS con dati di collaudo](evidence/optimized-eglfs/clock.png)
+
+![Classifica con i nomi della cache reale, in verifica isolata](evidence/optimized-eglfs/standing.png)

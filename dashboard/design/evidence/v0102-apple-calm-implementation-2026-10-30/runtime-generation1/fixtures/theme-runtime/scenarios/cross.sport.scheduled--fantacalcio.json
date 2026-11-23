@@ -1,0 +1,54 @@
+{
+  "id": "cross.sport.scheduled:fantacalcio",
+  "covers": [],
+  "family": "sport-match",
+  "surfaceId": "sport.match.detail",
+  "variant": "scheduled×fantacalcio",
+  "clockEpoch": 1790848800,
+  "initialProperties": {
+    "familyId": "sport",
+    "overlay": "sportDetail",
+    "sportDetailPage": 3
+  },
+  "domainSetup": [
+    "match:scheduled"
+  ],
+  "expectedExpressions": [
+    "sportOverlay.detail",
+    "sportDetailPage === 3",
+    "sportMatch.canonicalMatchId.length > 0",
+    "sportMatch.status === \"scheduled\"",
+    "sportMatch.homeScore == null",
+    "sportMatch.awayScore == null",
+    "sportMatch.scoreText === \"—\"",
+    "sportFixtures.filter(match => match.canonicalMatchId === sportMatchId).length === 1"
+  ],
+  "invariants": [
+    "navigationAndTab",
+    "overlayStack",
+    "inputFocus",
+    "providerEffects",
+    "actorIdentity",
+    "eventFlagsAndDeadline"
+  ],
+  "actions": [
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 4
+    },
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 6
+    }
+  ],
+  "publicApiBinding": "deferredA1",
+  "expectedDomain": {
+    "status": "scheduled",
+    "homeScore": null,
+    "awayScore": null,
+    "scoreText": "—"
+  },
+  "legacyNullSemantics": "Backend scores must be Python null/None exactly. Legacy QVariantMap maps None to JavaScript undefined on Qt 6.11, so QML absence uses == null and never accepts zero; typed public binding remains deferredA1."
+}

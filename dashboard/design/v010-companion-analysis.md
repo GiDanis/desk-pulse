@@ -1,15 +1,18 @@
-# SmartPC — v0.11 · Analisi iniziale del compagno interattivo
+# SmartPC — v0.11 · Analisi del compagno interattivo
 
-> **Riallineamento roadmap · 13 ottobre 2026:** Compagno ora v0.11, memoria/scene AI v0.12; la nuova v0.10 è Acquario. Nomi dei file e asset conservati per mantenere i collegamenti. Baseline, fonti e proposte dell’11 ottobre restano storiche; per stato corrente e numerazione vale il [MasterPlan](release-masterplan.md), revisione 2.68. Nessuna nuova verifica sulla board.
-**Revisione 6 · 11 ottobre 2026 · Europe/Rome**
+**Revisione 7 · 20 novembre 2026 · Europe/Rome**
+
+Roadmap: Acquario v0.10 → Compagno v0.11 → Memoria/AI v0.12. I nomi storici `v010-companion-*` restano per conservare collegamenti e asset.
 
 **Stato: analisi; scelte proposte da discutere, nessuna implementazione o prova sulla board.**
 
-Riferimento: [MasterPlan, revisione 2.56](release-masterplan.md), soprattutto sezioni 2, 5, 12 e 13. Baseline documentata: core **0.9.0-rc.6**, Theme API **2.9**, **68 superfici**, Apple Calm **1.6.2**. Baseline letta nei documenti e nei sorgenti locali; questa analisi non verifica nuovamente l'installazione Orange Pi.
+Riferimento: [MasterPlan, revisione 3.42](release-masterplan.md), soprattutto sezioni 12 e 13. Baseline documentata: core **0.10.4-rc.2**, Theme API **2.15**, **71 superfici**, Apple Calm **1.9.1**. Versioni lette nei documenti e nei sorgenti locali; nessuna nuova verifica dell'installazione Orange Pi. La distribuzione qualificata e il checkout di ricerca non sono equivalenti: la base del futuro prototipo deve essere identificata per manifest e delta selezionato.
+
+**Riesame corrente:** [risultati, correzioni e lotti del 20 novembre](v011-companion-review-2026-11-20.md). Integrate le lezioni Acquario/Apple Calm: layout adattivo ai banner, conferme dopo commit, proprietario unico del visuale, controllo dei costi continui e distinzione fra frame software/pixel. La simulazione di sette giorni ha rilevato un bilancio di cura insostenibile nei vecchi coefficienti; la specifica propone valori alternativi, ancora da concordare. Il modello usato per redigere l'analisi non costituisce evidenza di fattibilità o qualità.
 
 **Decisioni acquisite:** stile **A — Calm / illustrazione 2D** e accudimento **più attivo**, con bisogni frequenti e conseguenze temporanee recuperabili. L'approfondimento operativo è nella [specifica funzionale e tecnica](v010-companion-functional-spec.md): schermate/input, regole di cura/tempo, mini-gioco, progressione, protocollo delle azioni, persistenza, contratti e gate. I parametri numerici restano proposte da tarare.
 
-**Ricerca online integrata:** [14 riferimenti principali e applicazioni](v010-companion-online-research.md), consultati l'11 ottobre 2026: studi originali sul rapporto e sulla motivazione, comportamento animale nei giochi, utility/animazione, Tamagotchi, Google/W3C, Disney/Spine, ToonCrafter, Qt e SQLite. La specifica revisione 2 amplia personalità, leggibilità dei bisogni, focus, gesti autonomi, compatibilità del rig, uso mirato di Animator, timeout e qualifica degli asset AI. Evidenze esterne, nostre proposte e verifiche future sono distinte.
+**Ricerca online integrata:** [14 riferimenti principali e applicazioni](v010-companion-online-research.md), consultati l'11 ottobre 2026: studi originali sul rapporto e sulla motivazione, comportamento animale nei giochi, utility/animazione, Tamagotchi, Google/W3C, Disney/Spine, ToonCrafter, Qt e SQLite. Ricontrollati quattro riferimenti tecnici Qt/SQLite il 20 novembre; gli altri non sono presentati come ricontrollati oggi. La specifica revisione 3 consolida comportamento, visuale, esiti e recupero. Evidenze esterne, nostre proposte e verifiche future sono distinte.
 
 ## 1. Risultato da progettare
 
@@ -32,21 +35,23 @@ Il MasterPlan prevede già cane locale, riposo/attenzione/gioco, reazioni prepar
 
 L'ampliamento richiede nella v0.11 una **memoria funzionale minima**: identità, bisogni, progressione e impostazioni devono sopravvivere al reboot. Questo è stato locale del gioco di accudimento; la v0.12 conserva il lavoro sulla storia evoluta e sul planner AI. Le normali impostazioni persistenti e lo stato dei bisogni non costituiscono apprendimento AI. Uno stato conservato durante la navigazione non dimostra recupero al reboot.
 
-L'analisi v0.11 può avanzare mentre restano aperti gate del Gioco; il rilascio dovrà conservare la baseline e verificare gli effetti della convivenza. Non si dichiara conclusa la qualifica v0.9.
+L'analisi v0.11 avanza sulla baseline consegnata: Gioco è in chiusura funzionale/manutenzione, Acquario implementato; restano gate fisici, live, durata e scientifici attribuiti ai rispettivi moduli. Il rilascio del cane deve conservare la baseline e verificare gli effetti della convivenza, senza riaprire automaticamente la ricerca Gioco.
 
 ## 3. Cosa c'è già e cosa va ampliato
 
-Riscontri nei sorgenti al momento dell'analisi:
+Riscontri mirati aggiornati al 20 novembre, integrati con i report di consegna:
 
 | Base riutilizzabile | Limite attuale e conseguenza |
 | --- | --- |
 | [SceneHost](../components/SceneHost.qml) persistente nel root | Già gestisce caricamento, regioni, sospensione e recovery. Va riusato; la vita del cane deve avere un controller di prodotto separato dal renderer. |
 | [ActorState](../components/ActorState.qml) | Identità, posa, locomozione, sequenza, pausa, anchor e motionMode. Non contiene ancora bisogni, interazioni o decisioni del cane. |
 | [Registry scene](../scenes/registry.json) e attore geometrico | Renderer di prova da 30×30 px; non è un cane, un set di animazioni o una prova del futuro carico. |
-| Region negotiation in [Main.qml](../Main.qml) | Il percorso builtin dichiara una regione di **56×48 px**, a x=880/y=8. Un footprint più grande non entra e può bloccare/nascondere l'attore. Serve una scelta esplicita delle regioni per ogni presentazione. |
+| Region negotiation in [Main.qml](../Main.qml) | Il percorso builtin dichiara ancora **56×48 px**, a x=880/y=8. Apple Calm ha banner inferiori adattivi e geometrie negoziate: un footprint più grande e una pagina dedicata richiedono regioni dichiarate e composizione nello spazio realmente disponibile. |
 | `scene.main` e `SceneContext` pubblici | La superficie dichiara **zero azioni**; il ViewHost della scena è `interactive: false`. La scena ambientale non è già un'interfaccia di gioco. |
 | Notifica fornita alla scena | Main inoltra l'urgente o il banner corrente. Questo non è un flusso completo di eventi semantici di tutti i moduli. Non collegare direttamente ogni refresh a una reazione. |
-| Pause e motion già presenti | Main sospende la scena con overlay, urgente, **night** e **quietActive**. La v0.11 deve separare palette notte, silenzio Avvisi, riposo del cane e movimento ridotto, come chiede il MasterPlan. |
+| Pause e motion già presenti | Main sospende la scena con Acquario selezionato, overlay, urgente, **night** e **quietActive**. La v0.11 deve separare palette solare, silenzio Avvisi, riposo del cane e movimento ridotto, conservando la precedenza della scena Acquario. |
+| Acquario e conferme asincrone | Gestione persistente, request ID, pending fino all'esito del worker, retry limitato e failure visibile sono già qualificati nella manutenzione rc.1. Riutilizzare semantica e pattern verificati; non duplicare alla cieca i domini/stati dei pesci. |
+| Movimento e uso continuo | Le prove Apple hanno conservato NumberAnimation; il soak misura ora la GUI reale e distingue helper/cgroup. Usare questi criteri per il cane, senza ereditare una certificazione di FPS, RAM o stabilità del suo futuro carico. |
 | Theme Engine e fallback | Contratti, asset/renderer, staging e recovery esistono. Nuove superfici/azioni richiedono evoluzione additiva, fixture e kit aggiornati; non una riscrittura dell'engine. |
 
 Gli studi storici [presentazioni e compagno](theme-engine-presentation-spec.md) e [guida del motore](theme-engine-implementation-guide.md) contengono idee pertinenti, ma assegnano ancora il cane alla vecchia v0.9 in alcuni passaggi. Per numerazione e stato vale il MasterPlan corrente. Le proposte UX precedenti non sostituiscono i comandi e lo stile attuali.
@@ -203,9 +208,9 @@ Conservare per ogni asset riferimento, prompt, versione approvata, dimensioni, p
 
 ## 9. Architettura candidata e temi
 
-Flusso proposto: **comandi/eventi normalizzati → servizio Compagno Python con store locale → snapshot semantico → SceneHost/render adapter QML**. Python decide stato, bisogni, progresso, priorità, tempi e configurazione; QML esegue clip e spostamenti senza aggiornamenti Python per ogni frame. Completamenti/interruzioni tornano al controller con un identificatore dell'azione: un callback vecchio non chiude quella nuova.
+Flusso proposto: **comandi/eventi normalizzati → servizio Compagno Python con store locale → snapshot semantico → SceneHost ambientale / ViewHost dedicato e visuale QML condiviso**. Python decide stato, bisogni, progresso, priorità, tempi e configurazione; QML esegue clip e spostamenti senza aggiornamenti Python per frame. Completamenti/interruzioni identificano azione, proprietario e generazione: un callback vecchio non chiude quella nuova. L'effetto accettato e l'esito persistente sono distinti dalla conclusione cosmetica del gesto.
 
-Un solo stato di prodotto alimenta presenza ambientale e vista dedicata. Evitare due cani indipendenti: definire chi possiede la clip attiva durante passaggi, pannelli e cambi tema. Il bisogno di un processo dedicato va dimostrato da lavoro costoso; la proposta locale a stati non lo richiede di principio e non richiede NPU.
+Un solo stato di prodotto alimenta presenza ambientale e vista dedicata. Un solo renderer possiede animazione/ricevute; un'eventuale copia statica durante cambio tema non assegna effetti. SceneHost rimane ambientale: la pagina interattiva usa i contratti/ViewHost esistenti. Il bisogno di un processo dedicato va dimostrato da lavoro costoso; la proposta locale a stati non lo richiede di principio e non richiede NPU.
 
 Il contratto corrente della scena non va forzato tramite accesso ai controller privati. Per la vista richiesta, progettare contesto, azioni tipizzate e stato degli esiti; nomi delle superfici e futura minor API rimangono da definire. Includere Base/Functional, Apple Calm o fallback, corpus e kit della nuova release.
 
@@ -229,17 +234,17 @@ Qt Quick costruisce un scene graph renderizzato tramite API grafiche, con ottimi
 
 L'obiettivo durante l'animazione è un budget di circa **16,67 ms per fotogramma a 60 FPS**, da valutare sull'intero percorso. Un renderer C++ non risolve da solo texture troppo grandi, caricamenti durante la clip, trasparenze sovrapposte, sincronizzazioni o lavoro sulla GUI. Analizzare separatamente CPU, GPU, preparazione asset e intervalli dei frame; una media vicina a 60 non prova assenza di scatti. [Guida prestazioni Qt 6.8](https://doc.qt.io/qt-6.8/qtquick-performance.html).
 
-Distribuire lavoro sui core quando ci sono attività indipendenti che ne beneficiano, senza creare un thread per ogni bisogno o cercare di saturare la macchina. Per lo stile Soft 2.5D resta aperto il confronto fra sequenze preparate e un rig/runtime: l'immagine del concept non richiede 3D in tempo reale. Il caso di prova deve includere cane, interazioni, banner e carichi concomitanti realmente consentiti. Nessun cambio di linguaggio o prestazione viene dichiarato implementato in questa revisione.
+Distribuire lavoro sui core quando ci sono attività indipendenti che ne beneficiano, senza creare un thread per ogni bisogno o cercare di saturare la macchina. La base è stile A 2D con animazioni Qt di proprietà: il confronto ABBA e il 3D Acquario non motivano una conversione globale ad Animator o un cambio di stile. La prova deve includere cane, input, salvataggi, banner e carichi concomitanti consentiti. Nessun cambio di linguaggio o prestazione è implementato da questa revisione.
 
 ## 10. Percorso di studio e gate futuri
 
-Le fasi C0–C2 costituiscono il lavoro di analisi. C3–C5 sono successive attività di implementazione/qualifica, da avviare dopo accordo sul perimetro.
+Fasi riallineate al [riesame corrente](v011-companion-review-2026-11-20.md#8-lotti-e-gate-per-rendere-il-piano-eseguibile): C0/C1 sono analisi; C2 avvia produzione di asset/animazioni e C3–C5 implementazione/qualifica, da avviare dopo accordo sul perimetro.
 
 | Fase | Risultato reviewabile | Criterio per avanzare |
 | --- | --- | --- |
 | **C0 · Prodotto** | Ruolo acquisito dalla risposta dell'utente; scenari, identità e lista incluso/rinviato da completare. | Definite regole di accudimento/progressione e interazioni principali. |
 | **C1 · UX e comportamento** | Layout 960×640, mappa tasti, stati, bisogni/tempo, schema persistente e matrice reazioni. | Dati/focus protetti; percorsi e interruzioni completi; recupero del progresso e nessuna fonte ambigua. |
-| **C2 · Scelta grafica/tecnica** | Pipeline AI ibrida proposta; personaggio master, campione parti/pose, rig/clip e budget asset da progettare. | Produzione fattibile interamente in chat, identità e raccordi coerenti; criteri osservabili per la prova, senza promettere prestazioni non misurate. |
+| **C2 · Campione grafico/tecnico** | Produzione del master A e della sequenza minima, con parti/clip, pivot, appoggi e raccordi. | Qualità alle dimensioni reali, identità e interruzioni coerenti; distinto dalla qualifica prestazionale. Non prodotto in questa analisi. |
 | **C3 · Nucleo locale** | Controller, accudimento/progresso persistenti, azioni, prima scena, fallback e contratti. | Funziona offline, una sola identità, nessuna coda incontrollata o replay; reboot non perde il cane. |
 | **C4 · Integrazione e temi** | Reazioni selezionate, scene giorno/notte, Cozy e compatibilità. | Urgenti/focus/lifecycle prevalgono; eventi freschi e deduplicati; cambio tema recuperabile. |
 | **C5 · Qualifica Orange Pi** | Evidenze PC/board, input fisico, frame pacing, manifest/rollback. | Azioni leggibili a 50–60 cm; carico e recovery misurati nella build consegnata. |
@@ -263,4 +268,4 @@ Dopo queste decisioni, approfondire C1 con quattro scenari: consultazione tranqu
 
 ## 12. Evidenze e limiti di questa revisione
 
-Analisi del MasterPlan e dei sorgenti locali indicati; integrate fonti online primarie nel [registro della ricerca](v010-companion-online-research.md), con limiti e studi applicativi futuri. Generati quattro concept statici di confronto, con stile A selezionato; nessun asset/rig di produzione, prototipo eseguito, installazione, reboot o benchmark del cane. Questo file accompagna il MasterPlan e non promuove la v0.11 a implementata. Le modifiche locali del Gioco e del MasterPlan già presenti nel checkout non sono state alterate da questa analisi.
+Analisi del MasterPlan e dei sorgenti/report locali indicati; fonti primarie nel [registro della ricerca](v010-companion-online-research.md). Il [riesame corrente](v011-companion-review-2026-11-20.md) comprende ricontrollo di quattro riferimenti tecnici e screening aritmetico riproducibile di 12 combinazioni su sette giorni. I quattro concept restano confronti storici, con A selezionato; nessun asset/rig di produzione, prototipo Qt del cane, installazione, reboot o benchmark sulla board. Il MasterPlan e i lavori runtime preesistenti non sono modificati da questa revisione. La v0.11 rimane pianificata.

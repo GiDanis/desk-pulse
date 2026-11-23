@@ -1,0 +1,31 @@
+Impossibile inizializzare il servizio dei temi
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/state.py", line 142, in __init__
+    self._appearance = ThemeService(self, trace=trace)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_service.py", line 190, in __init__
+    self.catalog = make_catalog(self.store,self._root,trace=trace)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_runtime.py", line 12, in make_catalog
+    catalog=ThemeCatalog(store,root=root,trace=trace)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_core.py", line 99, in __init__
+    self.reload()
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_trace_hooks.py", line 26, in wrapped
+    return function(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_core.py", line 138, in reload
+    if 'base' not in self.packs: raise ThemeError('base','fallback distribuito mancante/non valido')
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+theme_core.ThemeError: base: fallback distribuito mancante/non valido
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_api_adapters.py", line 122, in <module>
+    report = verify()
+             ^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_theme_api_adapters.py", line 23, in verify
+    harness = LegacyHarness(base, {'theme': 'base', 'variant': 'day', 'motion': 'off'})
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/theme_fixture_support.py", line 144, in __init__
+    self.service.catalog.scene_renderers['fixture.canvas']={'file':'fixtures/theme-runtime/renderers/CanvasScene.qml','apiVersion':1,'sceneMode':'canvas','respectsOccupiedRegions':True}
+    ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'catalog'

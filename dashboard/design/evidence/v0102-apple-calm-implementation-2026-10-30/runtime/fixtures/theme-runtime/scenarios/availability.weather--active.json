@@ -1,0 +1,48 @@
+{
+  "id": "availability.weather:active",
+  "covers": [],
+  "family": "weather",
+  "surfaceId": "weather.now",
+  "variant": "active",
+  "clockEpoch": 1790848800,
+  "initialProperties": {
+    "familyId": "meteo",
+    "viewIndex": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "domainSetup": [
+    "weather:active"
+  ],
+  "expectedExpressions": [
+    "activeContentId === \"weather.now\"",
+    "weather.status === \"active\"",
+    "(weatherData.temperature || \"—\") === \"0\\u00b0\""
+  ],
+  "invariants": [
+    "navigationAndTab",
+    "overlayStack",
+    "inputFocus",
+    "providerEffects",
+    "actorIdentity",
+    "eventFlagsAndDeadline"
+  ],
+  "actions": [
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 4
+    },
+    {
+      "operation": "setToken",
+      "token": "shape.radiusRow",
+      "value": 6
+    }
+  ],
+  "publicApiBinding": "deferredA1"
+}

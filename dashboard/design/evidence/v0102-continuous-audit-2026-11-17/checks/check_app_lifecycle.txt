@@ -1,0 +1,65 @@
+test_automatic_timers_and_provider_shutdown (__main__.LauncherTests.test_automatic_timers_and_provider_shutdown) ... FAIL
+test_failed_qml_load_closes_services (__main__.LauncherTests.test_failed_qml_load_closes_services) ... FAIL
+test_normal_exit_closes_services (__main__.LauncherTests.test_normal_exit_closes_services) ... FAIL
+
+======================================================================
+FAIL: test_automatic_timers_and_provider_shutdown (__main__.LauncherTests.test_automatic_timers_and_provider_shutdown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 118, in test_automatic_timers_and_provider_shutdown
+    self.check_exit("automatic")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 108, in check_exit
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 123, in <module>
+    child(sys.argv[1])
+    ~~~~~^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 16, in child
+    from PySide6.QtCore import QTimer, QUrl
+ModuleNotFoundError: No module named 'PySide6'
+
+
+======================================================================
+FAIL: test_failed_qml_load_closes_services (__main__.LauncherTests.test_failed_qml_load_closes_services)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 115, in test_failed_qml_load_closes_services
+    self.check_exit("qml-failure")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 108, in check_exit
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 123, in <module>
+    child(sys.argv[1])
+    ~~~~~^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 16, in child
+    from PySide6.QtCore import QTimer, QUrl
+ModuleNotFoundError: No module named 'PySide6'
+
+
+======================================================================
+FAIL: test_normal_exit_closes_services (__main__.LauncherTests.test_normal_exit_closes_services)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 112, in test_normal_exit_closes_services
+    self.check_exit("normal")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 108, in check_exit
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 123, in <module>
+    child(sys.argv[1])
+    ~~~~~^^^^^^^^^^^^^
+  File "/home/giuseppe/Documenti/Workspace/SmartPC/dashboard/check_app_lifecycle.py", line 16, in child
+    from PySide6.QtCore import QTimer, QUrl
+ModuleNotFoundError: No module named 'PySide6'
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.347s
+
+FAILED (failures=3)

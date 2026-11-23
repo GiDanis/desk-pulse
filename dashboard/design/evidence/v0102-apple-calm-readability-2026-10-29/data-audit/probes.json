@@ -1,0 +1,171 @@
+{
+  "scope": "offline source/DTO/Apple Calm JS probes only; no providers, no board",
+  "qt": "6.11.2",
+  "python": "3.14.4",
+  "cases": [
+    {
+      "id": "zero-is-not-missing",
+      "kind": "control",
+      "actual": "0",
+      "expected": "0",
+      "matched": true,
+      "evidence": "theme_api.numeric → Format.number"
+    },
+    {
+      "id": "missing-is-not-zero",
+      "kind": "control",
+      "actual": "—",
+      "expected": "—",
+      "matched": true,
+      "evidence": "theme_api.numeric → Format.number"
+    },
+    {
+      "id": "account-duration-alias",
+      "kind": "control",
+      "actual": 300,
+      "expected": 300,
+      "matched": true,
+      "evidence": "account_sync output windowDurationMins → normalize_dto"
+    },
+    {
+      "id": "account-used-is-not-remaining",
+      "kind": "control",
+      "actual": 34,
+      "expected": 34,
+      "matched": true,
+      "evidence": "AccountPage currently labels this Utilizzato; residual candidate must derive 100-used"
+    },
+    {
+      "id": "unknown-reset-zero",
+      "kind": "finding",
+      "actual": "Reset 01/01 · 01:00",
+      "expected": "Reset non disponibile",
+      "matched": false,
+      "evidence": "account_sync uses 0 when reset unavailable; AccountPage checks null only"
+    },
+    {
+      "id": "halftime-in-progress-filter",
+      "kind": "finding",
+      "actual": [
+        "live"
+      ],
+      "expected": [
+        "live",
+        "half_time"
+      ],
+      "matched": false,
+      "evidence": "sport_core.LIVE_STATES includes half_time; Format.matches checks live only"
+    },
+    {
+      "id": "halftime-italian-label",
+      "kind": "finding",
+      "actual": "Stato non disponibile",
+      "expected": "Intervallo",
+      "matched": false,
+      "evidence": "sport_core status normalized as half_time; Format.matchStatus lacks label"
+    },
+    {
+      "id": "f1-result-reaches-renderer",
+      "kind": "finding",
+      "actual": false,
+      "expected": true,
+      "matched": false,
+      "evidence": {
+        "fixture": "dashboard/fixtures/racing-f1-normalized.json",
+        "sourceValue": "1:42.526",
+        "dtoTime": {
+          "available": false,
+          "value": null,
+          "unit": "",
+          "displayText": "",
+          "sourceRevision": ""
+        },
+        "renderedValue": "— · —"
+      }
+    },
+    {
+      "id": "motogp-result-reaches-renderer",
+      "kind": "finding",
+      "actual": false,
+      "expected": true,
+      "matched": false,
+      "evidence": {
+        "fixture": "dashboard/fixtures/racing-motogp-normalized.json",
+        "sourceValue": "01:27.917",
+        "dtoTime": {
+          "available": false,
+          "value": null,
+          "unit": "",
+          "displayText": "",
+          "sourceRevision": ""
+        },
+        "renderedValue": "— · —"
+      }
+    },
+    {
+      "id": "partial-score-consistency",
+      "kind": "presentation-decision",
+      "actual": "",
+      "expected": "0 – —",
+      "matched": false,
+      "evidence": "dashboard_summary preserves 0–missing, list formatter currently hides the score"
+    },
+    {
+      "id": "weather-zero",
+      "kind": "control",
+      "actual": 0,
+      "expected": 0,
+      "matched": true,
+      "evidence": "real normalize_response → weather_snapshot"
+    },
+    {
+      "id": "daily-not-hourly",
+      "kind": "control",
+      "actual": 3,
+      "expected": 3,
+      "matched": true,
+      "evidence": {
+        "dates": [
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03"
+        ],
+        "hourlyForecastField": "absent; hourly request is precipitation_probability only"
+      }
+    },
+    {
+      "id": "offline-retains-source-age",
+      "kind": "control",
+      "actual": true,
+      "expected": true,
+      "matched": true,
+      "evidence": "source_snapshot offline retained data"
+    },
+    {
+      "id": "invalid-numeric-display",
+      "kind": "boundary-hardening",
+      "actual": "False",
+      "expected": "—",
+      "matched": false,
+      "evidence": "numeric(False) is unavailable but carries displayText=False, currently preferred by Format.number"
+    }
+  ],
+  "matches": 7,
+  "findings": [
+    "unknown-reset-zero",
+    "halftime-in-progress-filter",
+    "halftime-italian-label",
+    "f1-result-reaches-renderer",
+    "motogp-result-reaches-renderer",
+    "partial-score-consistency",
+    "invalid-numeric-display"
+  ],
+  "sourceHashes": {
+    "theme-projects/apple-calm/bundle/qml/Format.js": "7aa56f961e586f4ae3279fcc0a22860c5027e2125919f49a821f4b007e3eca28",
+    "dashboard/theme_api.py": "a7d7a4124db6793ab88a774bca2c7ce7758fa748de782089fa82b2c28f2c7dd9",
+    "dashboard/weather.py": "8508649e9d4e192aee7eed56ba737bb1a7cc56b53f78c07b26a01826afba0735",
+    "dashboard/account_sync.py": "1d3f82073d4dea71a0013910859133d6c25fb3e34530c39c8bff4e8de3afdf93",
+    "dashboard/sport_core.py": "cfe1f07b8a73f825ed2e1a0d9f5774f56154562c323867d44fb74392c93e60f1",
+    "theme-projects/apple-calm/bundle/qml/AccountPage.qml": "9a7236aa16f4821477ed5d4851313142d1ee37851072b3134e5704ea759fa3ca"
+  }
+}
