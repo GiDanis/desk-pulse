@@ -703,6 +703,15 @@
         "diagnostics": {
           "type": "boolean",
           "readOnly": true
+        },
+        "unreadCount": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "notificationsAvailable": {
+          "type": "boolean",
+          "readOnly": true
         }
       },
       "required": [
@@ -710,7 +719,9 @@
         "recovery",
         "quiet",
         "night",
-        "diagnostics"
+        "diagnostics",
+        "unreadCount",
+        "notificationsAvailable"
       ],
       "additionalProperties": false
     },
@@ -1502,6 +1513,7 @@
           "enum": [
             "scheduled",
             "live",
+            "half_time",
             "finished",
             "postponed",
             "cancelled",
@@ -2143,6 +2155,32 @@
         "points": {
           "$ref": "#/$defs/NumericValue",
           "readOnly": true
+        },
+        "timeKind": {
+          "type": "string",
+          "enum": [
+            "total",
+            "best_lap",
+            "last_lap",
+            "reference",
+            "unavailable"
+          ],
+          "readOnly": true
+        },
+        "resultText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "resultKind": {
+          "type": "string",
+          "enum": [
+            "time",
+            "gap",
+            "status",
+            "reported",
+            "unavailable"
+          ],
+          "readOnly": true
         }
       },
       "required": [
@@ -2159,7 +2197,10 @@
         "compound",
         "status",
         "team",
-        "points"
+        "points",
+        "timeKind",
+        "resultText",
+        "resultKind"
       ],
       "additionalProperties": false
     },
@@ -2748,6 +2789,31 @@
               "type": "null"
             }
           ]
+        },
+        "cancelled": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "expired": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "presented": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "deliveryState": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "presented",
+            "listed_capacity",
+            "listed_late",
+            "revoked",
+            "expired",
+            "unavailable"
+          ],
+          "readOnly": true
         }
       },
       "required": [
@@ -2765,7 +2831,11 @@
         "expiresAt",
         "seen",
         "bannerSize",
-        "source"
+        "source",
+        "cancelled",
+        "expired",
+        "presented",
+        "deliveryState"
       ],
       "additionalProperties": false
     },
@@ -5129,6 +5199,241 @@
         "backgroundUrl",
         "species",
         "instances"
+      ],
+      "additionalProperties": false
+    },
+    "AquariumFish3D": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "visitId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "operationId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "speciesId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "assetUrl": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "speciesName": {
+          "type": "string",
+          "readOnly": true
+        },
+        "tint": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "readOnly": true
+        },
+        "size": {
+          "type": "number",
+          "readOnly": true
+        },
+        "speed": {
+          "type": "number",
+          "readOnly": true
+        },
+        "frequency": {
+          "type": "number",
+          "readOnly": true
+        },
+        "phase": {
+          "type": "number",
+          "readOnly": true
+        },
+        "startX": {
+          "type": "number",
+          "readOnly": true
+        },
+        "startY": {
+          "type": "number",
+          "readOnly": true
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "depth": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "visitId",
+        "operationId",
+        "speciesId",
+        "assetUrl",
+        "name",
+        "speciesName",
+        "tint",
+        "size",
+        "speed",
+        "frequency",
+        "phase",
+        "startX",
+        "startY",
+        "seed",
+        "depth"
+      ],
+      "additionalProperties": false
+    },
+    "Aquarium3DState": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "readOnly": true
+        },
+        "errorText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "sessionId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "assetRevision": {
+          "type": "string",
+          "readOnly": true
+        },
+        "effectivePlayback": {
+          "type": "string",
+          "readOnly": true
+        },
+        "populationRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "clockHealthy": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "fish": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AquariumFish3D"
+          },
+          "maxItems": 16,
+          "readOnly": true
+        },
+        "pending": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AquariumFish3D"
+          },
+          "maxItems": 1,
+          "readOnly": true
+        },
+        "runtimeAvailable": {
+          "type": "boolean",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "status",
+        "errorText",
+        "sessionId",
+        "assetRevision",
+        "effectivePlayback",
+        "populationRevision",
+        "clockHealthy",
+        "fish",
+        "pending",
+        "runtimeAvailable"
+      ],
+      "additionalProperties": false
+    },
+    "AquariumManageRow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "value": {
+          "type": "string",
+          "readOnly": true
+        },
+        "detail": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "value",
+        "detail"
+      ],
+      "additionalProperties": false
+    },
+    "AquariumManagement": {
+      "type": "object",
+      "properties": {
+        "section": {
+          "type": "string",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "message": {
+          "type": "string",
+          "readOnly": true
+        },
+        "selectedIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "busy": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "nameEditing": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AquariumManageRow"
+          },
+          "maxItems": 256,
+          "readOnly": true
+        }
+      },
+      "required": [
+        "section",
+        "title",
+        "message",
+        "selectedIndex",
+        "busy",
+        "nameEditing",
+        "rows"
       ],
       "additionalProperties": false
     },
@@ -8206,6 +8511,194 @@
         "commands",
         "actions",
         "aquarium"
+      ],
+      "additionalProperties": false
+    },
+    "Aquarium3DContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scene": {
+          "$ref": "#/$defs/Aquarium3DState",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "scene"
+      ],
+      "additionalProperties": false
+    },
+    "AquariumManagementContext": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "contextVersion": {
+          "type": "integer",
+          "const": 1,
+          "readOnly": true
+        },
+        "surfaceInstanceId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "appearanceRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "dataRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "style": {
+          "$ref": "#/$defs/ThemeStyle",
+          "readOnly": true
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/SurfaceLifecycle",
+          "readOnly": true
+        },
+        "viewport": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "safeArea": {
+          "$ref": "#/$defs/Rect",
+          "readOnly": true
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Command"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AvailableAction"
+          },
+          "maxItems": 10000,
+          "readOnly": true
+        },
+        "motionPolicy": {
+          "$ref": "#/$defs/MotionPolicy",
+          "readOnly": true
+        },
+        "dashboardSummary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DashboardSummary",
+              "readOnly": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "management": {
+          "$ref": "#/$defs/AquariumManagement",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "contentId",
+        "contextVersion",
+        "surfaceInstanceId",
+        "appearanceRevision",
+        "dataRevision",
+        "style",
+        "lifecycle",
+        "viewport",
+        "safeArea",
+        "commands",
+        "actions",
+        "management"
       ],
       "additionalProperties": false
     },

@@ -265,7 +265,7 @@ def effective_manifest(value, surfaces):
             {'network.router','network.wifi','network.ports'},
             {'sport.hub','settings.services','settings.sports','settings.appearance.management'},
             {'casa.inventory'}, {'network.inventory'},
-            {'game.track','game.leaderboard','game.progress','game.menu','game.driver.details'}, {'game.driver'}, {'aquarium.main'}]
+            {'game.track','game.leaderboard','game.progress','game.menu','game.driver.details'}, {'game.driver'}, {'aquarium.main'}, {'aquarium.3d','aquarium.manage'}]
     missing=set(surfaces)-known
     if missing and missing <= set.union(*groups) and all(not (group & missing) or group <= missing for group in groups):
         coverage['fallbacks']=sorted(set(coverage['fallbacks']) | missing)

@@ -369,6 +369,15 @@ class LegacyHarness:
             if case['variant'] in ('normal','reduced','off'):assert mode==case['variant']
             if case['variant']=='canvas':assert host.property('canvasScene') and renderer=='fixture.canvas','canvas variant not actually instantiated'
             if case['variant']=='paused':assert host.property('suspended') and actor.property('paused')
+        elif sid in ('aquarium.3d','aquarium.manage'):
+            host=self.root.findChild(QObject,'aquarium3DPage' if sid=='aquarium.3d' else 'aquariumManagePage')
+            deadline=time.monotonic()+5
+            while (self.aquarium.population.busy or not host.property('currentReady')) and time.monotonic()<deadline:self.pump(5)
+            assert self.aquarium.supports3d and host and host.property('currentReady'),sid
+            assert host.property('width')==960 and host.property('height')==640,sid
+            assert len(self.aquarium.population.state['active'])==6,sid
+            if sid=='aquarium.manage':assert len(self.aquarium.management['rows'])==7
+            return
         elif sid=='aquarium.main':
             host=self.root.findChild(QObject,'aquariumPage')
             deadline=time.monotonic()+5

@@ -4,7 +4,7 @@
 
 Generated from the four canonical JSON documents. Do not edit generated files.
 
-API fingerprint: `1106f292d7d4c4b25723aec56680fc529c56d382c8703b39b2e06e547d903177`
+API fingerprint: `5457c7f00f43ce140ca66be370757785510e99944eb4fa22ce84260d7d409dd0`
 
 This fingerprint is independent from the schema-1 registry fingerprint.
 
@@ -81,6 +81,8 @@ This fingerprint is independent from the schema-1 registry fingerprint.
 | game.driver.details | GameContext 1 | overlay | gameDetails | navigation.back, navigation.home, navigation.menu, navigation.inbox, navigation.family.step, navigation.view.step, details.open, game.start, game.pause, game.observe, game.display, game.mode, game.configure, game.driver.select, game.driver.create, game.participant, game.option.step, game.option.activate, selection.move, selection.select |
 | game.driver | GameContext 1 | page | — | navigation.back, navigation.home, navigation.menu, navigation.inbox, navigation.family.step, navigation.view.step, details.open, game.start, game.pause, game.observe, game.display, game.mode, game.configure, game.driver.select, game.driver.create, game.participant, game.option.step, game.option.activate, selection.move, selection.select |
 | aquarium.main | AquariumContext 1 | page | — | navigation.back, navigation.home, navigation.menu, navigation.inbox, navigation.family.step, aquarium.pause, aquarium.resume |
+| aquarium.3d | Aquarium3DContext 1 | page | — | navigation.back, navigation.home, navigation.menu, navigation.inbox, navigation.family.step, aquarium.pause, aquarium.resume, aquarium.manage.open, aquarium.manage.key, aquarium.change, aquarium.prepared, aquarium.shown |
+| aquarium.manage | AquariumManagementContext 1 | page | — | navigation.back, navigation.home, navigation.menu, navigation.inbox, navigation.family.step, aquarium.pause, aquarium.resume, aquarium.manage.open, aquarium.manage.key, aquarium.change, aquarium.prepared, aquarium.shown |
 
 ## Contexts
 
@@ -709,6 +711,48 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 
 Method `requestAction(string, string, legacyMap) → ActionResult`.
 
+### Aquarium3DContext
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| contentId | string | required / non-null | {} |
+| contextVersion | int | required / non-null | {"const": 1} |
+| surfaceInstanceId | string | required / non-null | {} |
+| appearanceRevision | int | required / non-null | {"minimum": 0} |
+| dataRevision | int | required / non-null | {"minimum": 0} |
+| style | ThemeStyle | required / non-null | {} |
+| lifecycle | SurfaceLifecycle | required / non-null | {} |
+| viewport | Rect | required / non-null | {} |
+| safeArea | Rect | required / non-null | {} |
+| commands | CommandModel | required / non-null | {} |
+| actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
+| scene | Aquarium3DState | required / non-null | {} |
+
+Method `requestAction(string, string, legacyMap) → ActionResult`.
+
+### AquariumManagementContext
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| contentId | string | required / non-null | {} |
+| contextVersion | int | required / non-null | {"const": 1} |
+| surfaceInstanceId | string | required / non-null | {} |
+| appearanceRevision | int | required / non-null | {"minimum": 0} |
+| dataRevision | int | required / non-null | {"minimum": 0} |
+| style | ThemeStyle | required / non-null | {} |
+| lifecycle | SurfaceLifecycle | required / non-null | {} |
+| viewport | Rect | required / non-null | {} |
+| safeArea | Rect | required / non-null | {} |
+| commands | CommandModel | required / non-null | {} |
+| actions | ActionModel | required / non-null | {} |
+| motionPolicy | MotionPolicy | optional / non-null | {} |
+| dashboardSummary | DashboardSummary | optional / nullable | {} |
+| management | AquariumManagement | required / non-null | {} |
+
+Method `requestAction(string, string, legacyMap) → ActionResult`.
+
 ## DTOs
 
 ### Point
@@ -882,6 +926,8 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | quiet | bool | required / non-null | {} |
 | night | bool | required / non-null | {} |
 | diagnostics | bool | required / non-null | {} |
+| unreadCount | int | required / non-null | {"minimum": 0} |
+| notificationsAvailable | bool | required / non-null | {} |
 
 ### AppearanceDraftSummary
 
@@ -1073,7 +1119,7 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | roundId | string | required / non-null | {} |
 | source | SourceState | required / non-null | {} |
 | providerMatchId | string | required / non-null | {} |
-| status | string | required / non-null | {"enum": ["scheduled", "live", "finished", "postponed", "cancelled", "suspended", "unavailable"]} |
+| status | string | required / non-null | {"enum": ["scheduled", "live", "half_time", "finished", "postponed", "cancelled", "suspended", "unavailable"]} |
 | rawStatus | string | required / non-null | {} |
 | home | TeamIdentity | required / non-null | {} |
 | away | TeamIdentity | required / non-null | {} |
@@ -1217,6 +1263,9 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | status | string | required / non-null | {} |
 | team | string | required / non-null | {} |
 | points | NumericValue | required / non-null | {} |
+| timeKind | string | required / non-null | {"enum": ["total", "best_lap", "last_lap", "reference", "unavailable"]} |
+| resultText | string | required / non-null | {} |
+| resultKind | string | required / non-null | {"enum": ["time", "gap", "status", "reported", "unavailable"]} |
 
 ### PitStop
 
@@ -1344,6 +1393,10 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | seen | bool | required / non-null | {} |
 | bannerSize | string | required / non-null | {"enum": ["small", "large"]} |
 | source | SourceState | required / nullable | {} |
+| cancelled | bool | required / non-null | {} |
+| expired | bool | required / non-null | {} |
+| presented | bool | required / non-null | {} |
+| deliveryState | string | required / non-null | {"enum": ["pending", "presented", "listed_capacity", "listed_late", "revoked", "expired", "unavailable"]} |
 
 ### MotionPolicy
 
@@ -1856,6 +1909,63 @@ Method `requestAction(string, string, legacyMap) → ActionResult`.
 | species | array | required / non-null | {"items": "AquariumSpecies", "maxItems": 8} |
 | instances | array | required / non-null | {"items": "AquariumInstance", "maxItems": 16} |
 
+### AquariumFish3D
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| id | string | required / non-null | {} |
+| visitId | string | required / non-null | {} |
+| operationId | string | required / non-null | {} |
+| speciesId | string | required / non-null | {} |
+| assetUrl | string | required / non-null | {} |
+| name | string | required / non-null | {} |
+| speciesName | string | required / non-null | {} |
+| tint | color | required / non-null | {} |
+| size | real | required / non-null | {} |
+| speed | real | required / non-null | {} |
+| frequency | real | required / non-null | {} |
+| phase | real | required / non-null | {} |
+| startX | real | required / non-null | {} |
+| startY | real | required / non-null | {} |
+| seed | int | required / non-null | {"minimum": 0} |
+| depth | int | required / non-null | {"minimum": 0, "maximum": 2} |
+
+### Aquarium3DState
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| status | string | required / non-null | {} |
+| errorText | string | required / non-null | {} |
+| sessionId | string | required / non-null | {} |
+| assetRevision | string | required / non-null | {} |
+| effectivePlayback | string | required / non-null | {} |
+| populationRevision | int | required / non-null | {"minimum": 0} |
+| clockHealthy | bool | required / non-null | {} |
+| fish | array | required / non-null | {"items": "AquariumFish3D", "maxItems": 16} |
+| pending | array | required / non-null | {"items": "AquariumFish3D", "maxItems": 1} |
+| runtimeAvailable | bool | required / non-null | {} |
+
+### AquariumManageRow
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| id | string | required / non-null | {} |
+| title | string | required / non-null | {} |
+| value | string | required / non-null | {} |
+| detail | string | required / non-null | {} |
+
+### AquariumManagement
+
+| Read-only field | Type | Optional/nullable | Constraints |
+| --- | --- | --- | --- |
+| section | string | required / non-null | {} |
+| title | string | required / non-null | {} |
+| message | string | required / non-null | {} |
+| selectedIndex | int | required / non-null | {"minimum": 0} |
+| busy | bool | required / non-null | {} |
+| nameEditing | bool | required / non-null | {} |
+| rows | array | required / non-null | {"items": "AquariumManageRow", "maxItems": 256} |
+
 ## Models
 
 | Model | Row type | Identity |
@@ -1971,6 +2081,11 @@ The runtime broker also checks lifecycle, generation and private router availabi
 | game.driver.create | optional | {"name": {"type": "string", "maxLength": 40}} |
 | aquarium.pause | optional | {} |
 | aquarium.resume | optional | {} |
+| aquarium.manage.open | optional | {} |
+| aquarium.prepared | optional | {} |
+| aquarium.shown | optional | {} |
+| aquarium.manage.key | optional | {"key": {"type": "int", "minimum": 1, "maximum": 9, "required": true}} |
+| aquarium.change | optional | {"operation": {"type": "string", "enum": ["add", "replace", "remove", "save", "pool"], "required": true}, "species": {"type": "string", "maxLength": 128, "required": false}, "fishId": {"type": "string", "maxLength": 128, "required": false}, "name": {"type": "string", "maxLength": 128, "required": false}, "variant": {"type": "string", "maxLength": 128, "required": false}, "nextSpecies": {"type": "string", "maxLength": 128, "required": false}, "days": {"type": "int", "minimum": 0, "maximum": 3650, "required": false}, "revision": {"type": "int", "minimum": 0, "required": false}} |
 
 ## Semantic roles
 

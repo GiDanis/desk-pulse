@@ -78,9 +78,15 @@ def timestamp(value, timezone='Europe/Rome'):
 
 def numeric(value, unit='', display='', revision=''):
     if isinstance(value, dict):
-        return complete_snapshot('NumericValue', value)
+        result = complete_snapshot('NumericValue', value)
+        if result['available'] and not _finite_number(result['value']):
+            result.update(available=False, value=None, displayText='')
+        return result
+    # Formatted durations are intentionally display-only. Boolean/non-finite
+    # inputs must never leak their Python spelling into a measurement label.
+    invalid = type(value) is bool or type(value) in (int, float) and not _finite_number(value)
     return {'available': _finite_number(value), 'value': value if _finite_number(value) else None,
-            'unit': unit, 'displayText': str(display) if display != '' else str(value) if value is not None else '',
+            'unit': unit, 'displayText': '' if invalid else str(display) if display != '' else str(value) if value is not None else '',
             'sourceRevision': str(revision)}
 
 
@@ -121,7 +127,7 @@ ALIASES = {
     'SettingRow': {'title': 'label', 'detail': 'description'},
     'InfoRow': {'title': 'label'},
     'DriverData': {'name': 'driverName', 'laps': 'lapTimes'},
-    'RacingTiming': {'driverName': 'name'},
+    'RacingTiming': {'driverName': 'name', 'lap': 'laps', 'driverId': 'id'},
     'RacingEventData': {'roundId': 'round', 'startsAt': 'start', 'endsAt': 'end', 'info': 'infoRows', 'summary': 'summaryRows'},
     'RacingSessionData': {'startsAt': 'start', 'endsAt': 'end', 'status': 'state', 'info': 'infoRows'},
 }
@@ -228,10 +234,26 @@ def normalize_dto(type_name, raw, *, identity='', source=None):
         values['balance'] = default_snapshot('ScalarValue')
     if type_name == 'AccountWindow' and 'windowDurationMinutes' not in raw and 'windowDurationMins' in raw:
         values['windowDurationMinutes'] = numeric(raw['windowDurationMins'])
+    if type_name == 'AccountWindow' and (values['resetsAt'] is None or values['resetsAt'] <= 0):
+        values['resetsAt'] = None
+    if type_name == 'RacingTiming' and not values['resultText']:
+        # Old caches lack semantic timing fields: preserve the reported text,
+        # never guess whether it is a duration, gap or classification status.
+        reported = raw.get('value')
+        if isinstance(reported, str) and reported not in ('', '—'):
+            values.update(resultText=reported, resultKind='reported')
     if type_name == 'Lineup':
         values['teamId'] = str(raw.get('teamId', raw.get('side', '')))
     if type_name == 'NotificationEvent' and isinstance(raw.get('source'), str):
         values['source'] = None
+    if type_name == 'NotificationEvent':
+        delivery = {'in attesa':'pending', 'presentato':'presented',
+                    'solo elenco · coda piena':'listed_capacity',
+                    'solo elenco · fuori tempo':'listed_late', 'revocato':'revoked', 'scaduto':'expired'}
+        values['deliveryState'] = ('revoked' if values['cancelled'] else 'expired' if values['expired']
+            else delivery.get(raw.get('deliveryState'), raw.get('deliveryState', 'unavailable')))
+        if values['deliveryState'] not in fields['deliveryState']['enum']:
+            values['deliveryState'] = 'unavailable'
     return complete_snapshot(type_name, values)
 
 
@@ -269,6 +291,12 @@ def weather_snapshot(envelope):
             value = display
         result[key] = numeric(value, unit, display, result['source']['dataRevision'])
     result['forecast'] = []
+    direction = result['windDirection']['value']
+    result['windDirectionText'] = (['N','NE','E','SE','S','SO','O','NO'][int((direction % 360 + 22.5) // 45) % 8]
+                                   if direction is not None else '')
+    speed = result['windSpeed']['value']
+    if speed is not None:
+        result['windSpeed']['displayText'] = f'{speed:g} km/h'
     result['observationAt'] = timestamp(data.get('observationAt', data.get('weather_time')))
     for i, row in enumerate(data.get('forecast', [])):
         if not isinstance(row, dict):
@@ -404,6 +432,8 @@ def normalize_legacy(surface_id, payload, cache=None, *, validate=True):
         values['eventData'] = normalize_dto('NotificationEvent', event) if event else None
         values['itemModel'] = [normalize_dto('NotificationEvent', row) for row in payload.get('items', [])]
         values['sourceMetadata'] = normalize_dto('SourceState', payload['sourceMetadata']) if isinstance(payload.get('sourceMetadata'), dict) else None
+        if values['eventData'] and values['sourceMetadata']:
+            values['eventData']['source'] = deepcopy(values['sourceMetadata'])
         if 'commands' not in payload:
             values['commands'] = [normalize_dto('Command', hint, identity=f'key:{hint.get("key", i+1)}')
                                   for i, hint in enumerate(payload.get('commandHints', [])) if isinstance(hint, dict)]
@@ -529,8 +559,9 @@ def normalize_legacy(surface_id, payload, cache=None, *, validate=True):
             for key, label in [('temperature','Temperatura'),('feelsLike','Percepita'),('windSpeed','Vento'),('gusts','Raffiche'),('humidity','Umidità'),('precipitation','Precipitazioni'),('rainProbability','Probabilità del periodo')]:
                 value = weather[key]
                 detail_row(key, label, value['displayText'] or '—', qualification)
+            detail_row('windDirection', 'Direzione vento', weather['windDirectionText'] or '—', qualification)
             for day in weather['forecast']:
-                detail_row(day['id'], day['date'], day['low']['displayText']+' / '+day['high']['displayText'], day['description']+' · '+qualification)
+                detail_row(day['id'], day['date'], 'Max '+(day['high']['displayText'] or '—')+' · Min '+(day['low']['displayText'] or '—'), day['description']+' · Prob. max '+(day['rainProbability']['displayText'] or '—')+' · '+qualification)
         values['rows'] = rows
         index = max(0, min(len(rows)-1, int(_mapping(payload.get('selection')).get('index', 0))))
         values['selection'] = normalize_dto('SelectionState', {'selectedId':rows[index]['id'] if rows else '', 'index':index, 'count':len(rows)})

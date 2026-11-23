@@ -40,7 +40,14 @@ def contract_lane(cases,contract):
 
 def child(profile,cases):
     private,base=isolate_process()
+    native=any(case.get('requiresGraphics3D') for case in cases)
+    if not native:os.environ['SMARTPC_AQUARIUM_RENDERER']='2d'
     from theme_fixture_support import LegacyHarness
+    if native:
+        from aquarium_geometry import available
+        if not available():
+            private.cleanup()
+            return {'status':'failed','profile':profile,'coverage':[],'error':'This subset requires Qt Quick 3D and an accelerated backend; use the focused check-aquarium-3d.py for native qualification.'}
     from PySide6.QtCore import qVersion
     import PySide6
     harness=None;results=[]
@@ -57,8 +64,8 @@ def child(profile,cases):
         private.cleanup()
 
 
-def execute_child(profile,timeout,selected=None):
-    command=[sys.executable,str(Path(__file__).resolve()),'--child',json.dumps(profile)]
+def execute_lane(profile,timeout,selected=None,lane="legacy"):
+    command=[sys.executable,str(Path(__file__).resolve()),'--child',json.dumps(profile),'--render-lane',lane]
     if selected:command+=['--select',selected]
     started=time.monotonic()
     try:result=subprocess.run(command,capture_output=True,text=True,timeout=timeout)
@@ -68,6 +75,15 @@ def execute_child(profile,timeout,selected=None):
     report['exitCode']=result.returncode;report['elapsedSeconds']=round(time.monotonic()-started,3)
     if result.returncode:report['status']='failed';report.setdefault('stderr',result.stderr[-10000:])
     return report
+
+
+def execute_child(profile,timeout,selected=None):
+    _,cases,_=read_corpus()
+    if selected:cases=[case for case in cases if case['id']==selected or case['family']==selected]
+    lanes=[]
+    for name,native in [('legacy',False),('3d',True)]:
+        if any(bool(case.get('requiresGraphics3D'))==native for case in cases):lanes.append(execute_lane(profile,timeout,selected,name))
+    return {'status':'passed' if all(row['status']=='passed' for row in lanes) else 'failed','profile':profile,'rendererLanes':lanes,'coverage':[case for row in lanes for case in row.get('coverage',[])]}
 
 
 def coverage_summary(lanes,cases):
@@ -117,6 +133,7 @@ def regression_lane(timeout):
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--track',choices=['all','contractData','legacyUi','regressions'],default='all');parser.add_argument('--profiles',help='Comma-separated theme:variant:motion; default full corpus matrix')
     parser.add_argument('--fault-child',choices=['loading']);parser.add_argument('--regressions',action='store_true',help='Also run isolated functional/fault/race regression children');parser.add_argument('--regression-child');parser.add_argument('--output',type=Path);parser.add_argument('--child');parser.add_argument('--select',help='Scenario ID or family, diagnostic subset explicitly reported');parser.add_argument('--timeout',type=float,default=180)
+    parser.add_argument('--render-lane',choices=['legacy','3d'],help=argparse.SUPPRESS)
     args=parser.parse_args()
     if args.fault_child:
         private,base=isolate_process()
@@ -141,6 +158,7 @@ def main():
     if args.select:
         cases=[case for case in cases if case['id']==args.select or case['family']==args.select];assert cases,'unknown scenario selection'
     if args.child:
+        if args.render_lane:cases=[case for case in cases if bool(case.get('requiresGraphics3D'))==(args.render_lane=='3d')]
         try:report=child(json.loads(args.child),cases)
         except Exception as error:report={'status':'failed','error':str(error),'traceback':traceback.format_exc(),'profile':json.loads(args.child)}
         print(json.dumps(report,ensure_ascii=False));return 0 if report['status']=='passed' else 1

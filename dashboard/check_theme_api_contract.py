@@ -49,10 +49,10 @@ class ContractTests(unittest.TestCase):
 
     def test_coverage_and_not_runtime_availability(self):
         c = self.contract
-        self.assertEqual(len(c.surfaces), 69)
+        self.assertEqual(len(c.surfaces), 71)
         self.assertEqual(c.check_source_coverage()['routes'], 44)
         self.assertEqual(c.check_source_coverage()['applicationOwnedRoutes'], ['themeChooser'])
-        self.assertEqual(c.check_source_coverage()['registeredContents'], 37)
+        self.assertEqual(c.check_source_coverage()['registeredContents'], 39)
         self.assertFalse(c.metadata()['runtimeModuleVerified'])
         self.assertEqual(c.metadata()['availability'], 'contractOnly')
 

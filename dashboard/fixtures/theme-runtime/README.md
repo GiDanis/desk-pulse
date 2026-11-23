@@ -33,3 +33,11 @@ Per aggiungere un caso: definire payload ed expected indipendenti, route, azioni
 barriere dei worker, effetti consentiti e assert; aggiornare gli hash del catalogo
 dopo review. Non trasformare una label o un caso non eseguito in PASS. Le fixture
 non attestano provider live, tastierino fisico, rendering GPU o prestazioni EGLFS.
+
+Le due superfici Aquarium API 2.14 hanno `requiresGraphics3D`: il runner le
+separa dai casi del vecchio renderer 2D in processi distinti. La sola corsia
+`contractData` resta eseguibile senza GPU; la matrice UI completa richiede
+Qt Quick 3D e un backend accelerato. Il backend software segnala esplicitamente
+il requisito mancante, senza attribuire PASS alle mesh. Per le prove proporzionate
+con vera Main, gestione, sostituzioni, pause e tempi usare
+`scripts/check-aquarium-3d.py`; i suoi risultati non chiudono la matrice estesa.

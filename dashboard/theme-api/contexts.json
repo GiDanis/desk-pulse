@@ -3,7 +3,7 @@
   "module": {
     "uri": "SmartPC.ThemeApi",
     "major": 2,
-    "minor": 13
+    "minor": 15
   },
   "apiState": "implemented",
   "privateHandles": [
@@ -502,6 +502,15 @@
           "readOnly": true
         },
         "diagnostics": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "unreadCount": {
+          "type": "int",
+          "minimum": 0,
+          "readOnly": true
+        },
+        "notificationsAvailable": {
           "type": "bool",
           "readOnly": true
         }
@@ -1063,6 +1072,7 @@
           "enum": [
             "scheduled",
             "live",
+            "half_time",
             "finished",
             "postponed",
             "cancelled",
@@ -1504,6 +1514,32 @@
         "points": {
           "type": "NumericValue",
           "readOnly": true
+        },
+        "timeKind": {
+          "type": "string",
+          "enum": [
+            "total",
+            "best_lap",
+            "last_lap",
+            "reference",
+            "unavailable"
+          ],
+          "readOnly": true
+        },
+        "resultText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "resultKind": {
+          "type": "string",
+          "enum": [
+            "time",
+            "gap",
+            "status",
+            "reported",
+            "unavailable"
+          ],
+          "readOnly": true
         }
       }
     },
@@ -1878,6 +1914,31 @@
         "source": {
           "type": "SourceState",
           "nullable": true,
+          "readOnly": true
+        },
+        "cancelled": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "expired": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "presented": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "deliveryState": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "presented",
+            "listed_capacity",
+            "listed_late",
+            "revoked",
+            "expired",
+            "unavailable"
+          ],
           "readOnly": true
         }
       }
@@ -3306,6 +3367,181 @@
           "maxItems": 16
         }
       }
+    },
+    "AquariumFish3D": {
+      "fields": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "visitId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "operationId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "speciesId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "assetUrl": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "speciesName": {
+          "type": "string",
+          "readOnly": true
+        },
+        "tint": {
+          "type": "color",
+          "readOnly": true
+        },
+        "size": {
+          "type": "real",
+          "readOnly": true
+        },
+        "speed": {
+          "type": "real",
+          "readOnly": true
+        },
+        "frequency": {
+          "type": "real",
+          "readOnly": true
+        },
+        "phase": {
+          "type": "real",
+          "readOnly": true
+        },
+        "startX": {
+          "type": "real",
+          "readOnly": true
+        },
+        "startY": {
+          "type": "real",
+          "readOnly": true
+        },
+        "seed": {
+          "type": "int",
+          "readOnly": true,
+          "minimum": 0
+        },
+        "depth": {
+          "type": "int",
+          "readOnly": true,
+          "minimum": 0,
+          "maximum": 2
+        }
+      }
+    },
+    "Aquarium3DState": {
+      "fields": {
+        "status": {
+          "type": "string",
+          "readOnly": true
+        },
+        "errorText": {
+          "type": "string",
+          "readOnly": true
+        },
+        "sessionId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "assetRevision": {
+          "type": "string",
+          "readOnly": true
+        },
+        "effectivePlayback": {
+          "type": "string",
+          "readOnly": true
+        },
+        "populationRevision": {
+          "type": "int",
+          "readOnly": true,
+          "minimum": 0
+        },
+        "clockHealthy": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "fish": {
+          "type": "array",
+          "readOnly": true,
+          "items": "AquariumFish3D",
+          "maxItems": 16
+        },
+        "pending": {
+          "type": "array",
+          "readOnly": true,
+          "items": "AquariumFish3D",
+          "maxItems": 1
+        },
+        "runtimeAvailable": {
+          "type": "bool",
+          "readOnly": true
+        }
+      }
+    },
+    "AquariumManageRow": {
+      "fields": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "value": {
+          "type": "string",
+          "readOnly": true
+        },
+        "detail": {
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "AquariumManagement": {
+      "fields": {
+        "section": {
+          "type": "string",
+          "readOnly": true
+        },
+        "title": {
+          "type": "string",
+          "readOnly": true
+        },
+        "message": {
+          "type": "string",
+          "readOnly": true
+        },
+        "selectedIndex": {
+          "type": "int",
+          "readOnly": true,
+          "minimum": 0
+        },
+        "busy": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "nameEditing": {
+          "type": "bool",
+          "readOnly": true
+        },
+        "rows": {
+          "type": "array",
+          "readOnly": true,
+          "items": "AquariumManageRow",
+          "maxItems": 256
+        }
+      }
     }
   },
   "models": {
@@ -4655,6 +4891,46 @@
       "fields": {
         "aquarium": {
           "type": "AquariumSnapshot",
+          "readOnly": true
+        }
+      },
+      "methods": {
+        "requestAction": {
+          "parameters": [
+            "string",
+            "string",
+            "legacyMap"
+          ],
+          "result": "ActionResult"
+        }
+      }
+    },
+    "Aquarium3DContext": {
+      "version": 1,
+      "extends": "SurfaceContext",
+      "fields": {
+        "scene": {
+          "type": "Aquarium3DState",
+          "readOnly": true
+        }
+      },
+      "methods": {
+        "requestAction": {
+          "parameters": [
+            "string",
+            "string",
+            "legacyMap"
+          ],
+          "result": "ActionResult"
+        }
+      }
+    },
+    "AquariumManagementContext": {
+      "version": 1,
+      "extends": "SurfaceContext",
+      "fields": {
+        "management": {
+          "type": "AquariumManagement",
           "readOnly": true
         }
       },
