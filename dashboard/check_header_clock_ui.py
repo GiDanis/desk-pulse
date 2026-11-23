@@ -46,8 +46,14 @@ def main():
         def clock():
             if args.theme == 'apple':
                 assert h.service.activeThemeId == 'studio.applecalm', (h.service.activeThemeId, h.service.lastError)
+                # PageHost publishes the presented route with Qt.callLater;
+                # the old page remains until that route has been presented.
+                h.pump(40)
             found = [item for item in h.root.findChildren(QObject, 'headerClock') if item.property('visible')]
-            assert len(found) == 1, (len(found), h.value('familyId'), h.value('overlay'))
+            if args.theme == 'apple' and h.value('activeContentId') in ('home.now', 'home.clock') and not h.value('overlay'):
+                assert not found, 'The Apple Calm Home clock is duplicated in the header'
+                found = [item for item in h.root.findChildren(QObject, 'dominantClock') if item.property('visible')]
+            assert len(found) == 1, ([item.objectName() for item in found], h.value('activeContentId'), h.value('overlay'))
             assert found[0].property('text') == h.expression('timeText()')
             assert found[0].property('truncated') is False
             return found[0]
@@ -131,14 +137,49 @@ def main():
                 clock()
                 image.save(str(args.output / (variant + '-' + str(percent) + '.png')))
                 brightness.append(dict(variant=variant, percent=percent, samples=samples))
-        # Automatic scheduling follows the existing configured hours.
+        # The solar palette is separate from the saved hours for dimming.
         h.state._brightness_mode = 'auto'
         h.state._day_brightness, h.state._night_brightness = 100, 35
         h.state.settingsChanged.emit()
-        stamp(23, 12, 0)
-        assert h.value('brightnessPercent') == 100 and abs(dim.property('opacity')) < .001
-        stamp(23, 23, 0)
-        assert h.value('brightnessPercent') == 35 and abs(dim.property('opacity') - .65) < .001
+        assert h.service.setSection('paletteMode', 'auto')
+        h.wait_ready()
+
+        def display(day, hour, minute, night, percent):
+            stamp(day, hour, minute)
+            h.wait_ready()
+            assert h.value('night') == night, (day, hour, minute, night)
+            assert h.value('brightnessPercent') == percent, (day, hour, minute, percent)
+            assert abs(dim.property('opacity') - (1 - percent / 100)) < .001
+
+        display(23, 12, 0, False, 100)
+        display(23, 20, 59, True, 100)
+        display(23, 21, 0, True, 35)
+        display(24, 0, 0, True, 35)
+        h.state._day_start_hour = 10
+        h.state.settingsChanged.emit()
+        display(24, 6, 0, True, 35)
+        display(24, 9, 0, False, 100)
+
+        from datetime import date
+        from math import ceil
+        from solar_time import daylight_bounds
+        from weather import LATITUDE, LONGITUDE
+        for day in (date(2026, 6, 21), date(2026, 10, 25), date(2026, 12, 21)):
+            sunrise, sunset = daylight_bounds(day, LATITUDE, LONGITUDE)
+            for boundary, night in ((sunrise, False), (sunset, True)):
+                transition_minute = ceil(boundary / 60)
+                for offset, expected in ((-1, not night), (0, night)):
+                    h.root.setProperty('now', QDateTime.fromSecsSinceEpoch((transition_minute + offset) * 60))
+                    h.pump(50)
+                    h.wait_ready()
+                    assert h.value('night') == expected, (day, night, offset)
+
+        assert h.service.setSection('paletteMode', 'day')
+        h.wait_ready()
+        display(24, 23, 0, False, 100)
+        assert h.service.setSection('paletteMode', 'night')
+        h.wait_ready()
+        display(24, 12, 0, True, 100)
         clock()
         assert not h.messages, h.messages
         report = dict(status='passed', theme=args.theme, window=[h.window.width(), h.window.height()],

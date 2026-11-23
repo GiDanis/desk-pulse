@@ -26,6 +26,13 @@ UI = {
     "check_theme_semantic_residuals.py",
     "check_theme_semantic_palettes.py",
 }
+QUICK = {
+    "check_settings.py",
+    "check_aquarium.py",
+    "check_game_menu.py",
+    "check_game_session_start.py",
+    "check_theme_core.py",
+}
 
 
 def cases(suite):
@@ -33,7 +40,9 @@ def cases(suite):
         if path.name in SPECIAL:
             continue
         is_ui = path.stem.endswith("_ui") or path.name in UI
-        if suite != "all" and is_ui != (suite == "ui"):
+        if suite == "quick" and path.name not in QUICK:
+            continue
+        if suite not in ("all", "quick") and is_ui != (suite == "ui"):
             continue
         arguments = (
             ["--offline-only"]
@@ -70,26 +79,46 @@ def cases(suite):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--suite", choices=("core", "ui", "all"), default="core")
+    parser.add_argument(
+        "--suite", choices=("quick", "core", "ui", "all"), default="quick"
+    )
     parser.add_argument(
         "--case",
         action="append",
         help="Run only this named case; repeat to select several.",
     )
-    parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--output-dir", type=Path)
+    parser.add_argument(
+        "--list", action="store_true", help="List selected cases without running tests."
+    )
+    parser.add_argument(
+        "--verbose", action="store_true", help="Print each case result as it completes."
+    )
     parser.add_argument("--timeout", type=float, default=120)
     args = parser.parse_args()
     if args.timeout <= 0:
         parser.error("--timeout must be positive")
-    selected = list(cases(args.suite))
+    selected = list(cases("all" if args.case else args.suite))
     if args.case:
         unknown = set(args.case) - {name for name, _ in selected}
         if unknown:
-            parser.error("Unknown cases for this suite: " + ", ".join(sorted(unknown)))
+            parser.error("Unknown cases: " + ", ".join(sorted(unknown)))
         selected = [(name, command) for name, command in selected if name in args.case]
+    if not selected:
+        parser.error("No cases selected")
+    if args.list:
+        print("\n".join(name for name, _ in selected))
+        return 0
+    if args.output_dir is None:
+        parser.error("--output-dir is required when running tests")
     args.output_dir.mkdir(parents=True, exist_ok=True)
     results = []
+    run_started = time.monotonic()
     for name, command in selected:
+        if name == "check_header_clock_ui":
+            command = [*command, "--theme", "base", "--output", str(args.output_dir.resolve() / "header-clock-base")]
+        elif name == "check_aquarium_ui":
+            command = [*command, "--output", str(args.output_dir.resolve() / "aquarium-ui")]
         started = time.monotonic()
         with tempfile.TemporaryDirectory(prefix="smartpc-regression-") as private:
             base = Path(private)
@@ -143,9 +172,10 @@ def main():
             row["elapsedSeconds"] = round(time.monotonic() - started, 3)
             (args.output_dir / (name + ".txt")).write_text(output)
             results.append(row)
-            print(json.dumps(row), flush=True)
+            if args.verbose:
+                print(json.dumps(row), flush=True)
             report = {
-                "suite": args.suite,
+                "suite": "selected" if args.case else args.suite,
                 "results": results,
                 "status": "passed"
                 if all(row["status"] == "passed" for row in results)
@@ -155,6 +185,21 @@ def main():
             (args.output_dir / "checks.json").write_text(
                 json.dumps(report, indent=2) + "\n"
             )
+    print(
+        json.dumps(
+            {
+                "status": report["status"],
+                "passed": sum(row["status"] == "passed" for row in results),
+                "total": len(results),
+                "failedCases": [
+                    row["case"] for row in results if row["status"] != "passed"
+                ],
+                "elapsedSeconds": round(time.monotonic() - run_started, 3),
+                "report": str(args.output_dir / "checks.json"),
+            }
+        ),
+        flush=True,
+    )
     return 0 if report["status"] == "passed" else 1
 
 

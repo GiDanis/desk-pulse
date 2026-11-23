@@ -104,6 +104,19 @@ class DashboardSummaryTests(unittest.TestCase):
         result=self.project('casa-preferiti',data)
         self.assertEqual([c['rect']['height'] for c in result['cards']],[504,504])
 
+    def test_favourite_offline_and_previous_states_are_explicit(self):
+        data = {'favourites': [
+            {'id': 'offline', 'name': 'Presa', 'availability': 'Offline', 'primaryText': 'Acceso', 'previous': True},
+            {'id': 'saved', 'name': 'Sensore', 'availability': 'Online secondo Tuya', 'primaryText': '0 °C',
+             'availabilityPrevious': True},
+            {'id': 'live', 'name': 'Lampada', 'availability': 'Online secondo Tuya', 'primaryText': 'Spento'},
+        ]}
+        cards = self.project('casa-preferiti', data)['cards']
+        self.assertEqual([(c['value'], c['detail']) for c in cards], [
+            ('Offline', 'Ultimo stato: Acceso'), ('Dato precedente', 'Ultimo stato: 0 °C'),
+            ('Spento', 'Online secondo Tuya'),
+        ])
+
     def test_soccer_fresh_in_progress_precedes_future_without_false_live(self):
         data={'activeMatches':[{'canonicalMatchId':'a','status':'live','isLive':False,'fresh':True,'kickoffUtc':990,'homeScore':0,'awayScore':1,'minute':'12'}],
               'fixtures':[{'canonicalMatchId':'b','status':'scheduled','kickoffUtc':1200}]}

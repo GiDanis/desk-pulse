@@ -20,6 +20,24 @@ case "$mode" in
         export QT_QPA_EGLFS_HIDECURSOR=1
         export QT_QPA_EGLFS_KMS_CONFIG="${SMARTPC_KMS_CONFIG:-/etc/smartpc/eglfs-kms.json}"
         export QSG_RHI_BACKEND=opengl
+        # Qt's desktop-GL build must query the actual EGL context on this image.
+        # Interpose only capability queries, never preload the whole GLES driver.
+        if [[ "${SMARTPC_AQUARIUM_RENDERER:-3d}" != 2d && -f /usr/local/lib/libGLESv2.so.2 && -f /usr/local/lib/libEGL.so.1 ]] && "${SMARTPC_PYTHON:-python3}" -c 'import PySide6.QtQuick3D' >/dev/null 2>&1; then
+            context_bridge="${SMARTPC_GL_CONTEXT_BRIDGE:-$dashboard_dir/libsmartpc_egl_context_bridge.so}"
+            if [[ "$context_bridge" != off && -f "$context_bridge" ]] && "${SMARTPC_PYTHON:-python3}" -c 'import ctypes,sys; ctypes.CDLL(sys.argv[1])' "$context_bridge" >/dev/null 2>&1; then
+                export LD_PRELOAD="$context_bridge${LD_PRELOAD:+:$LD_PRELOAD}"
+                export SMARTPC_AQUARIUM_GRAPHICS_PROFILE=egl-query-bridge-no-shader-cache-v1
+                # On this PowerVR/Qt profile, reloading shader disk caches can
+                # produce a blank scanout without errors. A fresh cache fails
+                # on the next load too. Preserve files, but bypass shader caches.
+                # QML bytecode and application/provider caches stay enabled.
+                export QT_DISABLE_SHADER_DISK_CACHE=1
+                unset QSG_RHI_PIPELINE_CACHE_LOAD QSG_RHI_PIPELINE_CACHE_SAVE
+            else
+                export SMARTPC_AQUARIUM_RENDERER=2d
+                echo "Acquario: adattatore EGL assente, avvio in modalità 2D." >&2
+            fi
+        fi
         if [[ $EUID -eq 0 ]] && command -v plymouth >/dev/null 2>&1; then plymouth quit 2>/dev/null || true; fi
         ;;
     *)

@@ -16,6 +16,8 @@ from PySide6.QtCore import QObject, Property, QSettings, Signal, Slot
 
 from module_state import module_state
 from events import EventService
+from solar_time import is_daylight
+from weather import LATITUDE, LONGITUDE, TIMEZONE
 
 
 DEMO_WEATHER = {
@@ -715,6 +717,10 @@ class DashboardState(QObject):
     @Property(str, notify=settingsChanged)
     def nightMode(self) -> str:
         return self._appearance.resolvedAppearance.get("paletteMode", self._night_mode) if self._appearance else self._night_mode
+
+    @Slot(float, result=bool)
+    def solarDaylight(self, epoch: float) -> bool:
+        return is_daylight(epoch, LATITUDE, LONGITUDE, TIMEZONE)
 
     @Property(str, notify=settingsChanged)
     def brightnessMode(self) -> str:

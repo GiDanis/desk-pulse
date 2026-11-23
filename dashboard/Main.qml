@@ -110,15 +110,21 @@ Window {
     property var dashboardState: null
     readonly property var aquariumService: dashboardState ? dashboardState.aquarium : null
     readonly property var aquariumData: aquariumService ? aquariumService.snapshot : ({})
+    readonly property var aquariumPage:aquariumManaging ? aquariumManagePage:aquariumService && aquariumService.supports3d ? aquarium3DPage:aquariumLegacyPage
+    property bool aquariumManaging:false
+    readonly property string aquariumContentId:aquariumManaging ? "aquarium.manage":aquariumService && aquariumService.supports3d ? "aquarium.3d":"aquarium.main"
+    readonly property var aquariumScene:aquariumService ? aquariumService.scene3d:({})
+    readonly property var aquariumManagement:aquariumService ? aquariumService.management:({})
+    function openAquariumManagement() { if (!aquariumService || !aquariumService.supports3d) return false; aquariumService.openManagement(); aquariumManaging=true; return true }
     readonly property bool aquariumSelected: familyId === "aquarium" && visibleModules.indexOf("aquarium") >= 0
     readonly property bool aquariumAssetFailed: !!aquariumPage.currentItem && aquariumPage.currentItem.assetFailed === true
-    readonly property var aquariumLifecycle: [aquariumSelected, presentedPageContentId === "aquarium.main" && !!aquariumPage.currentItem && aquariumPage.currentItem.ready === true,
+    readonly property var aquariumLifecycle: [aquariumSelected, !aquariumManaging && presentedPageContentId === aquariumContentId && !!aquariumPage.currentItem && aquariumPage.currentItem.ready === true,
         overlay !== "", !!urgentEvent.id, style.appearance ? style.appearance.motionMode : "off", !!themeCandidate.generation, aquariumAssetFailed]
     onAquariumLifecycleChanged: Qt.callLater(syncAquariumLifecycle)
     function syncAquariumLifecycle() {
         if (!aquariumService) return
         const p=aquariumLifecycle
-        if (aquariumAssetFailed) aquariumService.reportAssetError(aquariumData.sessionId,"Risorsa grafica Acquario non caricabile")
+        if (aquariumAssetFailed && aquariumContentId==="aquarium.main") aquariumService.reportAssetError(aquariumData.sessionId,"Risorsa grafica Acquario non caricabile")
         aquariumService.setLifecycle(p[0],p[1],p[2],p[3],p[4],p[5])
     }
     readonly property var gameService: dashboardState ? dashboardState.game : null
@@ -171,7 +177,7 @@ Window {
         if ((gameData.drivers || []).some(row=>row.id===id)) return openPilotDetails(id)
         return false
     }
-    readonly property string activeContentId: familyId === "aquarium" ? "aquarium.main" : familyId === "game" ? ["game.track","game.leaderboard","game.progress","game.driver"][viewIndex[8] || 0] : familyId === "sports" ? "sport.hub" : familyId === "oggi" ? (viewIndex[0] === 0 ? "home.now" : viewIndex[0] === 1 ? "home.clock" : "home.day") : familyId === "meteo" ? (viewIndex[1] === 0 ? "weather.now" : "weather.forecast") : familyId === "account" ? "account.usage" : familyId === "sport" ? (sportView === "LA MIA SQUADRA" ? "sport.team" : "sport.overview") : familyId === "casa" ? ((viewIndex[6] || 0) < casaDashboardNames.length-1 ? "casa.overview" : "casa.devices") : familyId === "network" ? ((viewIndex[7] || 0) < 2 ? "network.overview" : "network.devices") : "racing.overview"
+    readonly property string activeContentId: familyId === "aquarium" ? aquariumContentId : familyId === "game" ? ["game.track","game.leaderboard","game.progress","game.driver"][viewIndex[8] || 0] : familyId === "sports" ? "sport.hub" : familyId === "oggi" ? (viewIndex[0] === 0 ? "home.now" : viewIndex[0] === 1 ? "home.clock" : "home.day") : familyId === "meteo" ? (viewIndex[1] === 0 ? "weather.now" : "weather.forecast") : familyId === "account" ? "account.usage" : familyId === "sport" ? (sportView === "LA MIA SQUADRA" ? "sport.team" : "sport.overview") : familyId === "casa" ? ((viewIndex[6] || 0) < casaDashboardNames.length-1 ? "casa.overview" : "casa.devices") : familyId === "network" ? ((viewIndex[7] || 0) < 2 ? "network.overview" : "network.devices") : "racing.overview"
     onActiveContentIdChanged: { if (traceRecorder) traceRecorder.traceEvent("navigation.content",{surfaceId:activeContentId}); if (themeService) themeService.setActiveContent(activeContentId); Qt.callLater(function() { presentPage(contentLayer.children.find(host => host.active)) }) }
     readonly property var themeService: dashboardState ? dashboardState.appearance : null
     readonly property var themeCandidate: themeService ? themeService.candidateAppearance : ({})
@@ -209,21 +215,32 @@ Window {
     }
     readonly property var negotiatedLayout: style.appearance && hasExternalSurface("shell.main") ? style.appearance.layout || null : null
     readonly property bool builtinDashboardLayout: style.appearance && ["base","functional"].indexOf(style.appearance.themeId)>=0
+    readonly property bool reservesNotificationSpace: !!negotiatedLayout && smallBanner.metrics.anchor === "bottom"
+    function noticeSafeGeometry(area) {
+        if (!reservesNotificationSpace || !bannerPresentationAllowed || urgentEvent.id) return area
+        let bottom = area.y + area.height
+        for (const host of [smallBanner,largeBanner]) {
+            if ((!host.show && !host.exiting) || host.metrics.anchor !== "bottom") continue
+            if (host.x >= area.x+area.width || host.x+host.width <= area.x) continue
+            bottom = Math.min(bottom,host.y-12)
+        }
+        return Qt.rect(area.x,area.y,area.width,Math.max(0,bottom-area.y))
+    }
     function pageGeometry(surfaceId) {
-        if (surfaceId === "aquarium.main") return Qt.rect(0,0,960,640)
-        if (surfaceId.indexOf("game.")===0) return Qt.rect(24,72,912,552)
+        if (surfaceId.indexOf("aquarium.")===0) return Qt.rect(0,0,960,640)
+        if (surfaceId.indexOf("game.")===0) return noticeSafeGeometry(Qt.rect(24,72,912,552))
         const area = negotiatedLayout && hasExternalSurface(surfaceId) ? negotiatedLayout.content : null
-        if (area) return Qt.rect(area.x,area.y,area.width,area.height)
+        if (area) return noticeSafeGeometry(Qt.rect(area.x,area.y,area.width,area.height))
         // External themes retain their calibrated fallback viewport.
         if (builtinDashboardLayout) return Qt.rect(24,72,912,dashboardState && dashboardState.themeRecoveryError || themeService && themeService.status === "recovery" ? 520 : 552)
         return Qt.rect(44,90,872,455)
     }
     // Compact shells reserve their header for every external overlay.
     function overlayGeometry(surfaceId) {
-        if (surfaceId.indexOf("game.")===0) return Qt.rect(0,56,960,584)
+        if (surfaceId.indexOf("game.")===0) return noticeSafeGeometry(Qt.rect(0,56,960,584))
         const compact = negotiatedLayout && negotiatedLayout.guide.height === 0 && hasExternalSurface(surfaceId)
         const top = compact ? negotiatedLayout.header.y + negotiatedLayout.header.height : 0
-        return Qt.rect(0,top,960,640-top)
+        return noticeSafeGeometry(Qt.rect(0,top,960,640-top))
     }
     property string presentedPageContentId: ""
     property string presentedFamilyId: ""
@@ -312,7 +329,9 @@ Window {
         return [1,2,3,4,5,6,7,8,9].map(key=>({id:"key."+key,key:key,actionId:actions[key],targetId:"",label:labels[key] || "",enabled:true}))
     }
     function publicSurfaceCommands(surfaceId) {
-        if (surfaceId === "aquarium.main" || surfaceId === "shell.main" && familyId === "aquarium")
+        if (surfaceId==="aquarium.manage" || surfaceId==="shell.main" && aquariumManaging && familyId==="aquarium")
+            return [[2,"SELEZIONA"],[8,"SELEZIONA"],[4,"CAMBIA"],[6,"CAMBIA"],[5,"APRI"],[7,"VASCA"],[1,"HOME"],[3,"AVVISI"],[9,"MENU"]].map(row=>({id:"command."+row[0],key:row[0],label:row[1],enabled:true}))
+        if (surfaceId.indexOf("aquarium.")===0 || surfaceId === "shell.main" && familyId === "aquarium")
             return [[4,"ARGOMENTO"],[6,"ARGOMENTO"],[5,aquariumData.requestedPlayback === "paused" ? "RIPRENDI" : "PAUSA"],[7,"HOME"],[1,"HOME"],[3,"AVVISI"],[9,"MENU"]].map(row=>({id:"command."+row[0],key:row[0],label:row[1],enabled:true}))
         if (surfaceId.indexOf("game.")===0 || surfaceId==="shell.main" && familyId==="game") {
             const active=gameCaptured,menu=surfaceId==="game.menu",dossier=surfaceId==="game.driver.details",settings=gameData.settings || {},panels=["telemetria","premi","rete"].indexOf(gameData.camera)>=0
@@ -337,10 +356,16 @@ Window {
         return rows.map(row => ({id:"key."+row[0],key:row[0],label:row[1],enabled:true,actionId:"",targetId:""}))
     }
     function publicSurfacePayload(surfaceId, dataProjection, streamGameScene) {
+        if (surfaceId === "aquarium.3d" || surfaceId === "aquarium.manage") {
+            const header=shellGeometry().header
+            const payload={commands:publicSurfaceCommands(surfaceId),safeArea:noticeSafeGeometry(Qt.rect(16,header.y+header.height+16,928,Math.max(0,624-header.y-header.height-16)))}
+            if(surfaceId==="aquarium.3d")payload.scene=aquariumScene;else payload.management=aquariumManagement
+            return payload
+        }
         if (surfaceId === "aquarium.main") {
             const header = shellGeometry().header
             return {aquarium:aquariumData,commands:publicSurfaceCommands(surfaceId),
-                safeArea:Qt.rect(16,header.y+header.height+16,928,Math.max(0,624-header.y-header.height-16))}
+                safeArea:noticeSafeGeometry(Qt.rect(16,header.y+header.height+16,928,Math.max(0,624-header.y-header.height-16)))}
         }
         if (surfaceId.indexOf("game.")===0) {
             const payload={game:gameData,
@@ -363,7 +388,7 @@ Window {
             return {commandHints:hints}
         if (surfaceId === "shell.main") { const nav = settledNavigation(); return {commandHints:hints,clockText:timeText(),dateText:dateText(),
             families:families,currentFamilyId:nav.familyId,currentViewId:nav.viewId,navigation:nav,layout:shellGeometry(),commands:publicSurfaceCommands(surfaceId),
-            uiStatus:{urgent:!!urgentEvent.id,recovery:!!(dashboardState && dashboardState.themeRecoveryError) || !!(themeService && themeService.status === "recovery"),quiet:quietActive,night:night,diagnostics:diagnostics},
+            uiStatus:{urgent:!!urgentEvent.id,recovery:!!(dashboardState && dashboardState.themeRecoveryError) || !!(themeService && themeService.status === "recovery"),quiet:quietActive,night:night,diagnostics:diagnostics,unreadCount:unreadAlertCount,notificationsAvailable:!!events},
             keyMap:publicKeyMap(),firstRun:!!(dashboardState && dashboardState.firstRun)} }
         let rows = [], selected = 0, tabs = [], tabId = "", description = "", feedback = ""
         if (surfaceId === "settings.network") { rows=networkSettingRows; selected=networkSettingsIndex; description="Dispositivi preferiti e ordine"; feedback=network.error || "" }
@@ -427,7 +452,7 @@ Window {
             navigation:{familyId:familyId,viewId:activeContentId,overlayId:overlayContentId,familyPosition:family+1,familyCount:families.length,
                 viewPosition:(isRacing ? currentFamily.views.indexOf(racingView) : familyId === "sport" ? sportViews.indexOf(sportView) : (viewIndex[currentFamily.slot] || 0))+1,viewCount:currentFamily.views.length},
             layout:shellGeometry(),
-            uiStatus:{urgent:!!urgentEvent.id,recovery:!!(dashboardState && dashboardState.themeRecoveryError) || !!(themeService && themeService.status === "recovery"),quiet:quietActive,night:night,diagnostics:diagnostics},
+            uiStatus:{urgent:!!urgentEvent.id,recovery:!!(dashboardState && dashboardState.themeRecoveryError) || !!(themeService && themeService.status === "recovery"),quiet:quietActive,night:night,diagnostics:diagnostics,unreadCount:unreadAlertCount,notificationsAvailable:!!events},
             keyMap:publicKeyMap(),firstRun:!!(dashboardState && dashboardState.firstRun),
             tabs:tabs.map(label => ({id:label,label:label,enabled:true})), description:description,feedback:feedback,
             draft:themeService ? {editing:themeService.editing,themeId:draft.themeId,paletteMode:draft.paletteMode || "auto",
@@ -442,6 +467,7 @@ Window {
             commands:publicSurfaceCommands(surfaceId),commandHints:[{key:1,label:"HOME"},{key:3,label:"AVVISI"},{key:7,label:"INDIETRO"},{key:9,label:"MENU"}]}
     }
     function publicActionOperation(action,target) {
+        if (["aquarium.prepared","aquarium.shown","aquarium.change"].indexOf(action)>=0) return "aquarium"
         if (action==="game.pause") return "game:pause"
         if (action==="game.start") return "game:start"
         if (action === "network.metrics.refresh") return networkData.modeText && networkData.modeText.indexOf("Demo")===0 ? "" : "networkMetricsRefresh"
@@ -518,13 +544,21 @@ Window {
         }
         return false
     }
-    function publicDispatch(context, action, target, arguments) {
+    function publicDispatch(context, action, target, arguments, requestId) {
         const args=arguments || {}, surface=context.contentId
         if (urgentEvent.id && surface !== "alerts.urgent") return false
         if (gameCaptured && (action==="navigation.view.step" || action==="navigation.family.step")) return false
         if (action === "aquarium.pause" || action === "aquarium.resume") {
-            if (surface !== "aquarium.main" || !aquariumSelected || overlay !== "" || !aquariumService) return false
+            if (["aquarium.main","aquarium.3d"].indexOf(surface)<0 || !aquariumSelected || overlay !== "" || !aquariumService) return false
             return action === "aquarium.pause" ? aquariumService.pause() : aquariumService.resume()
+        }
+        if (action.indexOf("aquarium.")===0) {
+            if(!aquariumService || !aquariumSelected || overlay!=="")return false
+            if(action==="aquarium.manage.open")return openAquariumManagement()
+            if(action==="aquarium.manage.key" && surface==="aquarium.manage")return aquariumService.managementKey(args.key)
+            if((action==="aquarium.prepared" || action==="aquarium.shown") && surface==="aquarium.3d")return aquariumService.populationAction(action.slice(9),target,args,requestId || "")
+            if(action==="aquarium.change" && surface==="aquarium.manage")return aquariumService.populationAction(args.operation,target,args,requestId || "")
+            return false
         }
         if (action.indexOf("game.")===0) {
             if (!gameService) return false
@@ -1273,9 +1307,13 @@ Window {
     }
     readonly property int dayStartHour: dashboardState ? dashboardState.dayStartHour : 7
     readonly property int nightStartHour: dashboardState ? dashboardState.nightStartHour : 21
-    readonly property bool daytime: dayStartHour < nightStartHour
-                                    ? now.getHours() >= dayStartHour && now.getHours() < nightStartHour
-                                    : now.getHours() >= dayStartHour || now.getHours() < nightStartHour
+    readonly property bool inDimmingHours: nightStartHour > dayStartHour
+        ? now.getHours() >= nightStartHour || now.getHours() < dayStartHour
+        : now.getHours() >= nightStartHour && now.getHours() < dayStartHour
+    readonly property real epochMinute: Math.floor(now.getTime() / 60000)
+    readonly property bool daytime: dashboardState
+        ? dashboardState.solarDaylight(epochMinute * 60)
+        : now.getHours() >= 7 && now.getHours() < 21
     readonly property bool night: dashboardState && dashboardState.nightMode === "night"
                                   || (!dashboardState || dashboardState.nightMode === "auto") && !daytime
     readonly property int minuteOfDay: now.getHours()*60+now.getMinutes()
@@ -1285,9 +1323,11 @@ Window {
         : minuteOfDay >= dashboardState.quietStartMinute || minuteOfDay < dashboardState.quietEndMinute)
     readonly property int brightnessPercent: dashboardState
         ? (dashboardState.brightnessMode === "manual" ? dashboardState.manualBrightness
-           : (daytime ? dashboardState.dayBrightness : dashboardState.nightBrightness))
+           : (!daytime && night && style.variant === "night" && inDimmingHours
+              ? Math.min(dashboardState.dayBrightness, dashboardState.nightBrightness)
+              : dashboardState.dayBrightness))
         : 100
-    readonly property var menuItems: ["Comandi", "Impostazioni", "Informazioni", "Diagnostica"].concat(familyId === "aquarium" ? [aquariumData.requestedPlayback === "paused" ? "Riprendi acquario" : "Pausa acquario"] : []).concat(["sports","sport","f1","motogp"].indexOf(familyId)>=0 ? [familyId==="sport" || familyId==="sports" && ["sport","team"].indexOf(sportHubSelectedId)>=0 ? "Altre partite" : "Calendario gare", "Classifica"] : [])
+    readonly property var menuItems: ["Comandi", "Impostazioni", "Informazioni", "Diagnostica"].concat(familyId === "aquarium" ? [aquariumData.requestedPlayback === "paused" ? "Riprendi acquario" : "Pausa acquario"].concat(aquariumService && aquariumService.supports3d ? ["Gestisci pesci"] : []) : []).concat(["sports","sport","f1","motogp"].indexOf(familyId)>=0 ? [familyId==="sport" || familyId==="sports" && ["sport","team"].indexOf(sportHubSelectedId)>=0 ? "Altre partite" : "Calendario gare", "Classifica"] : [])
     readonly property var settingsItems: settingsPanel.entries.map(row => row.title)
 
     function two(value) { return (value < 10 ? "0" : "") + value }
@@ -1371,6 +1411,7 @@ Window {
         Qt.callLater(function() { presentPage(contentLayer.children.find(host => host.active)) })
     }
     function home() {
+        aquariumManaging=false
         if (gameService) gameService.suspend()
         pendingNavigationDirection = -1; pendingNavigationVertical = false
         notificationPreviewMode = ""
@@ -1436,11 +1477,13 @@ Window {
         }
     }
     function back() {
+        if(overlay==="" && familyId==="aquarium" && aquariumManaging) {if(!aquariumService.managementKey(7))aquariumManaging=false;return}
         if (overlay !== "") popOverlay()
         else if (["sport","f1","motogp"].indexOf(familyId)>=0) { rememberDiscipline();sportHubSelectedId=familyId;familyId="sports" }
         else home()
     }
     function selectMenu() {
+        if(familyId==="aquarium" && menuIndex===5 && aquariumService) {popOverlay();openAquariumManagement();return}
         if (familyId === "aquarium" && menuIndex === 4 && aquariumService) {
             if (aquariumData.requestedPlayback === "paused") aquariumService.resume(); else aquariumService.pause()
             popOverlay(); return
@@ -1813,6 +1856,7 @@ Window {
             return
         }
         if (overlay !== "") return
+        if(familyId==="aquarium" && aquariumManaging && aquariumService) {aquariumService.managementKey(position);return}
         if (familyId === "aquarium" && position === 5 && aquariumService) {
             if (aquariumData.requestedPlayback === "paused") aquariumService.resume(); else aquariumService.pause()
             return
@@ -1897,7 +1941,7 @@ Window {
     }
     function syncClock() {
         const d = new Date()
-        if (d.getMinutes() !== app.now.getMinutes() || d.getDate() !== app.now.getDate()) {
+        if (Math.floor(d.getTime() / 60000) !== app.epochMinute) {
             app.now = d
         }
     }
@@ -1918,6 +1962,17 @@ Window {
         }
     }
     property var pendingPublicActions: []
+    Connections {
+        target: app.aquariumService
+        function onOperationFinished(requestId,ok,message) {
+            const kept=[]
+            for (const entry of app.pendingPublicActions) {
+                if (entry.requestId===requestId) app.themeService.apiFactory.completeAction(entry.context,requestId,ok,ok ? "" : message)
+                else kept.push(entry)
+            }
+            app.pendingPublicActions=kept
+        }
+    }
     function completePublicActions(operation,ok,error) {
         const kept=[]
         for (const entry of pendingPublicActions) {
@@ -1972,7 +2027,7 @@ Window {
             // Register before dispatch: local Account rereads can finish synchronously.
             if (operation) app.pendingPublicActions=app.pendingPublicActions.concat([{context:context,requestId:requestId,operation:operation}])
             let ok=false, error=""
-            try { ok=app.publicDispatch(context,action,targetId,args) } catch (failure) { error=String(failure) }
+            try { ok=app.publicDispatch(context,action,targetId,args,requestId) } catch (failure) { error=String(failure) }
             if (!ok || !operation) {
                 if (operation) app.pendingPublicActions=app.pendingPublicActions.filter(entry => entry.context !== context || entry.requestId !== requestId)
                 app.themeService.apiFactory.completeAction(context,requestId,ok,error || (ok ? "" : "Azione non disponibile nello stato corrente"))
@@ -2038,7 +2093,9 @@ Window {
         id: contentLayer
         objectName: "contentLayer"
         x: 0; y: 90; width: 960; height: 455
-        PageHost { id:aquariumPage;objectName:"aquariumPage";contentId:"aquarium.main";controller:app;style:app.style;active:app.aquariumSelected;interactive:active && app.overlay === "" && !app.urgentEvent.id }
+        PageHost { id:aquariumLegacyPage;objectName:"aquariumPage";contentId:"aquarium.main";controller:app;style:app.style;active:app.aquariumSelected && !app.aquariumManaging && (!app.aquariumService || !app.aquariumService.supports3d);interactive:active && app.overlay === "" && !app.urgentEvent.id }
+        PageHost { id:aquarium3DPage;objectName:"aquarium3DPage";contentId:"aquarium.3d";controller:app;style:app.style;active:app.aquariumSelected && !app.aquariumManaging && !!app.aquariumService && app.aquariumService.supports3d;interactive:active && app.overlay === "" && !app.urgentEvent.id }
+        PageHost { id:aquariumManagePage;objectName:"aquariumManagePage";contentId:"aquarium.manage";controller:app;style:app.style;active:app.aquariumSelected && app.aquariumManaging;interactive:active && app.overlay === "" && !app.urgentEvent.id }
         PageHost { objectName: "homeNow"; contentId: "home.now"; controller: app; style: app.style; active: app.familyId === "oggi" && app.viewIndex[0] === 0; interactive: active && app.overlay === "" && !app.urgentEvent.id }
         PageHost { objectName: "homeClock"; contentId: "home.clock"; controller: app; style: app.style; active: app.familyId === "oggi" && app.viewIndex[0] === 1; interactive: active && app.overlay === "" && !app.urgentEvent.id }
         PageHost { objectName: "homeDay"; contentId: "home.day"; controller: app; style: app.style; active: app.familyId === "oggi" && app.viewIndex[0] === 2; interactive: active && app.overlay === "" && !app.urgentEvent.id }
@@ -2078,7 +2135,7 @@ Window {
 
     NotificationHost {
         id: badgeHost; z: 3; objectName: "unreadAlertsBadge"; contentId: "alerts.badge"; controller: app
-        show: app.familyId === "oggi" && app.overlay === "" && app.unreadAlertCount > 0 && !app.bannerEvent.id && !app.urgentEvent.id
+        show: !app.reservesNotificationSpace && app.familyId === "oggi" && app.overlay === "" && app.unreadAlertCount > 0 && !app.bannerEvent.id && !app.urgentEvent.id
         exitAllowed: false
     }
     AnimatedLayer { // private observer

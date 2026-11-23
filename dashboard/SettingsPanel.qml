@@ -77,12 +77,12 @@ Item {
     ]
     readonly property var rows: !active ? [] : section === "settings" ? entries : section === "integrations" ? sportEntries : section === "sources" ? sourceEntries : section === "services" ? serviceEntries : section === "sportModules" ? sportModuleEntries : section === "themeManagement" ? managementRows : section === "modules" ? moduleEntries : section === "appearance" ? appearanceRows
  : section === "appearanceNotifications" ? notificationAppearanceRows : section === "system" ? [
-        {title: "Modalità", value: dashboard.systemValue(1), detail: "Automatico segue la fascia giorno / notte"},
+        {title: "Modalità luminosità", value: dashboard.systemValue(1), detail: "Auto: attenua nella fascia notturna"},
         {title: "Livello manuale", value: dashboard.systemValue(2), detail: "Usato in modalità manuale", enabled: backend && backend.brightnessMode === "manual"},
-        {title: "Livello giorno", value: dashboard.systemValue(3), detail: "Usato in modalità automatica", enabled: backend && backend.brightnessMode === "auto"},
-        {title: "Livello notte", value: dashboard.systemValue(4), detail: "Usato in modalità automatica", enabled: backend && backend.brightnessMode === "auto"},
-        {title: "Giorno dalle", value: dashboard.systemValue(5), detail: "Orario condiviso con il tema automatico"},
-        {title: "Notte dalle", value: dashboard.systemValue(6), detail: "Orario condiviso con il tema automatico"},
+        {title: "Livello normale", value: dashboard.systemValue(3), detail: "Fuori dalla fascia notturna", enabled: backend && backend.brightnessMode === "auto"},
+        {title: "Livello attenuato", value: dashboard.systemValue(4), detail: "Al massimo pari al livello normale", enabled: backend && backend.brightnessMode === "auto"},
+        {title: "Attenua fino alle", value: dashboard.systemValue(5), detail: "Termina anche prima se arriva l'alba"},
+        {title: "Attenua dalle", value: dashboard.systemValue(6), detail: "Inizia quando è notte e la palette è scura"},
         {id:"appearance.textScale",title:"Dimensione testo",value:Math.round(root.style.textScale*100)+"%",detail:supportsAdjustment("textScale") ? "Anteprima · salva oppure annulla" : "Dimensione gestita dal tema",enabled:supportsAdjustment("textScale")},
         {id:"appearance.apply",title:"Salva testo",value:"SALVA",detail:"Conserva la dimensione al riavvio",enabled:!!themeService && themeService.dirty && themeService.readyToApply},
         {id:"appearance.cancel",title:"Annulla anteprima",value:"ANNULLA",detail:"Torna alla dimensione salvata",enabled:!!themeService && themeService.dirty}
@@ -107,7 +107,7 @@ Item {
     property bool advancedAppearance: false
     readonly property var appearanceRows: advancedAppearance ? advancedAppearanceRows : simpleAppearanceRows
     readonly property var simpleAppearanceRows: themeService ? [
-        {title:"Palette", value:({auto:"AUTOMATICA",day:"GIORNO",night:"NOTTE"})[themeService.draft.paletteMode || "auto"],detail:supportsAdjustment("paletteMode") ? "Automatico segue gli orari del dispositivo" : "Palette gestita dal tema",enabled:supportsAdjustment("paletteMode")},
+        {title:"Palette", value:({auto:"AUTOMATICA",day:"GIORNO",night:"NOTTE"})[themeService.draft.paletteMode || "auto"],detail:supportsAdjustment("paletteMode") ? "In automatico segue alba e tramonto locali" : "Palette gestita dal tema",enabled:supportsAdjustment("paletteMode")},
         {title:"Movimento", value:({normal:"NORMALE",reduced:"RIDOTTO",off:"DISATTIVO"})[themeService.draft.motionMode],detail:"Animazioni del tema e della scena"},
         {title:"Tema",value:(themeService.themes.find(t => t.id === themeService.draft.themeId) || {}).name || themeService.draft.themeId,detail:catalogTheme.coverageSummary || "Scegli dalla lista · attivazione e salvataggio",target:"themeChooser"},
         {title:"Dimensione testo",value:Math.round(root.style.textScale*100)+"%",detail:supportsAdjustment("textScale") ? "Piccolo adattamento della leggibilità" : "Dimensione definita dal tema",enabled:supportsAdjustment("textScale")},
@@ -119,7 +119,7 @@ Item {
         {title:"Personalizzazione avanzata",value:"APRI",detail:"Editor di compatibilità · la composizione si crea nel tema"}
     ].map((row,index) => Object.assign({},row,{id:PublicSettingsRows.simpleAppearanceIds[index]})).filter(row => ["appearance.textScale","appearance.revision","appearance.import","appearance.export"].indexOf(row.id)<0).concat([{id:"appearance.management",title:"Gestione temi",detail:"Importa, esporta e revisioni",target:"themeManagement"}]) : []
     readonly property var advancedAppearanceRows: themeService ? [
-        {title: "Palette", value: ({auto:"AUTOMATICA",day:"GIORNO",night:"NOTTE"})[themeService.draft.paletteMode || "auto"], detail: supportsAdjustment("paletteMode") ? "Bozza · segue gli orari di Luminosità in automatico" : "Palette gestita dal tema",enabled:supportsAdjustment("paletteMode")},
+        {title: "Palette", value: ({auto:"AUTOMATICA",day:"GIORNO",night:"NOTTE"})[themeService.draft.paletteMode || "auto"], detail: supportsAdjustment("paletteMode") ? "In automatico segue alba e tramonto locali" : "Palette gestita dal tema",enabled:supportsAdjustment("paletteMode")},
         {title: "Movimento", value: ({normal:"NORMALE",reduced:"RIDOTTO",off:"DISATTIVO"})[themeService.draft.motionMode], detail: "Transizioni e scena rispettano la stessa policy"},
         {title: "Tema", value: (themeService.themes.find(t => t.id === themeService.draft.themeId) || {}).name || themeService.draft.themeId, detail:catalogTheme.coverageSummary || "Preset e pacchetti personali nel catalogo"},
         {title: "Composizione Home", value: presentationName(Theme.presentations["home.now"]), detail: "Stessi dati · disposizione a sinistra o centrata"},

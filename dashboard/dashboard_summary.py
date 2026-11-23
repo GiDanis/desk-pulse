@@ -55,8 +55,9 @@ def build_summary(view_id, payload, model, now):
 
     def finish(title, envelope, layout='hero'):
         result['title'] = title
-        result['subtitle'] = ' · '.join(filter(None, [str(envelope.get('source', '')), state(envelope),
-                                                     stamp(envelope.get('updatedAt')) if envelope.get('updatedAt') else '']))
+        result['subtitle'] = ' · '.join(filter(None, [state(envelope),
+                                                     stamp(envelope.get('updatedAt')) if envelope.get('updatedAt') else '',
+                                                     str(envelope.get('source') or '')]))
         n = len(cards)
         if not n:
             card('missing', title, 'Dati non disponibili', 'Consulta Dati e aggiornamenti', value_size=34)
@@ -194,10 +195,22 @@ def build_summary(view_id, payload, model, now):
         result['detailTarget'] = 'casa.inventory'
         if view_id == 'casa-preferiti':
             for r in (data.get('favourites') or [])[:4]:
-                card(r['id'], r['name'], r.get('primaryText') or '—',
-                     r.get('availability', '') + ' · ' + r.get('secondaryText', ''),
+                primary = r.get('primaryText') or '—'
+                availability = r.get('availability') or ''
+                previous = r.get('previous') or r.get('availabilityPrevious')
+                if availability in ('Offline', 'Non trovato', 'Non più disponibile'):
+                    value = availability
+                elif previous:
+                    value = 'Dato precedente'
+                else:
+                    value = primary
+                if value != primary:
+                    detail = 'Ultimo stato: ' + primary if primary not in ('—', 'Stato non disponibile') else ''
+                else:
+                    detail = ' · '.join(filter(None, [availability, r.get('secondaryText')]))
+                card(r['id'], r['name'], value, detail,
                      {'casa.temperature': 'thermometer', 'casa.light': 'lightbulb', 'casa.plug': 'plug', 'casa.motion': 'motion'}.get(r.get('iconId'), 'connected-home'),
-                     r.get('previous') or r.get('availabilityPrevious'), 48, target=r['id'])
+                     previous, 48, target=r['id'])
             return finish('Preferiti', envelope, 'grid')
         if view_id == 'casa-ambiente':
             for r in environment_devices(data):

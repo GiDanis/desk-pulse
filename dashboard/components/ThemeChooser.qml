@@ -19,7 +19,7 @@ Item {
             if (row) root.focusedId=row.id
         }
     }
-    readonly property var operation: controller.themeOperation
+    readonly property var operation: controller.themeOperation || ({busy:false,targetId:"",message:""})
     readonly property var selectedRow: rows[controller.themeChoiceIndex] || ({})
     readonly property var incidentRow: selectedRow.selectable === false ? selectedRow :
         (selectedRow.revisions || []).find(row=>row.state==="blocked" || row.state==="invalid") || ({})
