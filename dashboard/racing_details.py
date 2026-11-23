@@ -196,6 +196,8 @@ def open_results(client, snapshot, event, session, *, force=False):
                 "name": text(d.get("full_name")),
                 "team": text(d.get("team_name")),
                 "value": best or "—",
+                "time": best or None, "timeKind": "best_lap" if session["kind"] in ("Q", "SQ") else "reference",
+                "resultText": best or "—", "resultKind": "time" if best else "unavailable",
                 "points": None,
                 "laps": number(row.get("number_of_laps")),
                 "status": "Ritirato" if row.get("dnf") else "",

@@ -6,7 +6,6 @@ Results are applied in episode order; this module never evaluates a policy.
 """
 from collections import OrderedDict
 from copy import deepcopy
-import math
 import numpy as np
 from game_simulation import World,DT
 from game_catalog import ACADEMY_OBSERVATION_VERSION

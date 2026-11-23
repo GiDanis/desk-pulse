@@ -7,7 +7,7 @@ import random
 
 import neat
 import numpy as np
-from game_observation_contract import bind,contract
+from game_observation_contract import bind
 
 from game_catalog import ACTION_VERSION, observation_size, observation_version
 

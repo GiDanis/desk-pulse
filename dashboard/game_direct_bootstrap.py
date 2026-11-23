@@ -9,7 +9,7 @@ from pathlib import Path
 import hashlib,json
 import numpy as np
 from game_direct import snapshot,features,DirectPolicy
-from game_learning import Adam,forward,backward,random_weights
+from game_learning import Adam,forward,backward
 from game_residual import profile
 
 ASSET=Path(__file__).with_name('game-direct-base.json')

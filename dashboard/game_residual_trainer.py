@@ -1,12 +1,11 @@
 """One pilot learns; each visible lap tests a frozen snapshot of its candidate."""
 from copy import deepcopy
-import math
 import time
 import hashlib
 from pathlib import Path
 import numpy as np
 from game_academy import Episode
-from game_residual import profile as make_profile,recipe,legacy_recipe,snapshot,features,value_features,learning_potential,controls,key,DECISION_STEPS
+from game_residual import recipe,legacy_recipe,snapshot,features,value_features,learning_potential,controls,key,DECISION_STEPS
 from game_residual_learning import ResidualPPO,OffPolicy
 from game_learning import Policy,PPO
 from game_catalog import configuration,scope_hash
@@ -183,7 +182,6 @@ class ResidualTrainer:
         self.rng=np.random.default_rng(profile['seed']+709)
         if c.get('rng'):self.rng.bit_generator.state=c['rng']
         # Keep random feature layer and a zero output layer, not a dead all-zero network.
-        from game_residual import initial_weights
         neutral=self.initial_policy(profile,c)
         self.state=deepcopy(c.get('curriculum')) or dict(version=1,residualVersion=self.protocol,
             phase='pace',round=0,updates=0,champion=dict(policy=neutral,profile=profile),

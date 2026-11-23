@@ -6,7 +6,6 @@ import zlib
 import numpy as np
 from game_learning import PPO,Adam,forward,backward,random_weights
 from game_residual import initial_weights,snapshot,recipe
-from game_numeric import checkpoint_value
 
 
 def input_gradient(cache):

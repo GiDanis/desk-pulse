@@ -4,7 +4,7 @@ Exact episode features are precomputed once because the encoder never changes.
 The adapter is neural; no desired path or teacher action is an inference input.
 """
 from pathlib import Path
-import argparse,json,time,hashlib
+import argparse,time,hashlib
 import numpy as np
 import torch
 from game_lab.models import Actor

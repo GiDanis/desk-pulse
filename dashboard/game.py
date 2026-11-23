@@ -94,7 +94,7 @@ class GameService(QObject):
             if self._metadata_reader is None or self._metadata_reader.closed:
                 if self._metadata_reader:self._metadata_reader.deleteLater()
                 from game_metadata import MetadataReader
-                self._metadata_reader=MetadataReader(self._root,self._metadata_ready,self,backend=self._process_backend)
+                self._metadata_reader=MetadataReader(self._root,self._metadata_ready,self)
             self._metadata_ticket+=1
             self._metadata_reader.request(self._metadata_ticket,self._selected,self._track,
                                           getattr(self._store,'objective','impara'))

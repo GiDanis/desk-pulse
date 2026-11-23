@@ -1,7 +1,7 @@
 """Independent three-sector timing; never changes physics or learning rewards."""
 from copy import deepcopy
 from concurrent.futures import ThreadPoolExecutor
-import hashlib,json,math
+import hashlib,json
 import numpy as np
 
 VERSION='lap-timing-1'

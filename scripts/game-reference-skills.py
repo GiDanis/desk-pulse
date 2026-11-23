@@ -4,7 +4,7 @@ import argparse,json,time
 import torch
 from game_lab.skills import initialize,SkillEnv,export
 from game_lab.checkpoint import save,load
-from game_lab.artifacts import atomic_report,digest
+from game_lab.artifacts import atomic_report
 from game_residual import key
 
 def main():

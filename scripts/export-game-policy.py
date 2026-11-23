@@ -12,7 +12,7 @@ import numpy as np
 import onnx
 from onnx import helper, numpy_helper, TensorProto
 import onnxruntime as ort
-from game_catalog import OBSERVATION_SIZE, configuration
+from game_catalog import configuration
 from game_learning import Policy
 from game_store import canonical
 

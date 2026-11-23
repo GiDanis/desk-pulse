@@ -200,6 +200,11 @@ def f1_result_rows(race, key):
                 ).strip(),
                 "team": text(mapping(row.get("Constructor")).get("name")),
                 "value": text(value) or "—",
+                "time": text(value) if key == "QualifyingResults" or number(row.get("position")) == 1 and mapping(row.get("Time")).get("time") else None,
+                "timeKind": "best_lap" if key == "QualifyingResults" else "total",
+                "gap": mapping(row.get("Time")).get("time") if key != "QualifyingResults" and number(row.get("position")) != 1 else None,
+                "resultText": text(value) or "—",
+                "resultKind": "time" if key == "QualifyingResults" or number(row.get("position")) == 1 and mapping(row.get("Time")).get("time") else "gap" if mapping(row.get("Time")).get("time") else "status",
                 "points": points(row.get("points")),
                 "laps": number(row.get("laps")),
                 "status": text(row.get("status")),
@@ -418,6 +423,11 @@ def moto_result_rows(raw, kind="RAC"):
                     (lap if kind not in ("RAC", "SPR") else value) or row.get("status")
                 )
                 or "—",
+                "time": text(lap) if kind not in ("RAC", "SPR") else text(row.get("time")) if number(row.get("position")) == 1 else None,
+                "timeKind": "best_lap" if kind not in ("RAC", "SPR") else "total",
+                "gap": text(gap) if kind in ("RAC", "SPR") and number(row.get("position")) != 1 and gap not in (None, "0.000", "0", 0) else None,
+                "resultText": text((lap if kind not in ("RAC", "SPR") else value) or row.get("status")) or "—",
+                "resultKind": "time" if kind not in ("RAC", "SPR") and lap or number(row.get("position")) == 1 and row.get("time") else "gap" if gap not in (None, "0.000", "0", 0) else "status",
                 "number": number(rider.get("number")),
                 "nationality": text(mapping(rider.get("country")).get("name")),
                 "bike": text(mapping(row.get("constructor")).get("name")),

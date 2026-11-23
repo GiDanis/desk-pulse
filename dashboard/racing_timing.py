@@ -182,6 +182,12 @@ class TimingState:
                     "name": text(driver.get("FullName") or driver.get("LastName")),
                     "team": text(driver.get("TeamName")),
                     "value": gap or best or "—",
+                    "time": text(mapping(line.get("LastLapTime")).get("Value")) or best or None,
+                    "timeKind": "last_lap" if mapping(line.get("LastLapTime")).get("Value") else "best_lap",
+                    "gap": gap or None, "interval": interval or None,
+                    "compound": text(stint.get("Compound")),
+                    "resultText": gap or text(mapping(line.get("LastLapTime")).get("Value")) or best or "—",
+                    "resultKind": "gap" if gap else "time" if mapping(line.get("LastLapTime")).get("Value") or best else "unavailable",
                     "laps": number(line.get("NumberOfLaps")),
                     "status": "Ai box" if line.get("InPit") else "",
                     "points": None,
@@ -450,6 +456,8 @@ def moto_timing(raw, snapshot, acquired, now, verified=False):
         name = (
             text(row.get("rider_name")) + " " + text(row.get("rider_surname"))
         ).strip()
+        live_gap = text(row.get("gap_first")) if row.get("gap_first") not in (None, "0.000", "0", 0) else ""
+        last_lap = text(row.get("last_lap_time")) if row.get("last_lap_time") not in (None, "0.000", "0", 0) else ""
         value = text(row.get("gap_first")) or text(row.get("last_lap_time")) or "—"
         if value in ("0.000", "0"):
             value = "—"
@@ -460,6 +468,10 @@ def moto_timing(raw, snapshot, acquired, now, verified=False):
                 "name": name,
                 "team": text(row.get("team_name")),
                 "value": value,
+                "time": last_lap or None, "timeKind": "last_lap",
+                "gap": text(row.get("gap_first")) if row.get("gap_first") not in (None,"0.000","0",0) else None,
+                "interval": text(row.get("gap_prev")) if row.get("gap_prev") not in (None,"0.000","0",0) else None,
+                "resultText": live_gap or last_lap or "—", "resultKind": "gap" if live_gap else "time" if last_lap else "unavailable",
                 "laps": number(row.get("num_lap")),
                 "status": "Ai box" if row.get("on_pit") else "",
                 "points": None,

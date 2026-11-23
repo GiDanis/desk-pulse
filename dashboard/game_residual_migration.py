@@ -3,7 +3,6 @@ from pathlib import Path
 import ctypes
 from contextlib import closing
 import hashlib
-import json
 import os
 import sqlite3
 import time

@@ -5,7 +5,6 @@ acknowledgements continue through GameService's existing worker protocol.
 """
 from contextlib import contextmanager
 import os
-import multiprocessing
 from pathlib import Path
 import queue
 import sqlite3
@@ -94,10 +93,9 @@ def _read_loop(root, requests, results):
 
 
 class MetadataReader(QObject):
-    def __init__(self, root, receive, parent=None,*,backend='spawn'):
+    def __init__(self, root, receive, parent=None,*,idle_timeout_ms=60000):
         super().__init__(parent)
         self.root=str(root)
-        self.backend=backend
         self.receive=receive
         self.process=None
         self.requests=self.results=None
@@ -105,30 +103,39 @@ class MetadataReader(QObject):
         self.inflight=None
         self.closed=False
         self.last_stats={}
+        self._releasing=False
+        self._release_started=0.0
+        self.idle=QTimer(self)
+        self.idle.setSingleShot(True)
+        self.idle.setInterval(idle_timeout_ms)
+        self.idle.timeout.connect(self._release_idle)
         self.timer=QTimer(self)
         self.timer.setInterval(20)
         self.timer.timeout.connect(self._poll)
 
     def request(self, ticket, selected, track, objective):
         if self.closed:return
+        self.idle.stop()
         self.pending=(ticket,selected,track,objective)
         # Spawn after construction/engine loading, never from a property getter.
         self.timer.start()
 
     def _poll(self):
         if self.closed:return
+        if self._releasing:
+            if self.process.is_alive() and time.monotonic()-self._release_started<2:
+                return
+            self._dispose_process()
+            self._releasing=False
+            if self.pending is None:
+                self.timer.stop();return
         if self.process is None:
             started=time.monotonic()
             try:
-                if self.backend=='local':
-                    from game_process import spawn_role,ParentRequests,ParentResults
-                    self.process,link,_=spawn_role('metadata',self.root)
-                    self.requests=ParentRequests(link);self.results=ParentResults(link)
-                else:
-                    context=multiprocessing.get_context('spawn')
-                    self.requests=context.Queue(maxsize=1);self.results=context.Queue(maxsize=1)
-                    self.process=context.Process(target=_read_loop,args=(self.root,self.requests,self.results),name='smartpc-metadata',daemon=True)
-                    self.process.start()
+                # The local transport survives POSIX IPC cleanup when an SSH session ends.
+                from game_process import spawn_role,ParentRequests,ParentResults
+                self.process,link,_=spawn_role('metadata',self.root)
+                self.requests=ParentRequests(link);self.results=ParentResults(link)
             except (OSError,ValueError,RuntimeError) as error:
                 ticket=self.pending[0]
                 self.receive(dict(ticket=ticket,error='Avvio metadati non riuscito: '+str(error)))
@@ -159,15 +166,32 @@ class MetadataReader(QObject):
                 self.close();return
         elif self.inflight is None:
             self.timer.stop()
+            self.idle.start()
+
+    def _release_idle(self):
+        if self.closed or self.pending is not None or self.inflight is not None or self.process is None:
+            return
+        try:
+            self.requests.put_nowait(None)
+        except (OSError,EOFError,ValueError,queue.Full):
+            self._dispose_process();return
+        self._releasing=True
+        self._release_started=time.monotonic()
+        self.timer.start()
 
     def close(self):
         self.closed=True
         self.timer.stop()
+        self.idle.stop()
+        self._dispose_process()
+
+    def _dispose_process(self):
         if self.process is not None:
             # This helper never writes; cancelling a read cannot lose a commit.
             if self.process.is_alive():self.process.terminate();self.process.join(.5)
             if self.process.is_alive():self.process.kill();self.process.join(.5)
             self.process.close()
             for channel in (self.requests,self.results):
-                if channel:channel.cancel_join_thread();channel.close()
+                if channel:channel.close()
             self.process=None
+            self.requests=self.results=None

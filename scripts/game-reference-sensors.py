@@ -1,6 +1,6 @@
 """Migrate a private recurrent preparation to the versioned road sensors."""
 from pathlib import Path
-import argparse,json,hashlib
+import argparse,hashlib
 import torch
 from game_lab.models import Actor
 from game_lab.sensors import road_policy
