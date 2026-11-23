@@ -1,0 +1,16 @@
+[Unit]
+Description=Keep the Orange Pi GPIO fan at full speed with one owner
+Wants=orangepi-hardware-optimize.service
+After=orangepi-hardware-optimize.service
+Before=smartpc-dashboard.service
+ConditionPathExists=/sys/class/gpio/gpio101/value
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/smartpc-fan-ownership apply
+ExecStop=/usr/local/libexec/smartpc-fan-ownership restore
+RemainAfterExit=yes
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

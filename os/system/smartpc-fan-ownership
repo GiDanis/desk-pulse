@@ -1,0 +1,33 @@
+#!/usr/bin/python3
+"""Resolve the stock zero3w GPIO/PWM conflict without changing GPIO full speed."""
+from pathlib import Path
+import sys
+
+GPIO=Path('/sys/class/gpio/gpio101')
+DRIVER=Path('/sys/bus/platform/drivers/pwm-fan')
+DEVICE='soc@3000000:pwm-fan'
+STATE=Path('/run/smartpc-fan-ownership')
+
+def full_speed():
+    assert (GPIO/'direction').read_text().strip()=='out','GPIO fan must remain an output'
+    assert (GPIO/'value').read_text().strip()=='1','GPIO fan must remain high'
+
+def main():
+    compatible=Path('/proc/device-tree/compatible').read_bytes().split(b'\0')
+    assert b'xunlong,orangepi-4-pro' in compatible and b'arm,sun60iw2p1' in compatible,compatible
+    full_speed()
+    if sys.argv[1]=='apply':
+        if (DRIVER/DEVICE).is_symlink():
+            (DRIVER/'unbind').write_text(DEVICE)
+            STATE.write_text(DEVICE)
+        full_speed()
+        assert not (DRIVER/DEVICE).exists(),'Duplicate PWM owner remains bound'
+        print('GPIO101 remains high; duplicate PWM fan controller detached')
+    elif sys.argv[1]=='restore':
+        if STATE.exists() and not (DRIVER/DEVICE).exists():
+            (DRIVER/'bind').write_text(DEVICE)
+        STATE.unlink(missing_ok=True)
+        full_speed()
+    else:raise ValueError('apply or restore required')
+
+if __name__=='__main__':main()
