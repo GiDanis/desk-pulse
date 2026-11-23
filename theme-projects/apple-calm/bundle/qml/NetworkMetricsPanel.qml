@@ -25,7 +25,7 @@ Item {
             required property int index
             x:24+index*((root.width-48)/root.tabs.length);y:108;width:(root.width-48)/root.tabs.length-16;height:40;radius:6
             color:root.context.selection.tabId===modelData ? root.context.style.surfaceFocused : root.context.style.surface
-            border.color:root.context.selection.anchorId==="metrics.tabs" && root.context.selection.tabId===modelData ? root.context.style.accent : root.context.style.border;border.width:root.context.style.borderWidth
+            border.color:root.context.selection.anchorId==="metrics.tabs" && root.context.selection.tabId===modelData ? root.context.style.accent : root.context.style.border;border.width:root.context.selection.anchorId==="metrics.tabs" && root.context.selection.tabId===modelData ? 3 : 0
             CasaLabel { visualStyle:root.context.style;anchors.centerIn:parent;font.pixelSize:visualStyle.font26;text:root.tabLabels[parent.index] }
             MouseArea { anchors.fill:parent;enabled:root.context.lifecycle.interactive;onClicked:root.context.requestAction("network.metrics.section",parent.modelData,{}) }
         }
@@ -46,7 +46,7 @@ Item {
             required property int index
             width:metricList.width-(metricList.contentHeight>metricList.height ? 10 : 0);height:118*root.context.style.textScale-8;radius:root.context.style.radiusRow
             color:root.context.selection.index===index && root.context.selection.anchorId!=="metrics.tabs" ? root.context.style.surfaceFocused : root.context.style.surface
-            border.color:root.context.selection.index===index && root.context.selection.anchorId!=="metrics.tabs" ? root.context.style.accent : root.context.style.border;border.width:root.context.style.borderWidth
+            border.color:root.context.selection.index===index && root.context.selection.anchorId!=="metrics.tabs" ? root.context.style.accent : root.context.style.border;border.width:root.context.selection.index===index && root.context.selection.anchorId!=="metrics.tabs" ? 3 : 0
             CasaLabel { visualStyle:root.context.style;x:14;y:7;width:parent.width*0.56;font.pixelSize:visualStyle.font32;text:parent.item.title }
             CasaLabel { visualStyle:root.context.style;x:parent.width*0.60;y:7;width:parent.width-x-16;horizontalAlignment:Text.AlignRight;font.pixelSize:visualStyle.font32;text:parent.item.value;color:parent.item.previous ? visualStyle.semantic.warningOnOverlay : visualStyle.textPrimary }
             CasaLabel { visualStyle:root.context.style;x:14;y:parent.height-38;width:parent.width-28;font.pixelSize:visualStyle.font22;color:visualStyle.textSecondary;text:parent.item.detail+(parent.item.previous ? " · PRECEDENTE" : "") }
@@ -54,6 +54,6 @@ Item {
         }
     }
     Rectangle { x:parent.width-28;y:metricList.y+metricList.visibleArea.yPosition*metricList.height;width:4;height:Math.max(18,metricList.visibleArea.heightRatio*metricList.height);radius:2;color:root.context.style.accent;opacity:0.65;visible:root.view.section!=="history" && metricList.contentHeight>metricList.height }
-    NetworkHistoryChart { x:24;y:164;width:parent.width-48;height:Math.max(120,root.height-180);chart:root.view.chart;visualStyle:root.context.style;visible:root.view.section==="history" && root.view.hasChart }
+    NetworkHistoryChart { x:24;y:164;width:parent.width-48;height:Math.max(1,root.height-180);chart:root.view.chart;visualStyle:root.context.style;visible:root.view.section==="history" && root.view.hasChart }
     CasaLabel { visualStyle:root.context.style;x:24;y:245;width:parent.width-48;font.pixelSize:visualStyle.font25;visible:root.view.section==="history" && !root.view.hasChart;text:"Storico non disponibile per questa selezione" }
 }

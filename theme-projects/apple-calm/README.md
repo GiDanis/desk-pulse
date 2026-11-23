@@ -1,15 +1,25 @@
-# Apple Calm 1.6.5
+# Apple Calm
 
-**Installata con core0.10.0-rc.2 / API2.13:** icona Acquario dedicata, glifi precedenti identici, geometria/font/palette conservati. [Chiusura e ricevuta](../../dashboard/design/v010-aquarium-completion-report.md).
+**1.9.2 · candidata con Dashboard 0.10.4-rc.3.** Previsioni conserva le condizioni importanti con un avviso lungo, Oggi distingue gli stati meteo e Casa mette in evidenza i dispositivi offline. La testata indica la vista, le classifiche allineano posizione e punteggio e gli avvisi ordinari lunghi rimandano al dettaglio.
+
+**1.9.1 installata sulla Orange Pi con Dashboard 0.10.4-rc.2.** Il banner grande si adatta alle righe di testo e compare dopo che il contenuto ha riservato lo spazio necessario. Il prossimo evento entra con una dissolvenza locale in Oggi e Orologio. La posizione del quadrante resta stabile quando l'evento compare. Movimento ridotto e Disattivo si applicano anche a questa transizione.
+
+**1.9.0 · candidata grafica per il core 0.10.4-rc.1.** In Oggi, ora, data e meteo condividono una composizione aperta. Il prossimo evento ha una fascia dedicata e non sposta il quadrante. Oggi e Orologio usano lo stesso carattere per l'ora, con cifre tabulari. Previsioni presenta massima, minima e pioggia in colonne separate. Gli Avvisi distinguono focus, stato non letto e gravità. La navigazione è più visibile e la campanella mostra il conteggio quando ci sono avvisi da leggere.
+
+**1.8.0 · candidata per il core 0.10.4-rc.1.** Oggi mostra un solo orologio, Orologio adatta data, ora e meteo allo spazio lasciato dagli avvisi, Previsioni raggruppa icone e valori, Avvisi mette il titolo al primo posto. L'indicatore di navigazione attivo si distingue per forma. Il manifesto conserva le revisioni precedenti per poter tornare alla grafica installata.
+
+**1.7.0 installata / core 0.10.2-rc.5 / API 2.15:** avvisi in basso con fonte/orario e icone di dominio, campanella globale, area utile delle pagine protetta, viste compatte per 960×640 e scala 110%, dati Account/Meteo/Motorsport corretti. Backend GPU esistente conservato; nessun blur dinamico. [Report, verifiche e limiti](../../dashboard/design/v0102-apple-calm-implementation-report.md).
+
+**1.6.5 storica, installata con core0.10.0-rc.2 / API2.13:** icona Acquario dedicata, glifi precedenti identici, geometria/font/palette conservati. [Chiusura e ricevuta](../../dashboard/design/v010-aquarium-completion-report.md).
 
 **1.6.4 / core 0.9.4-rc.1:** orario persistente nella barra, tramite `ShellContext.clock` (Theme API 2.12); gli stati Quiete/Ripristino usano una seconda riga nello stesso spazio. [Verifiche e consegna](../../dashboard/design/v094-header-clock-report.md).
 
-Tema per SmartPC a 960 × 640, palette Giorno/Notte, 61 superfici proprie più scena Base. Consegna storica: revisione **1.6.3 installata e selezionabile** sulla Orange Pi con **SmartPC 0.9.0-rc.19 / Theme API 2.11**; Base resta attivo. Grafici nascosti sospesi e ripresa/assenza dei dati corrette, senza modificare font, palette, icone e layout approvati. Il core rende visibili i temi bloccati con diagnostica e verifica isolata. Matrici PC/ARM da 1.098 casi e prove EGLFS superate; soak del core finale e supplemento del bundle finale hanno perimetri distinti. [Consegna corrente e limiti](../../dashboard/design/apple-calm-recovery-performance-report.md), [storico delle revisioni](CONSEGNA.md).
+Tema per SmartPC a 960 × 640, palette Giorno/Notte, 61 superfici proprie più scena Base. Consegna storica 1.6.3: revisione **1.6.3 installata e selezionabile** sulla Orange Pi con **SmartPC 0.9.0-rc.19 / Theme API 2.11**; Base resta attivo. Grafici nascosti sospesi e ripresa/assenza dei dati corrette, senza modificare font, palette, icone e layout approvati. Il core rende visibili i temi bloccati con diagnostica e verifica isolata. Matrici PC/ARM da 1.098 casi e prove EGLFS superate; soak del core finale e supplemento del bundle finale hanno perimetri distinti. [Consegna corrente e limiti](../../dashboard/design/apple-calm-recovery-performance-report.md), [storico delle revisioni](CONSEGNA.md).
 
 - `bundle/`: unico payload installabile corrente, con 61 superfici proprie e fallback Base per la scena.
 - `design/icon-source.json`: unico sorgente modificabile dei 61 glifi vettoriali e delle loro associazioni semantiche.
 - `tools/generate_icons.py`: genera metadati e un solo atlante PNG condiviso. QtSvg serve soltanto sul PC di authoring; il dispositivo legge PNG con la propria installazione Qt.
-- `tools/blueprint/` e `tools/assemble.py`: strumenti storici con blueprint1.6.1, da riallineare prima di rigenerare l’intero bundle corrente. Per la1.6.5 sono stati rigenerati soltanto i due asset iconici esistenti e aggiornate le versioni dei manifesti; nessun nuovo percorso richiede modifica dell’inventario. Il bundle corrente e il delta verificato sono il riferimento.
+- `tools/blueprint/` e `tools/assemble.py`: strumenti storici con blueprint1.6.1, da riallineare prima di rigenerare l’intero bundle corrente. Per la1.6.5 erano stati rigenerati soltanto i due asset iconici; la1.7.0 aggiunge i componenti NoticeHeading/NoticeRow nel payload e nell’inventario dichiarato. Il bundle corrente e il delta verificato sono il riferimento.
 - `tools/verify_optimization.py`: confronto con dati reali in cache e provider isolati; verifica nomi, identità, riuso dei dettagli e nuova vista Orologio.
 - `tools/verify_main.py`: Main reale, corpus canonico, palette, ingrandimento testo, azioni, scroll, pallini, Normale/Ridotto/Disattivo.
 - `tools/verify_board.sh`: collaudo EGLFS completo; usare uno stage persistente sotto `/var/lib/smartpc-dashboard`, con core diagnostico e copia della cache sportiva.
@@ -22,7 +32,7 @@ La pagina precedente resta presentata finché la destinazione è pronta. Le pagi
 
 La vista Oggi → Orologio usa numeri grandi e meteo compatto, senza riempire spazi con eventi inesistenti. Il tema non contiene leggende permanenti del tastierino; la guida rimane nel Menu.
 
-Il manifesto usa `retention: latest`. La pulizia avviene solo dopo l'attivazione e tre heartbeat coerenti: conserva la revisione attiva, protegge eventuali lease ancora vive e usa Base per il recupero. Rimuove le revisioni precedenti di Apple Calm e i loro override, senza toccare i dati dei provider o gli altri temi.
+La revisione 1.8.0 usa `retention: all` per conservare le revisioni e i rispettivi profili dopo l'attivazione. Base resta disponibile per il recupero.
 
 Le misure azione → callback `frameSwapped` attestano il comportamento software osservato sul dispositivo. Non sono latenza ottica, tempo GPU o prova del tastierino fisico. I dati delle verifiche sono sintetici oppure cache reali isolate, con rete negata.
 

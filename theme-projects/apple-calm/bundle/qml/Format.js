@@ -9,7 +9,32 @@ function list(model) {
 }
 function number(value) { return !value ? "—" : value.displayText || (value.available ? String(value.value) + (value.unit ? " " + value.unit : "") : "—"); }
 function scalar(value) { return value && value.available ? value.displayText || (typeof value.value === "boolean" ? value.value ? "Attivo" : "Disattivo" : String(value.value)) : "—"; }
-function stamp(value) { return value === null || value === undefined ? "" : Qt.formatDateTime(new Date(value * 1000), "dd/MM · HH:mm"); }
+function stamp(value) { return typeof value !== "number" || !isFinite(value) || value <= 0 ? "" : Qt.formatDateTime(new Date(value * 1000), "dd/MM · HH:mm"); }
+function remaining(value) { return value && value.available && typeof value.value === "number" && isFinite(value.value) && value.value >= 0 && value.value <= 100 ? 100-value.value : null; }
+function percent(value) { return value === null ? "—" : String(Math.round(value*10)/10).replace(".",",")+"%"; }
+function shortDate(clock) { return clock ? clock.dateText.replace(/\s+\d{4}$/, "") : ""; }
+function deskWeatherStatus(value) {
+    if (!value) return "Meteo non disponibile";
+    if (!value.hasData) return ({
+        pending: "Meteo in attesa",
+        updating: "Aggiornamento meteo…",
+        offline: "Meteo offline",
+        error: "Errore meteo"
+    })[value.status] || "Meteo non disponibile";
+    if (value.isStale || ["stale", "offline", "error"].indexOf(value.status) >= 0)
+        return "Dati meteo precedenti";
+    return value.status === "updating" ? "Aggiornamento meteo…" : "";
+}
+function noticeDomain(event) { if (!event) return ""; var source=event.sourceId || "";return source==="sport_f1" ? "f1" : source==="sport_motogp" ? "motogp" : source==="weather-alert" || event.category==="meteo" ? "weather" : event.category; }
+function noticeIcon(event) { return ({weather:"cloud",account:"account",sport:"football",football:"football",f1:"race-car",motogp:"motorcycle",racing:"flag",network:"network",system:"info"})[noticeDomain(event)] || "bell"; }
+function noticeCategory(event) { return !event ? "Avviso" : ({weather:"Meteo",account:"Account",sport:"Calcio",football:"Calcio",f1:"Formula 1",motogp:"MotoGP",racing:"Motorsport",network:"Rete",system:"Sistema"})[noticeDomain(event)] || "Avviso"; }
+function noticePriority(event) {
+    if (!event)
+        return "";
+    return ({gialla:"Allerta gialla",arancione:"Allerta arancione",rossa:"Allerta rossa"})[event.weatherSeverity]
+        || ({warning:"Attenzione",critical:"Critico"})[event.severity] || "";
+}
+function noticeState(event) { return !event ? "Non disponibile" : event.cancelled ? "Revocato" : event.expired ? "Scaduto" : ({pending:"In attesa",presented:"Presentato",listed_capacity:"Solo elenco · coda piena",listed_late:"Solo elenco · fuori tempo",revoked:"Revocato",expired:"Scaduto"})[event.deliveryState] || (event.seen ? "Letto" : "Non letto"); }
 function source(value) {
     if (!value) return "Dati non disponibili";
     var labels = {active: "Aggiornato", updating: "Aggiornamento", pending: "In attesa", stale: "Dati precedenti", offline: "Offline", error: "Errore fonte", unavailable: "Non disponibile"};
@@ -40,15 +65,31 @@ function weather(code) {
 }
 function row(id, title, detail, value, icon) { return {id: id, title: title || "", detail: detail || "", value: value === undefined ? "" : value, icon: icon || ""}; }
 function info(model) { return list(model).map(function(x) { return row(x.id, x.title, x.detail, scalar(x.value)); }); }
-function standings(model) { return list(model).map(function(x) { return row(x.id, number(x.position) + "  " + x.name, x.played.available ? "Giocate " + number(x.played) + " · V " + number(x.wins) + "  N " + number(x.draws) + "  P " + number(x.losses) : "", number(x.points) + " pt"); }); }
+function standings(model) {
+    return list(model).map(function(x) {
+        const stats = !x.played || !x.played.available ? [] : [[x.played, "Giocate"], [x.wins, "V"], [x.draws, "N"], [x.losses, "P"]]
+            .filter(function(stat) { return stat[0] && stat[0].available; })
+            .map(function(stat) { return stat[1] + " " + number(stat[0]); });
+        const result = row(x.id, x.name, stats.join(" · "), x.points && x.points.available ? number(x.points) + " pt" : "—");
+        result.rank = number(x.position);
+        return result;
+    });
+}
 function matches(model, filter) {
     var all = list(model);
     if (filter === "PROSSIME") all = all.filter(function(m) { return m.status === "scheduled" || m.status === "postponed"; });
-    if (filter === "IN CORSO") all = all.filter(function(m) { return m.status === "live"; });
+    if (filter === "IN CORSO") all = all.filter(function(m) { return m.status === "live" || m.status === "half_time"; });
     if (filter === "RISULTATI") all = all.filter(function(m) { return m.status === "finished"; });
-    return all.map(function(m) { return row(m.id, m.home.name + "  –  " + m.away.name, [m.whenText, m.status === "live" ? "In corso " + number(m.minute) : m.rawStatus || m.status, m.pendingVAR ? "VAR" : ""].filter(Boolean).join(" · "), m.homeScore.available && m.awayScore.available ? number(m.homeScore) + " – " + number(m.awayScore) : "", "football"); });
+    return all.map(function(m) { return row(m.id, m.home.name + "  –  " + m.away.name, [m.whenText, matchStatus(m), m.pendingVAR ? "VAR" : ""].filter(Boolean).join(" · "), m.homeScore.available || m.awayScore.available ? number(m.homeScore) + " – " + number(m.awayScore) : "", "football"); });
 }
-function timing(model) { return list(model).map(function(x) { return row(x.id, number(x.position) + "  " + x.driverName, [x.team, x.compound || x.tyre, x.status].filter(Boolean).join(" · "), [number(x.time), number(x.gap)].join(" · ")); }); }
+function timing(model) { return list(model).map(function(x) {
+    var kind=x.resultKind, value=x.resultText, label="";
+    if (!value && number(x.time)!=="—") { value=number(x.time);kind="time"; }
+    if (!value && number(x.gap)!=="—") { value=number(x.gap);kind="gap"; }
+    label=kind==="time" ? ({total:"Tempo totale",best_lap:"Giro migliore",last_lap:"Ultimo giro",reference:"Riferimento"})[x.timeKind] || "Tempo" : ({gap:"Dal leader",status:"Stato",reported:"Dato riportato"})[kind] || "Non disponibile";
+    var result=row(x.id, number(x.position) + "  " + x.driverName, [x.team, x.compound || x.tyre, x.status, x.lap.available ? "Giri "+number(x.lap) : ""].filter(Boolean).join(" · "), value || "—");
+    result.valueDetail=label;return result;
+}); }
 function events(model) { return list(model).map(function(x) { return row(x.id, x.name, [x.circuit, stamp(x.startsAt)].filter(Boolean).join(" · "), "", "flag"); }); }
 function sessions(model) { return list(model).map(function(x) { return row(x.id, x.name, stamp(x.startsAt), x.status); }); }
 function squad(model) { return list(model).map(function(x) { return row(x.id, number(x.shirtNumber) + "  " + x.name, [x.role, x.group, x.inMinute.available ? "Entra " + number(x.inMinute) : "", x.outMinute.available ? "Esce " + number(x.outMinute) : ""].filter(Boolean).join(" · ")); }); }
@@ -93,7 +134,7 @@ function driverRows(context) {
     if (tab.indexOf("GOM") >= 0 || tab.indexOf("TYRE") >= 0) return list(d.stints).map(function(x) { return row(x.id, x.compound, "Giri " + number(x.startLap) + "–" + number(x.endLap), "Età " + number(x.tyreAge)); });
     var out = info(d.detailRows); if (d.timing) out = timing([d.timing]).concat(out); return out;
 }
-function matchStatus(m) { var labels={scheduled:"Programmata",live:"In corso",finished:"Terminata",postponed:"Rinviata",cancelled:"Annullata",suspended:"Sospesa",unavailable:"Stato non disponibile"}; return (labels[m.status] || m.status) + (m.status === "live" && m.minute.available ? " · " + number(m.minute) + "′" : ""); }
+function matchStatus(m) { var labels={scheduled:"Programmata",live:"In corso",half_time:"Intervallo",finished:"Terminata",postponed:"Rinviata",cancelled:"Annullata",suspended:"Sospesa",unavailable:"Stato non disponibile"}; return (labels[m.status] || "Stato non disponibile") + (m.status === "live" && m.minute.available ? " · " + number(m.minute) + "′" : ""); }
 function fantasyPlayers(team) { return !team ? [] : list(team.players).map(function(x) { return row(x.id,x.name,[x.role,x.group,list(x.bonuses).map(function(b) { return b.label + " " + number(b.count) + " (" + number(b.points) + ")"; }).join(" · ")].filter(Boolean).join(" · "), (x.withoutVote ? "S.V." : x.voteText || number(x.vote)) + " / " + (x.fantavoteText || number(x.fantavote))); }); }
 
 function familyIcon(id) { return ({oggi:"clock",meteo:"partly-cloudy",account:"account",sports:"trophy",sport:"football",f1:"race-car",motogp:"motorcycle",casa:"connected-home",network:"network",aquarium:"aquarium"})[id] || "unknown"; }
@@ -110,8 +151,18 @@ function forecastDay(date,epoch,fallback) {
     const parts=date.split("-"),day=new Date(Number(parts[0]),Number(parts[1])-1,Number(parts[2]));
     const today=new Date(epoch*1000);today.setHours(0,0,0,0);
     const tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);
-    const label=day.getTime()===today.getTime() ? "Oggi" : day.getTime()===tomorrow.getTime() ? "Domani" : ["Dom","Lun","Mar","Mer","Gio","Ven","Sab"][day.getDay()];
-    return label+" · "+parts[2]+"/"+parts[1];
+    if (day.getTime()===today.getTime()) return "Oggi";
+    if (day.getTime()===tomorrow.getTime()) return "Domani";
+    return ["Dom","Lun","Mar","Mer","Gio","Ven","Sab"][day.getDay()]+" "+parts[2]+"/"+parts[1];
+}
+
+function compactForecastCondition(code, description) {
+    return ({
+        56: "Gelo · pioviggine lieve", 57: "Gelo · pioviggine intensa",
+        66: "Gelo · pioggia lieve", 67: "Gelo · pioggia intensa",
+        85: "Rovesci nevosi lievi", 86: "Rovesci nevosi intensi",
+        96: "Grandine debole", 99: "Grandine intensa"
+    })[code] || description;
 }
 
 function windowLabel(window) { const label=window.label || "Utilizzo", d=duration(window.windowDurationMinutes);return label===d ? label : label+" · "+d; }

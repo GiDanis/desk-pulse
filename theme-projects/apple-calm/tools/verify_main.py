@@ -112,7 +112,8 @@ try:
    assert indicator.property('count')==count and indicator.property('selectedIndex')==position-1
    assert abs(indicator.property('position')-20*(position-1))<.1,{'axis':indicator.objectName(),'position':indicator.property('position'),'target':indicator.property('targetPosition'),'selected':position,'animating':indicator.property('animating'),'mode':ctx.motionPolicy.mode}
   assert abs(family.property('x')+family.property('width')/2-480)<.1
-  assert view.property('x')==939
+  assert view.property('x')+view.property('width')<=946
+  assert view.property('x')>=h.expression('pageGeometry("home.now")').right()
   assert h.expression('pageGeometry("home.now").height')==expected_content_height
   navigation_steps+=1
  for direction in (1,-1):
@@ -137,6 +138,8 @@ try:
   deadline=time.monotonic()+3
   while mode!='off' and animation_starts[axis]==before and time.monotonic()<deadline:h.pump(5)
   if mode=='off':h.wait_ready();h.pump(30)
+  if (animation_starts[axis]>before)!=(mode!='off'):
+   print('Motion diagnostic '+json.dumps({'mode':mode,'axis':axis,'starts':animation_starts,'family':h.value('familyId'),'overlay':h.value('overlay'),'viewIndex':h.value('viewIndex'),'navigation':h.expression('navigationSnapshot()'),'published':h.expression('settledNavigation()'),'dots':[{k:dot.property(k) for k in ['currentPosition','targetPosition','position','duration','resettingGroup','settling','animating','initialized']} for dot in dots()]}),flush=True)
   assert (animation_starts[axis]>before)==(mode!='off'),(mode,axis,'animation start signal')
  for mode,duration in [('normal',140),('reduced',80),('off',0)]:
   assert h.service.setSection('motionMode',mode);h.wait_ready();h.pump(30);wait_dots_settled()
@@ -144,7 +147,9 @@ try:
   before=animation_starts['family'];h.expression('activateKey(6)')
   wait_motion_start('family',before,mode)
   wait_dots_settled();check_dots()
-  h.root.setProperty('familyId','oggi');h.wait_ready();h.pump(30);wait_dots_settled()
+  h.root.setProperty('familyId','oggi')
+  indexes=h.value('viewIndex');indexes[0]=0;h.root.setProperty('viewIndex',indexes)
+  h.wait_ready();h.pump(30);wait_navigation_published();wait_dots_settled()
   before=animation_starts['view'];h.expression('activateKey(8)')
   wait_motion_start('view',before,mode)
   wait_dots_settled();check_dots()
@@ -165,6 +170,7 @@ try:
  selected=h.value('sportMatchId')
  target=next(m for m in h.sport._snapshot['fixtures'] if m['canonicalMatchId']==selected)
  target['stats']=[{'id':'stat-'+str(i),'label':'Statistica '+str(i),'home':i,'away':0} for i in range(20)]
+ h.sport._snapshot=deepcopy(h.sport._snapshot)
  h.sport.changed.emit();h.root.setProperty('sportDetailPage',1);h.wait_ready();h.pump(50)
  for _ in range(12):h.expression('activateKey(8)');h.pump(5)
  ctx=context(host_for('sport.match.detail'));assert ctx.selection.count==20 and ctx.selection.index>0

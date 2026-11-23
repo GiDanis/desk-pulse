@@ -47,6 +47,10 @@ assert engine.rootObjects(),warnings
 root=engine.rootObjects()[0];window=shiboken6.wrapInstance(shiboken6.getCppPointer(root)[0],QQuickWindow)
 if app.platformName()=='offscreen':window.setVisibility(QWindow.Visibility.Windowed);window.resize(960,640)
 service=state.appearance
+if args.apply:
+ # Keep an imported candidate protected while the old saved revision becomes
+ # ready; its normal latest-only cleanup must not retire the incoming bundle.
+ service.beginEdit()
 def until(predicate,timeout=15):
  deadline=time.monotonic()+timeout
  while time.monotonic()<deadline:

@@ -3,10 +3,10 @@ Item {
     id:root
     required property var chart
     required property var visualStyle
-    readonly property var series:chart.series
+    readonly property var series:chart ? chart.series : null
     readonly property var drawing: {
         const result=[]
-        if (!visible || !chart) return result
+        if (!visible || !chart || !series) return result
         for (let i=0;i<series.count;i++) {
             const s=series.get(i),points=[]
             for (let j=0;j<s.points.count;j++) { const p=s.points.get(j);points.push({time:p.time,value:p.value,broken:p.breakBefore}) }
@@ -29,9 +29,9 @@ Item {
             if (p.value!==null && p.value!==undefined) value=Math.max(value,p.value)
         return value>0 ? value : 1
     }
-    CasaLabel { visualStyle:root.visualStyle; width:parent.width;font.pixelSize:visualStyle.font20;text:root.chart.period+(root.chart.previous ? " · PRECEDENTE" : "") }
+    CasaLabel { visualStyle:root.visualStyle; width:parent.width;font.pixelSize:visualStyle.font20;text:root.chart.period+" · "+root.chart.unit+(root.chart.previous ? " · PRECEDENTE" : "") }
     Canvas {
-        id:canvas;x:60;y:46;width:parent.width-80;height:parent.height-110
+        id:canvas;x:60;y:46;width:Math.max(1,parent.width-80);height:Math.max(1,parent.height-110)
         onWidthChanged:root.repaintVisible()
         onHeightChanged:root.repaintVisible()
         onAvailableChanged:root.repaintVisible()
@@ -67,6 +67,6 @@ Item {
         visualStyle:root.visualStyle;x:canvas.x+2;y:canvas.y+canvas.height-height-4;width:canvas.width-4
         font.pixelSize:visualStyle.font22;color:visualStyle.textSecondary;text:"0"
     }
-    CasaLabel { visualStyle:root.visualStyle;y:parent.height-55;width:parent.width;font.pixelSize:visualStyle.font22;text:root.drawing.map(s=>(root.drawing.indexOf(s)===0 ? "━ " : "┄ ")+s.label+" · "+s.gaps+" buchi").join("  /  ") }
-    CasaLabel { visualStyle:root.visualStyle;y:parent.height-28;width:parent.width;font.pixelSize:visualStyle.font22;color:visualStyle.textSecondary;text:root.chart.message+" · valori nella risoluzione RRD disponibile" }
+    CasaLabel { visualStyle:root.visualStyle;y:Math.max(0,parent.height-55);width:parent.width;font.pixelSize:visualStyle.font22;visible:root.height>=120;text:root.drawing.map(s=>(root.drawing.indexOf(s)===0 ? "━ " : "┄ ")+s.label+" · "+s.gaps+" buchi").join("  /  ") }
+    CasaLabel { visualStyle:root.visualStyle;y:Math.max(0,parent.height-28);width:parent.width;font.pixelSize:visualStyle.font22;color:visualStyle.textSecondary;visible:root.height>=150;text:root.chart.message+" · valori nella risoluzione RRD disponibile" }
 }

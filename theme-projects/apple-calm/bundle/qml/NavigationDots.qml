@@ -17,8 +17,8 @@ Item {
     property bool initialized: false
     property bool settling: false
     readonly property bool animating: travel.running
-    implicitWidth: vertical ? 10 : Math.max(10, (count - 1) * 20 + 10)
-    implicitHeight: vertical ? Math.max(10, (count - 1) * 20 + 10) : 10
+    implicitWidth: vertical ? 10 : Math.max(16, (count - 1) * 20 + 16)
+    implicitHeight: vertical ? Math.max(16, (count - 1) * 20 + 16) : 10
     visible: count > 0
     function settleMotion() {
         settling = true
@@ -39,17 +39,19 @@ Item {
         model: Math.max(0, root.count)
         delegate: Rectangle {
             required property int index
-            x: root.vertical ? 2 : index * 20 + 2
-            y: root.vertical ? index * 20 + 2 : 2
-            width: 6; height: 6; radius: 3
+            x: root.vertical ? 1 : index * 20 + 4
+            y: root.vertical ? index * 20 + 4 : 1
+            width: 8; height: 8; radius: 4
             color: root.themeStyle ? root.themeStyle.textSecondary : "#5D626C"
-            opacity: 0.4
+            opacity: 0.76
         }
     }
     Rectangle {
-        x: root.vertical ? 0 : root.position
-        y: root.vertical ? root.position : 0
-        width: 10; height: 10; radius: 5
+        x: root.vertical ? 1 : root.position
+        y: root.vertical ? root.position : 1
+        width: root.vertical ? 8 : 16
+        height: root.vertical ? 16 : 8
+        radius: 4
         color: root.themeStyle ? root.themeStyle.semantic.accentDecoration : "#0066CC"
     }
 }

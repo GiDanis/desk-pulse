@@ -12,7 +12,7 @@ PageCanvas {
     Grid {
         x:root.width*416/912; y:root.bodyTop; columns:2; spacing:16
         Repeater {
-            model: [{title:"Vento",size:34,value:root.weather ? Format.number(root.weather.windSpeed) : "—",detail:root.weather ? root.weather.windDirectionText : "",symbol:"wind"}, {title:"Umidità",size:52,value:root.weather ? Format.number(root.weather.humidity) : "—",detail:"",symbol:"humidity"}, {title:"Raffiche",size:34,value:root.weather ? Format.number(root.weather.gusts) : "—",detail:"",symbol:"wind"}, {title:"Precipitazioni",size:38,value:root.weather ? Format.number(root.weather.precipitation) : "—",detail:"Intervallo del modello",symbol:"rain"}]
+            model: [{title:"Vento",size:34,value:root.weather ? Format.number(root.weather.windSpeed) : "—",detail:root.weather ? root.weather.windDirectionText : "",symbol:"wind"}, {title:"Umidità",size:52,value:root.weather ? Format.number(root.weather.humidity) : "—",detail:"",symbol:"humidity"}, {title:"Raffiche",size:34,value:root.weather ? Format.number(root.weather.gusts) : "—",detail:"",symbol:"wind"}, {title:"Precipitazioni",size:38,value:root.weather ? Format.number(root.weather.precipitation) : "—",detail:"Quantità del modello",symbol:"rain"}]
             delegate: Metric { required property var modelData; width:root.width*240/912; height:(root.bodyHeight-16)/2; style:root.style; title:modelData.title; value:modelData.value; detail:modelData.detail; symbol:modelData.symbol; valueSize:modelData.size }
         }
     }
