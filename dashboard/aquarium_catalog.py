@@ -64,3 +64,35 @@ def load_catalog(root=ROOT):
     data['backgroundUrl'] = resolved[data['background']]
     data['assetRevision'] = hashlib.sha256(raw).hexdigest()
     return data
+
+
+ROOT3D = Path(__file__).parent / 'assets' / 'aquarium' / 'calm-3d-v1'
+
+
+def load_3d_catalog(root=ROOT3D):
+    """Catalogue size is independent of active population; all paths/hash checked."""
+    import re
+    from aquarium_geometry import read_mesh
+    root=Path(root).resolve();raw=(root/'catalog.json').read_bytes();data=json.loads(raw)
+    if type(data.get('schemaVersion')) is not int or data['schemaVersion']!=2:
+        raise ValueError('Catalogo 3D non compatibile')
+    files=data.get('files',{})
+    for name,digest in files.items():
+        p=(root/name).resolve()
+        if not p.is_relative_to(root) or not p.is_file() or hashlib.sha256(p.read_bytes()).hexdigest()!=digest:
+            raise ValueError('Risorsa 3D assente o modificata')
+    rows=data.get('species',[])
+    if not isinstance(rows,list) or not 1<=len(rows)<=256:raise ValueError('Catalogo 3D vuoto o troppo grande')
+    seen=set()
+    for row in rows:
+        identity=row.get('id','')
+        if not re.fullmatch(r'[a-z][a-z0-9_.-]{0,63}',identity) or identity in seen:raise ValueError('Identità specie 3D non valida')
+        seen.add(identity)
+        if row.get('rigProfile')!='swim-skin-v1' or row.get('mesh') not in files:raise ValueError('Rig o mesh non supportati')
+        read_mesh(str((root/row['mesh']).resolve()))
+        for k,low,high in [('referenceSize',50,180),('speed',5,80),('tailFrequency',.1,5)]:number(row[k],low,high)
+        variants=row.get('variants',[])
+        if not variants or len({v['id'] for v in variants})!=len(variants) or any(not re.fullmatch('#[a-fA-F0-9]{6}',v['tint']) for v in variants):raise ValueError('Varianti non valide')
+        row['assetUrl']=(root/row['mesh']).as_uri()
+    data['assetRevision']=hashlib.sha256(raw).hexdigest()
+    return data

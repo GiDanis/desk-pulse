@@ -9,10 +9,17 @@ from aquarium_catalog import ROOT, load_catalog
 
 class AquariumService(QObject):
     changed = Signal()
+    operationFinished = Signal(str,bool,str)
     _catalogLoaded = Signal(int, object, str)
 
     def __init__(self, parent=None, *, root=ROOT):
         super().__init__(parent)
+        from aquarium_geometry import register
+        self._supports3d = register()
+        from aquarium_population import AquariumPopulation
+        self.population = AquariumPopulation(self)
+        self.population.changed.connect(self.changed)
+        self.population.operationFinished.connect(self.operationFinished)
         self._root = root
         self._executor = None
         self._closed = False
@@ -31,6 +38,33 @@ class AquariumService(QObject):
     @Property('QVariantMap', notify=changed)
     def snapshot(self):
         return self._snapshot
+
+    @Property(bool, constant=True)
+    def supports3d(self):return self._supports3d
+
+    @Property('QVariantMap', notify=changed)
+    def scene3d(self):
+        return dict(self.population.scene(self._snapshot.get('effectivePlayback','suspended'),self._session),runtimeAvailable=self._supports3d)
+
+    @Property('QVariantMap', notify=changed)
+    def management(self):return self.population.management()
+
+    @Slot()
+    def openManagement(self):self.population.open()
+
+    @Slot(int, result=bool)
+    def managementKey(self,key):return self.population.key(key)
+
+    @Slot(str, str, 'QVariantMap', result=bool)
+    @Slot(str, str, 'QVariantMap', str, result=bool)
+    def populationAction(self,action,target,args,request_id=''):
+        if action=='prepared':
+            if not self._selected or not self._exposed or self._overlay or self._urgent or self._theme or not self.population.state.get('clockHealthy',True):return False
+            return self.population.submit('prepared',target,request_id=request_id)
+        if action=='shown':return self.population.submit('shown',target,request_id=request_id)
+        if self._urgent:return False
+        return self.population.submit(action,target,args,request_id or uuid.uuid4().hex,
+                                      args.get('revision',self.population.state.get('revision')))
 
     def _load(self):
         if self._closed or self._loading or self._catalog or self._error:
@@ -65,6 +99,7 @@ class AquariumService(QObject):
             self._session = uuid.uuid4().hex
             self._paused = False
             self._load()
+            if self._supports3d:self.population.load()
         if urgent and selected and (not self._urgent or not self._selected):
             self._paused = True
         self._selected, self._exposed = selected, exposed
@@ -122,6 +157,7 @@ class AquariumService(QObject):
             self.changed.emit()
 
     def close(self):
+        self.population.close()
         self._closed = True
         self._epoch += 1
         if self._executor:

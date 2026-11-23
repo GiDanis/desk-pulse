@@ -22,6 +22,7 @@ def main():
     p.add_argument('--broken-image',action='store_true')
     p.add_argument('--bundle',type=Path)
     a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
+    os.environ['SMARTPC_AQUARIUM_RENDERER']='2d'
     from theme_fixture_support import isolate_process,LegacyHarness
     private,base=isolate_process()
     from theme_bundle import BundleManager,validate_project
